@@ -1,0 +1,111 @@
+name: Manual Deploy to Cloudflare Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      apps:
+        description: 'Apps to deploy (comma-separated: admin,company,student)'
+        required: true
+        type: string
+        default: 'admin,company,student'
+      reason:
+        description: 'Why you attempted a manual deployment'
+        required: true
+        type: string
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    outputs:
+      apps-matrix: ${{ steps.process.outputs.apps-matrix }}
+      valid-apps: ${{ steps.process.outputs.valid-apps }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Process input apps
+        id: process
+        run: |
+          INPUT_APPS="${{ github.event.inputs.apps }}"
+          
+          APPS_ARRAY=$(echo "$INPUT_APPS" | tr ',' '\n' | xargs -n1 | grep -v '^$')
+          
+          VALID_APPS=""
+          for app in $APPS_ARRAY; do
+            if [ -d "apps/$app" ]; then
+              echo "✓ Found app: $app"
+              if [ -z "$VALID_APPS" ]; then
+                VALID_APPS="$app"
+              else
+                VALID_APPS="$VALID_APPS,$app"
+              fi
+            else
+              echo "✗ App directory not found: apps/$app"
+              exit 1
+            fi
+          done
+          
+          APPS_JSON=$(echo "$VALID_APPS" | tr ',' '\n' | jq -R -s -c 'split("\n")[:-1]')
+          
+          echo "apps-matrix=$APPS_JSON" >> $GITHUB_OUTPUT
+          echo "valid-apps=$VALID_APPS" >> $GITHUB_OUTPUT
+          
+          echo "Apps to deploy: $VALID_APPS"
+
+  manual-deploy:
+    runs-on: ubuntu-latest
+    needs: validate-inputs
+    strategy:
+      matrix:
+        app: ${{ fromJson(needs.validate-inputs.outputs.apps-matrix) }}
+      fail-fast: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build app ${{ matrix.app }}
+        run: yarn nx build ${{ matrix.app }}
+
+      - name: Deploy ${{ matrix.app }} to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy apps/${{ matrix.app }}/dist --project-name=${{ matrix.app }} --commit-dirty=true
+          workingDirectory: .
+          packageManager: yarn
+
+  deployment-complete:
+    runs-on: ubuntu-latest
+    needs: [validate-inputs, manual-deploy]
+    if: always()
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "attachments": [
+                {
+                  "color": "${{ needs.manual-deploy.result == 'success' && 'good' || 'danger' }}",
+                  "title": "${{ needs.manual-deploy.result == 'success' && '🎉' || '💥' }} Manual Deployment ${{ needs.manual-deploy.result == 'success' && 'Completed' || 'Failed' }}",
+                  "text": "Apps: ${{ needs.validate-inputs.outputs.valid-apps }}\nStatus: ${{ needs.manual-deploy.result == 'success' && '✅ All deployments successful' || '❌ Some deployments failed' }}\nReason: ${{ github.event.inputs.reason }}\nTriggered by: ${{ github.actor }}"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,131 @@
+name: Deploy affected apps to Cloudflare Pages
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      affected-apps: ${{ steps.affected.outputs.apps }}
+      has-changes: ${{ steps.affected.outputs.has-changes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Get affected apps
+        id: affected
+        run: |
+          AFFECTED_APPS=$(yarn nx show projects --affected --base=HEAD~1 --type=app --plain)
+          
+          if [ -n "$AFFECTED_APPS" ]; then
+            CLEANED_APPS=$(echo "$AFFECTED_APPS" | sed 's/@jobis-deploy\///g')
+            APPS_JSON=$(echo "$CLEANED_APPS" | jq -R -s -c 'split("\n")[:-1]')
+            echo "apps=$APPS_JSON" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Affected apps: $CLEANED_APPS"
+          else
+            echo "apps=[]" >> $GITHUB_OUTPUT
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No affected apps found"
+          fi
+
+  deploy-affected:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    strategy:
+      matrix:
+        app: ${{ fromJson(needs.detect-changes.outputs.affected-apps) }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build app ${{ matrix.app }}
+        run: yarn nx build ${{ matrix.app }}
+
+      - name: Deploy ${{ matrix.app }} to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy apps/${{ matrix.app }}/dist --project-name=${{ matrix.app }} --commit-dirty=true
+          workingDirectory: .
+          packageManager: yarn
+
+  no-changes:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'false'
+    steps:
+      - name: No changes detected
+        run: echo "No affected apps found. Skipping deployment."
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-affected]
+    if: failure() && needs.detect-changes.outputs.has-changes == 'true'
+    steps:
+      - name: Get failed apps
+        id: failed-apps
+        run: |
+          FAILED_APPS=""
+          
+          JOBS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs")
+          
+          FAILED_JOBS=$(echo "$JOBS" | jq -r '.jobs[] | select(.name | startswith("deploy-affected")) | select(.conclusion == "failure") | .name')
+          
+          if [ -n "$FAILED_JOBS" ]; then
+            FAILED_APPS=$(echo "$FAILED_JOBS" | sed 's/deploy-affected (\(.*\))/\1/' | tr '\n' ', ' | sed 's/, $//')
+          fi
+          
+          echo "failed-apps=$FAILED_APPS" >> $GITHUB_OUTPUT
+          echo "Failed apps: $FAILED_APPS"
+
+      - name: Notify Slack on deployment failure
+        if: steps.failed-apps.outputs.failed-apps != ''
+        uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "attachments": [
+                {
+                  "color": "danger",
+                  "title": "🚨 Deployment Failed",
+                  "text": "Failed Apps: ${{ steps.failed-apps.outputs.failed-apps }}\nCommit: ${{ github.event.head_commit.message }}\nAuthor: ${{ github.actor }}\nAction link: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              ]
+            }
