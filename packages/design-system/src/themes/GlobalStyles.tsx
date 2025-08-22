@@ -1,8 +1,9 @@
-import { Global, css, useTheme } from "@emotion/react";
+import { Global, css } from "@emotion/react";
+import { useTheme } from "@/hooks";
 import font from "../../assets/fonts/pretendard-variable.woff2";
 
 export const GlobalStyles = () => {
-  const theme = useTheme();
+  const { currentTheme } = useTheme();
   return (
     <Global
       styles={css`
@@ -28,7 +29,7 @@ export const GlobalStyles = () => {
             sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          background-color: ${theme.color.grayScale[10]};
+          background-color: ${currentTheme.color.grayScale[10]};
         }
       `}
     />
