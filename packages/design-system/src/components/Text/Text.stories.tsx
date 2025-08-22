@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Text } from "./Text";
+import { Props } from "./Text.types";
 
 const meta: Meta<typeof Text> = {
   title: "components/Text",
@@ -60,7 +61,7 @@ export const Headings: Story = {
   args: {
     children: "제목 텍스트"
   },
-  render: args => (
+  render: (args: Props) => (
     <>
       <Text {...args} $size="h1">
         Heading 1
@@ -88,7 +89,7 @@ export const BodyTexts: Story = {
   args: {
     children: "본문 텍스트"
   },
-  render: args => (
+  render: (args: Props) => (
     <>
       <Text {...args} $size="body1">
         Body Text 1 - 기본 본문 텍스트 스타일
@@ -111,19 +112,11 @@ export const WithCustomColor: Story = {
   }
 };
 
-export const WithAlignment: Story = {
-  args: {
-    $size: "body1",
-    $align: "center",
-    children: "가운데 정렬 텍스트"
-  }
-};
-
 export const FontWeight: Story = {
   args: {
-    children: "폰트 굵기 텍스트"
+    children: "폰트 굵기별 텍스트"
   },
-  render: args => (
+  render: (args: Props) => (
     <>
       <Text {...args} $size="body1" $weight="regular">
         Regular Weight Text
@@ -140,7 +133,7 @@ export const FontWeight: Story = {
 
 export const SpanElement: Story = {
   args: {
-    $size: "h1",
+    $size: "h4",
     $span: true,
     children: "Span으로 렌더링된 텍스트"
   }
