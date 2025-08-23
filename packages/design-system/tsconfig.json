@@ -16,7 +16,8 @@
     "src/**/*.tsx",
     ".storybook/**/*.ts",
     ".storybook/**/*.tsx",
-    "src/emotion.d.ts"
+    "src/emotion.d.ts",
+    "assets/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
