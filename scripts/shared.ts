@@ -68,8 +68,13 @@ export const git = {
   async getLog(simple: boolean = false): Promise<string> {
     try {
       const args = simple
-        ? ["log", "--oneline", "-n", "10"]
-        : ["log", "--pretty=format:%h|%ad|%an|%s", "--date=format:%y-%m-%d"];
+        ? ["log", "--oneline", "--no-merges", "-n", "10"]
+        : [
+            "log",
+            "--no-merges",
+            "--pretty=format:%h|%ad|%an|%s",
+            "--date=format:%y-%m-%d"
+          ];
       const { stdout } = await execa("git", args);
       return stdout;
     } catch (error) {

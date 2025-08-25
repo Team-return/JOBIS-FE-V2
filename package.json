@@ -18,6 +18,7 @@
     "graph": "nx run-many --target=build --graph",
     "prepare": "husky",
     "lint": "eslint . --cache --cache-location ./node_modules/.cache/eslint/",
+    "storybook": "yarn workspace @jobis/design-system storybook",
     "setup": "jiti ./scripts/setup.ts",
     "commit": "jiti ./scripts/commit.ts",
     "commit:ai": "jiti ./scripts/ai-commit.ts",
