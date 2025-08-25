@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Icon } from "./Icon";
 import * as icons from "../../../assets/icons";
-import { Grid } from "../primitive/Grid";
-import { Text } from "../Text";
-import { Flex } from "../primitive/Flex";
+import { Grid, Text, Flex } from "@/components";
 import { IconName } from "./Icon.types";
 
 const meta: Meta<typeof Icon> = {
