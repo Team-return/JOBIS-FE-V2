@@ -15,13 +15,13 @@ const meta: Meta<typeof Icon> = {
     icon: {
       control: "select",
       options: Object.keys(icons),
-      description: "아이콘 이름",
+      description: "아이콘 이름"
     },
     size: {
       control: { type: "range", min: 16, max: 80, step: 1 },
-      description: "아이콘 크기 (기본값: 28)",
-    },
-  },
+      description: "아이콘 크기 (기본값: 28)"
+    }
+  }
 };
 
 export default meta;
