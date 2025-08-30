@@ -15,6 +15,14 @@ const preview = definePreview({
     a11y: {
       test: "error"
     },
+    backgrounds: {
+      default: "light",
+      disable: true,
+      options: {
+        light: { name: "Light", value: "#fff" },
+        dark: { name: "Dark", value: "#000" }
+      }
+    },
     options: {
       storySort: {
         method: "alphabetical",
