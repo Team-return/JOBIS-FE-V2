@@ -1,25 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./button";
 import { buttonVariants, buttonSizes } from "./button.types";
+import { expect, fn, userEvent, within } from "storybook/test";
 
 const meta: Meta<typeof Button> = {
   title: "Components/Button",
   component: Button,
   tags: ["autodocs"],
-  parameters: {
-    docs: {
-      description: {
-        component: "사용자 인터랙션을 위한 기본 버튼 컴포넌트입니다."
-      }
-    }
-  },
+  parameters: { layout: "centered" },
   argTypes: {
     $variant: {
       control: "select",
       options: buttonVariants,
-      description: "버튼의 종류 (contained, outline)"
+      description: "버튼의 종류"
     },
-    $size: {
+    $buttonSize: {
       control: "select",
       options: buttonSizes,
       description: "버튼의 크기 (md, lg)"
@@ -41,7 +36,7 @@ const meta: Meta<typeof Button> = {
   args: {
     children: "Button",
     $variant: "contained",
-    $size: "md",
+    $buttonSize: "md",
     disabled: false,
     $progressing: false
   }
@@ -50,7 +45,18 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    onClick: fn()
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const component = canvas.getByRole("button");
+    expect(component).toBeInTheDocument();
+    await userEvent.click(component);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  }
+};
 
 export const Variants: Story = {
   render: args => (
@@ -68,10 +74,10 @@ export const Variants: Story = {
 export const Sizes: Story = {
   render: args => (
     <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-      <Button {...args} $size="md">
+      <Button {...args} $buttonSize="md">
         Medium
       </Button>
-      <Button {...args} $size="lg">
+      <Button {...args} $buttonSize="lg">
         Large
       </Button>
     </div>

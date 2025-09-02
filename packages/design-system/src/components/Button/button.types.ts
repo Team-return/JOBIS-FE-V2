@@ -6,8 +6,10 @@ export const buttonSizes = ["md", "lg"] as const;
 export type ButtonVariant = (typeof buttonVariants)[number];
 export type ButtonSize = (typeof buttonSizes)[number];
 
-export interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
+export interface ButtonProps
+  extends Omit<ComponentPropsWithoutRef<"button">, "children"> {
+  children: string;
   $variant?: ButtonVariant;
-  $size?: ButtonSize;
+  $buttonSize?: ButtonSize;
   $progressing?: boolean;
 }

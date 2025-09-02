@@ -19,7 +19,7 @@ const meta: Meta<typeof Icon> = {
     },
     size: {
       control: { type: "range", min: 16, max: 80, step: 1 },
-      description: "아이콘 크기 (기본값: 28)"
+      description: "아이콘 크기"
     }
   }
 };
