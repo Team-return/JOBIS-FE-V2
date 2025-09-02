@@ -17,11 +17,11 @@ const meta: Meta<typeof Button> = {
     $buttonSize: {
       control: "select",
       options: buttonSizes,
-      description: "버튼의 크기 (md, lg)"
+      description: "버튼의 크기"
     },
     $progressing: {
       control: "boolean",
-      description: "버튼 로딩 상태 여부 (contained variant 전용)"
+      description: "버튼 로딩 상태 여부"
     },
     disabled: {
       control: "boolean",
