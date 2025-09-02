@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Button from "./button";
+import { Button } from "./button";
 import { buttonVariants, buttonSizes } from "./button.types";
 
 const meta: Meta<typeof Button> = {
@@ -14,17 +14,17 @@ const meta: Meta<typeof Button> = {
     }
   },
   argTypes: {
-    variant: {
+    $variant: {
       control: "select",
       options: buttonVariants,
       description: "버튼의 종류 (contained, outline)"
     },
-    size: {
+    $size: {
       control: "select",
       options: buttonSizes,
       description: "버튼의 크기 (md, lg)"
     },
-    progressing: {
+    $progressing: {
       control: "boolean",
       description: "버튼 로딩 상태 여부 (contained variant 전용)"
     },
@@ -40,10 +40,10 @@ const meta: Meta<typeof Button> = {
   },
   args: {
     children: "Button",
-    variant: "contained",
-    size: "md",
+    $variant: "contained",
+    $size: "md",
     disabled: false,
-    progressing: false
+    $progressing: false
   }
 };
 
@@ -55,10 +55,10 @@ export const Default: Story = {};
 export const Variants: Story = {
   render: args => (
     <div style={{ display: "flex", gap: "16px" }}>
-      <Button {...args} variant="contained">
+      <Button {...args} $variant="contained">
         Contained
       </Button>
-      <Button {...args} variant="outline">
+      <Button {...args} $variant="outline">
         Outline
       </Button>
     </div>
@@ -68,10 +68,10 @@ export const Variants: Story = {
 export const Sizes: Story = {
   render: args => (
     <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-      <Button {...args} size="md">
+      <Button {...args} $size="md">
         Medium
       </Button>
-      <Button {...args} size="lg">
+      <Button {...args} $size="lg">
         Large
       </Button>
     </div>
@@ -81,10 +81,10 @@ export const Sizes: Story = {
 export const Disabled: Story = {
   render: args => (
     <div style={{ display: "flex", gap: "16px" }}>
-      <Button {...args} variant="contained" disabled>
+      <Button {...args} $variant="contained" disabled>
         Contained Disabled
       </Button>
-      <Button {...args} variant="outline" disabled>
+      <Button {...args} $variant="outline" disabled>
         Outline Disabled
       </Button>
     </div>
@@ -94,12 +94,12 @@ export const Disabled: Story = {
 export const Progressing: Story = {
   render: args => (
     <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-      <Button {...args} variant="contained" progressing>
+      <Button {...args} $variant="contained" $progressing>
         Will not show
       </Button>
     </div>
   ),
   args: {
-    progressing: true
+    $progressing: true
   }
 };

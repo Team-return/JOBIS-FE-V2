@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { type ButtonProps } from "./button.types";
@@ -26,39 +25,7 @@ const Spinner = styled.div`
   mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 0);
 `;
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { children, variant = "contained", progressing = false, disabled, ...rest },
-    ref
-  ) => {
-    const isProgressing = variant === "contained" && progressing;
-
-    return (
-      <StyledButton
-        ref={ref}
-        disabled={disabled}
-        progressing={isProgressing}
-        variant={variant}
-        {...rest}
-      >
-        {isProgressing ? (
-          <>
-            <Spinner />
-            <span>{children}</span>
-          </>
-        ) : (
-          children
-        )}
-      </StyledButton>
-    );
-  }
-);
-
-Button.displayName = "Button";
-
-export default Button;
-
-const StyledButton = styled.button<ButtonProps>`
+const Component = styled.button<ButtonProps>`
   cursor: pointer;
   border: 1px solid transparent;
   font-weight: 600;
@@ -72,8 +39,8 @@ const StyledButton = styled.button<ButtonProps>`
     color 0.2s ease-in-out;
   user-select: none;
 
-  ${({ size }) => {
-    switch (size) {
+  ${({ $size }) => {
+    switch ($size) {
       case "md":
         return `
           height: 48px;
@@ -91,21 +58,21 @@ const StyledButton = styled.button<ButtonProps>`
     }
   }}
 
-  ${({ progressing }) =>
-    progressing &&
+  ${({ $progressing }) =>
+    $progressing &&
     `
       pointer-events: none;
       cursor: wait;
   `}
 
-  ${({ variant, theme }) => {
+  ${({ $variant, theme }) => {
     const primaryColor = theme.color.primary[20];
     const primaryHoverColor = "#C7D1FF";
     const primaryFocusColor = theme.color.primary[40];
     const textColor = theme.color.grayScale[10];
     const outlineHoverBgColor = theme.color.primary[20];
 
-    if (variant === "contained") {
+    if ($variant === "contained") {
       return `
         background-color: ${primaryColor};
         color: ${textColor};
@@ -126,7 +93,7 @@ const StyledButton = styled.button<ButtonProps>`
       `;
     }
 
-    if (variant === "outline") {
+    if ($variant === "outline") {
       return `
         background-color: transparent;
         color: ${primaryColor};
@@ -153,3 +120,31 @@ const StyledButton = styled.button<ButtonProps>`
     }
   }}
 `;
+
+export const Button = ({
+  children,
+  $variant = "contained",
+  $progressing = false,
+  disabled,
+  ...rest
+}: ButtonProps) => {
+  const isProgressing = $variant === "contained" && $progressing;
+
+  return (
+    <Component
+      disabled={disabled}
+      $progressing={isProgressing}
+      $variant={$variant}
+      {...rest}
+    >
+      {isProgressing ? (
+        <>
+          <Spinner />
+          <span>{children}</span>
+        </>
+      ) : (
+        children
+      )}
+    </Component>
+  );
+};

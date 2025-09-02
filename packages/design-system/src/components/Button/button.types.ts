@@ -7,7 +7,7 @@ export type ButtonVariant = (typeof buttonVariants)[number];
 export type ButtonSize = (typeof buttonSizes)[number];
 
 export interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  progressing?: boolean;
+  $variant?: ButtonVariant;
+  $size?: ButtonSize;
+  $progressing?: boolean;
 }
