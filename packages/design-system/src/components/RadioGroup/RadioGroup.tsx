@@ -17,7 +17,7 @@ const RadioList = styled.div`
 
 export const RadioGroup = ({ options, onChange }: Props) => {
   const [selectedValue, setSelectedValue] = useState<string | null>(
-    options.find(option => option.checked)?.value || null
+    options.filter(option => option.checked)[0]?.value || null
   );
 
   const handleRadioChange = (value: string) => () => {

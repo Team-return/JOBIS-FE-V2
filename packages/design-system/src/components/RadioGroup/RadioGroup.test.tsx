@@ -36,6 +36,20 @@ describe("RadioGroup", () => {
     expect(uncheckedRadios).toHaveLength(2);
   });
 
+  it("handles multiple checked options by selecting the first one", () => {
+    const optionsWithMultipleChecked = [
+      { label: "Option 1", value: "option1" },
+      { label: "Option 2", value: "option2", checked: true },
+      { label: "Option 3", value: "option3", checked: true }
+    ];
+
+    renderWithTheme(<RadioGroup options={optionsWithMultipleChecked} />);
+
+    const checkedRadio = screen.getByRole("radio", { checked: true });
+    expect(checkedRadio).toBeInTheDocument();
+    expect(screen.getByText("Option 2")).toBeInTheDocument();
+  });
+
   it("calls onChange handler when radio is clicked", async () => {
     const handleChange = vi.fn();
     renderWithTheme(
