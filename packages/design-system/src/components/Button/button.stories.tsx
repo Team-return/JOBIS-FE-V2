@@ -14,7 +14,7 @@ const meta: Meta<typeof Button> = {
       options: buttonVariants,
       description: "버튼의 종류"
     },
-    $buttonSize: {
+    $size: {
       control: "select",
       options: buttonSizes,
       description: "버튼의 크기"
@@ -36,7 +36,7 @@ const meta: Meta<typeof Button> = {
   args: {
     children: "Button",
     $variant: "contained",
-    $buttonSize: "md",
+    $size: "md",
     disabled: false,
     $progressing: false
   }
@@ -74,10 +74,10 @@ export const Variants: Story = {
 export const Sizes: Story = {
   render: args => (
     <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-      <Button {...args} $buttonSize="md">
+      <Button {...args} $size="md">
         Medium
       </Button>
-      <Button {...args} $buttonSize="lg">
+      <Button {...args} $size="lg">
         Large
       </Button>
     </div>
