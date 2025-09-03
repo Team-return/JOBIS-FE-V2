@@ -8,7 +8,7 @@ export type ButtonSize = (typeof buttonSizes)[number];
 
 export interface Props
   extends Omit<ComponentPropsWithoutRef<"button">, "children"> {
-  children: string;
+  // children: string; << TextProps에서 확장하므로 제외
   $variant?: ButtonVariant;
   $size?: ButtonSize;
   $progressing?: boolean;

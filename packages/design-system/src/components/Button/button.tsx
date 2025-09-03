@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { type Props } from "./button.types";
 import { Text } from "@/components";
+import { TextProps } from "@/utils";
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -26,8 +27,7 @@ const Spinner = styled.div`
   mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 0);
 `;
 
-const Component = styled.button<Omit<Props, "children">>`
-  //ButtonProps가 ComponentPropsWithoutRef<"button">를 확장하면서 ReactNode childeren과 string children이 생겨 충돌이 발생 이를 해결하기 위해 추가
+const Component = styled.button<Props>`
   cursor: pointer;
   border: 1px solid transparent;
   font-weight: 600;
@@ -129,7 +129,7 @@ export const Button = ({
   $progressing = false,
   disabled,
   ...rest
-}: Props) => {
+}: TextProps<Props>) => {
   const isProgressing = $variant === "contained" && $progressing;
 
   return (
