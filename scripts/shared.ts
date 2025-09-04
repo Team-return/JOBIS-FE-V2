@@ -18,6 +18,7 @@ export const SCOPE_MAP: Record<string, string> = {
   CO: "Company",
   ST: "Student",
   DS: "Design System",
+  AP: "API",
   RT: "Root"
 };
 
@@ -25,6 +26,7 @@ export const COMMIT_SCOPES = [
   { code: "AD", path: "apps/admin/" },
   { code: "CO", path: "apps/company/" },
   { code: "ST", path: "apps/student/" },
+  { code: "AP", path: "packages/api/" },
   { code: "DS", path: "packages/design-system/" }
 ];
 
