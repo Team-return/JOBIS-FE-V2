@@ -2851,6 +2851,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jobis/api@workspace:packages/api":
+  version: 0.0.0-use.local
+  resolution: "@jobis/api@workspace:packages/api"
+  dependencies:
+    "@tanstack/react-query": "npm:^5.86.0"
+    axios: "npm:^1.11.0"
+  languageName: unknown
+  linkType: soft
+
 "@jobis/company@workspace:apps/company":
   version: 0.0.0-use.local
   resolution: "@jobis/company@workspace:apps/company"
@@ -5051,6 +5060,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.86.0":
+  version: 5.86.0
+  resolution: "@tanstack/query-core@npm:5.86.0"
+  checksum: 10c0/24c56ac46e664f5a7f165dc8519366f695bb61ae4edc2330f8f177e5d2d3b45c538da91e1ddf8e2a160d64aa7ccbb7e12c42a10cd502e36c41e707775473079e
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.86.0":
+  version: 5.86.0
+  resolution: "@tanstack/react-query@npm:5.86.0"
+  dependencies:
+    "@tanstack/query-core": "npm:5.86.0"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/46f2ef02cce6a9f6fe81101b59c698c9409f4daeec245e309497ab22d0929d41808c7f4cd9cdacc7c2c6a50dd39ede339c5aa3d4fa4713e759e27beae3813fb6
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
@@ -6325,7 +6352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.8.2, axios@npm:^1.8.3":
+"axios@npm:^1.11.0, axios@npm:^1.8.2, axios@npm:^1.8.3":
   version: 1.11.0
   resolution: "axios@npm:1.11.0"
   dependencies:
