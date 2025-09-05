@@ -5,17 +5,22 @@ import { Toast } from "./Toast";
 
 describe("Toast", () => {
   it("should render the label", () => {
-    renderWithTheme(<Toast $label="Hello!" />);
+    renderWithTheme(<Toast $label="Hello!" $type="info" />);
     expect(screen.getByText("Hello!")).toBeInTheDocument();
   });
 
-  it("should render the success icon by default", () => {
-    renderWithTheme(<Toast $label="Success!" />);
+  it("should render the success icon when $type is success", () => {
+    renderWithTheme(<Toast $label="Success!" $type="success" />);
     expect(screen.getByAltText("ToastSuccess")).toBeInTheDocument();
   });
 
   it("should render the error icon when $type is error", () => {
     renderWithTheme(<Toast $label="Error!" $type="error" />);
     expect(screen.getByAltText("ToastError")).toBeInTheDocument();
+  });
+
+  it("should render the warning icon when $type is warning", () => {
+    renderWithTheme(<Toast $label="Warning!" $type="warning" />);
+    expect(screen.getByAltText("ToastWarning")).toBeInTheDocument();
   });
 });

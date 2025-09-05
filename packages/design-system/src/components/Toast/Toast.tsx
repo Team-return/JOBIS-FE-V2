@@ -18,12 +18,12 @@ const Component = styled.div<Omit<Props, "$label">>`
   border-radius: 16px;
 `;
 
-export const Toast = ({ $label, $type = "success" }: Props) => {
+export const Toast = ({ $label, $type }: Props) => {
   const iconName = ToastTypeIcon[$type];
 
   return (
     <Component role="alert" $type={$type}>
-      <Icon icon={iconName} width={24} height={24} />
+      <Icon icon={iconName} size={24} />
       <Text $size="body1" $weight="regular">
         {$label}
       </Text>
