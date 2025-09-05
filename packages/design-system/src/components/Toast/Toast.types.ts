@@ -1,8 +1,6 @@
 export type ToastType = "success" | "error" | "warning" | "info";
 
-import type { HTMLAttributes } from "react";
-
-export interface Props extends HTMLAttributes<HTMLDivElement> {
-  label: string;
+export interface Props {
+  $label: string;
   $type?: ToastType;
 }

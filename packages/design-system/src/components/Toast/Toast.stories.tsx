@@ -9,7 +9,7 @@ const meta: Meta<typeof Toast> = {
     layout: "centered"
   },
   argTypes: {
-    label: {
+    $label: {
       control: "text",
       description: "토스트에 표시될 내용"
     },
@@ -26,35 +26,35 @@ type Story = StoryObj<typeof Toast>;
 
 export const Default: Story = {
   args: {
-    label: "This is a toast message.",
+    $label: "This is a toast message.",
     $type: "success"
   }
 };
 
 export const Success: Story = {
   args: {
-    label: "요청에 성공했습니다.",
+    $label: "요청에 성공했습니다.",
     $type: "success"
   }
 };
 
 export const Error: Story = {
   args: {
-    label: "에러가 발생했습니다.",
+    $label: "에러가 발생했습니다.",
     $type: "error"
   }
 };
 
 export const Warning: Story = {
   args: {
-    label: "주의가 필요한 작업입니다.",
+    $label: "주의가 필요한 작업입니다.",
     $type: "warning"
   }
 };
 
 export const Info: Story = {
   args: {
-    label: "정보를 확인해주세요.",
+    $label: "정보를 확인해주세요.",
     $type: "info"
   }
 };

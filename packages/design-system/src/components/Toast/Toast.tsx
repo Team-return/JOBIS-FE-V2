@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Icon, Text } from "@/components";
 import type { Props, ToastType } from "./Toast.types";
-import type { IconName } from "@/components/Icon/Icon.types";
+import type { IconName } from "../Icon/Icon.types";
 
 const ToastTypeIcon: Record<ToastType, IconName> = {
   success: "ToastSuccess",
@@ -9,7 +9,7 @@ const ToastTypeIcon: Record<ToastType, IconName> = {
   warning: "ToastWarning",
   info: "ToastInfo"
 };
-const Component = styled.div<Omit<Props, "label" | "onClose">>`
+const Component = styled.div<Omit<Props, "$label">>`
   display: inline-flex;
   align-items: center;
   gap: 40px;
@@ -18,14 +18,14 @@ const Component = styled.div<Omit<Props, "label" | "onClose">>`
   border-radius: 16px;
 `;
 
-export const Toast = ({ label, $type = "success", ...rest }: Props) => {
+export const Toast = ({ $label, $type = "success" }: Props) => {
   const iconName = ToastTypeIcon[$type];
 
   return (
-    <Component role="alert" $type={$type} {...rest}>
+    <Component role="alert" $type={$type}>
       <Icon icon={iconName} width={24} height={24} />
       <Text $size="body1" $weight="regular">
-        {label}
+        {$label}
       </Text>
     </Component>
   );
