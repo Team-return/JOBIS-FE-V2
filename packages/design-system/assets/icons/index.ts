@@ -41,3 +41,7 @@ export { default as Recruitment } from "./recruitment.svg";
 export { default as Search } from "./search.svg";
 export { default as Success } from "./success.svg";
 export { default as Upload } from "./upload.svg";
+export { default as ToastSuccess } from "./toast-success.svg";
+export { default as ToastError } from "./toast-error.svg";
+export { default as ToastInfo } from "./toast-info.svg";
+export { default as ToastWarning } from "./toast-warning.svg";
