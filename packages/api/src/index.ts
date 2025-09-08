@@ -1,4 +1,4 @@
-export * from "./instance";
+export * from "./QueryProvider";
 export * from "./enum";
 
 export * from "./acceptances";
