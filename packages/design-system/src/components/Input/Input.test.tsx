@@ -35,12 +35,18 @@ describe("Input", () => {
 
   it("should display an error message when in error state", () => {
     const errorMessage = "This field is required";
-    renderWithTheme(<Input $isError $errorMessage={errorMessage} />);
+    renderWithTheme(<Input $errorMessage={errorMessage} />);
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 
   it("should have aria-invalid attribute when in error state", () => {
-    renderWithTheme(<Input $isError $label="Test" placeholder="error-input" />);
+    renderWithTheme(
+      <Input
+        $label="Test"
+        placeholder="error-input"
+        $errorMessage="error message"
+      />
+    );
     expect(screen.getByText("Test")).toBeInTheDocument();
     const input = screen.getByPlaceholderText("error-input");
     expect(input).toHaveAttribute("aria-invalid", "true");

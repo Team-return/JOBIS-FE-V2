@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { type ChangeEvent, useId } from "react";
 import { Text } from "@/components";
+import { parseValue } from "@/utils";
 import type { Props } from "./Input.types";
 
 const Wrapper = styled.div`
@@ -9,15 +10,22 @@ const Wrapper = styled.div`
   gap: 4px;
 `;
 
-const StyledInput = styled.input<
-  Omit<Props, "onChange" | "$label" | "$errorMessage">
->`
-  width: ${({ $width }) => $width || "100%"};
+const Label = styled.label`
+  ${({ theme }) => `
+    color: ${theme.color.grayScale[90]};
+    font-weight: ${theme.fontWeight.regular};
+    font-size: ${theme.font.body3.fontSize};
+    line-height: ${theme.font.body3.lineHeight};
+  `}
+`;
+
+const StyledInput = styled.input<Omit<Props, "onChange" | "$label">>`
+  width: ${({ $width }) => parseValue($width || "100%")};
   height: 48px;
   padding: 0 16px;
   border: 1px solid
-    ${({ theme, $isError }) =>
-      $isError ? theme.color.subColor.red[20] : "transparent"};
+    ${({ theme, $errorMessage }) =>
+      $errorMessage ? theme.color.subColor.red[20] : "transparent"};
   border-radius: 8px;
   background-color: ${({ theme }) => theme.color.grayScale[20]};
   color: ${({ theme }) => theme.color.grayScale[80]};
@@ -25,8 +33,8 @@ const StyledInput = styled.input<
 
   &:focus {
     outline: none;
-    border-color: ${({ theme, $isError }) =>
-      $isError ? theme.color.subColor.red[20] : theme.color.primary[20]};
+    border-color: ${({ theme, $errorMessage }) =>
+      $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]};
   }
 
   &::placeholder {
@@ -45,7 +53,6 @@ export const Input = ({
   $label,
   value,
   onChange,
-  $isError,
   $errorMessage,
   ...props
 }: Props) => {
@@ -56,20 +63,16 @@ export const Input = ({
 
   return (
     <Wrapper>
-      {$label && (
-        <Text $span $size="body3" $weight="regular">
-          {$label}
-        </Text>
-      )}
+      {$label && <Label htmlFor={id}>{$label}</Label>}
       <StyledInput
         id={id}
         value={value}
         onChange={handleChange}
-        $isError={$isError}
-        aria-invalid={$isError}
+        $errorMessage={$errorMessage}
+        aria-invalid={!!$errorMessage}
         {...props}
       />
-      {$isError && $errorMessage && (
+      {$errorMessage && (
         <Text $span $size="body3" $weight="regular" $color="#E74C3C">
           {$errorMessage}
         </Text>

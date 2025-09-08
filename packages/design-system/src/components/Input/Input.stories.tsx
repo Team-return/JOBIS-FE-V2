@@ -13,8 +13,7 @@ const meta: Meta<typeof Input> = {
     value: "",
     placeholder: "텍스트를 입력해주세요.",
     $width: "300px",
-    $isError: false,
-    $errorMessage: "에러가 발생했습니다."
+    $errorMessage: ""
   },
   argTypes: {
     $label: {
@@ -41,10 +40,7 @@ const meta: Meta<typeof Input> = {
       control: "text",
       description: "인풋의 너비"
     },
-    $isError: {
-      control: "boolean",
-      description: "에러 상태 여부"
-    },
+
     $errorMessage: {
       control: "text",
       description: "에러 상태일 때 표시될 메시지"
@@ -79,7 +75,7 @@ export const Disabled: Story = {
 
 export const Error: Story = {
   args: {
-    $isError: true,
+    $errorMessage: "에러가 발생했습니다.",
     value: "error"
   }
 };
