@@ -75,10 +75,6 @@ const IconWrapper = styled.div<{ onClick?: () => void }>`
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
 `;
 
-const ErrorMessage = styled(Text)`
-  color: ${({ theme }) => theme.color.subColor.red[20]};
-`;
-
 export const Input = ({
   $label,
   value,
@@ -118,9 +114,9 @@ export const Input = ({
         )}
       </InputWrapper>
       {$errorMessage && (
-        <ErrorMessage $span $size="body3" $weight="regular">
+        <Text $span $size="body3" $weight="regular" $color="#E74C3C">
           {$errorMessage}
-        </ErrorMessage>
+        </Text>
       )}
     </Wrapper>
   );
