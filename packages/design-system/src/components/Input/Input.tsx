@@ -17,8 +17,8 @@ const StyledInput = styled.input<
   padding: 0 16px;
   border: 1px solid
     ${({ theme, $isError }) =>
-      $isError ? theme.color.subColor.red[20] : theme.color.grayScale[40]};
-  border-radius: 12px;
+      $isError ? theme.color.subColor.red[20] : "transparent"};
+  border-radius: 8px;
   background-color: ${({ theme }) => theme.color.grayScale[20]};
   color: ${({ theme }) => theme.color.grayScale[80]};
   font-size: 14px;
