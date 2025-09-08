@@ -2860,6 +2860,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:8.35.1"
     axios: "npm:^1.11.0"
     eslint: "npm:^9.33.0"
+    react-cookie: "npm:^8.0.1"
     typescript: "npm:5.8.3"
     vite: "npm:5.3.1"
   languageName: unknown
@@ -5305,6 +5306,17 @@ __metadata:
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
   checksum: 10c0/39d34d1afaa338ab9763f37ad6066e3f349444f9052b9676a7cc0252ef9485a41c6d81c9c4e0d26e9077993354edf25efc853f3224dd4b447175ef62bdcc86a5
+  languageName: node
+  linkType: hard
+
+"@types/hoist-non-react-statics@npm:^3.3.6":
+  version: 3.3.7
+  resolution: "@types/hoist-non-react-statics@npm:3.3.7"
+  dependencies:
+    hoist-non-react-statics: "npm:^3.3.0"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10c0/ed8f4e88338f7d021d0f956adf6089d2a12b2e254a03c05292324f2e986d2376eb9efdb8a4f04596823e8fca88c9d06361d20dab4a2a00dc935fb36ac911de55
   languageName: node
   linkType: hard
 
@@ -9179,7 +9191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -11662,6 +11674,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-cookie@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "react-cookie@npm:8.0.1"
+  dependencies:
+    "@types/hoist-non-react-statics": "npm:^3.3.6"
+    hoist-non-react-statics: "npm:^3.3.2"
+    universal-cookie: "npm:^8.0.0"
+  peerDependencies:
+    react: ">= 16.3.0"
+  checksum: 10c0/af6136c79129d7ffd78a399b169b814c5ea1f05324bfd5ca65e5361e7bdf66de7699fc6d2303641cd7d6c5cc3364b3682510a7a1bdc7f59a721afa01bf13b79f
+  languageName: node
+  linkType: hard
+
 "react-docgen-typescript@npm:^2.2.2":
   version: 2.4.0
   resolution: "react-docgen-typescript@npm:2.4.0"
@@ -13485,6 +13510,15 @@ __metadata:
   dependencies:
     imurmurhash: "npm:^0.1.4"
   checksum: 10c0/d324c5a44887bd7e105ce800fcf7533d43f29c48757ac410afd42975de82cc38ea2035c0483f4de82d186691bf3208ef35c644f73aa2b1b20b8e651be5afd293
+  languageName: node
+  linkType: hard
+
+"universal-cookie@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "universal-cookie@npm:8.0.1"
+  dependencies:
+    cookie: "npm:^1.0.2"
+  checksum: 10c0/96b1f2eba8941e590892513ab3220fccad9606485452d2443f86c69388a0c663937feb386a2911d2dec5796840ae7af155c6deef8712906a931ae8a30ae93485
   languageName: node
   linkType: hard
 

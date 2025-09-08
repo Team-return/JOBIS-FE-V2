@@ -11,7 +11,8 @@
   "packageManager": "yarn@4.9.2",
   "dependencies": {
     "@tanstack/react-query": "^5.86.0",
-    "axios": "^1.11.0"
+    "axios": "^1.11.0",
+    "react-cookie": "^8.0.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "8.35.1",
