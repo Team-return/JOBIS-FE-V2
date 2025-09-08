@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn, userEvent, within, expect } from "storybook/test";
 import { Input } from "./Input";
+import * as icons from "../../../assets/icons";
 
 const meta: Meta<typeof Input> = {
   title: "components/Input",
@@ -9,11 +10,13 @@ const meta: Meta<typeof Input> = {
   args: {
     $label: "Label",
     onChange: fn(),
+    onIconClick: fn(),
     disabled: false,
     value: "",
     placeholder: "텍스트를 입력해주세요.",
     $width: "300px",
-    $errorMessage: ""
+    $errorMessage: "",
+    $iconName: undefined
   },
   argTypes: {
     $label: {
@@ -40,10 +43,18 @@ const meta: Meta<typeof Input> = {
       control: "text",
       description: "인풋의 너비"
     },
-
     $errorMessage: {
       control: "text",
       description: "에러 상태일 때 표시될 메시지"
+    },
+    $iconName: {
+      control: "select",
+      options: [undefined, ...Object.keys(icons)],
+      description: "인풋 오른쪽에 표시될 아이콘 이름"
+    },
+    onIconClick: {
+      action: "icon-clicked",
+      description: "아이콘을 클릭했을 때 호출되는 이벤트 핸들러"
     }
   }
 };
@@ -54,7 +65,7 @@ type Story = StoryObj<typeof Input>;
 export const Default: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const input = canvas.getByRole("input");
+    const input = canvas.getByRole("textbox");
     await userEvent.type(input, "Hello world!");
     await expect(args.onChange).toHaveBeenCalled();
   }
@@ -77,5 +88,17 @@ export const Error: Story = {
   args: {
     $errorMessage: "에러가 발생했습니다.",
     value: "error"
+  }
+};
+
+export const WithIcon: Story = {
+  args: {
+    $iconName: "Search",
+    placeholder: "검색어를 입력하세요."
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const icon = canvas.getByRole("img");
+    await userEvent.click(icon);
   }
 };

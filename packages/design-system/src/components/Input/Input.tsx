@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { type ChangeEvent, useId } from "react";
-import { Text } from "@/components";
+import { Text, Icon } from "@/components";
 import { parseValue } from "@/utils";
 import type { Props } from "./Input.types";
 
@@ -19,7 +19,12 @@ const Label = styled.label`
   `}
 `;
 
-const StyledInput = styled.input<Omit<Props, "onChange" | "$label">>`
+const InputWrapper = styled.div<
+  Pick<Props, "$width" | "$errorMessage" | "disabled">
+>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: ${({ $width }) => parseValue($width || "100%")};
   height: 48px;
   padding: 0 16px;
@@ -28,25 +33,50 @@ const StyledInput = styled.input<Omit<Props, "onChange" | "$label">>`
       $errorMessage ? theme.color.subColor.red[20] : "transparent"};
   border-radius: 8px;
   background-color: ${({ theme }) => theme.color.grayScale[20]};
-  color: ${({ theme }) => theme.color.grayScale[80]};
-  font-size: 14px;
 
-  &:focus {
+  &:focus-within {
     outline: none;
     border-color: ${({ theme, $errorMessage }) =>
       $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]};
   }
 
+  ${({ theme, disabled }) =>
+    disabled &&
+    `
+    border: 1px solid ${theme.color.grayScale[50]};
+    background-color: ${theme.color.grayScale[30]};
+    cursor: not-allowed;
+
+    & > * {
+      color: ${theme.color.grayScale[60]};
+      cursor: not-allowed;
+    }
+  `}
+`;
+
+const StyledInput = styled.input`
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: ${({ theme }) => theme.color.grayScale[80]};
+  font-size: 14px;
+
   &::placeholder {
     color: ${({ theme }) => theme.color.grayScale[50]};
   }
+`;
 
-  &:disabled {
-    border: 1px solid ${({ theme }) => theme.color.grayScale[50]};
-    background-color: ${({ theme }) => theme.color.grayScale[30]};
-    color: ${({ theme }) => theme.color.grayScale[60]};
-    cursor: not-allowed;
-  }
+const IconWrapper = styled.div<{ onClick?: () => void }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
+`;
+
+const ErrorMessage = styled(Text)`
+  color: ${({ theme }) => theme.color.subColor.red[20]};
 `;
 
 export const Input = ({
@@ -54,6 +84,10 @@ export const Input = ({
   value,
   onChange,
   $errorMessage,
+  $width,
+  $iconName,
+  onIconClick,
+  disabled,
   ...props
 }: Props) => {
   const id = useId();
@@ -64,18 +98,29 @@ export const Input = ({
   return (
     <Wrapper>
       {$label && <Label htmlFor={id}>{$label}</Label>}
-      <StyledInput
-        id={id}
-        value={value}
-        onChange={handleChange}
+      <InputWrapper
+        $width={$width}
         $errorMessage={$errorMessage}
-        aria-invalid={!!$errorMessage}
-        {...props}
-      />
+        disabled={disabled}
+      >
+        <StyledInput
+          id={id}
+          value={value}
+          onChange={handleChange}
+          aria-invalid={!!$errorMessage}
+          disabled={disabled}
+          {...props}
+        />
+        {$iconName && (
+          <IconWrapper onClick={onIconClick}>
+            <Icon icon={$iconName} size={24} />
+          </IconWrapper>
+        )}
+      </InputWrapper>
       {$errorMessage && (
-        <Text $span $size="body3" $weight="regular" $color="#E74C3C">
+        <ErrorMessage $span $size="body3" $weight="regular">
           {$errorMessage}
-        </Text>
+        </ErrorMessage>
       )}
     </Wrapper>
   );

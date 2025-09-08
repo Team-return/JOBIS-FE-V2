@@ -1,4 +1,5 @@
 import type { DimensionValue } from "@/utils/type";
+import type { IconName } from "@/components/Icon/Icon.types";
 
 export interface Props {
   $label?: string;
@@ -8,4 +9,6 @@ export interface Props {
   $width?: DimensionValue;
   disabled?: boolean;
   $errorMessage?: string;
+  $iconName?: IconName;
+  onIconClick?: () => void;
 }
