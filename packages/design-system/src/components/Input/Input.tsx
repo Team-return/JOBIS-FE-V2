@@ -34,7 +34,9 @@ const StyledInput = styled.input<
   }
 
   &:disabled {
+    border: 1px solid ${({ theme }) => theme.color.grayScale[50]};
     background-color: ${({ theme }) => theme.color.grayScale[30]};
+    color: ${({ theme }) => theme.color.grayScale[60]};
     cursor: not-allowed;
   }
 `;
