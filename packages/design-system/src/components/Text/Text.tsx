@@ -18,6 +18,7 @@ const cache: Partial<Record<TextElement, ComponentType<Props>>> = {};
 
 const createComponent = (element: TextElement): TextComponent => {
   cache[element] = styled(element)<Props>`
+    margin: 0;
     color: ${({ theme, $color }) =>
       $color ? $color : theme.color.grayScale[90]};
     font-weight: ${({ theme, $weight }) =>
