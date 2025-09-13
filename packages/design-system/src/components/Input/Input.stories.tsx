@@ -33,7 +33,7 @@ const meta: Meta<typeof Input> = {
     },
     placeholder: {
       control: "text",
-      description: "인풋에 표시될 플레이스홀더 텍스트"
+      description: "인풋에 인풋에 표시될 플레이스홀더 텍스트"
     },
     disabled: {
       control: "boolean",

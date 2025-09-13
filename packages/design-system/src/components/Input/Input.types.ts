@@ -1,5 +1,5 @@
-import type { DimensionValue } from "@/utils/type";
 import type { IconName } from "@/components/Icon/Icon.types";
+import type { DimensionValue } from "@/utils/type";
 
 export interface Props {
   $label?: string;
