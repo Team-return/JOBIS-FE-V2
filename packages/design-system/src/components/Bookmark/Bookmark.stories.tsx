@@ -33,7 +33,7 @@ export const Default: Story = {
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const component = canvas.getByRole("button");
+    const component = canvas.getByLabelText("bookmark");
     expect(component).toBeInTheDocument();
     await userEvent.click(component);
     await expect(args.onClick).toHaveBeenCalledTimes(1);

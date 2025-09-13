@@ -26,6 +26,7 @@ export const Bookmark = ({ $checked, onClick }: Props) => {
   const { currentTheme: theme } = useTheme();
   return (
     <Component
+      aria-label="bookmark"
       role="button"
       view-box="0 0 24 24"
       $checked={$checked}
