@@ -36,9 +36,20 @@ describe("Search", () => {
       expect(icon).toBeInTheDocument();
     });
 
-    it("should not be clickable if no onClick passed", async () => {
+    it("should call onIconClick when icon is clicked", async () => {
       const user = userEvent.setup();
-      renderWithTheme(<Search placeholder="no-click-icon" />);
+      const handleClick = vi.fn();
+      renderWithTheme(<Search onIconClick={handleClick} />);
+      const icon = screen.getByRole("img");
+
+      await user.click(icon);
+
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not throw if no onIconClick is passed", async () => {
+      const user = userEvent.setup();
+      renderWithTheme(<Search />);
       const icon = screen.getByRole("img");
 
       await user.click(icon);

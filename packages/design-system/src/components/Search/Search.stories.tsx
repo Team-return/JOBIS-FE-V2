@@ -9,7 +9,8 @@ const meta: Meta<typeof Search> = {
   args: {
     placeholder: "검색어를 입력해주세요",
     $width: "300px",
-    onChange: fn()
+    onChange: fn(),
+    onIconClick: fn()
   },
   argTypes: {
     $width: {
@@ -40,6 +41,8 @@ export const Default: Story = {
     const input = canvas.getByRole("search");
     await userEvent.type(input, "Hello world!");
     await expect(args.onChange).toHaveBeenCalled();
+    const icon = canvas.getByRole("img");
+    await userEvent.click(icon);
   }
 };
 

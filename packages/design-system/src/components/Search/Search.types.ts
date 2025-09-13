@@ -5,4 +5,5 @@ export interface Props {
   onChange?: (value: string) => void;
   $width?: DimensionValue;
   placeholder?: string;
+  onIconClick?: () => void;
 }

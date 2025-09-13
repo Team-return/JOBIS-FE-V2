@@ -42,9 +42,19 @@ const IconWrapper = styled.div<{ onClick?: () => void }>`
   align-items: center;
   justify-content: center;
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.1);
+  }
 `;
 
-export const Search = ({ value, onChange, $width, ...props }: Props) => {
+export const Search = ({
+  value,
+  onChange,
+  $width,
+  onIconClick,
+  ...props
+}: Props) => {
   const id = useId();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange?.(e.target.value);
@@ -54,7 +64,7 @@ export const Search = ({ value, onChange, $width, ...props }: Props) => {
     <Wrapper>
       <InputWrapper $width={$width}>
         <StyledInput id={id} value={value} onChange={handleChange} {...props} />
-        <IconWrapper>
+        <IconWrapper onClick={onIconClick}>
           <Icon icon={"Search"} size={24} />
         </IconWrapper>
       </InputWrapper>
