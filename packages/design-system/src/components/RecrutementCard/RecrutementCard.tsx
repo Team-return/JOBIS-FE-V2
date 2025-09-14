@@ -3,11 +3,16 @@ import type { Props } from "./RecrutementCard.types";
 import { Box, Flex, Stack, Text, Bookmark, Surface } from "@/components";
 import { useTheme } from "@/hooks";
 
-const Component = styled(Stack)`
+const Component = styled.div`
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-direction: column;
   border-radius: 12px;
   width: 222px;
   height: 264px;
   overflow: hidden;
+  cursor: pointer;
 
   & > div,
   & > div > div {
@@ -31,13 +36,14 @@ export const RecrutementCard = ({
   hiringJobs,
   trainPay,
   militarySupport,
-  bookmarked
+  bookmarked,
+  onClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
 
   return (
     <Surface $shadow>
-      <Component>
+      <Component onClick={onClick} role="cell">
         <img
           width={222}
           height={144}

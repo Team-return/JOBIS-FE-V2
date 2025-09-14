@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { RecrutementCard } from "./RecrutementCard";
+import { expect, fn, userEvent, within } from "storybook/test";
 
 const meta: Meta<typeof RecrutementCard> = {
   title: "Components/RecrutementCard",
@@ -30,6 +31,10 @@ const meta: Meta<typeof RecrutementCard> = {
     bookmarked: {
       control: "boolean",
       description: "북마크 여부"
+    },
+    onClick: {
+      action: "clicked",
+      description: "카드 클릭 이벤트 핸들러"
     }
   },
   args: {
@@ -45,7 +50,18 @@ const meta: Meta<typeof RecrutementCard> = {
 export default meta;
 type Story = StoryObj<typeof RecrutementCard>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    onClick: fn()
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const component = canvas.getByRole("cell");
+    expect(component).toBeInTheDocument();
+    await userEvent.click(component);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  }
+};
 
 export const Bookmarked: Story = {
   args: {

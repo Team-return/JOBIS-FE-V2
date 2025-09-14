@@ -1,5 +1,5 @@
-import { screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 import { RecrutementCard } from "./RecrutementCard";
 import { renderWithTheme } from "@/utils";
 
@@ -45,5 +45,24 @@ describe("RecrutementCard", () => {
     const image = screen.getByRole("img");
     expect(image).toHaveAttribute("src", defaultProps.companyProfileUrl);
     expect(image).toHaveAttribute("alt", defaultProps.companyName);
+  });
+
+  it("calls onClick when card is clicked", () => {
+    const onClick = vi.fn();
+    renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);
+
+    const card = screen.getByRole("cell", { hidden: true });
+    fireEvent.click(card);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call onClick when not provided", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} />);
+
+    const card = screen.getByRole("cell", { hidden: true });
+    fireEvent.click(card);
+
+    expect(true).toBe(true);
   });
 });

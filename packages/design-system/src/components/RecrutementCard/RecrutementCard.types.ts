@@ -5,4 +5,5 @@ export interface Props {
   trainPay: number;
   militarySupport: boolean;
   bookmarked: boolean;
+  onClick?: () => void;
 }
