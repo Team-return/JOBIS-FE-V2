@@ -32,3 +32,13 @@ export interface StudentSignupResponse {
   authority: string;
   platform_type: string;
 }
+
+export interface ChangePwByEmailRequest {
+  email: string;
+  password: string;
+}
+
+export interface ChangePwRequest {
+  current_password: string;
+  new_password: string;
+}
