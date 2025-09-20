@@ -13,7 +13,7 @@ const Component = styled.div<Omit<Props, "$label">>`
   display: inline-flex;
   align-items: center;
   gap: 40px;
-  padding: 1px 88px 1px 24px;
+  padding: 19px 88px 19px 24px;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 16px;
 `;
@@ -23,7 +23,7 @@ export const Toast = ({ $label, $type }: Props) => {
 
   return (
     <Component role="alert" $type={$type}>
-      <Icon icon={iconName} size={24} />
+      <Icon icon={iconName} size={24} color="white" />
       <Text $size="body1" $weight="regular">
         {$label}
       </Text>
