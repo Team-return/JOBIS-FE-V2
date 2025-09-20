@@ -39,3 +39,11 @@ export const Default: Story = {
     await userEvent.click(component);
   }
 };
+
+export const Done: Story = {
+  args: {
+    $label: "File Download",
+    $done: true,
+    $fileUrl: "/mock.pdf"
+  }
+};

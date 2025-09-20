@@ -22,8 +22,8 @@ const Component = styled.div<Pick<Props, "$done">>`
   }
 `;
 
-export const FileDownload = ({ $label, $fileUrl }: Props) => {
-  const [done, setDone] = useState(false);
+export const FileDownload = ({ $label, $fileUrl, $done }: Props) => {
+  const [done, setDone] = useState($done);
 
   const handleDownload = () => {
     if (!$fileUrl) return;
