@@ -3,7 +3,9 @@ import type {
   StudentMyResponse,
   UpdateStudentProfileRequest,
   StudentSignupRequest,
-  StudentSignupResponse
+  StudentSignupResponse,
+  ChangePwByEmailRequest,
+  ChangePwRequest
 } from "./types";
 import { instance } from "@/instance";
 
@@ -49,6 +51,30 @@ export const useStudentSignup = (request: StudentSignupRequest) => {
         request
       );
       return data;
+    }
+  });
+};
+
+export const useChangePwByEmail = (request: ChangePwByEmailRequest) => {
+  return useMutation({
+    mutationFn: async () => {
+      await instance.patch(`${DOMAIN}/forgotten_password`, request);
+    }
+  });
+};
+
+export const useChangePw = (request: ChangePwRequest) => {
+  return useMutation({
+    mutationFn: async () => {
+      await instance.patch(`${DOMAIN}/password`, request);
+    }
+  });
+};
+
+export const useCheckPw = (password: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      await instance.get(`${DOMAIN}/password`, { params: { password } });
     }
   });
 };
