@@ -26,6 +26,7 @@ const createComponent = (element: TextElement): TextComponent => {
     font-size: ${({ theme, $size }) => theme.font[$size].fontSize};
     line-height: ${({ theme, $size }) => theme.font[$size].lineHeight};
     ${({ $align }) => $align && `text-align: ${$align};`}
+    ${({ $underline }) => $underline && "text-decoration-line: underline;"}
   `;
   return cache[element] as TextComponent;
 };
@@ -36,14 +37,21 @@ export const Text = ({
   $span,
   $color,
   $align,
-  $weight
+  $weight,
+  $underline
 }: TextProps<Props>) => {
   const element = parseSize($size, $span);
 
   const Component = cache[element] || createComponent(element);
 
   return (
-    <Component $size={$size} $color={$color} $align={$align} $weight={$weight}>
+    <Component
+      $size={$size}
+      $color={$color}
+      $align={$align}
+      $weight={$weight}
+      $underline={$underline}
+    >
       {children}
     </Component>
   );

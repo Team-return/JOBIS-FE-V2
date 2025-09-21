@@ -6,4 +6,5 @@ export interface Props {
   $color?: string;
   $span?: boolean;
   $align?: "left" | "center" | "right" | "justify";
+  $underline?: boolean;
 }

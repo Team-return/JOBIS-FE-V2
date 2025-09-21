@@ -1,5 +1,5 @@
 export interface Props {
-  $label?: string;
-  $done?: boolean;
+  $label: string;
   $fileUrl: string;
+  $done?: boolean;
 }

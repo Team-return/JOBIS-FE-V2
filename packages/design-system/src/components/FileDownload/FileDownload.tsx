@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 import { Icon, Text } from "@/components";
 import type { Props } from "./FileDownload.types";
-import { useState } from "react";
 
-const Component = styled.div<Pick<Props, "$done">>`
+const Component = styled.button<Pick<Props, "$done">>`
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -11,38 +10,32 @@ const Component = styled.div<Pick<Props, "$done">>`
   padding: 4px 12px;
   border-radius: 8px;
   cursor: pointer;
-
-  & > span {
-    ${({ $done, theme }) =>
-      $done &&
-      `
-      text-decoration: underline;
-      text-decoration-color: ${theme.color.grayScale[60]};
-    `}
-  }
+  border: none;
+  font-family: inherit;
 `;
 
-export const FileDownload = ({ $label, $fileUrl, $done }: Props) => {
-  const [done, setDone] = useState($done);
-
+export const FileDownload = ({ $label, $fileUrl, $done = false }: Props) => {
   const handleDownload = () => {
-    if (!$fileUrl) return;
-
     const link = document.createElement("a");
     link.href = $fileUrl;
-    link.download = $label || "download";
+    link.download = $label;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    setDone(true);
   };
+
   return (
-    <Component $done={done} onClick={handleDownload}>
-      <Text $span $size="caption" $weight="regular" $color="#7F7F7F">
+    <Component type="button" onClick={handleDownload} $done={$done}>
+      <Text
+        $span
+        $size="caption"
+        $weight="regular"
+        $color="#7F7F7F"
+        $underline={$done}
+      >
         {$label}
       </Text>
-      <Icon icon={done ? "DownloadDone" : "Download"} size={16} />
+      <Icon icon={$done ? "DownloadDone" : "Download"} size={16} />
     </Component>
   );
 };
