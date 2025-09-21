@@ -13,7 +13,8 @@ const Component = styled.button<Pick<Props, "$done">>`
   border: none;
   font-family: inherit;
   &:hover {
-    opacity: 0.7;
+    text-decoration-line: underline;
+    text-decoration-color: ${({ theme }) => theme.color.grayScale[60]};
   }
 `;
 
