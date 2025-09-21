@@ -8,7 +8,7 @@ const meta: Meta<typeof FileDownload> = {
   tags: ["autodocs"],
   parameters: { layout: "centered" },
   argTypes: {
-    $label: {
+    label: {
       control: "text",
       description: "다운로드에 표시될 내용"
     },
@@ -16,7 +16,7 @@ const meta: Meta<typeof FileDownload> = {
       control: "boolean",
       description: "다운로드 완료 여부"
     },
-    $fileUrl: {
+    fileUrl: {
       control: "text",
       description: "다운로드할 파일 주소"
     }
@@ -28,9 +28,9 @@ type Story = StoryObj<typeof FileDownload>;
 
 export const Default: Story = {
   args: {
-    $label: "File Download",
+    label: "File Download",
     $done: false,
-    $fileUrl: "/mock.pdf"
+    fileUrl: "/mock.pdf"
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -42,8 +42,8 @@ export const Default: Story = {
 
 export const Done: Story = {
   args: {
-    $label: "File Download",
+    label: "File Download",
     $done: true,
-    $fileUrl: "/mock.pdf"
+    fileUrl: "/mock.pdf"
   }
 };

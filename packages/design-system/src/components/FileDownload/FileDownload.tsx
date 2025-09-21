@@ -12,13 +12,16 @@ const Component = styled.button<Pick<Props, "$done">>`
   cursor: pointer;
   border: none;
   font-family: inherit;
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
-export const FileDownload = ({ $label, $fileUrl, $done = false }: Props) => {
+export const FileDownload = ({ label, fileUrl, $done = false }: Props) => {
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = $fileUrl;
-    link.download = $label;
+    link.href = fileUrl;
+    link.download = label;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -33,7 +36,7 @@ export const FileDownload = ({ $label, $fileUrl, $done = false }: Props) => {
         $color="#7F7F7F"
         $underline={$done}
       >
-        {$label}
+        {label}
       </Text>
       <Icon icon={$done ? "DownloadDone" : "Download"} size={16} />
     </Component>
