@@ -47,11 +47,12 @@ type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   args: {
-    onClick: fn()
+    onClick: fn(),
+    title: "button"
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const component = canvas.getByRole("button");
+    const component = canvas.getByTitle("button");
     expect(component).toBeInTheDocument();
     await userEvent.click(component);
     await expect(args.onClick).toHaveBeenCalledTimes(1);
@@ -101,7 +102,7 @@ export const Progressing: Story = {
   render: args => (
     <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
       <Button {...args} $variant="contained" $progressing>
-        Will not show
+        Loading
       </Button>
     </div>
   ),
