@@ -41,7 +41,7 @@ const Component = styled.button<Props>`
     color 0.2s ease-in-out;
   user-select: none;
 
-  ${({ $size }) => {
+  ${({ $size = "md" }) => {
     switch ($size) {
       case "md":
         return `
@@ -67,58 +67,57 @@ const Component = styled.button<Props>`
       cursor: wait;
   `}
 
-  ${({ $variant, theme }) => {
+  ${({ $variant = "contained", theme }) => {
     const primaryColor = theme.color.primary[20];
-    const primaryHoverColor = "#C7D1FF";
+    const primaryHoverColor = theme.color.primary[30];
     const primaryFocusColor = theme.color.primary[40];
     const textColor = theme.color.grayScale[10];
-    const outlineHoverBgColor = theme.color.primary[20];
+    const outlineHoverBgColor = theme.color.primary[10];
 
-    if ($variant === "contained") {
-      return `
-        background-color: ${primaryColor};
-        color: ${textColor};
-
-        &:hover {
-          background-color: ${primaryHoverColor};
-        }
-
-        &:focus-visible {
-          background-color: ${primaryFocusColor};
-        }
-
-        &:disabled {
-          background-color: ${theme.color.grayScale[40]};
-          color: ${theme.color.grayScale[60]};
-          cursor: not-allowed;
-        }
-      `;
-    }
-
-    if ($variant === "outline") {
-      return `
-        background-color: transparent;
-        color: ${primaryColor};
-        border-color: ${primaryColor};
-
-        &:hover {
-          background-color: ${outlineHoverBgColor};
+    switch ($variant) {
+      case "contained":
+        return `
+          background-color: ${primaryColor};
           color: ${textColor};
-        }
+  
+          &:hover {
+            background-color: ${primaryHoverColor};
+          }
+  
+          &:focus-visible {
+            background-color: ${primaryFocusColor};
+          }
+  
+          &:disabled {
+            background-color: ${theme.color.grayScale[40]};
+            color: ${theme.color.grayScale[60]};
+            cursor: not-allowed;
+          }
+        `;
 
-        &:focus-visible {
-          background-color: ${primaryFocusColor};
-          border-color: ${primaryFocusColor};
-          color: ${textColor};
-        }
-
-        &:disabled {
-          border: 1px solid ${theme.color.grayScale[50]};
-          background-color: ${theme.color.grayScale[30]};
-          color: ${theme.color.grayScale[50]};
-          cursor: not-allowed;
-        }
-      `;
+      case "outline":
+        return `
+          background-color: transparent;
+          color: ${primaryColor};
+          border-color: ${primaryColor};
+  
+          &:hover {
+            background-color: ${outlineHoverBgColor}; 
+          }
+  
+          &:focus-visible {
+            background-color: ${primaryColor};
+            border-color: ${primaryFocusColor};
+            color: ${textColor};
+          }
+  
+          &:disabled {
+            border: 1px solid ${theme.color.grayScale[50]};
+            background-color: ${theme.color.grayScale[30]};
+            color: ${theme.color.grayScale[50]};
+            cursor: not-allowed;
+          }
+        `;
     }
   }}
 `;

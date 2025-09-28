@@ -20,7 +20,7 @@ export { default as DownloadDone } from "./download-done.svg";
 export { default as Download } from "./download.svg";
 export { default as Edit } from "./edit.svg";
 export { default as Error } from "./error.svg";
-export { default as Error2 } from "./error2.svg";
+export { default as Bug } from "./bug.svg";
 export { default as EyeClose } from "./eye-close.svg";
 export { default as EyeOpen } from "./eye-open.svg";
 export { default as Female } from "./female.svg";
