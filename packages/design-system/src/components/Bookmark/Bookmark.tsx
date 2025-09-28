@@ -33,6 +33,7 @@ export const Bookmark = ({ $checked, onClick }: Props) => {
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      aria-pressed={$checked}
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
