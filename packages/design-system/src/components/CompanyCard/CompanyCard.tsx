@@ -12,20 +12,20 @@ const Img = styled.img`
 `;
 
 export const CompanyCard = ({
-  $imgUrl,
+  imgUrl,
   companyName,
   annualSales,
-  $bookmark
+  bookmark
 }: Props) => {
-  const [isBookmarked, setIsBookmarked] = useState($bookmark);
+  const [isBookmarked, setIsBookmarked] = useState(bookmark);
 
   useEffect(() => {
-    setIsBookmarked($bookmark);
-  }, [$bookmark]);
+    setIsBookmarked(bookmark);
+  }, [bookmark]);
 
   return (
     <Flex $direction="column" $gap={16}>
-      <Img src={$imgUrl} alt={companyName} />
+      <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>
           <Text $size="h6" $weight="regular">

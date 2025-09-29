@@ -5,11 +5,11 @@ import { renderWithTheme } from "@/utils";
 
 describe("CompanyCard", () => {
   const defaultProps = {
-    $imgUrl:
+    imgUrl:
       "https://jobis-store.s3.ap-northeast-2.amazonaws.com/company_logo/vivar.png",
     companyName: "주식회사 비바리퍼블리카",
     annualSales: "연매출 1,000억",
-    $bookmark: false
+    bookmark: false
   };
 
   it("renders company name and annual sales correctly", () => {
@@ -21,17 +21,17 @@ describe("CompanyCard", () => {
   it("renders company image with correct src and alt", () => {
     renderWithTheme(<CompanyCard {...defaultProps} />);
     const img = screen.getByRole("img", { name: defaultProps.companyName });
-    expect(img).toHaveAttribute("src", defaultProps.$imgUrl);
+    expect(img).toHaveAttribute("src", defaultProps.imgUrl);
   });
 
   it("renders bookmark button with initial state (false)", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} $bookmark={false} />);
+    renderWithTheme(<CompanyCard {...defaultProps} bookmark={false} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
   });
 
   it("renders bookmark button with initial state (true)", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} $bookmark={true} />);
+    renderWithTheme(<CompanyCard {...defaultProps} bookmark={true} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
   });

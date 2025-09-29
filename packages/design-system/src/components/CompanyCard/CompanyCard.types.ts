@@ -1,6 +1,6 @@
 export interface Props {
-  $imgUrl: string;
+  imgUrl: string;
   companyName: string;
   annualSales: string;
-  $bookmark: boolean;
+  bookmark: boolean;
 }

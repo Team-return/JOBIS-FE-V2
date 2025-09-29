@@ -10,7 +10,7 @@ const meta: Meta<typeof CompanyCard> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    $imgUrl: {
+    imgUrl: {
       control: "text",
       description: "회사의 로고/이미지 URL"
     },
@@ -22,7 +22,7 @@ const meta: Meta<typeof CompanyCard> = {
       control: "text",
       description: "연매출 정보"
     },
-    $bookmark: {
+    bookmark: {
       control: "boolean",
       description: "북마크 여부"
     }
@@ -34,11 +34,11 @@ type Story = StoryObj<typeof CompanyCard>;
 
 export const Default: Story = {
   args: {
-    $imgUrl:
+    imgUrl:
       "https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png",
     companyName: "주식회사 비바리퍼블리카",
     annualSales: "연매출 1,000억",
-    $bookmark: false
+    bookmark: false
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -59,6 +59,6 @@ export const Default: Story = {
 export const Bookmarked: Story = {
   args: {
     ...Default.args,
-    $bookmark: true
+    bookmark: true
   }
 };
