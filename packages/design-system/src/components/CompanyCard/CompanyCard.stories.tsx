@@ -26,7 +26,7 @@ const meta: Meta<typeof CompanyCard> = {
       control: "boolean",
       description: "북마크 여부"
     },
-    onClick: {
+    onBookmarkClick: {
       action: "clicked",
       description: "북마크 버튼 클릭 이벤트"
     }
@@ -45,7 +45,7 @@ const InteractiveCompanyCard = (args: Story["args"]) => {
       companyName="테스트 기업"
       annualSales="100억"
       bookmark={isBookmarked}
-      onClick={() => setIsBookmarked(prev => !prev)}
+      onBookmarkClick={() => setIsBookmarked(prev => !prev)}
     />
   );
 };

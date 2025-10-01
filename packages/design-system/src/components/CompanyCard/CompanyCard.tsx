@@ -15,7 +15,7 @@ export const CompanyCard = ({
   companyName,
   annualSales,
   bookmark,
-  onClick
+  onBookmarkClick
 }: Props) => {
   return (
     <Flex $direction="column" $gap={16}>
@@ -29,7 +29,7 @@ export const CompanyCard = ({
             {annualSales}
           </Text>
         </Flex>
-        <Bookmark $checked={bookmark} onClick={onClick} />
+        <Bookmark $checked={bookmark} onClick={onBookmarkClick} />
       </Flex>
     </Flex>
   );

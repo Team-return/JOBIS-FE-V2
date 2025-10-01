@@ -41,7 +41,9 @@ describe("CompanyCard", () => {
 
   it("should call onBookmarkClick when the bookmark button is clicked", async () => {
     const handleClick = vi.fn();
-    renderWithTheme(<CompanyCard {...defaultProps} onClick={handleClick} />);
+    renderWithTheme(
+      <CompanyCard {...defaultProps} onBookmarkClick={handleClick} />
+    );
     const bookmarkButton = screen.getByRole("button", {
       name: "bookmark"
     });
