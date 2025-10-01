@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { Icon } from "@/components";
-import type { DropdownProps } from "./Dropdown.types";
 import { Text } from "@/components";
+import { Props } from "./Dropdown.types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -60,11 +60,7 @@ const Option = styled.li<{ $selected: boolean }>`
   }
 `;
 
-export const Dropdown = ({
-  $options,
-  onChange,
-  placeholder
-}: DropdownProps) => {
+export const Dropdown = ({ options, onChange, $placeholder }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -74,13 +70,13 @@ export const Dropdown = ({
     setIsOpen(false);
   };
 
-  const selectedLabel = $options.find(o => o.value === selected)?.label;
+  const selectedLabel = options.find(o => o.value === selected)?.label;
 
   return (
     <Wrapper>
       <TriggerButton $isOpen={isOpen} onClick={() => setIsOpen(prev => !prev)}>
         <Text $size="body3" $weight="regular" $color="#7F7F7F">
-          {selectedLabel || placeholder || "선택"}
+          {selectedLabel || $placeholder || "선택"}
         </Text>
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
@@ -90,7 +86,7 @@ export const Dropdown = ({
       </TriggerButton>
       {isOpen && (
         <Options>
-          {$options.map(opt => (
+          {options.map(opt => (
             <Option
               key={opt.value}
               $selected={opt.value === selected}

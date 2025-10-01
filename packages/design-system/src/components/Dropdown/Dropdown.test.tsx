@@ -12,13 +12,13 @@ const options = [
 
 describe("Dropdown", () => {
   it("should render with placeholder", () => {
-    renderWithTheme(<Dropdown $options={options} placeholder="분야 선택" />);
+    renderWithTheme(<Dropdown options={options} $placeholder="분야 선택" />);
     expect(screen.getByText("분야 선택")).toBeInTheDocument();
   });
 
   it("should open options when clicked", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<Dropdown $options={options} />);
+    renderWithTheme(<Dropdown options={options} />);
     const button = screen.getByRole("button");
 
     await user.click(button);
@@ -31,7 +31,7 @@ describe("Dropdown", () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();
 
-    renderWithTheme(<Dropdown $options={options} onChange={handleChange} />);
+    renderWithTheme(<Dropdown options={options} onChange={handleChange} />);
     const button = screen.getByRole("button");
 
     await user.click(button);
@@ -44,7 +44,7 @@ describe("Dropdown", () => {
 
   it("should close after selecting option", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<Dropdown $options={options} />);
+    renderWithTheme(<Dropdown options={options} />);
     const button = screen.getByRole("button");
 
     await user.click(button);

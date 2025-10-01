@@ -6,8 +6,8 @@ const meta: Meta<typeof Dropdown> = {
   component: Dropdown,
   tags: ["autodocs"],
   args: {
-    placeholder: "분야 선택",
-    $options: [
+    $placeholder: "분야 선택",
+    options: [
       { label: "프론트엔드", value: "frontend" },
       { label: "백엔드", value: "backend" },
       { label: "디자이너", value: "designer" }
@@ -21,7 +21,7 @@ export const Default: Story = {};
 
 export const WithPreselected: Story = {
   args: {
-    $options: [
+    options: [
       { label: "프론트엔드", value: "frontend" },
       { label: "백엔드", value: "backend" },
       { label: "디자이너", value: "designer" }
