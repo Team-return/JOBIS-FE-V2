@@ -3,4 +3,5 @@ export interface Props {
   companyName: string;
   annualSales: string;
   bookmark: boolean;
+  onClick?: () => void;
 }

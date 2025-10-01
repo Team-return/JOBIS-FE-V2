@@ -1,5 +1,6 @@
-import { fireEvent, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
 import { CompanyCard } from "./CompanyCard";
 import { renderWithTheme } from "@/utils";
 
@@ -12,40 +13,41 @@ describe("CompanyCard", () => {
     bookmark: false
   };
 
-  it("renders company name and annual sales correctly", () => {
+  it("should render company name and annual sales correctly", () => {
     renderWithTheme(<CompanyCard {...defaultProps} />);
     expect(screen.getByText(defaultProps.companyName)).toBeInTheDocument();
     expect(screen.getByText(defaultProps.annualSales)).toBeInTheDocument();
   });
 
-  it("renders company image with correct src and alt", () => {
+  it("should render company image with correct src and alt", () => {
     renderWithTheme(<CompanyCard {...defaultProps} />);
-    const img = screen.getByRole("img", { name: defaultProps.companyName });
+    const img = screen.getByRole("img", {
+      name: defaultProps.companyName
+    });
     expect(img).toHaveAttribute("src", defaultProps.imgUrl);
   });
 
-  it("renders bookmark button with initial state (false)", () => {
+  it("should render bookmark as unchecked when bookmark prop is false", () => {
     renderWithTheme(<CompanyCard {...defaultProps} bookmark={false} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("renders bookmark button with initial state (true)", () => {
+  it("should render bookmark as checked when bookmark prop is true", () => {
     renderWithTheme(<CompanyCard {...defaultProps} bookmark={true} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("toggles bookmark state when clicked", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} />);
-    const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
+  it("should call onBookmarkClick when the bookmark button is clicked", async () => {
+    const handleClick = vi.fn();
+    renderWithTheme(<CompanyCard {...defaultProps} onClick={handleClick} />);
+    const bookmarkButton = screen.getByRole("button", {
+      name: "bookmark"
+    });
 
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
+    await userEvent.click(bookmarkButton);
 
-    fireEvent.click(bookmarkButton);
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
-
-    fireEvent.click(bookmarkButton);
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
+    expect(handleClick).toHaveBeenCalledTimes(1);
   });
 });

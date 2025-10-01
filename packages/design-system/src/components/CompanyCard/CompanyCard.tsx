@@ -1,7 +1,6 @@
 import { Flex, Text, Bookmark } from "@/components";
 import type { Props } from "./CompanyCard.types";
 import styled from "@emotion/styled";
-import { useState, useEffect } from "react";
 
 const Img = styled.img`
   width: 304px;
@@ -15,14 +14,9 @@ export const CompanyCard = ({
   imgUrl,
   companyName,
   annualSales,
-  bookmark
+  bookmark,
+  onClick
 }: Props) => {
-  const [isBookmarked, setIsBookmarked] = useState(bookmark);
-
-  useEffect(() => {
-    setIsBookmarked(bookmark);
-  }, [bookmark]);
-
   return (
     <Flex $direction="column" $gap={16}>
       <Img src={imgUrl} alt={companyName} />
@@ -35,10 +29,7 @@ export const CompanyCard = ({
             {annualSales}
           </Text>
         </Flex>
-        <Bookmark
-          $checked={isBookmarked}
-          onClick={() => setIsBookmarked(prev => !prev)}
-        />
+        <Bookmark $checked={bookmark} onClick={onClick} />
       </Flex>
     </Flex>
   );

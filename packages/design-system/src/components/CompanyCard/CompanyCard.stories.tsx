@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
 import { CompanyCard } from "./CompanyCard";
+import { useState } from "react";
 
 const meta: Meta<typeof CompanyCard> = {
   title: "components/CompanyCard",
@@ -25,12 +25,30 @@ const meta: Meta<typeof CompanyCard> = {
     bookmark: {
       control: "boolean",
       description: "북마크 여부"
+    },
+    onClick: {
+      action: "clicked",
+      description: "북마크 버튼 클릭 이벤트"
     }
   }
 };
 
 export default meta;
 type Story = StoryObj<typeof CompanyCard>;
+
+const InteractiveCompanyCard = (args: Story["args"]) => {
+  const [isBookmarked, setIsBookmarked] = useState(args?.bookmark ?? false);
+
+  return (
+    <CompanyCard
+      imgUrl="https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png"
+      companyName="테스트 기업"
+      annualSales="100억"
+      bookmark={isBookmarked}
+      onClick={() => setIsBookmarked(prev => !prev)}
+    />
+  );
+};
 
 export const Default: Story = {
   args: {
@@ -40,25 +58,13 @@ export const Default: Story = {
     annualSales: "연매출 1,000억",
     bookmark: false
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const bookmarkButton = canvas.getByRole("button", { name: "bookmark" });
-
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
-
-    await userEvent.click(bookmarkButton);
-
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
-
-    await userEvent.click(bookmarkButton);
-
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
-  }
+  render: args => <InteractiveCompanyCard {...args} />
 };
 
 export const Bookmarked: Story = {
   args: {
     ...Default.args,
     bookmark: true
-  }
+  },
+  render: args => <InteractiveCompanyCard {...args} />
 };
