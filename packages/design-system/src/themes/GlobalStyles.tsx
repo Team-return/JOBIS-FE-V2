@@ -15,11 +15,14 @@ export const GlobalStyles = () => {
             url(${font}) format("woff2");
         }
 
+        * {
+          box-sizing: border-box;
+        }
+
         html,
         body {
           margin: 0;
           padding: 0;
-          box-sizing: border-box;
           font-family:
             "Pretendard Variable",
             -apple-system,
