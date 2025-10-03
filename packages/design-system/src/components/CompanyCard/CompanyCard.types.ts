@@ -4,4 +4,5 @@ export interface Props {
   annualSales: string;
   bookmark: boolean;
   onBookmarkClick?: () => void;
+  onClick?: () => void;
 }

@@ -10,7 +10,9 @@ describe("CompanyCard", () => {
       "https://jobis-store.s3.ap-northeast-2.amazonaws.com/company_logo/vivar.png",
     companyName: "주식회사 비바리퍼블리카",
     annualSales: "연매출 1,000억",
-    bookmark: false
+    bookmark: false,
+    onBookmarkClick: vi.fn(),
+    onClick: vi.fn()
   };
 
   it("should render company name and annual sales correctly", () => {
@@ -49,6 +51,18 @@ describe("CompanyCard", () => {
     });
 
     await userEvent.click(bookmarkButton);
+
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call onClick when the whole card is clicked", async () => {
+    const handleClick = vi.fn();
+    renderWithTheme(<CompanyCard {...defaultProps} onClick={handleClick} />);
+    const card = screen.getByText(defaultProps.companyName).closest("div");
+
+    if (card) {
+      await userEvent.click(card);
+    }
 
     expect(handleClick).toHaveBeenCalledTimes(1);
   });

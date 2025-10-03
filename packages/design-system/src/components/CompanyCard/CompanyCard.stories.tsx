@@ -27,8 +27,12 @@ const meta: Meta<typeof CompanyCard> = {
       description: "북마크 여부"
     },
     onBookmarkClick: {
-      action: "clicked",
+      action: "onBookmarkClick",
       description: "북마크 버튼 클릭 이벤트"
+    },
+    onClick: {
+      action: "onClick",
+      description: "컴포넌트 클릭 이벤트"
     }
   }
 };
@@ -36,16 +40,20 @@ const meta: Meta<typeof CompanyCard> = {
 export default meta;
 type Story = StoryObj<typeof CompanyCard>;
 
-const InteractiveCompanyCard = (args: Story["args"]) => {
-  const [isBookmarked, setIsBookmarked] = useState(args?.bookmark ?? false);
+const InteractiveCompanyCard = (args: Story["args"] = {}) => {
+  const [isBookmarked, setIsBookmarked] = useState(args.bookmark ?? false);
 
   return (
     <CompanyCard
-      imgUrl="https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png"
-      companyName="테스트 기업"
-      annualSales="100억"
+      imgUrl={args.imgUrl!}
+      companyName={args.companyName!}
+      annualSales={args.annualSales!}
       bookmark={isBookmarked}
-      onBookmarkClick={() => setIsBookmarked(prev => !prev)}
+      onBookmarkClick={() => {
+        args.onBookmarkClick?.();
+        setIsBookmarked(prev => !prev);
+      }}
+      onClick={() => args.onClick?.()}
     />
   );
 };

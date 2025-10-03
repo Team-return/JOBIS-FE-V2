@@ -15,10 +15,11 @@ export const CompanyCard = ({
   companyName,
   annualSales,
   bookmark,
-  onBookmarkClick
+  onBookmarkClick,
+  onClick
 }: Props) => {
   return (
-    <Flex $direction="column" $gap={16}>
+    <Flex $direction="column" $gap={16} onClick={onClick}>
       <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>
