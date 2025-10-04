@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { Icon } from "@/components";
-import { Text } from "@/components";
+import { Icon, Text } from "@/components";
 import { Props } from "./Dropdown.types";
 
 const Wrapper = styled.div`
@@ -24,11 +23,19 @@ const TriggerButton = styled.button<{ $isOpen: boolean }>`
   ${({ $isOpen }) =>
     $isOpen &&
     `
-    border-color: ${"#000"};
-  `}
+      border-color: #000;
+    `}
 `;
 
-const Options = styled.ul`
+const OptionsWrapper = styled.div`
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  z-index: 10;
+`;
+
+const DefaultOptions = styled.ul`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
@@ -46,21 +53,56 @@ const Options = styled.ul`
   align-items: center;
 `;
 
-const Option = styled.li<{ $selected: boolean }>`
+const DefaultOption = styled.li<{ $selected: boolean }>`
   padding: 8px 16px;
   cursor: pointer;
+
   ${({ $selected, theme }) =>
     $selected &&
     `
-    background: ${theme.color.grayScale[20]};
-    font-weight: bold;
-  `}
-  &:hover {
-    color: ${({ theme }) => theme.color.primary[30]};
-  }
+      color: ${theme.color.primary[30]};
+    `}
 `;
 
-export const Dropdown = ({ options, onChange, $placeholder }: Props) => {
+/* supportJob 스타일 */
+const SupportJobOptions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: ${({ theme }) => theme.color.grayScale[10]};
+  border-radius: 8px;
+`;
+
+const SupportJobTag = styled.button<{ $selected: boolean }>`
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: ${({ $selected, theme }) =>
+    $selected ? theme.color.primary[20] : theme.color.grayScale[20]};
+  color: ${({ $selected, theme }) =>
+    $selected ? theme.color.primary[40] : theme.color.grayScale[60]};
+  cursor: pointer;
+  border: none;
+`;
+
+/* period 스타일 */
+const PeriodOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: ${({ theme }) => theme.color.grayScale[10]};
+  border-radius: 8px;
+`;
+
+const DateInput = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid ${({ theme }) => theme.color.grayScale[30]};
+  border-radius: 6px;
+`;
+
+export const Dropdown = ({ options, onChange, $placeholder, types }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -84,18 +126,44 @@ export const Dropdown = ({ options, onChange, $placeholder }: Props) => {
           color="#7F7F7F"
         />
       </TriggerButton>
+
       {isOpen && (
-        <Options>
-          {options.map(opt => (
-            <Option
-              key={opt.value}
-              $selected={opt.value === selected}
-              onClick={() => handleSelect(opt.value)}
-            >
-              {opt.label}
-            </Option>
-          ))}
-        </Options>
+        <OptionsWrapper>
+          {types === undefined && (
+            <DefaultOptions>
+              {options.map(opt => (
+                <DefaultOption
+                  key={opt.value}
+                  $selected={opt.value === selected}
+                  onClick={() => handleSelect(opt.value)}
+                >
+                  {opt.label}
+                </DefaultOption>
+              ))}
+            </DefaultOptions>
+          )}
+
+          {types === "supportJob" && (
+            <SupportJobOptions>
+              {options.map(opt => (
+                <SupportJobTag
+                  key={opt.value}
+                  $selected={opt.value === selected}
+                  onClick={() => handleSelect(opt.value)}
+                >
+                  {opt.label}
+                </SupportJobTag>
+              ))}
+            </SupportJobOptions>
+          )}
+
+          {types === "period" && (
+            <PeriodOptions>
+              <DateInput type="date" />
+              <DateInput type="date" />
+            </PeriodOptions>
+          )}
+        </OptionsWrapper>
       )}
     </Wrapper>
   );

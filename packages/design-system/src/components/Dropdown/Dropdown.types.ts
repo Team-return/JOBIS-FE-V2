@@ -12,4 +12,5 @@ export interface Props {
   onChange?: (value: string) => void;
   $width?: DimensionValue;
   $placeholder?: string;
+  types?: "supportJob" | "period";
 }
