@@ -50,7 +50,7 @@ export const Default: Story = {
     imgUrl:
       "https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png",
     companyName: "주식회사 비바리퍼블리카",
-    date: "2025-09-28"
+    date: "2025.09.28"
   }
 };
 
