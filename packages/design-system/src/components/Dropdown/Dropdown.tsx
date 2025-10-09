@@ -1,7 +1,8 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { Icon, Text } from "@/components";
+import { Flex, Icon, Text } from "@/components";
 import { Props } from "./Dropdown.types";
+import { Search } from "../Search/Search";
 
 const Wrapper = styled.div`
   position: relative;
@@ -19,7 +20,7 @@ const TriggerButton = styled.button<{ $isOpen: boolean; $width?: string }>`
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
-  width: ${({ $width }) => $width || "120px"};
+  width: ${({ $width }) => $width};
   ${({ $isOpen }) =>
     $isOpen &&
     `
@@ -66,21 +67,21 @@ const DefaultOption = styled.li<{ $selected: boolean }>`
 
 /* supportJob 스타일 */
 const SupportJobOptions = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px;
-  background: ${({ theme }) => theme.color.grayScale[10]};
+  box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
+  display: flex;
+  flex-direction: column;
+  width: 399px;
+  padding: 20px;
+  height: 392px;
 `;
 
 const SupportJobTag = styled.button<{ $selected: boolean }>`
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: ${({ $selected, theme }) =>
-    $selected ? theme.color.primary[20] : theme.color.grayScale[20]};
-  color: ${({ $selected, theme }) =>
-    $selected ? theme.color.primary[40] : theme.color.grayScale[60]};
+  padding: 6px 16px;
+  border-radius: 100px;
+  background: ${({ theme }) => theme.color.subColor.blue[20]};
+  width: fit-content;
   cursor: pointer;
   border: none;
 `;
@@ -111,7 +112,7 @@ export const Dropdown = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const handleSelect = (value: string) => {
     setSelected(value);
     onChange?.(value);
@@ -119,7 +120,12 @@ export const Dropdown = ({
   };
 
   const selectedLabel = options.find(o => o.value === selected)?.label;
-
+  const filteredOptions =
+    types === "supportJob"
+      ? options.filter(opt =>
+          opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : options;
   return (
     <Wrapper>
       <TriggerButton
@@ -155,15 +161,38 @@ export const Dropdown = ({
 
           {types === "supportJob" && (
             <SupportJobOptions>
-              {options.map(opt => (
-                <SupportJobTag
-                  key={opt.value}
-                  $selected={opt.value === selected}
-                  onClick={() => handleSelect(opt.value)}
-                >
-                  {opt.label}
-                </SupportJobTag>
-              ))}
+              <Flex $direction="column" $gap={16}>
+                <Search
+                  $width={359}
+                  placeholder="검색어를 입력해주세요"
+                  onChange={value => setSearchTerm(value)}
+                  value={searchTerm}
+                />
+                <div style={{ height: "1px", backgroundColor: "#E5E5E5" }} />
+                <Flex $wrap $gap={10}>
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map(opt => (
+                      <SupportJobTag
+                        key={opt.value}
+                        $selected={opt.value === selected}
+                        onClick={() => handleSelect(opt.value)}
+                      >
+                        <Text
+                          $size="caption"
+                          $weight="regular"
+                          $color="#237BC9"
+                        >
+                          {opt.label}
+                        </Text>
+                      </SupportJobTag>
+                    ))
+                  ) : (
+                    <Text $size="body3" $weight="regular" $color="#7F7F7F">
+                      검색 결과가 없습니다.
+                    </Text>
+                  )}
+                </Flex>
+              </Flex>
             </SupportJobOptions>
           )}
 

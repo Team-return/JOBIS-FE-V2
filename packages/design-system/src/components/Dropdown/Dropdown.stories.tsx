@@ -10,7 +10,8 @@ const meta: Meta<typeof Dropdown> = {
     options: [
       { label: "프론트엔드", value: "frontend" },
       { label: "백엔드", value: "backend" },
-      { label: "디자이너", value: "designer" }
+      { label: "디자이너", value: "designer" },
+      { label: "데브옵스", value: "devops" }
     ]
   },
   argTypes: {
