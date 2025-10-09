@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   display: inline-block;
 `;
 
-const TriggerButton = styled.button<{ $isOpen: boolean }>`
+const TriggerButton = styled.button<{ $isOpen: boolean; $width?: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,7 +19,7 @@ const TriggerButton = styled.button<{ $isOpen: boolean }>`
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
-
+  width: ${({ $width }) => $width || "120px"};
   ${({ $isOpen }) =>
     $isOpen &&
     `
@@ -102,7 +102,13 @@ const DateInput = styled.input`
   border-radius: 6px;
 `;
 
-export const Dropdown = ({ options, onChange, $placeholder, types }: Props) => {
+export const Dropdown = ({
+  options,
+  onChange,
+  $placeholder,
+  types,
+  $width
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -116,7 +122,11 @@ export const Dropdown = ({ options, onChange, $placeholder, types }: Props) => {
 
   return (
     <Wrapper>
-      <TriggerButton $isOpen={isOpen} onClick={() => setIsOpen(prev => !prev)}>
+      <TriggerButton
+        $isOpen={isOpen}
+        onClick={() => setIsOpen(prev => !prev)}
+        $width={typeof $width === "number" ? `${$width}px` : $width}
+      >
         <Text $size="body3" $weight="regular" $color="#7F7F7F">
           {selectedLabel || $placeholder || "선택"}
         </Text>
