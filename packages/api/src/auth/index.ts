@@ -15,3 +15,22 @@ export const useCompanyLogin = (request: LoginRequest) => {
     }
   });
 };
+
+export const useAuthCodeCheck = (email: string, code: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      await instance.patch(`${DOMAIN}/code?email=${email}&auth_code=${code}`);
+    }
+  });
+};
+
+export const useSendAuthCode = (email: string, codeType: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      await instance.post(`${DOMAIN}/code`, {
+        email,
+        auth_code_type: codeType
+      });
+    }
+  });
+};
