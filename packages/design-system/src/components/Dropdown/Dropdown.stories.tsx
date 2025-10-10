@@ -23,10 +23,7 @@ const meta: Meta<typeof Dropdown> = {
       control: "text",
       description: "선택된 값 (제어 컴포넌트)"
     },
-    defaultValue: {
-      control: "text",
-      description: "기본 선택 값"
-    },
+
     onChange: {
       action: "changed",
       description: "선택 값 변경 이벤트 핸들러"
@@ -52,14 +49,17 @@ type Story = StoryObj<typeof Dropdown>;
 
 export const Default: Story = {};
 
-export const WithPreselected: Story = {
+export const Period: Story = {
   args: {
-    defaultValue: "backend"
+    types: "period",
+    checked: false
+  },
+  argTypes: {
+    onCheckChange: { action: "check changed" }
   }
 };
-
-export const Controlled: Story = {
+export const SupportJob: Story = {
   args: {
-    value: "designer"
+    types: "supportJob"
   }
 };

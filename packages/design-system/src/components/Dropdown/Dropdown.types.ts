@@ -8,9 +8,10 @@ export type DropdownOption = {
 export interface Props {
   options: DropdownOption[];
   value?: string;
-  defaultValue?: string;
   onChange?: (value: string) => void;
   $width?: DimensionValue;
   $placeholder?: string;
   types?: "supportJob" | "period";
+  checked?: boolean;
+  onCheckChange?: (checked: boolean) => void;
 }

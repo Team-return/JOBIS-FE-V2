@@ -2,7 +2,9 @@ import { useState } from "react";
 import styled from "@emotion/styled";
 import { Flex, Icon, Text } from "@/components";
 import { Props } from "./Dropdown.types";
-import { Search } from "../Search/Search";
+import { Search } from "../Search";
+import { Checkbox } from "../Checkbox";
+import { Button } from "../Button";
 
 const Wrapper = styled.div`
   position: relative;
@@ -90,17 +92,33 @@ const SupportJobTag = styled.button<{ $selected: boolean }>`
 const PeriodOptions = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  background: ${({ theme }) => theme.color.grayScale[10]};
+  gap: 24px;
+  padding: 24px;
+  box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
+  width: 398px;
 `;
 
-const DateInput = styled.input`
-  width: 100%;
+const DateContainer = styled.div`
+  width: 135px;
   padding: 8px;
-  border: 1px solid ${({ theme }) => theme.color.grayScale[30]};
   border-radius: 6px;
+  background-color: ${({ theme }) => theme.color.grayScale[20]};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+`;
+const DateInput = styled.input`
+  border: none;
+  background-color: transparent;
+  outline: none;
+  width: 76px;
+  font-size: ${({ theme }) => theme.font.body3.fontSize};
+  color: ${({ theme }) => theme.color.grayScale[50]};
+  &::placeholder {
+    color: ${({ theme }) => theme.color.grayScale[50]};
+  }
 `;
 
 export const Dropdown = ({
@@ -108,7 +126,9 @@ export const Dropdown = ({
   onChange,
   $placeholder,
   types,
-  $width
+  $width,
+  checked,
+  onCheckChange
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -198,8 +218,51 @@ export const Dropdown = ({
 
           {types === "period" && (
             <PeriodOptions>
-              <DateInput type="date" />
-              <DateInput type="date" />
+              <Flex $direction="column" $gap={24}>
+                <Flex $justify="space-between" $align="center">
+                  <Flex $align="center" $gap={8}>
+                    <Text $size="h6" $weight="bold">
+                      모집기간
+                    </Text>
+                    <Icon icon="Refresh" size={24} color="#ffffff" />
+                  </Flex>
+                  <Icon
+                    icon="Close"
+                    size={24}
+                    color="#ffffff"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setIsOpen(false)}
+                  />
+                </Flex>
+                <Flex $direction="column" $gap={8}>
+                  <Flex $align="center" $justify="space-between">
+                    <DateContainer>
+                      <DateInput type="text" placeholder="yyyy.mm.dd" />
+                      <Icon icon="Date" size={24} />
+                    </DateContainer>
+                    <Text $size="h5" $weight="regular" $color="#7F7F7F">
+                      ~
+                    </Text>
+                    <DateContainer>
+                      <DateInput type="text" placeholder="yyyy.mm.dd" />
+                      <Icon icon="Date" size={24} />
+                    </DateContainer>
+                  </Flex>
+                  <Checkbox
+                    label="상시모집"
+                    $labelSize="body2"
+                    $labelWeight="regular"
+                    $labelColor="#7F7F7F"
+                    $checked={checked}
+                    onChange={onCheckChange}
+                  />
+                </Flex>
+                <Flex $justify="flex-end">
+                  <Button $size="md" $variant="contained">
+                    확인
+                  </Button>
+                </Flex>
+              </Flex>
             </PeriodOptions>
           )}
         </OptionsWrapper>
