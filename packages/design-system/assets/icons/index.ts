@@ -45,3 +45,4 @@ export { default as ToastSuccess } from "./toast-success.svg?react";
 export { default as ToastError } from "./toast-error.svg?react";
 export { default as ToastInfo } from "./toast-info.svg?react";
 export { default as ToastWarning } from "./toast-warning.svg?react";
+export { default as Refresh } from "./refresh.svg?react";
