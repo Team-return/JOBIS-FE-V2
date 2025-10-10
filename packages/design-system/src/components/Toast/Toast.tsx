@@ -23,7 +23,7 @@ export const Toast = ({ $label, $type }: Props) => {
 
   return (
     <Component role="alert" $type={$type}>
-      <Icon icon={iconName} size={24} color="white" />
+      <Icon icon={iconName} size={24} color="white" aria-label={iconName} />
       <Text $size="body1" $weight="regular">
         {$label}
       </Text>

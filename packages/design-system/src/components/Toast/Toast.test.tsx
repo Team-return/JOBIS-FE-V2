@@ -11,16 +11,20 @@ describe("Toast", () => {
 
   it("should render the success icon when $type is success", () => {
     renderWithTheme(<Toast $label="Success!" $type="success" />);
-    expect(screen.getByAltText("ToastSuccess")).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "ToastSuccess" })
+    ).toBeInTheDocument();
   });
 
   it("should render the error icon when $type is error", () => {
     renderWithTheme(<Toast $label="Error!" $type="error" />);
-    expect(screen.getByAltText("ToastError")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "ToastError" })).toBeInTheDocument();
   });
 
   it("should render the warning icon when $type is warning", () => {
     renderWithTheme(<Toast $label="Warning!" $type="warning" />);
-    expect(screen.getByAltText("ToastWarning")).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "ToastWarning" })
+    ).toBeInTheDocument();
   });
 });

@@ -65,7 +65,7 @@ export const Search = ({
       <InputWrapper $width={$width}>
         <StyledInput id={id} value={value} onChange={handleChange} {...props} />
         <IconWrapper onClick={onIconClick}>
-          <Icon icon={"Search"} size={24} />
+          <Icon icon={"Search"} size={24} role="img" />
         </IconWrapper>
       </InputWrapper>
     </Wrapper>
