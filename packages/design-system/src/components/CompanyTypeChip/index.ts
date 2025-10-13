@@ -1,1 +1,1 @@
-export * from "./CompanyTypeClip";
+export * from "./CompanyTypeChip";
