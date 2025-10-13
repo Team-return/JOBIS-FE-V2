@@ -227,6 +227,7 @@ export const Dropdown = ({
                   placeholder="검색어를 입력해주세요"
                   onChange={value => setSearchTerm(value)}
                   value={searchTerm}
+                  IconColor="#7F7F7F"
                 />
                 <div style={{ height: "1px", backgroundColor: "#E5E5E5" }} />
                 <Flex $wrap $gap={10}>
