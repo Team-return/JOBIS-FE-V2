@@ -1,35 +1,37 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import svgr from "vite-plugin-svgr";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
-  plugins: [react(), svgr()],
-  resolve: {
-    alias: {
-      "@": resolve(DIR_NAME, "src")
-    }
-  },
+  plugins: [react(), svgr(), tsconfigPaths()],
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
       name: "jobis-design-system",
-      fileName: format => `jobis-design-system.${format}.js`
+      fileName: (format) => `jobis-design-system.${format}.js`,
     },
     rollupOptions: {
       external: ["react", "react-dom", "@emotion/react", "@emotion/styled"],
       output: {
         globals: {
-          "react": "React",
+          react: "React",
           "react-dom": "ReactDOM",
           "@emotion/react": "emotionReact",
-          "@emotion/styled": "emotionStyled"
-        }
-      }
-    }
-  }
+          "@emotion/styled": "emotionStyled",
+        },
+      },
+    },
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/setupTests.ts",
+  },
 });
