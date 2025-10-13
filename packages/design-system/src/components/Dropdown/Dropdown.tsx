@@ -1,10 +1,11 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { Flex, Icon, Text } from "@/components";
-import { Props } from "./Dropdown.types";
+import type { Props } from "./Dropdown.types";
 import { Search } from "../Search";
 import { Checkbox } from "../Checkbox";
 import { Button } from "../Button";
+import { Calendar } from "../Calendar";
 
 const Wrapper = styled.div`
   position: relative;
@@ -90,6 +91,7 @@ const SupportJobTag = styled.button<{ $selected: boolean }>`
 
 /* period 스타일 */
 const PeriodOptions = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -97,17 +99,20 @@ const PeriodOptions = styled.div`
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
   width: 398px;
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
 `;
 
-const DateContainer = styled.div`
+const DateContainer = styled.div<{ $disabled?: boolean }>`
   width: 135px;
   padding: 8px;
   border-radius: 6px;
-  background-color: ${({ theme }) => theme.color.grayScale[20]};
+  background-color: ${({ theme, $disabled }) =>
+    $disabled ? theme.color.grayScale[30] : theme.color.grayScale[20]};
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
 `;
 const DateInput = styled.input`
   border: none;
@@ -119,6 +124,14 @@ const DateInput = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.color.grayScale[50]};
   }
+`;
+
+const CalendarWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `;
 
 export const Dropdown = ({
@@ -133,9 +146,36 @@ export const Dropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // period type state
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [calendarFor, setCalendarFor] = useState<"start" | "end" | null>(null);
+
   const handleSelect = (value: string) => {
     setSelected(value);
     onChange?.(value);
+    setIsOpen(false);
+  };
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = `0${date.getMonth() + 1}`.slice(-2);
+    const day = `0${date.getDate()}`.slice(-2);
+    return `${year}.${month}.${day}`;
+  };
+
+  const handleDateChange = (date: Date) => {
+    if (calendarFor === "start") {
+      setStartDate(date);
+    } else if (calendarFor === "end") {
+      setEndDate(date);
+    }
+    setCalendarFor(null);
+  };
+
+  const handlePeriodSubmit = () => {
     setIsOpen(false);
   };
 
@@ -224,27 +264,45 @@ export const Dropdown = ({
                     <Text $size="h6" $weight="bold">
                       모집기간
                     </Text>
-                    <Icon icon="Refresh" size={24} color="#ffffff" />
+                    <Icon icon="Refresh" size={24} color="#7F7F7F" />
                   </Flex>
                   <Icon
                     icon="Close"
                     size={24}
-                    color="#ffffff"
+                    color="#7F7F7F"
                     style={{ cursor: "pointer" }}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() =>
+                      calendarFor ? setCalendarFor(null) : setIsOpen(false)
+                    }
                   />
                 </Flex>
                 <Flex $direction="column" $gap={8}>
                   <Flex $align="center" $justify="space-between">
-                    <DateContainer>
-                      <DateInput type="text" placeholder="yyyy.mm.dd" />
+                    <DateContainer
+                      $disabled={checked}
+                      onClick={() => !checked && setCalendarFor("start")}
+                    >
+                      <DateInput
+                        type="text"
+                        placeholder="yyyy.mm.dd"
+                        readOnly
+                        value={formatDate(startDate)}
+                      />
                       <Icon icon="Date" size={24} />
                     </DateContainer>
                     <Text $size="h5" $weight="regular" $color="#7F7F7F">
                       ~
                     </Text>
-                    <DateContainer>
-                      <DateInput type="text" placeholder="yyyy.mm.dd" />
+                    <DateContainer
+                      $disabled={checked}
+                      onClick={() => !checked && setCalendarFor("end")}
+                    >
+                      <DateInput
+                        type="text"
+                        placeholder="yyyy.mm.dd"
+                        readOnly
+                        value={formatDate(endDate)}
+                      />
                       <Icon icon="Date" size={24} />
                     </DateContainer>
                   </Flex>
@@ -254,15 +312,36 @@ export const Dropdown = ({
                     $labelWeight="regular"
                     $labelColor="#7F7F7F"
                     $checked={checked}
-                    onChange={onCheckChange}
+                    onChange={(isChecked: boolean) => {
+                      onCheckChange?.(isChecked);
+                      if (isChecked) {
+                        setStartDate(null);
+                        setEndDate(null);
+                      }
+                    }}
                   />
                 </Flex>
                 <Flex $justify="flex-end">
-                  <Button $size="md" $variant="contained">
+                  <Button
+                    $size="md"
+                    $variant="contained"
+                    onClick={handlePeriodSubmit}
+                  >
                     확인
                   </Button>
                 </Flex>
               </Flex>
+              {calendarFor && (
+                <CalendarWrapper>
+                  <Calendar
+                    value={
+                      (calendarFor === "start" ? startDate : endDate) ||
+                      new Date()
+                    }
+                    onChange={handleDateChange}
+                  />
+                </CalendarWrapper>
+              )}
             </PeriodOptions>
           )}
         </OptionsWrapper>
