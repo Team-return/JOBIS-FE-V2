@@ -15,23 +15,23 @@ export default defineConfig({
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
       name: "jobis-design-system",
-      fileName: (format) => `jobis-design-system.${format}.js`,
+      fileName: format => `jobis-design-system.${format}.js`
     },
     rollupOptions: {
       external: ["react", "react-dom", "@emotion/react", "@emotion/styled"],
       output: {
         globals: {
-          react: "React",
+          "react": "React",
           "react-dom": "ReactDOM",
           "@emotion/react": "emotionReact",
-          "@emotion/styled": "emotionStyled",
-        },
-      },
-    },
+          "@emotion/styled": "emotionStyled"
+        }
+      }
+    }
   },
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: "./src/setupTests.ts",
-  },
+    setupFiles: "./src/setupTests.ts"
+  }
 });
