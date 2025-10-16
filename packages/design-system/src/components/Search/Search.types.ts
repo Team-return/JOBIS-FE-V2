@@ -6,5 +6,5 @@ export interface Props {
   $width?: DimensionValue;
   placeholder?: string;
   onIconClick?: () => void;
-  IconColor?: string;
+  IconFillColor?: string;
 }

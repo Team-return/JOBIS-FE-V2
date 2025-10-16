@@ -199,7 +199,7 @@ export const Dropdown = ({
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
-          color="#7F7F7F"
+          fillColor="#7F7F7F"
         />
       </TriggerButton>
 
@@ -227,7 +227,7 @@ export const Dropdown = ({
                   placeholder="검색어를 입력해주세요"
                   onChange={value => setSearchTerm(value)}
                   value={searchTerm}
-                  IconColor="#7F7F7F"
+                  IconFillColor="#7F7F7F"
                 />
                 <div style={{ height: "1px", backgroundColor: "#E5E5E5" }} />
                 <Flex $wrap $gap={10}>
@@ -265,12 +265,17 @@ export const Dropdown = ({
                     <Text $size="h6" $weight="bold">
                       모집기간
                     </Text>
-                    <Icon icon="Refresh" size={24} color="#7F7F7F" />
+                    <Icon
+                      icon="Refresh"
+                      size={24}
+                      strokeColor="#444444"
+                      fillColor="#ffffff"
+                    />
                   </Flex>
                   <Icon
                     icon="Close"
                     size={24}
-                    color="#7F7F7F"
+                    fillColor="#7F7F7F"
                     style={{ cursor: "pointer" }}
                     onClick={() =>
                       calendarFor ? setCalendarFor(null) : setIsOpen(false)
