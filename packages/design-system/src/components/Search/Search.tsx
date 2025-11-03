@@ -53,6 +53,7 @@ export const Search = ({
   onChange,
   $width,
   onIconClick,
+  IconFillColor,
   ...props
 }: Props) => {
   const id = useId();
@@ -65,7 +66,12 @@ export const Search = ({
       <InputWrapper $width={$width}>
         <StyledInput id={id} value={value} onChange={handleChange} {...props} />
         <IconWrapper onClick={onIconClick}>
-          <Icon icon={"Search"} size={24} />
+          <Icon
+            icon={"Search"}
+            size={24}
+            role="img"
+            fillColor={IconFillColor}
+          />
         </IconWrapper>
       </InputWrapper>
     </Wrapper>

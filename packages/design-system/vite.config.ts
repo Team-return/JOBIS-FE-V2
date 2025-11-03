@@ -1,18 +1,16 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
+import svgr from "vite-plugin-svgr";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": resolve(DIR_NAME, "src")
-    }
-  },
+  plugins: [react(), svgr(), tsconfigPaths()],
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
@@ -30,5 +28,10 @@ export default defineConfig({
         }
       }
     }
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/setupTests.ts"
   }
 });

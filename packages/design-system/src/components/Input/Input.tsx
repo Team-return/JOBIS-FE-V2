@@ -109,7 +109,7 @@ export const Input = ({
         />
         {$iconName && (
           <IconWrapper onClick={onIconClick}>
-            <Icon icon={$iconName} size={24} />
+            <Icon icon={$iconName} size={24} role="img" />
           </IconWrapper>
         )}
       </InputWrapper>

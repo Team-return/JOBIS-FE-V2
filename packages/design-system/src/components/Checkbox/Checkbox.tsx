@@ -55,7 +55,14 @@ const CheckIcon = styled.svg`
   pointer-events: none;
 `;
 
-export const Checkbox = ({ label, $checked = false, onChange }: Props) => {
+export const Checkbox = ({
+  label,
+  $checked = false,
+  onChange,
+  $labelColor,
+  $labelSize,
+  $labelWeight
+}: Props) => {
   const handleToggle = () => onChange?.(!$checked);
 
   return (
@@ -85,7 +92,12 @@ export const Checkbox = ({ label, $checked = false, onChange }: Props) => {
         )}
       </StyledCheckbox>
       {label && (
-        <Text $span $size="body1" $weight="regular">
+        <Text
+          $span
+          $size={$labelSize || "body1"}
+          $weight={$labelWeight || "regular"}
+          $color={$labelColor || "#000"}
+        >
           {label}
         </Text>
       )}

@@ -1,9 +1,23 @@
 import * as icons from "../../../assets/icons";
-import { Props, IconName } from "./Icon.types";
+import { Props } from "./Icon.types";
 
-const iconComponents = icons as Record<IconName, string>;
+export const Icon = ({
+  icon,
+  size = 28,
+  fillColor,
+  strokeColor,
+  ...props
+}: Props) => {
+  const SvgIcon = icons[icon];
 
-export const Icon = ({ icon, size = 28, ...props }: Props) => {
-  const src = iconComponents[icon];
-  return <img src={src} alt={icon} width={size} height={size} {...props} />;
+  return (
+    <SvgIcon
+      width={size}
+      height={size}
+      fill={fillColor}
+      stroke={strokeColor}
+      role="img"
+      {...props}
+    />
+  );
 };

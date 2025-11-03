@@ -56,5 +56,13 @@ describe("Search", () => {
 
       expect(icon).toBeInTheDocument();
     });
+
+    it("should apply color to the icon via IconColor prop", async () => {
+      const iconColor = "red";
+      renderWithTheme(<Search IconFillColor={iconColor} />);
+
+      const icon = screen.getByRole("img");
+      expect(icon).toHaveAttribute("fill", iconColor);
+    });
   });
 });
