@@ -24,4 +24,10 @@ describe("Button", () => {
     const buttonElement = screen.getByRole("button", { name: /click me/i });
     expect(buttonElement).toBeDisabled();
   });
+
+  it("renders correctly with sm size", () => {
+    renderWithTheme(<Button $size="sm">Small Button</Button>);
+    const buttonElement = screen.getByRole("button", { name: /small button/i });
+    expect(buttonElement).toBeInTheDocument();
+  });
 });
