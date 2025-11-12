@@ -43,19 +43,26 @@ const Component = styled.button<Props>`
 
   ${({ $size = "md" }) => {
     switch ($size) {
-      case "md":
-        return `
-          height: 48px;
-          padding: 0 40px;
-          font-size: 16px;
-          border-radius: 8px;
-        `;
       case "lg":
         return `
-          height: 48px;
-          padding: 0 147px;
-          font-size: 16px;
-          border-radius: 12px;
+        height: 48px;
+        padding: 0 147px;
+        font-size: 16px;
+        border-radius: 12px;
+        `;
+      case "md":
+        return `
+            height: 48px;
+            padding: 0 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            `;
+      case "sm":
+        return `
+              height:36px;
+              padding: 8px 12px;
+              border-radius: 8px;
+              font-size: 14px;              
         `;
     }
   }}

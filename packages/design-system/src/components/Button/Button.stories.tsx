@@ -75,6 +75,9 @@ export const Variants: Story = {
 export const Sizes: Story = {
   render: args => (
     <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+      <Button {...args} $size="sm">
+        Small
+      </Button>
       <Button {...args} $size="md">
         Medium
       </Button>
