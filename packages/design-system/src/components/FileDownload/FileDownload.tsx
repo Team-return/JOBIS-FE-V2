@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useTheme } from "@/hooks";
 import { Icon, Text } from "@/components";
 import type { Props } from "./FileDownload.types";
 
@@ -19,6 +20,7 @@ const Component = styled.button<Pick<Props, "$done">>`
 `;
 
 export const FileDownload = ({ label, fileUrl, $done = false }: Props) => {
+  const { currentTheme } = useTheme();
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = fileUrl;
@@ -34,7 +36,7 @@ export const FileDownload = ({ label, fileUrl, $done = false }: Props) => {
         $span
         $size="caption"
         $weight="regular"
-        $color="#7F7F7F"
+        $color={currentTheme.color.grayScale[60]}
         $underline={$done}
       >
         {label}

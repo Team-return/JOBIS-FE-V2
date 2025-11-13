@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useTheme } from "@/hooks";
 import { type ChangeEvent, useId } from "react";
 import { Text, Icon } from "@/components";
 import { parseValue } from "@/utils";
@@ -86,6 +87,7 @@ export const Input = ({
   disabled,
   ...props
 }: Props) => {
+  const { currentTheme } = useTheme();
   const id = useId();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange?.(e.target.value);
@@ -114,7 +116,12 @@ export const Input = ({
         )}
       </InputWrapper>
       {$errorMessage && (
-        <Text $span $size="body3" $weight="regular" $color="#E74C3C">
+        <Text
+          $span
+          $size="body3"
+          $weight="regular"
+          $color={currentTheme.color.subColor.red[20]}
+        >
           {$errorMessage}
         </Text>
       )}

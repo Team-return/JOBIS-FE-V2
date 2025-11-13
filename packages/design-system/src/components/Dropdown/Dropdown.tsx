@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
+import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
 import type { Props } from "./Dropdown.types";
 import { Search } from "../Search";
@@ -186,6 +187,7 @@ export const Dropdown = ({
           opt.label.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : options;
+  const { currentTheme } = useTheme();
   return (
     <Wrapper>
       <TriggerButton
@@ -193,13 +195,17 @@ export const Dropdown = ({
         onClick={() => setIsOpen(prev => !prev)}
         $width={typeof $width === "number" ? `${$width}px` : $width}
       >
-        <Text $size="body3" $weight="regular" $color="#7F7F7F">
+        <Text
+          $size="body3"
+          $weight="regular"
+          $color={currentTheme.color.grayScale[60]}
+        >
           {selectedLabel || $placeholder || "선택"}
         </Text>
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
-          fillColor="#7F7F7F"
+          fillColor={currentTheme.color.grayScale[60]}
         />
       </TriggerButton>
 
@@ -227,7 +233,7 @@ export const Dropdown = ({
                   placeholder="검색어를 입력해주세요"
                   onChange={value => setSearchTerm(value)}
                   value={searchTerm}
-                  IconFillColor="#7F7F7F"
+                  IconFillColor={currentTheme.color.grayScale[60]}
                 />
                 <div style={{ height: "1px", backgroundColor: "#E5E5E5" }} />
                 <Flex $wrap $gap={10}>
@@ -241,14 +247,18 @@ export const Dropdown = ({
                         <Text
                           $size="caption"
                           $weight="regular"
-                          $color="#237BC9"
+                          $color={currentTheme.color.subColor.blue[30]}
                         >
                           {opt.label}
                         </Text>
                       </SupportJobTag>
                     ))
                   ) : (
-                    <Text $size="body3" $weight="regular" $color="#7F7F7F">
+                    <Text
+                      $size="body3"
+                      $weight="regular"
+                      $color={currentTheme.color.grayScale[60]}
+                    >
                       검색 결과가 없습니다.
                     </Text>
                   )}
@@ -296,7 +306,11 @@ export const Dropdown = ({
                       />
                       <Icon icon="Date" size={24} />
                     </DateContainer>
-                    <Text $size="h5" $weight="regular" $color="#7F7F7F">
+                    <Text
+                      $size="h5"
+                      $weight="regular"
+                      $color={currentTheme.color.grayScale[60]}
+                    >
                       ~
                     </Text>
                     <DateContainer
