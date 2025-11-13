@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { ApplicationState } from "./ApplicationState";
 import { renderWithTheme } from "@/utils";
@@ -56,5 +56,18 @@ describe("ApplicationState", () => {
     expect(statusContainerElement).toHaveStyle(
       `background-color: ${expectedBgColor}`
     );
+  });
+
+  it("should render menu when status is pending", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} types="pending" />);
+
+    const kebapMenuIcon = screen.getByLabelText("KebapMenu");
+    expect(kebapMenuIcon).toBeInTheDocument();
+
+    fireEvent.click(kebapMenuIcon);
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    expect(screen.getByText("재지원")).toBeInTheDocument();
+    expect(screen.getByText("지원 취소")).toBeInTheDocument();
   });
 });

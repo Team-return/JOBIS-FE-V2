@@ -16,6 +16,7 @@ export const Icon = ({
       height={size}
       fill={fillColor}
       stroke={strokeColor}
+      aria-label={icon}
       role="img"
       {...props}
     />
