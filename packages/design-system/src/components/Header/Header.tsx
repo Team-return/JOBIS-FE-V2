@@ -71,6 +71,7 @@ export const Header = (props: Props) => {
           userName={props.userName}
           onClickProfile={props.onClickProfile}
           alarm={props.alarm}
+          onClickLogo={onClickLogo}
         />
       ) : types === "company" ? (
         <Component>
