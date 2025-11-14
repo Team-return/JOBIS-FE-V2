@@ -119,7 +119,11 @@ export const ApplicationState = ({
               <Text $size="body2" $weight="regular">
                 {companyName}
               </Text>
-              <Text $size="caption" $weight="regular" $color={currentTheme.color.grayScale[60]}>
+              <Text
+                $size="caption"
+                $weight="regular"
+                $color={currentTheme.color.grayScale[60]}
+              >
                 {date}
               </Text>
             </Flex>

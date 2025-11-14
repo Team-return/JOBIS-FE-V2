@@ -45,54 +45,43 @@ export const Header = (props: Props) => {
     "공지",
     "배너"
   ];
-  return (
-    <>
-      {types === "admin" ? (
-        <Component>
-          <LogoContainer onClick={onClickLogo}>
-            <Icon icon="LogoWithText" width={90} height={26} />
-          </LogoContainer>
-          <MenuContainer types={types}>
-            {adminMenu.map((item, idx) => (
-              <TextContainer key={item + idx}>
-                <Text
-                  $span
-                  $size="body2"
-                  $color={currentTheme.color.grayScale[80]}
-                >
-                  {item}
-                </Text>
-              </TextContainer>
-            ))}
-          </MenuContainer>
-        </Component>
-      ) : types === "student" ? (
-        <HeaderStudent
-          userName={props.userName}
-          onClickProfile={props.onClickProfile}
-          alarm={props.alarm}
-          onClickLogo={onClickLogo}
-        />
-      ) : types === "company" ? (
-        <Component>
-          <LogoContainer onClick={onClickLogo}>
-            <Icon icon="LogoWithText" width={90} height={26} />
-          </LogoContainer>
-          <MenuContainer types={types}>
-            {companyMenu.map((item, idx) => (
-              <TextContainer key={item + idx}>
-                <Text
-                  $span
-                  $size="body2"
-                  $color={currentTheme.color.grayScale[80]}
-                >
-                  {item}
-                </Text>
-              </TextContainer>
-            ))}
-          </MenuContainer>
-        </Component>
-      ) : null}
-    </>
-  );
+  return types === "admin" ? (
+    <Component>
+      <LogoContainer onClick={onClickLogo}>
+        <Icon icon="LogoWithText" width={90} height={26} />
+      </LogoContainer>
+      <MenuContainer types={types}>
+        {adminMenu.map(item => (
+          <TextContainer key={item}>
+            <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
+              {item}
+            </Text>
+          </TextContainer>
+        ))}
+      </MenuContainer>
+    </Component>
+  ) : types === "student" ? (
+    <HeaderStudent
+      userName={props.userName}
+      onClickProfile={props.onClickProfile}
+      alarm={props.alarm}
+      notifications={props.notifications}
+      onClickLogo={onClickLogo}
+    />
+  ) : types === "company" ? (
+    <Component>
+      <LogoContainer onClick={onClickLogo}>
+        <Icon icon="LogoWithText" width={90} height={26} />
+      </LogoContainer>
+      <MenuContainer types={types}>
+        {companyMenu.map(item => (
+          <TextContainer key={item}>
+            <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
+              {item}
+            </Text>
+          </TextContainer>
+        ))}
+      </MenuContainer>
+    </Component>
+  ) : null;
 };

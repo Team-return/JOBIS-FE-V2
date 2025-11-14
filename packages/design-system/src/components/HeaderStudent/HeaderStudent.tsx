@@ -42,6 +42,13 @@ const HeaderWrapper = styled.div`
   position: relative;
 `;
 
+const ChevronIcon = styled.div<{ $isOpen: boolean }>`
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease-in-out;
+  transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+`;
+
 const AlarmContainer = styled.div`
   position: absolute;
   top: calc(100% + 8px);
@@ -54,7 +61,9 @@ const AlarmContainer = styled.div`
   gap: 16px;
   z-index: 100;
   max-height: 290px;
+  min-width: 300px;
   overflow-y: auto;
+  box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -77,7 +86,8 @@ export const HeaderStudent = ({
   onClickProfile,
   userName,
   alarm,
-  onClickLogo
+  onClickLogo,
+  notifications
 }: Props) => {
   const { currentTheme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
@@ -91,37 +101,14 @@ export const HeaderStudent = ({
     "마이페이지"
   ];
 
-  const notifications = [
-    {
-      title: "지원 현황",
-      content: "{REQUESTED} 상태로 변경되었습니다.",
-      date: new Date().toISOString()
-    },
-    {
-      title: "모집 공고",
-      content: "새로운 {APPROVED} 공고가 올라왔습니다.",
-      date: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-      title: "지원 현황",
-      content: "{REQUESTED} 상태로 변경되었습니다.",
-      date: new Date().toISOString()
-    },
-    {
-      title: "모집 공고",
-      content: "새로운 {APPROVED} 공고가 올라왔습니다.",
-      date: new Date(Date.now() - 86400000).toISOString()
-    }
-  ];
-
   return (
     <Component>
       <LogoContainer onClick={onClickLogo}>
         <Icon icon="LogoWithText" width={90} height={26} />
       </LogoContainer>
       <MenuContainer types="student">
-        {studentMenu.map((item, idx) => (
-          <TextContainer key={item + idx}>
+        {studentMenu.map(item => (
+          <TextContainer key={item}>
             <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
               {item}
             </Text>
@@ -140,20 +127,23 @@ export const HeaderStudent = ({
           <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
             {userName}
           </Text>
-          <Icon icon="ChevronDown" size={18} />
+          <ChevronIcon $isOpen={isAlarm}>
+            <Icon icon="ChevronDown" size={18} />
+          </ChevronIcon>
           {hasUnread && <AlarmDot aria-label="alarm-indicator" />}
         </HeaderContainer>
         {isAlarm && (
           <AlarmContainer>
-            {notifications.map(n => (
-              <NotificationItem
-                key={n.title + n.date}
-                title={n.title}
-                content={n.content}
-                date={n.date}
-              />
-            ))}
-            {notifications.length === 0 && (
+            {notifications && notifications.length > 0 ? (
+              notifications.map(n => (
+                <NotificationItem
+                  key={n.notification_id}
+                  title={n.title}
+                  content={n.content}
+                  date={n.created_at}
+                />
+              ))
+            ) : (
               <Text $size="body3" $color={currentTheme.color.grayScale[60]}>
                 알림이 없습니다.
               </Text>
