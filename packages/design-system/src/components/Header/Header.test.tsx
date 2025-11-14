@@ -100,9 +100,7 @@ describe("Header", () => {
         />
       );
 
-      // 프로필 아이콘은 HeaderProfile이라는 특정 아이콘
       const profileIcons = screen.getAllByRole("img");
-      // 두 번째 아이콘이 프로필 아이콘 (첫 번째는 로고)
       await userEvent.click(profileIcons[1]);
       expect(handleClickProfile).toHaveBeenCalledTimes(1);
     });
@@ -114,18 +112,14 @@ describe("Header", () => {
 
       const userName = screen.getByText("홍길동");
 
-      // 초기에는 알림 컨테이너가 없어야 함
       expect(screen.queryByText("알림이 없습니다.")).not.toBeInTheDocument();
 
-      // 클릭하면 알림 컨테이너가 나타나야 함
       await userEvent.click(userName);
-      // 더미 데이터가 있으므로 알림 아이템이 나타남 (getAllByText 사용)
       const notifications = screen.getAllByText("지원 현황");
       expect(notifications.length).toBeGreaterThan(0);
     });
 
     it.skip("handles logo click event", async () => {
-      // TODO: LogoContainer 클릭 이벤트가 제대로 전파되지 않는 이슈 확인 필요
       const handleClickLogo = vi.fn();
       renderWithTheme(
         <Header
@@ -136,10 +130,8 @@ describe("Header", () => {
         />
       );
 
-      // SVG 로고를 찾아서 부모의 부모 요소(LogoContainer) 클릭
       const allImages = screen.getAllByRole("img");
       const logoImage = allImages[0]; // 첫 번째가 로고
-      // Icon 컴포넌트는 SVG를 감싸는 div -> LogoContainer는 그 div의 부모
       const iconWrapper = logoImage.parentElement!;
       const logoContainer = iconWrapper.parentElement!;
       await userEvent.click(logoContainer);
