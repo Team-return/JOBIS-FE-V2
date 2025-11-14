@@ -4,3 +4,6 @@ export * from "./Text";
 export * from "./Icon";
 export * from "./Bookmark";
 export * from "./Button";
+export * from "./Header";
+export * from "./HeaderStudent";
+export * from "./NotificationItem";
