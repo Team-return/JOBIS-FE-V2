@@ -13,4 +13,6 @@ export interface Props {
   imgUrl: string;
   companyName: string;
   date: string;
+  onRetry?: () => void;
+  onCancle?: () => void;
 }

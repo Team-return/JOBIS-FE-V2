@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
-import { Flex, Text } from "@/components";
+import { Flex, Icon, Text } from "@/components";
 import type { Props, StatusType } from "./ApplicationState.types";
 import { useTheme } from "@/hooks";
 import type { JOBISTheme } from "@/themes";
+import { useState } from "react";
 
 const STATUS_MAP: Record<StatusType, string> = {
   rejected: "반려",
@@ -57,11 +58,15 @@ const CompanyLogo = styled.img`
   object-fit: cover;
 `;
 
-const Component = styled.div`
+const Container = styled.div`
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.color.grayScale[40]};
   padding: 16px;
   width: 668px;
+`;
+
+const Component = styled.div`
+  position: relative;
 `;
 
 const Status = styled.div<{
@@ -72,44 +77,97 @@ const Status = styled.div<{
   padding: 6px 12px;
 `;
 
+const Menu = styled.div`
+  position: absolute;
+  top: 98px;
+  right: 0px;
+  padding: 16px 0;
+  width: 120px;
+  box-shadow: 0px 4px 20px 0px rgba(112, 144, 176, 0.12);
+  border: 1px solid ${({ theme }) => theme.color.grayScale[30]};
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+`;
+
+const ClickAria = styled.span`
+  cursor: pointer;
+`;
+
 export const ApplicationState = ({
   types,
   imgUrl,
   companyName,
-  date
+  date,
+  onRetry,
+  onCancle
 }: Props) => {
   const statusText = STATUS_MAP[types] || "";
   const { currentTheme } = useTheme();
+  const [showMenu, setShowMenu] = useState<boolean>(false);
   const currentStatusStyle = getStatusStyle(currentTheme, types);
 
   return (
     <Component>
-      <Flex $justify="space-between" $align="center">
-        <Flex $gap={16} $align="center">
-          <CompanyLogo src={imgUrl} />
-          <Flex $direction="column">
-            <Text $size="body2" $weight="regular">
-              {companyName}
-            </Text>
-            <Text
-              $size="caption"
-              $weight="regular"
-              $color={currentTheme.color.grayScale[60]}
-            >
-              {date}
-            </Text>
+      <Container>
+        <Flex $justify="space-between" $align="center">
+          <Flex $gap={16} $align="center">
+            <CompanyLogo src={imgUrl} />
+            <Flex $direction="column">
+              <Text $size="body2" $weight="regular">
+                {companyName}
+              </Text>
+              <Text $size="caption" $weight="regular" $color={currentTheme.color.grayScale[60]}>
+                {date}
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex $gap={12}>
+            <Status backgroundColor={currentStatusStyle.backgroundColor || ""}>
+              <Text
+                $size="caption"
+                $weight="regular"
+                $color={currentStatusStyle.color}
+              >
+                {statusText}
+              </Text>
+            </Status>
+            {types === "pending" && (
+              <Icon
+                icon="KebapMenu"
+                size={24}
+                onClick={() => setShowMenu(!showMenu)}
+              />
+            )}
           </Flex>
         </Flex>
-        <Status backgroundColor={currentStatusStyle.backgroundColor || ""}>
-          <Text
-            $size="caption"
-            $weight="regular"
-            $color={currentStatusStyle.color}
+      </Container>
+      {showMenu && (
+        <Menu role="menu">
+          <ClickAria
+            onClick={() => {
+              setShowMenu(false);
+              onRetry?.();
+            }}
           >
-            {statusText}
-          </Text>
-        </Status>
-      </Flex>
+            <Text $size="caption" $color={currentTheme.color.grayScale[80]}>
+              재지원
+            </Text>
+          </ClickAria>
+          <ClickAria
+            onClick={() => {
+              setShowMenu(false);
+              onCancle?.();
+            }}
+          >
+            <Text $size="caption" $color={currentTheme.color.grayScale[80]}>
+              지원 취소
+            </Text>
+          </ClickAria>
+        </Menu>
+      )}
     </Component>
   );
 };
