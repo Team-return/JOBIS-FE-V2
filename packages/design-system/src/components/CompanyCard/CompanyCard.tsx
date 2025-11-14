@@ -1,6 +1,7 @@
 import { Flex, Text, Bookmark } from "@/components";
 import type { Props } from "./CompanyCard.types";
 import styled from "@emotion/styled";
+import { useTheme } from "@/hooks";
 
 const Img = styled.img`
   width: 304px;
@@ -18,6 +19,7 @@ export const CompanyCard = ({
   onBookmarkClick,
   onClick
 }: Props) => {
+  const { currentTheme } = useTheme();
   return (
     <Flex $direction="column" $gap={16} onClick={onClick}>
       <Img src={imgUrl} alt={companyName} />
@@ -26,7 +28,11 @@ export const CompanyCard = ({
           <Text $size="h6" $weight="regular">
             {companyName}
           </Text>
-          <Text $size="body3" $weight="regular" $color="#7F7F7F">
+          <Text
+            $size="body3"
+            $weight="regular"
+            $color={currentTheme.color.grayScale[60]}
+          >
             {annualSales}
           </Text>
         </Flex>
