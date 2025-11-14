@@ -6,7 +6,8 @@ import {
   MenuContainer,
   Text,
   TextContainer,
-  NotificationItem
+  NotificationItem,
+  LogoContainer
 } from "@/components";
 import { useState } from "react";
 import type { Props as HeaderProps } from "../Header/Header.types";
@@ -72,7 +73,12 @@ const AlarmContainer = styled.div`
   }
 `;
 
-export const HeaderStudent = ({ onClickProfile, userName, alarm }: Props) => {
+export const HeaderStudent = ({
+  onClickProfile,
+  userName,
+  alarm,
+  onClickLogo
+}: Props) => {
   const { currentTheme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
   const [hasUnread, setHasUnread] = useState(alarm);
@@ -85,7 +91,6 @@ export const HeaderStudent = ({ onClickProfile, userName, alarm }: Props) => {
     "마이페이지"
   ];
 
-  // 임시 알림 데이터 (추후 API 연동 가능)
   const notifications = [
     {
       title: "지원 현황",
@@ -111,7 +116,9 @@ export const HeaderStudent = ({ onClickProfile, userName, alarm }: Props) => {
 
   return (
     <Component>
-      <Icon icon="LogoWithText" width={90} height={26} />
+      <LogoContainer onClick={onClickLogo}>
+        <Icon icon="LogoWithText" width={90} height={26} />
+      </LogoContainer>
       <MenuContainer types="student">
         {studentMenu.map((item, idx) => (
           <TextContainer key={item + idx}>
@@ -127,7 +134,6 @@ export const HeaderStudent = ({ onClickProfile, userName, alarm }: Props) => {
           onClick={() => {
             const next = !isAlarm;
             setIsAlarm(next);
-            // 열리는 순간 알림을 사용자에게 보여주므로 빨간 점 제거
             if (next) setHasUnread(false);
           }}
         >

@@ -3,6 +3,7 @@ export type HeaderTypes = (typeof headerTypes)[number];
 
 interface BaseProps {
   types?: HeaderTypes;
+  onClickLogo?: () => void;
 }
 
 interface AdminProps extends BaseProps {

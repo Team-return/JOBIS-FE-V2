@@ -28,8 +28,12 @@ export const TextContainer = styled.div`
   }
 `;
 
+export const LogoContainer = styled.div`
+  cursor: pointer;
+`;
+
 export const Header = (props: Props) => {
-  const { types } = props;
+  const { types, onClickLogo } = props;
   const { currentTheme } = useTheme();
   const companyMenu = ["모집의뢰서", "지원자", "내 기업정보"];
   const adminMenu = [
@@ -45,7 +49,9 @@ export const Header = (props: Props) => {
     <>
       {types === "admin" ? (
         <Component>
-          <Icon icon="LogoWithText" width={90} height={26} />
+          <LogoContainer onClick={onClickLogo}>
+            <Icon icon="LogoWithText" width={90} height={26} />
+          </LogoContainer>
           <MenuContainer types={types}>
             {adminMenu.map((item, idx) => (
               <TextContainer key={item + idx}>
@@ -68,7 +74,9 @@ export const Header = (props: Props) => {
         />
       ) : types === "company" ? (
         <Component>
-          <Icon icon="LogoWithText" width={90} height={26} />
+          <LogoContainer onClick={onClickLogo}>
+            <Icon icon="LogoWithText" width={90} height={26} />
+          </LogoContainer>
           <MenuContainer types={types}>
             {companyMenu.map((item, idx) => (
               <TextContainer key={item + idx}>

@@ -24,6 +24,10 @@ const meta: Meta<typeof Header> = {
       action: "onClickProfile",
       description: "학생 헤더에서 프로필 아이콘 클릭 이벤트"
     },
+    onClickLogo: {
+      action: "onClickLogo",
+      description: "로고 클릭 이벤트"
+    },
     alarm: {
       control: "boolean",
       description: "학생 헤더에서 알림 뱃지 표시 여부"
@@ -37,13 +41,15 @@ type Story = StoryObj<typeof Header>;
 
 export const Admin: Story = {
   args: {
-    types: "admin"
+    types: "admin",
+    onClickLogo: fn()
   }
 };
 
 export const Company: Story = {
   args: {
-    types: "company"
+    types: "company",
+    onClickLogo: fn()
   }
 };
 
@@ -52,12 +58,14 @@ export const Student: Story = {
     types: "student",
     userName: "홍길동",
     alarm: true,
-    onClickProfile: fn()
+    onClickProfile: fn(),
+    onClickLogo: fn()
   }
 };
 
 export const Default: Story = {
   args: {
-    types: "admin"
+    types: "admin",
+    onClickLogo: fn()
   }
 };
