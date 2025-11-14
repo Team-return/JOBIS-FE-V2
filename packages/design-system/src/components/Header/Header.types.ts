@@ -2,7 +2,7 @@ export const headerTypes = ["admin", "company", "student"] as const;
 export type HeaderTypes = (typeof headerTypes)[number];
 
 interface BaseProps {
-  types?: HeaderTypes;
+  types: HeaderTypes;
   onClickLogo?: () => void;
 }
 
