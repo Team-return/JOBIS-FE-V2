@@ -7,3 +7,4 @@ export * from "./Button";
 export * from "./Header";
 export * from "./HeaderStudent";
 export * from "./NotificationItem";
+export * from "./Modal";
