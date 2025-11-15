@@ -16,6 +16,16 @@ const Component = styled.div<Omit<Props, "$label">>`
   padding: 19px 88px 19px 24px;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 16px;
+  min-width: 341px;
+  max-width: 500px;
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
+`;
+
+const TextWrapper = styled.div`
+  flex: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 `;
 
 export const Toast = ({ $label, $type }: Props) => {
@@ -24,9 +34,11 @@ export const Toast = ({ $label, $type }: Props) => {
   return (
     <Component role="alert" $type={$type}>
       <Icon icon={iconName} size={24} fillColor="white" aria-label={iconName} />
-      <Text $size="body1" $weight="regular">
-        {$label}
-      </Text>
+      <TextWrapper>
+        <Text $size="body1" $weight="regular">
+          {$label}
+        </Text>
+      </TextWrapper>
     </Component>
   );
 };
