@@ -12,7 +12,9 @@ const meta: Meta<typeof Modal> = {
     title: { control: "text" },
     content: { control: "text" },
     onConfirm: { action: "confirmed" },
-    onClose: { action: "closed" }
+    onClose: { action: "closed" },
+    disableBackdropClick: { description: "backdrop 클릭 시 닫기 여부" },
+    disableEscapeKey: { description: "ESC로 닫기 여부" }
   },
   decorators: [
     Story => {
