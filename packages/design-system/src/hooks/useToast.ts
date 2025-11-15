@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import type { ReactElement } from "react";
 
-let toastId = 0;
-
 export type ToastType = {
   id: string;
   component: ReactElement;
@@ -23,21 +21,38 @@ export const useToastStore = create<ToastState>(set => ({
 
 export const useToast = () => {
   const { openToast, closeToast } = useToastStore();
+  const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+  const open = (component: ReactElement, duration = 3000) => {
+    if (typeof duration !== "number" || duration < 0) {
+      throw new Error("Duration must be a non-negative number");
+    }
+
+    const id = `toast-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+    openToast({ id, component });
+
+    if (duration > 0) {
+      const timerId = setTimeout(() => {
+        close(id);
+      }, duration);
+      toastTimers.set(id, timerId);
+    }
+
+    return id;
+  };
+
+  const close = (id: string) => {
+    // Clear timer if exists
+    const timerId = toastTimers.get(id);
+    if (timerId) {
+      clearTimeout(timerId);
+      toastTimers.delete(id);
+    }
+    closeToast(id);
+  };
 
   return {
-    open: (component: ReactElement, duration = 3000) => {
-      toastId += 1;
-      const id = `toast-${toastId}`;
-      openToast({ id, component });
-
-      if (duration > 0) {
-        setTimeout(() => {
-          closeToast(id);
-        }, duration);
-      }
-
-      return id;
-    },
-    close: closeToast
+    open,
+    close
   };
 };

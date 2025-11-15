@@ -1,4 +1,4 @@
-import { cloneElement } from "react";
+import { cloneElement, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useToastStore } from "@/hooks/useToast";
 import styled from "@emotion/styled";
@@ -18,26 +18,36 @@ const ToastContainer = styled.div`
   }
 `;
 
-export const ToastManager = (): ReturnType<typeof createPortal> => {
+export const ToastManager = (): ReturnType<typeof createPortal> | null => {
   const { toasts } = useToastStore();
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
-  const toastRoot =
-    document.getElementById("toast-root") ||
-    (() => {
-      const root = document.createElement("div");
-      root.id = "toast-root";
-      document.body.appendChild(root);
-      return root;
-    })();
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    let el = document.getElementById("toast-root");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast-root";
+      document.body.appendChild(el);
+    }
+    setContainer(el);
+  }, []);
+
+  if (!container) return null;
 
   return createPortal(
-    <ToastContainer>
+    <ToastContainer
+      role="region"
+      aria-live="polite"
+      aria-relevant="additions text"
+      aria-label="알림 토스트"
+    >
       {toasts.map(({ component, id }) =>
         cloneElement(component, {
           key: id
         })
       )}
     </ToastContainer>,
-    toastRoot
+    container
   );
 };
