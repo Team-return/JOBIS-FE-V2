@@ -34,14 +34,21 @@ const ContentContainer = styled(Text)`
   margin-top: 8px;
 `;
 
-export const Modal = ({ title, content, onConfirm, onClose }: Props) => {
+export const Modal = ({
+  title,
+  content,
+  onConfirm,
+  onClose,
+  disableBackdropClick = false,
+  disableEscapeKey = false
+}: Props) => {
   const { currentTheme: theme } = useTheme();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !disableEscapeKey) {
         onClose();
       }
     };
@@ -52,10 +59,10 @@ export const Modal = ({ title, content, onConfirm, onClose }: Props) => {
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, disableEscapeKey]);
 
   return (
-    <Backdrop onClick={onClose}>
+    <Backdrop onClick={() => !disableBackdropClick && onClose()}>
       <ModalWrapper
         role="dialog"
         aria-modal="true"

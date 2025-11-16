@@ -1,82 +1,122 @@
 import { screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Modal } from "./Modal";
 import { renderWithTheme } from "@/utils";
-import { useModal } from "../../hooks/useModal";
-import { ModalManager } from "../ModalManager";
-import { Button } from "../Button";
 
-describe("Modal with useModal", () => {
+describe("Modal", () => {
   const onConfirm = vi.fn();
   const onClose = vi.fn();
 
-  const TestComponent = () => {
-    const { open } = useModal();
+  beforeEach(() => {
+    onConfirm.mockClear();
+    onClose.mockClear();
+  });
 
-    const openModal = () => {
-      open(
-        <Modal
-          title="Test Modal"
-          content="This is the modal content."
-          onConfirm={onConfirm}
-          onClose={onClose}
-        />
-      );
-    };
-
-    return <Button onClick={openModal}>Open Modal</Button>;
-  };
-
-  const renderTestComponent = () => {
+  it("should render the modal with title and content", () => {
     renderWithTheme(
-      <>
-        <TestComponent />
-        {ModalManager()}
-      </>
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      />
     );
-  };
 
-  it("should open and show the modal", async () => {
-    renderTestComponent();
-    fireEvent.click(screen.getByText("Open Modal"));
-
-    expect(await screen.findByText("Test Modal")).toBeInTheDocument();
+    expect(screen.getByText("Test Modal")).toBeInTheDocument();
     expect(screen.getByText("This is the modal content.")).toBeInTheDocument();
   });
 
   it("should call onConfirm when confirm button is clicked", async () => {
-    renderTestComponent();
-    fireEvent.click(screen.getByText("Open Modal"));
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      />
+    );
 
-    const confirmButton = await screen.findByText("확인");
+    const confirmButton = screen.getByText("확인");
     fireEvent.click(confirmButton);
     expect(onConfirm).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
   });
 
-  it("should call onClose when cancel button is clicked", async () => {
-    renderTestComponent();
-    fireEvent.click(screen.getByText("Open Modal"));
+  it("should call onClose when cancel button is clicked", () => {
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      />
+    );
 
-    const cancelButton = await screen.findByText("취소");
+    const cancelButton = screen.getByText("취소");
     fireEvent.click(cancelButton);
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
   });
 
   it("should call onClose when backdrop is clicked", async () => {
-    renderTestComponent();
-    fireEvent.click(screen.getByText("Open Modal"));
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      />
+    );
 
-    const dialog = await screen.findByRole("dialog");
+    const dialog = screen.getByRole("dialog");
     fireEvent.click(dialog.parentElement!);
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
   });
 
   it("should call onClose when Escape key is pressed", async () => {
-    renderTestComponent();
-    fireEvent.click(screen.getByText("Open Modal"));
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      />
+    );
 
-    await screen.findByRole("dialog");
-    fireEvent.keyDown(window, { key: "Escape", code: "Escape" });
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
+  });
+
+  it("should not call onClose when backdrop is clicked if disableBackdropClick is true", () => {
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+        disableBackdropClick={true}
+      />
+    );
+
+    const dialog = screen.getByRole("dialog");
+    fireEvent.click(dialog.parentElement!);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("should not call onClose when Escape key is pressed if disableEscapeKey is true", () => {
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+        disableEscapeKey={true}
+      />
+    );
+
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

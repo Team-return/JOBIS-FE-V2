@@ -3,4 +3,6 @@ export interface Props {
   content: string;
   onConfirm: () => void;
   onClose: () => void;
+  disableBackdropClick?: boolean;
+  disableEscapeKey?: boolean;
 }

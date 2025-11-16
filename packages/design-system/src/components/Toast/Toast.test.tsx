@@ -27,4 +27,9 @@ describe("Toast", () => {
       screen.getByRole("img", { name: "ToastWarning" })
     ).toBeInTheDocument();
   });
+
+  it("should render the info icon when $type is info", () => {
+    renderWithTheme(<Toast $label="Info!" $type="info" />);
+    expect(screen.getByRole("img", { name: "ToastInfo" })).toBeInTheDocument();
+  });
 });

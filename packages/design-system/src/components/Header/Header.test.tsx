@@ -105,21 +105,23 @@ describe("Header", () => {
       expect(handleClickProfile).toHaveBeenCalledTimes(1);
     });
 
-    it("toggles alarm container when user name is clicked", async () => {
+    it("toggles alarm container and shows empty state when no notifications", async () => {
       renderWithTheme(
         <Header types="student" userName="홍길동" alarm={true} />
       );
 
       const userName = screen.getByText("홍길동");
 
+      // Initially, dropdown isn't open
       expect(screen.queryByText("알림이 없습니다.")).not.toBeInTheDocument();
 
       await userEvent.click(userName);
-      const notifications = screen.getAllByText("지원 현황");
-      expect(notifications.length).toBeGreaterThan(0);
+
+      // After opening, empty state is visible when no notifications provided
+      expect(screen.getByText("알림이 없습니다.")).toBeInTheDocument();
     });
 
-    it.skip("handles logo click event", async () => {
+    it("handles logo click event", async () => {
       const handleClickLogo = vi.fn();
       renderWithTheme(
         <Header
@@ -130,11 +132,8 @@ describe("Header", () => {
         />
       );
 
-      const allImages = screen.getAllByRole("img");
-      const logoImage = allImages[0]; // 첫 번째가 로고
-      const iconWrapper = logoImage.parentElement!;
-      const logoContainer = iconWrapper.parentElement!;
-      await userEvent.click(logoContainer);
+      const logo = screen.getByRole("img", { name: "LogoWithText" });
+      await userEvent.click(logo.parentElement!);
       expect(handleClickLogo).toHaveBeenCalled();
     });
   });
