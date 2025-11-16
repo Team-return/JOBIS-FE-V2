@@ -2,6 +2,29 @@ import styled from "@emotion/styled";
 import { Icon, Text } from "@/components";
 import type { Props, ToastType } from "./Toast.types";
 import type { IconName } from "../Icon/Icon.types";
+import { keyframes } from "@emotion/react";
+
+const slideIn = keyframes`
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+const slideOut = keyframes`
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+`;
 
 const ToastTypeIcon: Record<ToastType, IconName> = {
   success: "ToastSuccess",
@@ -9,7 +32,8 @@ const ToastTypeIcon: Record<ToastType, IconName> = {
   warning: "ToastWarning",
   info: "ToastInfo"
 };
-const Component = styled.div<Omit<Props, "$label">>`
+
+const Component = styled.div<Omit<Props, "$label"> & { $isClosing?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 40px;
@@ -19,6 +43,8 @@ const Component = styled.div<Omit<Props, "$label">>`
   min-width: 341px;
   max-width: 500px;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
+  animation: ${({ $isClosing }) => ($isClosing ? slideOut : slideIn)} 0.3s
+    ease-in-out forwards;
 `;
 
 const TextWrapper = styled.div`
@@ -28,11 +54,11 @@ const TextWrapper = styled.div`
   white-space: normal;
 `;
 
-export const Toast = ({ $label, $type }: Props) => {
+export const Toast = ({ $label, $type, $isClosing }: Props) => {
   const iconName = ToastTypeIcon[$type];
 
   return (
-    <Component role="alert" $type={$type}>
+    <Component role="alert" $type={$type} $isClosing={$isClosing}>
       <Icon icon={iconName} size={24} fillColor="white" aria-label={iconName} />
       <TextWrapper>
         <Text $size="body1" $weight="regular">
