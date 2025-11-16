@@ -44,10 +44,10 @@ const ToastWithHook = ({
   label: string;
   type: "success" | "error" | "warning" | "info";
 }) => {
-  const { open } = useToast();
+  const toast = useToast();
 
   const openToast = () => {
-    open(<Toast $label={label} $type={type} />);
+    toast[type](label);
   };
 
   return <Button onClick={openToast}>Show Toast</Button>;
@@ -85,16 +85,13 @@ export const Info: Story = {
 };
 
 const MultipleToasts = () => {
-  const { open } = useToast();
+  const toast = useToast();
 
   const openMultipleToasts = () => {
-    open(<Toast $label="첫 번째 알림" $type="success" />);
-    setTimeout(() => open(<Toast $label="두 번째 알림" $type="info" />), 500);
-    setTimeout(
-      () => open(<Toast $label="세 번째 알림" $type="warning" />),
-      1000
-    );
-    setTimeout(() => open(<Toast $label="네 번째 알림" $type="error" />), 1500);
+    toast.success("첫 번째 알림");
+    setTimeout(() => toast.info("두 번째 알림"), 500);
+    setTimeout(() => toast.warning("세 번째 알림"), 1000);
+    setTimeout(() => toast.error("네 번째 알림"), 1500);
   };
 
   return <Button onClick={openMultipleToasts}>Show Multiple Toasts</Button>;

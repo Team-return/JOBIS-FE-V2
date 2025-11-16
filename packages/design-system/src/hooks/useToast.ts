@@ -1,58 +1,82 @@
 import { create } from "zustand";
-import type { ReactElement } from "react";
+import { createElement, type ReactElement } from "react";
+import { Toast } from "@/components/Toast";
 
-export type ToastType = {
+export type ToastItem = {
   id: string;
   component: ReactElement;
+  isClosing?: boolean;
 };
 
 type ToastState = {
-  toasts: ToastType[];
-  openToast: (toast: ToastType) => void;
+  toasts: ToastItem[];
+  openToast: (toast: ToastItem) => void;
   closeToast: (id: string) => void;
+  updateToast: (id: string, updates: Partial<ToastItem>) => void;
 };
 
 export const useToastStore = create<ToastState>(set => ({
   toasts: [],
   openToast: toast => set(state => ({ toasts: [...state.toasts, toast] })),
   closeToast: id =>
-    set(state => ({ toasts: state.toasts.filter(toast => toast.id !== id) }))
+    set(state => ({ toasts: state.toasts.filter(toast => toast.id !== id) })),
+  updateToast: (id, updates) =>
+    set(state => ({
+      toasts: state.toasts.map(toast =>
+        toast.id === id ? { ...toast, ...updates } : toast
+      )
+    }))
 }));
 
 export const useToast = () => {
-  const { openToast, closeToast } = useToastStore();
+  const { openToast, closeToast, updateToast } = useToastStore();
   const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-  const open = (component: ReactElement, duration = 3000) => {
-    if (typeof duration !== "number" || duration < 0) {
-      throw new Error("Duration must be a non-negative number");
-    }
-
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "warning" | "info"
+  ) => {
     const id = `toast-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-    openToast({ id, component });
+    const component = createElement(Toast, { $label: message, $type: type });
+    openToast({ id, component, isClosing: false });
 
-    if (duration > 0) {
-      const timerId = setTimeout(() => {
-        close(id);
-      }, duration);
-      toastTimers.set(id, timerId);
-    }
+    const timerId = setTimeout(() => {
+      close(id);
+    }, 3000);
+    toastTimers.set(id, timerId);
 
     return id;
   };
 
   const close = (id: string) => {
-    // Clear timer if exists
-    const timerId = toastTimers.get(id);
-    if (timerId) {
-      clearTimeout(timerId);
-      toastTimers.delete(id);
+    // Start closing animation
+    const component = useToastStore
+      .getState()
+      .toasts.find(t => t.id === id)?.component;
+    if (component) {
+      const closingComponent = createElement(Toast, {
+        ...component.props,
+        $isClosing: true
+      });
+      updateToast(id, { component: closingComponent, isClosing: true });
     }
-    closeToast(id);
+
+    // Remove after animation completes
+    setTimeout(() => {
+      const timerId = toastTimers.get(id);
+      if (timerId) {
+        clearTimeout(timerId);
+        toastTimers.delete(id);
+      }
+      closeToast(id);
+    }, 300); // Match animation duration
   };
 
   return {
-    open,
+    success: (message: string) => showToast(message, "success"),
+    error: (message: string) => showToast(message, "error"),
+    warning: (message: string) => showToast(message, "warning"),
+    info: (message: string) => showToast(message, "info"),
     close
   };
 };
