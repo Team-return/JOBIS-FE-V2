@@ -4,7 +4,7 @@ export * from "./Calendar";
 export * from "./Checkbox";
 export * from "./CheckboxGroup";
 export * from "./CompanyCard";
-export * from "./CompanyTypeClip";
+export * from "./CompanyTypeChip";
 export * from "./Dropdown";
 export * from "./FileDownload";
 export * from "./Header";

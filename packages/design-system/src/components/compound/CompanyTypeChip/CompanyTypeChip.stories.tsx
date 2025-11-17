@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { CompanyTypeClip } from "./CompanyTypeClip";
+import { CompanyTypeChip } from "./CompanyTypeChip";
 
-const meta: Meta<typeof CompanyTypeClip> = {
-  title: "components/compound/CompanyTypeClip",
-  component: CompanyTypeClip,
+const meta: Meta<typeof CompanyTypeChip> = {
+  title: "components/compound/CompanyTypeChip",
+  component: CompanyTypeChip,
   tags: ["autodocs"],
   parameters: { layout: "centered" },
   argTypes: {
@@ -23,7 +23,7 @@ const meta: Meta<typeof CompanyTypeClip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CompanyTypeClip>;
+type Story = StoryObj<typeof CompanyTypeChip>;
 
 export const Default: Story = {
   args: {
@@ -35,21 +35,21 @@ export const ParticipationType: Story = {
   args: {
     $type: "participation"
   },
-  render: args => <CompanyTypeClip {...args} />
+  render: args => <CompanyTypeChip {...args} />
 };
 
 export const LeaderType: Story = {
   args: {
     $type: "leader"
   },
-  render: args => <CompanyTypeClip {...args} />
+  render: args => <CompanyTypeChip {...args} />
 };
 
 export const Comparison: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "12px" }}>
-      <CompanyTypeClip $type="participation" />
-      <CompanyTypeClip $type="leader" />
+      <CompanyTypeChip $type="participation" />
+      <CompanyTypeChip $type="leader" />
     </div>
   )
 };
