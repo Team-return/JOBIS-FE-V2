@@ -3,9 +3,13 @@ import type { Props } from "./Pagination.types";
 import { Stack, Icon, Text } from "@/components";
 import { useTheme } from "@/hooks";
 
-const Component = styled(Stack)`
+const Component = styled.div`
   height: 32px;
   align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  gap: 12px;
 `;
 
 const PageNumber = styled.div`
@@ -51,7 +55,7 @@ export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
   const canGoNext = groupStartPage + PAGE_UNIT <= end;
 
   return (
-    <Component $direction="row" $gap={16}>
+    <Component>
       <Icon
         icon="ChevronLeft"
         size={16}

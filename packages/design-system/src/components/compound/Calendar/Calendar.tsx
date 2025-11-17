@@ -1,10 +1,10 @@
-import { Surface, Text, Button } from "@/components";
+import { Text, Button } from "@/components";
 import type { Props } from "./Calendar.types";
 import styled from "@emotion/styled";
 import { useState, useMemo, useEffect } from "react";
 import { useTheme } from "@/hooks";
 
-const Component = styled(Surface)`
+const Component = styled.div`
   width: 398px;
   height: 374px;
   padding: 24px 23px;
@@ -12,6 +12,7 @@ const Component = styled(Surface)`
   flex-direction: column;
   gap: 24px;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
+  box-shadow: 0px 4px 20px 0px rgba(112, 144, 176, 0.12);
 `;
 
 const Header = styled.div`
@@ -282,7 +283,7 @@ export const Calendar = ({ value, onChange }: Props) => {
   };
 
   return (
-    <Component $shadow>
+    <Component>
       <Header>
         <HeaderControls>
           <Arrow direction="left" double onClick={handlePrevYear} />
