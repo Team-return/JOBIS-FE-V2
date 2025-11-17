@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import type { Props } from "./CompanyTypeChip.types";
+import type { Props } from "./CompanyTypeClip.types";
 
 const Component = styled.div<Props>`
   width: 69px;
@@ -26,7 +26,7 @@ const Component = styled.div<Props>`
   }}
 `;
 
-export const CompanyTypeChip = ({ $type }: Props) => {
+export const CompanyTypeClip = ({ $type }: Props) => {
   return (
     <Component $type={$type}>
       {$type === "participation" ? "참여기업" : "선도기업"}
