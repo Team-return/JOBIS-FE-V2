@@ -1,18 +1,10 @@
-import { cloneElement } from "react";
+import { ReactNode, cloneElement } from "react";
 import { createPortal } from "react-dom";
-import { useModalStore } from "../../../hooks/useModal";
+import { useModalStore } from "@/hooks/useModal";
 
-export const ModalManager = (): ReturnType<typeof createPortal> => {
+export const ModalManager = (): ReactNode => {
   const { modals, closeModal } = useModalStore();
-
-  const modalRoot =
-    document.getElementById("modal-root") ||
-    (() => {
-      const root = document.createElement("div");
-      root.id = "modal-root";
-      document.body.appendChild(root);
-      return root;
-    })();
+  const container = document.getElementById("modal-root")!;
 
   return createPortal(
     <>
@@ -23,6 +15,6 @@ export const ModalManager = (): ReturnType<typeof createPortal> => {
         })
       )}
     </>,
-    modalRoot
-  );
+    container
+  ) as ReactNode;
 };

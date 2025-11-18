@@ -1,4 +1,4 @@
-import { cloneElement, useEffect, useState } from "react";
+import { ReactNode, cloneElement } from "react";
 import { createPortal } from "react-dom";
 import { useToastStore } from "@/hooks/useToast";
 import styled from "@emotion/styled";
@@ -18,22 +18,9 @@ const ToastContainer = styled.div`
   }
 `;
 
-export const ToastManager = (): ReturnType<typeof createPortal> | null => {
+export const ToastManager = (): ReactNode => {
   const { toasts } = useToastStore();
-  const [container, setContainer] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    let el = document.getElementById("toast-root");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "toast-root";
-      document.body.appendChild(el);
-    }
-    setContainer(el);
-  }, []);
-
-  if (!container) return null;
+  const container = document.getElementById("toast-root")!;
 
   return createPortal(
     <ToastContainer
@@ -49,5 +36,5 @@ export const ToastManager = (): ReturnType<typeof createPortal> | null => {
       )}
     </ToastContainer>,
     container
-  );
+  ) as ReactNode;
 };
