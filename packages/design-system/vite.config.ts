@@ -5,20 +5,40 @@ import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
+import dts from "vite-plugin-dts";
 
 const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
-  plugins: [react(), svgr(), tsconfigPaths()],
+  plugins: [
+    react(),
+    svgr(),
+    tsconfigPaths(),
+    dts({
+      entryRoot: "src",
+      outDir: "dist",
+      exclude: ["src/setupTests.ts", "**/*.stories.tsx", "**/*.test.tsx"]
+    })
+  ],
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
       name: "jobis-design-system",
-      fileName: format => `jobis-design-system.${format}.js`
+      fileName: "index",
+      formats: ["es"]
     },
     rollupOptions: {
-      external: ["react", "react-dom", "@emotion/react", "@emotion/styled"],
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "zustand",
+        "@emotion/react",
+        "@emotion/styled",
+        "@testing-library/react"
+      ],
       output: {
         globals: {
           "react": "React",
@@ -29,6 +49,7 @@ export default defineConfig({
       }
     }
   },
+  // @ts-expect-error: intentional cross-package vite plugin assignment
   test: {
     environment: "jsdom",
     globals: true,
