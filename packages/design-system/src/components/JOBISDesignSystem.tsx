@@ -2,6 +2,7 @@ import { useTheme } from "@/hooks";
 import { ThemeProvider } from "@emotion/react";
 import { ModalManager, ToastManager } from "@/components";
 import type { ReactNode } from "react";
+import { GlobalStyles } from "@/themes";
 
 export const JOBISDesignSystem = ({ children }: { children: ReactNode }) => {
   const { currentTheme } = useTheme();
@@ -16,6 +17,7 @@ export const JOBISDesignSystem = ({ children }: { children: ReactNode }) => {
 
   return (
     <ThemeProvider theme={currentTheme}>
+      <GlobalStyles />
       <ModalManager />
       <ToastManager />
       {children}
