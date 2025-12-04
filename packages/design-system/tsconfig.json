@@ -10,7 +10,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "noEmit": true
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",
