@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createElement, type ReactElement } from "react";
-import { Toast } from "@/components/Toast";
+import { Toast } from "@/components/compound/Toast";
 
 export type ToastItem = {
   id: string;

@@ -9,7 +9,9 @@
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",
