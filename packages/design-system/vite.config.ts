@@ -3,7 +3,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
-import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 import dts from "vite-plugin-dts";
 
@@ -13,12 +12,17 @@ const DIR_NAME = dirname(FILE_NAME);
 export default defineConfig({
   plugins: [
     react(),
-    svgr(),
     tsconfigPaths(),
     dts({
-      entryRoot: "src",
+      entryRoot: ".",
       outDir: "dist",
-      exclude: ["src/setupTests.ts", "**/*.stories.tsx", "**/*.test.tsx"]
+      include: ["src/", "assets/"],
+      exclude: [
+        "src/setupTests.ts",
+        ".storybook/*",
+        "**/*.stories.tsx",
+        "**/*.test.tsx"
+      ]
     })
   ],
   build: {

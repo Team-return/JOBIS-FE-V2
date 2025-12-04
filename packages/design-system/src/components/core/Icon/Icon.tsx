@@ -1,4 +1,4 @@
-import * as icons from "../../../../assets/icons";
+import * as icons from "../../../icons";
 import { Props, IconName } from "./Icon.types";
 
 const WHITE_FILL_ICONS: readonly IconName[] = [
