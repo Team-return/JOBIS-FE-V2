@@ -1,4 +1,5 @@
-import { MutationOptions, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import type { MutationOptions } from "@/QueryProvider";
 import axios from "axios";
 
 export const getFile = async (url: string) => {
@@ -14,7 +15,7 @@ export const getFile = async (url: string) => {
 
 export const usePresignLogoFile = (
   getFileCallback: (arg: void) => File,
-  option: MutationOptions<string>
+  options?: MutationOptions<string, string>
 ) => {
   const file = getFileCallback();
   const presign = async (targetFile: File) => {
@@ -33,7 +34,7 @@ export const usePresignLogoFile = (
     return { data, presignedFile: targetFile };
   };
   return useMutation({
-    ...option,
+    ...options,
     mutationFn: () =>
       presign(file).then(({ data, presignedFile }) => {
         const url = data.urls[0];

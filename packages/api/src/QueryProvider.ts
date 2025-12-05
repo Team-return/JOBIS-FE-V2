@@ -1,6 +1,21 @@
 import { createElement, type ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  type UseQueryOptions,
+  type UseMutationOptions
+} from "@tanstack/react-query";
 import { config } from "./config";
+
+export type QueryOptions<T> = Omit<
+  UseQueryOptions<T, number>,
+  "queryKey" | "queryFn"
+>;
+
+export type MutationOptions<Request, Response = void> = Omit<
+  UseMutationOptions<Response, number, Request, unknown>,
+  "mutationFn"
+>;
 
 const client = new QueryClient({
   defaultOptions: {

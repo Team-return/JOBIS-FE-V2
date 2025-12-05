@@ -9,11 +9,14 @@ import type {
   RejectionResponse,
   EmploymentResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/applications";
 
-export const useEmploymentCount = () => {
+export const useEmploymentCount = (
+  options?: QueryOptions<EmploymentCountResponse>
+) => {
   return useQuery({
     queryKey: ["employment-count"],
     queryFn: async () => {
@@ -21,11 +24,15 @@ export const useEmploymentCount = () => {
         `${DOMAIN}/employment/count`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const usePass = (companyId: number) => {
+export const usePass = (
+  companyId: number,
+  options?: QueryOptions<PassResponse>
+) => {
   return useQuery({
     queryKey: ["pass", companyId],
     queryFn: async () => {
@@ -33,11 +40,14 @@ export const usePass = (companyId: number) => {
         `${DOMAIN}/pass/${companyId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyApplications = () => {
+export const useCompanyApplications = (
+  options?: QueryOptions<CompanyApplicationResponse>
+) => {
   return useQuery({
     queryKey: ["company-applications"],
     queryFn: async () => {
@@ -45,11 +55,14 @@ export const useCompanyApplications = () => {
         `${DOMAIN}/company`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useStudentApplications = () => {
+export const useStudentApplications = (
+  options?: QueryOptions<StudentApplicationResponse>
+) => {
   return useQuery({
     queryKey: ["student-applications"],
     queryFn: async () => {
@@ -57,7 +70,8 @@ export const useStudentApplications = () => {
         `${DOMAIN}/students`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
@@ -67,7 +81,8 @@ export const useTeacherApplications = (
   recruitmentId?: number,
   winterIntern?: boolean,
   page?: number,
-  year?: string
+  year?: string,
+  options?: QueryOptions<TeacherApplicationResponse>
 ) => {
   return useQuery({
     queryKey: [
@@ -94,13 +109,15 @@ export const useTeacherApplications = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useTeacherApplicationCount = (
   applicationStatus?: string,
-  studentName?: string
+  studentName?: string,
+  options?: QueryOptions<TeacherApplicationCountResponse>
 ) => {
   return useQuery({
     queryKey: ["teacher-application-count", applicationStatus, studentName],
@@ -115,27 +132,41 @@ export const useTeacherApplicationCount = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteApplication = (applicationId: number) => {
+export const useDeleteApplication = (
+  applicationId: number,
+  options?: MutationOptions<void>
+) => {
   return useMutation({
     mutationFn: async () => {
       await instance.delete(`${DOMAIN}/${applicationId}`);
-    }
+    },
+    ...options
   });
 };
 
-export const useCreateApplication = (recruitmentId: number) => {
+export const useCreateApplication = (
+  recruitmentId: number,
+  options?: MutationOptions<{ url: string; type: string }[]>
+) => {
   return useMutation({
     mutationFn: async (attachments: { url: string; type: string }[]) => {
       await instance.post(`${DOMAIN}/${recruitmentId}`, { attachments });
-    }
+    },
+    ...options
   });
 };
 
-export const useUpdateApplicationStatus = () => {
+export const useUpdateApplicationStatus = (
+  options?: MutationOptions<{
+    applicationIds: number[];
+    status: string;
+  }>
+) => {
   return useMutation({
     mutationFn: async ({
       applicationIds,
@@ -148,11 +179,18 @@ export const useUpdateApplicationStatus = () => {
         application_ids: applicationIds,
         status
       });
-    }
+    },
+    ...options
   });
 };
 
-export const useUpdateTrainDate = () => {
+export const useUpdateTrainDate = (
+  options?: MutationOptions<{
+    applicationIds: number[];
+    startDate: string;
+    endDate: string;
+  }>
+) => {
   return useMutation({
     mutationFn: async ({
       applicationIds,
@@ -168,11 +206,18 @@ export const useUpdateTrainDate = () => {
         start_date: startDate,
         end_date: endDate
       });
-    }
+    },
+    ...options
   });
 };
 
-export const useRejectApplication = (applicationId: number) => {
+export const useRejectApplication = (
+  applicationId: number,
+  options?: MutationOptions<{
+    reason: string;
+    rejectionAttachments: { url: string }[];
+  }>
+) => {
   return useMutation({
     mutationFn: async ({
       reason,
@@ -185,11 +230,15 @@ export const useRejectApplication = (applicationId: number) => {
         reason,
         rejection_attachments: rejectionAttachments
       });
-    }
+    },
+    ...options
   });
 };
 
-export const useRejection = (applicationId: number) => {
+export const useRejection = (
+  applicationId: number,
+  options?: QueryOptions<RejectionResponse>
+) => {
   return useQuery({
     queryKey: ["rejection", applicationId],
     queryFn: async () => {
@@ -197,15 +246,20 @@ export const useRejection = (applicationId: number) => {
         `${DOMAIN}/rejection/${applicationId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useReapply = (applicationId: number) => {
+export const useReapply = (
+  applicationId: number,
+  options?: MutationOptions<{ url: string; type: string }[]>
+) => {
   return useMutation({
     mutationFn: async (attachments: { url: string; type: string }[]) => {
       await instance.put(`${DOMAIN}/${applicationId}`, { attachments });
-    }
+    },
+    ...options
   });
 };
 
@@ -214,7 +268,8 @@ export const useApplicationCount = (
   studentName?: string,
   recruitmentId?: number,
   winterIntern?: boolean,
-  year?: string
+  year?: string,
+  options?: QueryOptions<{ count: number }>
 ) => {
   return useQuery({
     queryKey: [
@@ -239,21 +294,23 @@ export const useApplicationCount = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteApplications = () => {
+export const useDeleteApplications = (options?: MutationOptions<string>) => {
   return useMutation({
     mutationFn: async (applicationIds: string) => {
       await instance.delete(`${DOMAIN}`, {
         params: { application_ids: applicationIds }
       });
-    }
+    },
+    ...options
   });
 };
 
-export const useEmployment = () => {
+export const useEmployment = (options?: QueryOptions<EmploymentResponse>) => {
   return useQuery({
     queryKey: ["employment"],
     queryFn: async () => {
@@ -261,16 +318,21 @@ export const useEmployment = () => {
         `${DOMAIN}/employment`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useTeacherApprove = (recruitmentId: number) => {
+export const useTeacherApprove = (
+  recruitmentId: number,
+  options?: MutationOptions<string[]>
+) => {
   return useMutation({
     mutationFn: async (studentGcns: string[]) => {
       await instance.post(`${DOMAIN}/teacher/${recruitmentId}`, {
         student_gcns: studentGcns
       });
-    }
+    },
+    ...options
   });
 };

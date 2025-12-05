@@ -3,11 +3,15 @@ import type {
   NotificationListResponse,
   NotificationTopicResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/notifications";
 
-export const useNotificationList = (isNew?: boolean) => {
+export const useNotificationList = (
+  isNew?: boolean,
+  options?: QueryOptions<NotificationListResponse>
+) => {
   return useQuery({
     queryKey: ["notification-list", isNew],
     queryFn: async () => {
@@ -15,37 +19,51 @@ export const useNotificationList = (isNew?: boolean) => {
         params: { is_new: isNew }
       });
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useReadNotification = (notificationId: number) => {
+export const useReadNotification = (
+  notificationId: number,
+  options?: MutationOptions<void>
+) => {
   return useMutation({
     mutationFn: async () => {
       await instance.patch(`${DOMAIN}/${notificationId}`);
-    }
+    },
+    ...options
   });
 };
 
-export const useToggleNotificationTopic = (topic: string) => {
+export const useToggleNotificationTopic = (
+  topic: string,
+  options?: MutationOptions<void>
+) => {
   return useMutation({
     mutationFn: async () => {
       await instance.patch(`${DOMAIN}/topic`, {
         params: { topic }
       });
-    }
+    },
+    ...options
   });
 };
 
-export const useToggleAllNotificationTopics = () => {
+export const useToggleAllNotificationTopics = (
+  options?: MutationOptions<void>
+) => {
   return useMutation({
     mutationFn: async () => {
       await instance.patch(`${DOMAIN}/topics`);
-    }
+    },
+    ...options
   });
 };
 
-export const useNotificationTopicStatus = () => {
+export const useNotificationTopicStatus = (
+  options?: QueryOptions<NotificationTopicResponse>
+) => {
   return useQuery({
     queryKey: ["notification-topic-status"],
     queryFn: async () => {
@@ -53,6 +71,7 @@ export const useNotificationTopicStatus = () => {
         `${DOMAIN}/topic`
       );
       return data;
-    }
+    },
+    ...options
   });
 };

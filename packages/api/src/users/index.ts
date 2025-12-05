@@ -1,10 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest, LoginResponse } from "./types";
+import type { MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/users";
 
-export const useLogin = (request: LoginRequest) => {
+export const useLogin = (
+  request: LoginRequest,
+  options?: MutationOptions<LoginRequest, LoginResponse>
+) => {
   return useMutation({
     mutationFn: async () => {
       const { data } = await instance.post<LoginResponse>(
@@ -12,6 +16,7 @@ export const useLogin = (request: LoginRequest) => {
         request
       );
       return data;
-    }
+    },
+    ...options
   });
 };
