@@ -1,4 +1,6 @@
+export * from "./config";
 export * from "./QueryProvider";
+export { setToken } from "./instance";
 export * from "./enum";
 
 export * from "./acceptances";

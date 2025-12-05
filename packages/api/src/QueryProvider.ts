@@ -1,11 +1,12 @@
 import { createElement, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { config } from "./config";
 
 const client = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60000,
-      gcTime: 600000,
+      staleTime: config.staleTime,
+      gcTime: config.gcTime,
       retry: 1
     }
   }

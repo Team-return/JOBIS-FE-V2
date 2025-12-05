@@ -1,5 +1,6 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import { Cookies } from "react-cookie";
+import { config } from "./config";
 
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
@@ -8,12 +9,12 @@ const cookie = new Cookies();
 
 const forRefresh = axios.create({
   baseURL: import.meta.env.BASE_URL,
-  timeout: 10000
+  timeout: config.timeout
 });
 
 export const instance = axios.create({
   baseURL: import.meta.env.BASE_URL,
-  timeout: 10000
+  timeout: config.timeout
 });
 
 instance.interceptors.request.use(
@@ -36,7 +37,7 @@ instance.interceptors.response.use(
       try {
         await axios.get(`${import.meta.env.BASE_URL}/`);
       } catch (healthError) {
-        console.error("서버 상태가 원활하지 않습니다.", healthError);
+        config.onServerError(healthError);
       }
       throw error;
     }
