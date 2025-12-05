@@ -1,4 +1,4 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { Cookies } from "react-cookie";
 import { config } from "./config";
 
@@ -28,7 +28,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   response => response,
-  async error => {
+  async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
       } catch (healthError) {
         config.onServerError(healthError);
       }
-      throw error;
+      throw error.status;
     }
 
     if (error.response?.status === 403 && !originalRequest._retry) {
@@ -87,7 +87,7 @@ instance.interceptors.response.use(
       }
     }
 
-    throw error;
+    throw error.status;
   }
 );
 
