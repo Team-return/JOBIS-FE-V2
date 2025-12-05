@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Icon } from "./Icon";
-import * as icons from "../../../../assets/icons";
+import * as icons from "../../../icons";
 import { Grid, Text, Flex } from "@/components";
 import { IconName } from "./Icon.types";
 
