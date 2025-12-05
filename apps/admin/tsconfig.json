@@ -3,18 +3,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@jobis/design-system": [
-        "../../packages/design-system/src/index",
-        "../../packages/design-system/src/index.d.ts"
-      ],
-      "@jobis/design-system/*": ["../../packages/design-system/src/*"]
+      "@jobis/design-system": ["../../packages/design-system/src/index"],
+      "@jobis/api": ["../../packages/api/src/index"]
     },
     "outDir": "dist"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../packages/design-system"
+      "path": "../../packages/design-system",
+    },
+    {
+      "path": "../../packages/api"
     }
   ]
 }
