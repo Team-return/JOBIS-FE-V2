@@ -31,11 +31,10 @@ export const useReviewDetail = (
 };
 
 export const useCreateReview = (
-  request: CreateReviewRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateReviewRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
     },
     ...options
@@ -58,11 +57,10 @@ export const useReviewQuestions = (
 };
 
 export const useDeleteReview = (
-  reviewId: string,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ reviewId: string }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ reviewId }) => {
       await instance.delete(`${DOMAIN}/${reviewId}`);
     },
     ...options

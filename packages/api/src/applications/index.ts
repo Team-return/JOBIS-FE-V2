@@ -138,11 +138,10 @@ export const useTeacherApplicationCount = (
 };
 
 export const useDeleteApplication = (
-  applicationId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ applicationId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ applicationId }) => {
       await instance.delete(`${DOMAIN}/${applicationId}`);
     },
     ...options
@@ -154,7 +153,7 @@ export const useCreateApplication = (
   options?: MutationOptions<{ url: string; type: string }[]>
 ) => {
   return useMutation({
-    mutationFn: async (attachments: { url: string; type: string }[]) => {
+    mutationFn: async attachments => {
       await instance.post(`${DOMAIN}/${recruitmentId}`, { attachments });
     },
     ...options
@@ -168,13 +167,7 @@ export const useUpdateApplicationStatus = (
   }>
 ) => {
   return useMutation({
-    mutationFn: async ({
-      applicationIds,
-      status
-    }: {
-      applicationIds: number[];
-      status: string;
-    }) => {
+    mutationFn: async ({ applicationIds, status }) => {
       await instance.patch(`${DOMAIN}/status`, {
         application_ids: applicationIds,
         status
@@ -192,15 +185,7 @@ export const useUpdateTrainDate = (
   }>
 ) => {
   return useMutation({
-    mutationFn: async ({
-      applicationIds,
-      startDate,
-      endDate
-    }: {
-      applicationIds: number[];
-      startDate: string;
-      endDate: string;
-    }) => {
+    mutationFn: async ({ applicationIds, startDate, endDate }) => {
       await instance.patch(`${DOMAIN}/train-date`, {
         application_ids: applicationIds,
         start_date: startDate,
@@ -219,13 +204,7 @@ export const useRejectApplication = (
   }>
 ) => {
   return useMutation({
-    mutationFn: async ({
-      reason,
-      rejectionAttachments
-    }: {
-      reason: string;
-      rejectionAttachments: { url: string }[];
-    }) => {
+    mutationFn: async ({ reason, rejectionAttachments }) => {
       await instance.patch(`${DOMAIN}/rejection/${applicationId}`, {
         reason,
         rejection_attachments: rejectionAttachments
@@ -256,7 +235,7 @@ export const useReapply = (
   options?: MutationOptions<{ url: string; type: string }[]>
 ) => {
   return useMutation({
-    mutationFn: async (attachments: { url: string; type: string }[]) => {
+    mutationFn: async attachments => {
       await instance.put(`${DOMAIN}/${applicationId}`, { attachments });
     },
     ...options
@@ -301,7 +280,7 @@ export const useApplicationCount = (
 
 export const useDeleteApplications = (options?: MutationOptions<string>) => {
   return useMutation({
-    mutationFn: async (applicationIds: string) => {
+    mutationFn: async applicationIds => {
       await instance.delete(`${DOMAIN}`, {
         params: { application_ids: applicationIds }
       });
@@ -328,7 +307,7 @@ export const useTeacherApprove = (
   options?: MutationOptions<string[]>
 ) => {
   return useMutation({
-    mutationFn: async (studentGcns: string[]) => {
+    mutationFn: async studentGcns => {
       await instance.post(`${DOMAIN}/teacher/${recruitmentId}`, {
         student_gcns: studentGcns
       });

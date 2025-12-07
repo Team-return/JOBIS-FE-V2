@@ -6,11 +6,10 @@ import { instance } from "@/instance";
 const DOMAIN = "/users";
 
 export const useLogin = (
-  request: LoginRequest,
   options?: MutationOptions<LoginRequest, LoginResponse>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       const { data } = await instance.post<LoginResponse>(
         `${DOMAIN}/login`,
         request

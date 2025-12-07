@@ -17,11 +17,10 @@ export const useBookmarks = (options?: QueryOptions<BookmarksResponse>) => {
 };
 
 export const useToggleBookmark = (
-  recruitmentId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ recruitmentId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ recruitmentId }) => {
       await instance.patch(`${DOMAIN}/${recruitmentId}`);
     },
     ...options

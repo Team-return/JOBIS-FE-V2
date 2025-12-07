@@ -28,11 +28,10 @@ import { instance } from "@/instance";
 const DOMAIN = "/recruitments";
 
 export const useCreateRecruitment = (
-  request: CreateRecruitmentRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateRecruitmentRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
     },
     ...options
@@ -41,11 +40,10 @@ export const useCreateRecruitment = (
 
 export const useUpdateRecruitment = (
   id: number,
-  request: UpdateRecruitmentRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateRecruitmentRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${id}`, request);
     },
     ...options
@@ -53,11 +51,10 @@ export const useUpdateRecruitment = (
 };
 
 export const useDeleteRecruitment = (
-  recruitmentId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ recruitmentId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ recruitmentId }) => {
       await instance.delete(`${DOMAIN}/${recruitmentId}`);
     },
     ...options
@@ -66,11 +63,10 @@ export const useDeleteRecruitment = (
 
 export const useUpdateRecruitmentArea = (
   recruitAreaId: number,
-  request: UpdateRecruitmentAreaRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateRecruitmentAreaRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/area/${recruitAreaId}`, request);
     },
     ...options
@@ -79,11 +75,10 @@ export const useUpdateRecruitmentArea = (
 
 export const useCreateRecruitmentArea = (
   recruitmentId: number,
-  request: CreateRecruitmentAreaRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateRecruitmentAreaRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(`${DOMAIN}/${recruitmentId}/area`, request);
     },
     ...options
@@ -91,11 +86,10 @@ export const useCreateRecruitmentArea = (
 };
 
 export const useDeleteRecruitmentArea = (
-  recruitAreaId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ recruitAreaId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ recruitAreaId }) => {
       await instance.delete(`${DOMAIN}/area/${recruitAreaId}`);
     },
     ...options
@@ -103,11 +97,10 @@ export const useDeleteRecruitmentArea = (
 };
 
 export const useUpdateRecruitmentStatus = (
-  request: UpdateRecruitmentStatusRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateRecruitmentStatusRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/status`, request);
     },
     ...options

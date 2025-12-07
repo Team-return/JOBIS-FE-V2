@@ -54,11 +54,10 @@ export const useUpdateStudentProfile = (
 };
 
 export const useStudentSignup = (
-  request: StudentSignupRequest,
   options?: MutationOptions<StudentSignupRequest, StudentSignupResponse>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       const { data } = await instance.post<StudentSignupResponse>(
         DOMAIN,
         request
@@ -70,35 +69,28 @@ export const useStudentSignup = (
 };
 
 export const useChangePwByEmail = (
-  request: ChangePwByEmailRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<ChangePwByEmailRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/forgotten_password`, request);
     },
     ...options
   });
 };
 
-export const useChangePw = (
-  request: ChangePwRequest,
-  options?: MutationOptions<void>
-) => {
+export const useChangePw = (options?: MutationOptions<ChangePwRequest>) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/password`, request);
     },
     ...options
   });
 };
 
-export const useCheckPw = (
-  password: string,
-  options?: MutationOptions<void>
-) => {
+export const useCheckPw = (options?: MutationOptions<{ password: string }>) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ password }) => {
       await instance.get(`${DOMAIN}/password`, { params: { password } });
     },
     ...options

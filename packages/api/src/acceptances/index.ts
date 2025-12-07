@@ -31,7 +31,7 @@ export const useUpdateFieldTrain = (
   options: MutationOptions<UpdateFieldTrainRequest>
 ) => {
   return useMutation({
-    mutationFn: async (request: UpdateFieldTrainRequest) => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/field-train`, request);
     },
     ...options
@@ -42,7 +42,7 @@ export const useUpdateContractDate = (
   options: MutationOptions<UpdateContractDateRequest>
 ) => {
   return useMutation({
-    mutationFn: async (request: UpdateContractDateRequest) => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/contract-date`, request);
     },
     ...options
@@ -53,7 +53,7 @@ export const useCreateEmployment = (
   options: MutationOptions<CreateEmploymentRequest>
 ) => {
   return useMutation({
-    mutationFn: async (request: CreateEmploymentRequest) => {
+    mutationFn: async request => {
       await instance.post(`${DOMAIN}/employment`, request);
     },
     ...options
@@ -64,7 +64,7 @@ export const useDeleteAcceptance = (
   options: MutationOptions<DeleteAcceptanceRequest>
 ) => {
   return useMutation({
-    mutationFn: async (request: DeleteAcceptanceRequest) => {
+    mutationFn: async request => {
       await instance.delete(DOMAIN, { data: request });
     },
     ...options

@@ -6,11 +6,10 @@ import { instance } from "@/instance";
 const DOMAIN = "/auth";
 
 export const useCompanyLogin = (
-  request: LoginRequest,
   options?: MutationOptions<LoginRequest, LoginResponse>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       const { data } = await instance.post<LoginResponse>(
         `${DOMAIN}/company`,
         request
@@ -22,12 +21,10 @@ export const useCompanyLogin = (
 };
 
 export const useAuthCodeCheck = (
-  email: string,
-  code: string,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ email: string; code: string }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ email, code }) => {
       await instance.patch(`${DOMAIN}/code?email=${email}&auth_code=${code}`);
     },
     ...options
@@ -35,12 +32,10 @@ export const useAuthCodeCheck = (
 };
 
 export const useSendAuthCode = (
-  email: string,
-  codeType: string,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ email: string; codeType: string }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ email, codeType }) => {
       await instance.post(`${DOMAIN}/code`, {
         email,
         auth_code_type: codeType

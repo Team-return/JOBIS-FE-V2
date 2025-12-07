@@ -31,7 +31,7 @@ export const useCreateCode = (
   options?: MutationOptions<CreateCodeRequest, CreateCodeResponse>
 ) => {
   return useMutation({
-    mutationFn: async (request: CreateCodeRequest) => {
+    mutationFn: async request => {
       const { data } = await instance.post<CreateCodeResponse>(DOMAIN, request);
       return data;
     },

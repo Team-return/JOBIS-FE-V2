@@ -1,4 +1,5 @@
 interface Config {
+  baseUrl: string;
   timeout: number;
   staleTime: number;
   gcTime: number;
@@ -6,6 +7,7 @@ interface Config {
 }
 
 export const config: Config = {
+  baseUrl: import.meta.env.VITE_BASE_URL,
   timeout: 10000,
   staleTime: 60000,
   gcTime: 600000,

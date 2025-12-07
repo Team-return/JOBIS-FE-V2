@@ -11,11 +11,10 @@ import { instance } from "@/instance";
 const DOMAIN = "/notices";
 
 export const useCreateNotice = (
-  request: CreateNoticeRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateNoticeRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
     },
     ...options
@@ -24,11 +23,10 @@ export const useCreateNotice = (
 
 export const useUpdateNotice = (
   noticeId: number,
-  request: UpdateNoticeRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateNoticeRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${noticeId}`, request);
     },
     ...options
@@ -36,11 +34,10 @@ export const useUpdateNotice = (
 };
 
 export const useDeleteNotice = (
-  noticeId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ noticeId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ noticeId }) => {
       await instance.delete(`${DOMAIN}/${noticeId}`);
     },
     ...options

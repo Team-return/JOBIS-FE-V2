@@ -10,11 +10,10 @@ import { instance } from "@/instance";
 const DOMAIN = "/banners";
 
 export const useCreateBanner = (
-  request: CreateBannerRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateBannerRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
     },
     ...options
@@ -22,11 +21,10 @@ export const useCreateBanner = (
 };
 
 export const useDeleteBanner = (
-  bannerId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ bannerId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ bannerId }) => {
       await instance.delete(`${DOMAIN}/${bannerId}`);
     },
     ...options

@@ -102,11 +102,10 @@ export const useCompanyMy = (options?: QueryOptions<CompanyMyResponse>) => {
 
 export const useUpdateCompany = (
   companyId: number,
-  request: UpdateCompanyRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateCompanyRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${companyId}`, request);
     },
     ...options
@@ -114,11 +113,10 @@ export const useUpdateCompany = (
 };
 
 export const useCreateCompany = (
-  request: CreateCompanyRequest,
   options?: MutationOptions<CreateCompanyRequest, CreateCompanyResponse>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       const { data } = await instance.post<CreateCompanyResponse>(
         DOMAIN,
         request
@@ -145,12 +143,9 @@ export const useCompanyExists = (
   });
 };
 
-export const useUpdateMou = (
-  request: UpdateMouRequest,
-  options?: MutationOptions<void>
-) => {
+export const useUpdateMou = (options?: MutationOptions<UpdateMouRequest>) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/mou`, request);
     },
     ...options
@@ -248,11 +243,10 @@ export const useEmploymentCompanyCount = (
 };
 
 export const useUpdateCompanyType = (
-  request: UpdateCompanyTypeRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<UpdateCompanyTypeRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/type`, request);
     },
     ...options
@@ -295,11 +289,10 @@ export const useCompanyFileDownload = (options?: QueryOptions<Blob>) => {
 };
 
 export const useCreateTeacherCompany = (
-  request: CreateTeacherCompanyRequest,
-  options?: MutationOptions<void>
+  options?: MutationOptions<CreateTeacherCompanyRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(`${DOMAIN}/teacher`, request);
     },
     ...options

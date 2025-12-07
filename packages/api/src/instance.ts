@@ -8,12 +8,12 @@ const REFRESH_TOKEN_KEY = "refresh_token";
 const cookie = new Cookies();
 
 const forRefresh = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: config.baseUrl,
   timeout: config.timeout
 });
 
 export const instance = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: config.baseUrl,
   timeout: config.timeout
 });
 
@@ -35,7 +35,7 @@ instance.interceptors.response.use(
 
     if (error.response?.status && error.response.status >= 500) {
       try {
-        await axios.get(`${import.meta.env.BASE_URL}/`);
+        await axios.get(`${config.baseUrl}/`);
       } catch (healthError) {
         config.onServerError(healthError);
       }

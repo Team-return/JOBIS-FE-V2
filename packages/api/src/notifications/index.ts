@@ -25,11 +25,10 @@ export const useNotificationList = (
 };
 
 export const useReadNotification = (
-  notificationId: number,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ notificationId: number }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ notificationId }) => {
       await instance.patch(`${DOMAIN}/${notificationId}`);
     },
     ...options
@@ -37,11 +36,10 @@ export const useReadNotification = (
 };
 
 export const useToggleNotificationTopic = (
-  topic: string,
-  options?: MutationOptions<void>
+  options?: MutationOptions<{ topic: string }>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ topic }) => {
       await instance.patch(`${DOMAIN}/topic`, {
         params: { topic }
       });
