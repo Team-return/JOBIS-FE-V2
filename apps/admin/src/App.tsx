@@ -10,7 +10,7 @@ export function App() {
     password: string;
     platform_type: PlatformType;
   }>({ account_id: "", password: "", platform_type: "WEB" });
-  const { mutate } = useLogin(data, {
+  const { mutate } = useLogin({
     onSuccess: () => success("로그인 성공"),
     onError: err => error(`오류: ${err}`)
   });
