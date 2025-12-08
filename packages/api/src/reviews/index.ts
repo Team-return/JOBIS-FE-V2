@@ -9,11 +9,15 @@ import type {
   ReviewCountQueryParams,
   MyReviewsResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/reviews";
 
-export const useReviewDetail = (reviewId: string) => {
+export const useReviewDetail = (
+  reviewId: string,
+  options?: QueryOptions<ReviewDetailResponse>
+) => {
   return useQuery({
     queryKey: ["review-detail", reviewId],
     queryFn: async () => {
@@ -21,19 +25,25 @@ export const useReviewDetail = (reviewId: string) => {
         `${DOMAIN}/${reviewId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCreateReview = (request: CreateReviewRequest) => {
+export const useCreateReview = (
+  options?: MutationOptions<CreateReviewRequest>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useReviewQuestions = () => {
+export const useReviewQuestions = (
+  options?: QueryOptions<ReviewQuestionsResponse>
+) => {
   return useQuery({
     queryKey: ["review-questions"],
     queryFn: async () => {
@@ -41,19 +51,26 @@ export const useReviewQuestions = () => {
         `${DOMAIN}/questions`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteReview = (reviewId: string) => {
+export const useDeleteReview = (
+  options?: MutationOptions<{ reviewId: string }>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ reviewId }) => {
       await instance.delete(`${DOMAIN}/${reviewId}`);
-    }
+    },
+    ...options
   });
 };
 
-export const useReviewList = (params?: ReviewListQueryParams) => {
+export const useReviewList = (
+  params?: ReviewListQueryParams,
+  options?: QueryOptions<ReviewListResponse>
+) => {
   return useQuery({
     queryKey: ["review-list", params],
     queryFn: async () => {
@@ -61,11 +78,15 @@ export const useReviewList = (params?: ReviewListQueryParams) => {
         params
       });
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useReviewCount = (params?: ReviewCountQueryParams) => {
+export const useReviewCount = (
+  params?: ReviewCountQueryParams,
+  options?: QueryOptions<ReviewCountResponse>
+) => {
   return useQuery({
     queryKey: ["review-count", params],
     queryFn: async () => {
@@ -74,16 +95,18 @@ export const useReviewCount = (params?: ReviewCountQueryParams) => {
         { params }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useMyReviews = () => {
+export const useMyReviews = (options?: QueryOptions<MyReviewsResponse>) => {
   return useQuery({
     queryKey: ["my-reviews"],
     queryFn: async () => {
       const { data } = await instance.get<MyReviewsResponse>(`${DOMAIN}/my`);
       return data;
-    }
+    },
+    ...options
   });
 };

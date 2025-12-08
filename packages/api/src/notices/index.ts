@@ -5,38 +5,49 @@ import type {
   NoticeDetailResponse,
   NoticeListResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/notices";
 
-export const useCreateNotice = (request: CreateNoticeRequest) => {
+export const useCreateNotice = (
+  options?: MutationOptions<CreateNoticeRequest>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
-    }
+    },
+    ...options
   });
 };
 
 export const useUpdateNotice = (
   noticeId: number,
-  request: UpdateNoticeRequest
+  options?: MutationOptions<UpdateNoticeRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${noticeId}`, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteNotice = (noticeId: number) => {
+export const useDeleteNotice = (
+  options?: MutationOptions<{ noticeId: number }>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ noticeId }) => {
       await instance.delete(`${DOMAIN}/${noticeId}`);
-    }
+    },
+    ...options
   });
 };
 
-export const useNoticeDetail = (noticeId: number) => {
+export const useNoticeDetail = (
+  noticeId: number,
+  options?: QueryOptions<NoticeDetailResponse>
+) => {
   return useQuery({
     queryKey: ["notice-detail", noticeId],
     queryFn: async () => {
@@ -44,16 +55,18 @@ export const useNoticeDetail = (noticeId: number) => {
         `${DOMAIN}/${noticeId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useNoticeList = () => {
+export const useNoticeList = (options?: QueryOptions<NoticeListResponse>) => {
   return useQuery({
     queryKey: ["notice-list"],
     queryFn: async () => {
       const { data } = await instance.get<NoticeListResponse>(DOMAIN);
       return data;
-    }
+    },
+    ...options
   });
 };

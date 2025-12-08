@@ -22,79 +22,94 @@ import type {
   TeacherRecruitmentCountQueryParams,
   TeacherRecruitmentCountResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/recruitments";
 
-export const useCreateRecruitment = (request: CreateRecruitmentRequest) => {
+export const useCreateRecruitment = (
+  options?: MutationOptions<CreateRecruitmentRequest>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
-    }
+    },
+    ...options
   });
 };
 
 export const useUpdateRecruitment = (
   id: number,
-  request: UpdateRecruitmentRequest
+  options?: MutationOptions<UpdateRecruitmentRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${id}`, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteRecruitment = (recruitmentId: number) => {
+export const useDeleteRecruitment = (
+  options?: MutationOptions<{ recruitmentId: number }>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ recruitmentId }) => {
       await instance.delete(`${DOMAIN}/${recruitmentId}`);
-    }
+    },
+    ...options
   });
 };
 
 export const useUpdateRecruitmentArea = (
   recruitAreaId: number,
-  request: UpdateRecruitmentAreaRequest
+  options?: MutationOptions<UpdateRecruitmentAreaRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/area/${recruitAreaId}`, request);
-    }
+    },
+    ...options
   });
 };
 
 export const useCreateRecruitmentArea = (
   recruitmentId: number,
-  request: CreateRecruitmentAreaRequest
+  options?: MutationOptions<CreateRecruitmentAreaRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(`${DOMAIN}/${recruitmentId}/area`, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteRecruitmentArea = (recruitAreaId: number) => {
+export const useDeleteRecruitmentArea = (
+  options?: MutationOptions<{ recruitAreaId: number }>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ recruitAreaId }) => {
       await instance.delete(`${DOMAIN}/area/${recruitAreaId}`);
-    }
+    },
+    ...options
   });
 };
 
 export const useUpdateRecruitmentStatus = (
-  request: UpdateRecruitmentStatusRequest
+  options?: MutationOptions<UpdateRecruitmentStatusRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/status`, request);
-    }
+    },
+    ...options
   });
 };
 
 export const useRecruitmentList = (
-  params?: StudentRecruitmentListQueryParams
+  params?: StudentRecruitmentListQueryParams,
+  options?: QueryOptions<StudentRecruitmentListResponse>
 ) => {
   return useQuery({
     queryKey: ["recruitment-list", params],
@@ -104,12 +119,14 @@ export const useRecruitmentList = (
         { params }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useStudentRecruitmentCount = (
-  params?: Omit<StudentRecruitmentListQueryParams, "page">
+  params?: Omit<StudentRecruitmentListQueryParams, "page">,
+  options?: QueryOptions<StudentRecruitmentCountResponse>
 ) => {
   return useQuery({
     queryKey: ["student-recruitment-count", params],
@@ -119,11 +136,15 @@ export const useStudentRecruitmentCount = (
         { params }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useRecruitmentCount = (params?: RecruitmentCountQueryParams) => {
+export const useRecruitmentCount = (
+  params?: RecruitmentCountQueryParams,
+  options?: QueryOptions<RecruitmentCountResponse>
+) => {
   return useQuery({
     queryKey: ["recruitment-count", params],
     queryFn: async () => {
@@ -134,11 +155,15 @@ export const useRecruitmentCount = (params?: RecruitmentCountQueryParams) => {
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useRecruitmentDetail = (recruitmentId: number) => {
+export const useRecruitmentDetail = (
+  recruitmentId: number,
+  options?: QueryOptions<RecruitmentDetailResponse>
+) => {
   return useQuery({
     queryKey: ["recruitment-detail", recruitmentId],
     queryFn: async () => {
@@ -146,12 +171,14 @@ export const useRecruitmentDetail = (recruitmentId: number) => {
         `${DOMAIN}/${recruitmentId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useTeacherRecruitmentList = (
-  params?: TeacherRecruitmentListQueryParams
+  params?: TeacherRecruitmentListQueryParams,
+  options?: QueryOptions<TeacherRecruitmentListResponse>
 ) => {
   return useQuery({
     queryKey: ["teacher-recruitment-list", params],
@@ -161,12 +188,14 @@ export const useTeacherRecruitmentList = (
         { params }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useTeacherRecruitmentCount = (
-  params?: TeacherRecruitmentCountQueryParams
+  params?: TeacherRecruitmentCountQueryParams,
+  options?: QueryOptions<TeacherRecruitmentCountResponse>
 ) => {
   return useQuery({
     queryKey: ["teacher-recruitment-count", params],
@@ -176,7 +205,8 @@ export const useTeacherRecruitmentCount = (
         { params }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
@@ -195,7 +225,9 @@ export const useTeacherRecruitmentListNoPage = (
   });
 };
 
-export const useMyRecruitments = () => {
+export const useMyRecruitments = (
+  options?: QueryOptions<MyRecruitmentsResponse>
+) => {
   return useQuery({
     queryKey: ["my-recruitments"],
     queryFn: async () => {
@@ -203,11 +235,14 @@ export const useMyRecruitments = () => {
         `${DOMAIN}/my`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useMyRecentRecruitment = () => {
+export const useMyRecentRecruitment = (
+  options?: QueryOptions<MyRecentRecruitmentResponse>
+) => {
   return useQuery({
     queryKey: ["my-recent-recruitment"],
     queryFn: async () => {
@@ -215,11 +250,14 @@ export const useMyRecentRecruitment = () => {
         `${DOMAIN}/my/recent`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useRecruitmentFileDownload = () => {
+export const useRecruitmentFileDownload = (
+  options?: QueryOptions<RecruitmentFileResponse>
+) => {
   return useQuery({
     queryKey: ["recruitment-file"],
     queryFn: async () => {
@@ -230,11 +268,14 @@ export const useRecruitmentFileDownload = () => {
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useRecruitmentExists = () => {
+export const useRecruitmentExists = (
+  options?: QueryOptions<RecruitmentExistsResponse>
+) => {
   return useQuery({
     queryKey: ["recruitment-exists"],
     queryFn: async () => {
@@ -242,11 +283,14 @@ export const useRecruitmentExists = () => {
         `${DOMAIN}/exists`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useTeacherManualRecruitmentList = () => {
+export const useTeacherManualRecruitmentList = (
+  options?: QueryOptions<TeacherManualRecruitmentListResponse>
+) => {
   return useQuery({
     queryKey: ["teacher-manual-recruitment-list"],
     queryFn: async () => {
@@ -254,6 +298,7 @@ export const useTeacherManualRecruitmentList = () => {
         `${DOMAIN}/teacher/manual`
       );
       return data;
-    }
+    },
+    ...options
   });
 };

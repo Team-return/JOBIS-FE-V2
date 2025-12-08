@@ -18,11 +18,16 @@ import type {
   CompanyCountResponse,
   CreateTeacherCompanyRequest
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/companies";
 
-export const useCompanyStudentList = (page?: number, name?: string) => {
+export const useCompanyStudentList = (
+  page?: number,
+  name?: string,
+  options?: QueryOptions<CompanyStudentListResponse>
+) => {
   return useQuery({
     queryKey: ["company-student-list", page, name],
     queryFn: async () => {
@@ -31,11 +36,15 @@ export const useCompanyStudentList = (page?: number, name?: string) => {
         { params: { page, name } }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyStudentCount = (name?: string) => {
+export const useCompanyStudentCount = (
+  name?: string,
+  options?: QueryOptions<CompanyStudentCountResponse>
+) => {
   return useQuery({
     queryKey: ["company-student-count", name],
     queryFn: async () => {
@@ -44,11 +53,14 @@ export const useCompanyStudentCount = (name?: string) => {
         { params: { name } }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyReviewList = () => {
+export const useCompanyReviewList = (
+  options?: QueryOptions<CompanyReviewListResponse>
+) => {
   return useQuery({
     queryKey: ["company-review-list"],
     queryFn: async () => {
@@ -56,11 +68,15 @@ export const useCompanyReviewList = () => {
         `${DOMAIN}/review`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyDetail = (companyId: number) => {
+export const useCompanyDetail = (
+  companyId: number,
+  options?: QueryOptions<CompanyDetailResponse>
+) => {
   return useQuery({
     queryKey: ["company-detail", companyId],
     queryFn: async () => {
@@ -68,44 +84,53 @@ export const useCompanyDetail = (companyId: number) => {
         `${DOMAIN}/${companyId}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyMy = () => {
+export const useCompanyMy = (options?: QueryOptions<CompanyMyResponse>) => {
   return useQuery({
     queryKey: ["company-my"],
     queryFn: async () => {
       const { data } = await instance.get<CompanyMyResponse>(`${DOMAIN}/my`);
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useUpdateCompany = (
   companyId: number,
-  request: UpdateCompanyRequest
+  options?: MutationOptions<UpdateCompanyRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/${companyId}`, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useCreateCompany = (request: CreateCompanyRequest) => {
+export const useCreateCompany = (
+  options?: MutationOptions<CreateCompanyRequest, CreateCompanyResponse>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       const { data } = await instance.post<CreateCompanyResponse>(
         DOMAIN,
         request
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyExists = (businessNumber: string) => {
+export const useCompanyExists = (
+  businessNumber: string,
+  options?: QueryOptions<CompanyExistsResponse>
+) => {
   return useQuery({
     queryKey: ["company-exists", businessNumber],
     queryFn: async () => {
@@ -113,15 +138,17 @@ export const useCompanyExists = (businessNumber: string) => {
         `${DOMAIN}/exists/${businessNumber}`
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useUpdateMou = (request: UpdateMouRequest) => {
+export const useUpdateMou = (options?: MutationOptions<UpdateMouRequest>) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/mou`, request);
-    }
+    },
+    ...options
   });
 };
 
@@ -130,7 +157,8 @@ export const useTeacherCompanyList = (
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number
+  businessArea?: number,
+  options?: QueryOptions<TeacherCompanyListResponse>
 ) => {
   return useQuery({
     queryKey: ["teacher-company-list", page, type, name, region, businessArea],
@@ -140,7 +168,8 @@ export const useTeacherCompanyList = (
         { params: { page, type, name, region, business_area: businessArea } }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
@@ -149,7 +178,8 @@ export const useTeacherCompanyCount = (
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number
+  businessArea?: number,
+  options?: QueryOptions<TeacherCompanyCountResponse>
 ) => {
   return useQuery({
     queryKey: ["teacher-company-count", page, type, name, region, businessArea],
@@ -159,7 +189,8 @@ export const useTeacherCompanyCount = (
         { params: { page, type, name, region, business_area: businessArea } }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
@@ -167,7 +198,8 @@ export const useEmploymentCompanyList = (
   page?: number,
   companyName?: string,
   companyType?: string,
-  year?: number
+  year?: number,
+  options?: QueryOptions<EmploymentCompanyListResponse>
 ) => {
   return useQuery({
     queryKey: ["employment-company-list", page, companyName, companyType, year],
@@ -184,14 +216,16 @@ export const useEmploymentCompanyList = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useEmploymentCompanyCount = (
   companyName?: string,
   companyType?: string,
-  year?: number
+  year?: number,
+  options?: QueryOptions<EmploymentCompanyCountResponse>
 ) => {
   return useQuery({
     queryKey: ["employment-company-count", companyName, companyType, year],
@@ -203,15 +237,19 @@ export const useEmploymentCompanyCount = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useUpdateCompanyType = (request: UpdateCompanyTypeRequest) => {
+export const useUpdateCompanyType = (
+  options?: MutationOptions<UpdateCompanyTypeRequest>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.patch(`${DOMAIN}/type`, request);
-    }
+    },
+    ...options
   });
 };
 
@@ -219,7 +257,8 @@ export const useCompanyCount = (
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number
+  businessArea?: number,
+  options?: QueryOptions<CompanyCountResponse>
 ) => {
   return useQuery({
     queryKey: ["company-count", type, name, region, businessArea],
@@ -231,11 +270,12 @@ export const useCompanyCount = (
         }
       );
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useCompanyFileDownload = () => {
+export const useCompanyFileDownload = (options?: QueryOptions<Blob>) => {
   return useQuery({
     queryKey: ["company-file"],
     queryFn: async () => {
@@ -243,16 +283,18 @@ export const useCompanyFileDownload = () => {
         responseType: "blob"
       });
       return data;
-    }
+    },
+    ...options
   });
 };
 
 export const useCreateTeacherCompany = (
-  request: CreateTeacherCompanyRequest
+  options?: MutationOptions<CreateTeacherCompanyRequest>
 ) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(`${DOMAIN}/teacher`, request);
-    }
+    },
+    ...options
   });
 };

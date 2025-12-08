@@ -4,37 +4,48 @@ import type {
   BannerListResponse,
   TeacherBannerListResponse
 } from "./types";
+import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
 
 const DOMAIN = "/banners";
 
-export const useCreateBanner = (request: CreateBannerRequest) => {
+export const useCreateBanner = (
+  options?: MutationOptions<CreateBannerRequest>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async request => {
       await instance.post(DOMAIN, request);
-    }
+    },
+    ...options
   });
 };
 
-export const useDeleteBanner = (bannerId: number) => {
+export const useDeleteBanner = (
+  options?: MutationOptions<{ bannerId: number }>
+) => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ bannerId }) => {
       await instance.delete(`${DOMAIN}/${bannerId}`);
-    }
+    },
+    ...options
   });
 };
 
-export const useBannerList = () => {
+export const useBannerList = (options?: QueryOptions<BannerListResponse>) => {
   return useQuery({
     queryKey: ["banner-list"],
     queryFn: async () => {
       const { data } = await instance.get<BannerListResponse>(DOMAIN);
       return data;
-    }
+    },
+    ...options
   });
 };
 
-export const useTeacherBannerList = (isOpened?: boolean) => {
+export const useTeacherBannerList = (
+  isOpened?: boolean,
+  options?: QueryOptions<TeacherBannerListResponse>
+) => {
   return useQuery({
     queryKey: ["teacher-banner-list", isOpened],
     queryFn: async () => {
@@ -43,6 +54,7 @@ export const useTeacherBannerList = (isOpened?: boolean) => {
         { params: { is_opended: isOpened } }
       );
       return data;
-    }
+    },
+    ...options
   });
 };

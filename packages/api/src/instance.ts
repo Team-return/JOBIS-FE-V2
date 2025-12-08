@@ -1,5 +1,6 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { Cookies } from "react-cookie";
+import { config } from "./config";
 
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
@@ -7,13 +8,13 @@ const REFRESH_TOKEN_KEY = "refresh_token";
 const cookie = new Cookies();
 
 const forRefresh = axios.create({
-  baseURL: import.meta.env.BASE_URL,
-  timeout: 10000
+  baseURL: config.baseUrl,
+  timeout: config.timeout
 });
 
 export const instance = axios.create({
-  baseURL: import.meta.env.BASE_URL,
-  timeout: 10000
+  baseURL: config.baseUrl,
+  timeout: config.timeout
 });
 
 instance.interceptors.request.use(
@@ -27,18 +28,18 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   response => response,
-  async error => {
+  async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
 
     if (error.response?.status && error.response.status >= 500) {
       try {
-        await axios.get(`${import.meta.env.BASE_URL}/`);
+        await axios.get(`${config.baseUrl}/`);
       } catch (healthError) {
-        console.error("서버 상태가 원활하지 않습니다.", healthError);
+        config.onServerError(healthError);
       }
-      throw error;
+      throw error.status;
     }
 
     if (error.response?.status === 403 && !originalRequest._retry) {
@@ -86,7 +87,7 @@ instance.interceptors.response.use(
       }
     }
 
-    throw error;
+    throw error.status;
   }
 );
 

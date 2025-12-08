@@ -15,7 +15,8 @@ export default defineConfig({
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
       name: "jobis-api",
-      fileName: format => `jobis-api.${format}.js`
+      fileName: "index",
+      formats: ["es"]
     },
     rollupOptions: {
       external: ["@tanstack/react-query", "axios"],
