@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import * as ReactDOM from "react-dom/client";
 import App from "./App";
+import { JOBISDesignSystem } from "@jobis/design-system";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -9,8 +9,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <BrowserRouter>
+    <JOBISDesignSystem>
       <App />
-    </BrowserRouter>
+    </JOBISDesignSystem>
   </StrictMode>
 );
