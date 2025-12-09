@@ -1,10 +1,11 @@
+import { Header } from "@jobis/design-system";
 import { createBrowserRouter } from "react-router-dom";
 
 export const Router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <div>header</div>,
+      element: <Header types="admin" />,
       children: [
         {
           path: "/recruitment",

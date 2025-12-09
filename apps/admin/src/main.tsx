@@ -1,5 +1,4 @@
 import { StrictMode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import * as ReactDOM from "react-dom/client";
 import App from "./App";
 import { JOBISDesignSystem } from "@jobis/design-system";
@@ -13,9 +12,7 @@ root.render(
   <StrictMode>
     <QueryProvider>
       <JOBISDesignSystem>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <App />
       </JOBISDesignSystem>
     </QueryProvider>
   </StrictMode>
