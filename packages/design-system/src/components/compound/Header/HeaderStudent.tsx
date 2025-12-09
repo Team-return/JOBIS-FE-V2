@@ -11,6 +11,7 @@ import {
 } from "@/components";
 import { useState } from "react";
 import type { Props as HeaderProps } from "./Header.types";
+import { useNavigate } from "react-router-dom";
 type StudentProps = Extract<HeaderProps, { types: "student" }>;
 
 type Props = Omit<StudentProps, "types">;
@@ -18,6 +19,7 @@ type Props = Omit<StudentProps, "types">;
 const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   position: relative;
@@ -92,14 +94,19 @@ export const HeaderStudent = ({
   const { currentTheme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
   const [hasUnread, setHasUnread] = useState(alarm);
+  const navigate = useNavigate();
 
   const studentMenu = [
-    "기업체",
-    "모집의뢰서",
-    "공지사항",
-    "후기",
-    "마이페이지"
+    { label: "기업체", path: "/company" },
+    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "공지사항", path: "/notice" },
+    { label: "후기", path: "/review" },
+    { label: "마이페이지", path: "/mypage" }
   ];
+
+  const handleMenuClick = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <Component>
@@ -108,9 +115,12 @@ export const HeaderStudent = ({
       </LogoContainer>
       <MenuContainer types="student">
         {studentMenu.map(item => (
-          <TextContainer key={item}>
+          <TextContainer
+            key={item.label}
+            onClick={() => handleMenuClick(item.path)}
+          >
             <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
-              {item}
+              {item.label}
             </Text>
           </TextContainer>
         ))}

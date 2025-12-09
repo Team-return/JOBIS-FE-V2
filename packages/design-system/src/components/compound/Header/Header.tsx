@@ -3,6 +3,7 @@ import { useTheme } from "@/hooks";
 import { Props } from "./Header.types";
 import { Icon, Text } from "@/components";
 import { HeaderStudent } from "./HeaderStudent";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export const Component = styled.div`
   padding: 21px 0;
@@ -35,53 +36,88 @@ export const LogoContainer = styled.div`
 export const Header = (props: Props) => {
   const { types, onClickLogo } = props;
   const { currentTheme } = useTheme();
-  const companyMenu = ["모집의뢰서", "지원자", "내 기업정보"];
-  const adminMenu = [
-    "모집의뢰서",
-    "기업",
-    "학생",
-    "학생 후기",
-    "지원서",
-    "공지",
-    "배너"
+  const navigate = useNavigate();
+
+  const companyMenu = [
+    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "지원자", path: "/application" },
+    { label: "내 기업정보", path: "/company/detail" }
   ];
+
+  const adminMenu = [
+    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "기업", path: "/company" },
+    { label: "학생", path: "/student" },
+    { label: "학생 후기", path: "/review" },
+    { label: "지원서", path: "/application" },
+    { label: "공지", path: "/notice" },
+    { label: "배너", path: "/banner" }
+  ];
+
+  const handleMenuClick = (path: string) => {
+    navigate(path);
+  };
+
   return types === "admin" ? (
-    <Component>
-      <LogoContainer onClick={onClickLogo}>
-        <Icon icon="LogoWithText" width={90} height={26} />
-      </LogoContainer>
-      <MenuContainer types={types}>
-        {adminMenu.map(item => (
-          <TextContainer key={item}>
-            <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
-              {item}
-            </Text>
-          </TextContainer>
-        ))}
-      </MenuContainer>
-    </Component>
+    <>
+      <Component>
+        <LogoContainer onClick={onClickLogo}>
+          <Icon icon="LogoWithText" width={90} height={26} />
+        </LogoContainer>
+        <MenuContainer types={types}>
+          {adminMenu.map(item => (
+            <TextContainer
+              key={item.label}
+              onClick={() => handleMenuClick(item.path)}
+            >
+              <Text
+                $span
+                $size="body2"
+                $color={currentTheme.color.grayScale[80]}
+              >
+                {item.label}
+              </Text>
+            </TextContainer>
+          ))}
+        </MenuContainer>
+      </Component>
+      <Outlet />
+    </>
   ) : types === "student" ? (
-    <HeaderStudent
-      userName={props.userName}
-      onClickProfile={props.onClickProfile}
-      alarm={props.alarm}
-      notifications={props.notifications}
-      onClickLogo={onClickLogo}
-    />
+    <>
+      <HeaderStudent
+        userName={props.userName}
+        onClickProfile={props.onClickProfile}
+        alarm={props.alarm}
+        notifications={props.notifications}
+        onClickLogo={onClickLogo}
+      />
+      <Outlet />
+    </>
   ) : types === "company" ? (
-    <Component>
-      <LogoContainer onClick={onClickLogo}>
-        <Icon icon="LogoWithText" width={90} height={26} />
-      </LogoContainer>
-      <MenuContainer types={types}>
-        {companyMenu.map(item => (
-          <TextContainer key={item}>
-            <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
-              {item}
-            </Text>
-          </TextContainer>
-        ))}
-      </MenuContainer>
-    </Component>
+    <>
+      <Component>
+        <LogoContainer onClick={onClickLogo}>
+          <Icon icon="LogoWithText" width={90} height={26} />
+        </LogoContainer>
+        <MenuContainer types={types}>
+          {companyMenu.map(item => (
+            <TextContainer
+              key={item.label}
+              onClick={() => handleMenuClick(item.path)}
+            >
+              <Text
+                $span
+                $size="body2"
+                $color={currentTheme.color.grayScale[80]}
+              >
+                {item.label}
+              </Text>
+            </TextContainer>
+          ))}
+        </MenuContainer>
+      </Component>
+      <Outlet />
+    </>
   ) : null;
 };
