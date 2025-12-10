@@ -1,11 +1,16 @@
 import { Header } from "@jobis/design-system";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useNavigate } from "react-router-dom";
 
-export const Router: ReturnType<typeof createBrowserRouter> =
+const AdminHeader = () => {
+  const navigate = useNavigate();
+  return <Header types="admin" onClickLogo={() => navigate("/")} />;
+};
+
+export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <Header types="admin" />,
+      element: <AdminHeader />,
       children: [
         {
           path: "/recruitment",
