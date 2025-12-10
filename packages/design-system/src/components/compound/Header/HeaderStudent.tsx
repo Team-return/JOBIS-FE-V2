@@ -85,7 +85,6 @@ const AlarmContainer = styled.div`
 `;
 
 export const HeaderStudent = ({
-  onClickProfile,
   userName,
   alarm,
   onClickLogo,
@@ -108,25 +107,40 @@ export const HeaderStudent = ({
     navigate(path);
   };
 
+  const onClickProfile = () => {
+    navigate("/mypage");
+  };
+
   return (
     <Component>
       <LogoContainer onClick={onClickLogo}>
         <Icon icon="LogoWithText" width={90} height={26} />
       </LogoContainer>
       <MenuContainer types="student">
-        {studentMenu.map(item => (
-          <TextContainer
-            key={item.label}
-            onClick={() => handleMenuClick(item.path)}
-          >
-            <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
-              {item.label}
-            </Text>
-          </TextContainer>
-        ))}
+        {studentMenu.map(item => {
+          const isActive = location.pathname.startsWith(item.path);
+          const textColor = isActive
+            ? currentTheme.color.grayScale[90]
+            : currentTheme.color.grayScale[80];
+          return (
+            <TextContainer
+              key={item.label}
+              $active={isActive}
+              onClick={() => handleMenuClick(item.path)}
+            >
+              <Text $span $size="body2" $color={textColor}>
+                {item.label}
+              </Text>
+            </TextContainer>
+          );
+        })}
       </MenuContainer>
       <HeaderWrapper>
-        <Icon icon="HeaderProfile" onClick={onClickProfile} />
+        <Icon
+          icon="HeaderProfile"
+          onClick={onClickProfile}
+          style={{ cursor: "pointer" }}
+        />
         <HeaderContainer
           onClick={() => {
             const next = !isAlarm;

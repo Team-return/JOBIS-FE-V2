@@ -162,12 +162,7 @@ describe("Header", () => {
     it("handles profile click event", async () => {
       const handleClickProfile = vi.fn();
       renderWithRouter(
-        <Header
-          types="student"
-          userName="홍길동"
-          alarm={false}
-          onClickProfile={handleClickProfile}
-        />
+        <Header types="student" userName="홍길동" alarm={false} />
       );
 
       const profileIcons = screen.getAllByRole("img");

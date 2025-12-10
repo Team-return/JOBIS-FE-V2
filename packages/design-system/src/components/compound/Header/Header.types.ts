@@ -24,7 +24,6 @@ interface CompanyProps extends BaseProps {
 
 interface StudentProps extends BaseProps {
   types: "student";
-  onClickProfile?: () => void;
   userName: string;
   alarm?: boolean;
   notifications?: Notification[];

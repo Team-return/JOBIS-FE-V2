@@ -1,9 +1,10 @@
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Props } from "./Header.types";
 import { Icon, Text } from "@/components";
 import { HeaderStudent } from "./HeaderStudent";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 export const Component = styled.div`
   padding: 21px 0;
@@ -18,9 +19,16 @@ export const MenuContainer = styled.div<Pick<Props, "types">>`
     types === "admin" ? "34px" : types === "student" ? "40px" : "48px"};
 `;
 
-export const TextContainer = styled.div`
+export const TextContainer = styled.div<{ $active?: boolean }>`
   > span {
     cursor: pointer;
+    ${({ $active, theme }) =>
+      $active &&
+      css`
+        color: ${theme.color.grayScale[90]};
+        font-weight: ${theme.fontWeight.bold};
+        font-size: ${theme.font.body2.fontSize};
+      `}
     &:hover {
       color: ${({ theme }) => theme.color.grayScale[90]};
       font-weight: ${({ theme }) => theme.fontWeight.bold};
@@ -37,6 +45,7 @@ export const Header = (props: Props) => {
   const { types, onClickLogo } = props;
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const companyMenu = [
     { label: "모집의뢰서", path: "/recruitment" },
@@ -65,20 +74,24 @@ export const Header = (props: Props) => {
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
         <MenuContainer types={types}>
-          {adminMenu.map(item => (
-            <TextContainer
-              key={item.label}
-              onClick={() => handleMenuClick(item.path)}
-            >
-              <Text
-                $span
-                $size="body2"
-                $color={currentTheme.color.grayScale[80]}
+          {adminMenu.map(item => {
+            const isActive = location.pathname.startsWith(item.path);
+            const textColor = isActive
+              ? currentTheme.color.grayScale[90]
+              : currentTheme.color.grayScale[80];
+
+            return (
+              <TextContainer
+                key={item.label}
+                $active={isActive}
+                onClick={() => handleMenuClick(item.path)}
               >
-                {item.label}
-              </Text>
-            </TextContainer>
-          ))}
+                <Text $span $size="body2" $color={textColor}>
+                  {item.label}
+                </Text>
+              </TextContainer>
+            );
+          })}
         </MenuContainer>
       </Component>
       <Outlet />
@@ -87,7 +100,6 @@ export const Header = (props: Props) => {
     <>
       <HeaderStudent
         userName={props.userName}
-        onClickProfile={props.onClickProfile}
         alarm={props.alarm}
         notifications={props.notifications}
         onClickLogo={onClickLogo}
@@ -101,20 +113,24 @@ export const Header = (props: Props) => {
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
         <MenuContainer types={types}>
-          {companyMenu.map(item => (
-            <TextContainer
-              key={item.label}
-              onClick={() => handleMenuClick(item.path)}
-            >
-              <Text
-                $span
-                $size="body2"
-                $color={currentTheme.color.grayScale[80]}
+          {companyMenu.map(item => {
+            const isActive = location.pathname.startsWith(item.path);
+            const textColor = isActive
+              ? currentTheme.color.grayScale[90]
+              : currentTheme.color.grayScale[80];
+
+            return (
+              <TextContainer
+                key={item.label}
+                $active={isActive}
+                onClick={() => handleMenuClick(item.path)}
               >
-                {item.label}
-              </Text>
-            </TextContainer>
-          ))}
+                <Text $span $size="body2" $color={textColor}>
+                  {item.label}
+                </Text>
+              </TextContainer>
+            );
+          })}
         </MenuContainer>
       </Component>
       <Outlet />
