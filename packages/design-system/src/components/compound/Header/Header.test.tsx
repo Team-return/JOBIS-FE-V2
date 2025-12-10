@@ -5,8 +5,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Header } from "./Header";
 import { ThemeProvider } from "@emotion/react";
 import { darkTheme } from "@/themes";
-import type { ReactElement, ReactNode } from "react";
-import { MemoryRouter } from "react-router-dom";
+import type { ReactElement } from "react";
 
 const mockNavigate = vi.fn();
 
@@ -18,18 +17,14 @@ vi.mock("react-router-dom", async () => {
 
   return {
     ...actual,
-    MemoryRouter: ({ children }: { children: ReactNode }) => <>{children}</>,
-    Outlet: () => null,
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
+    useLocation: () => ({ pathname: "/" }),
+    Outlet: () => null
   };
 });
 
 const renderWithRouter = (element: ReactElement) => {
-  return render(
-    <MemoryRouter>
-      <ThemeProvider theme={darkTheme}>{element}</ThemeProvider>
-    </MemoryRouter>
-  );
+  return render(<ThemeProvider theme={darkTheme}>{element}</ThemeProvider>);
 };
 
 describe("Header", () => {
@@ -160,14 +155,13 @@ describe("Header", () => {
     });
 
     it("handles profile click event", async () => {
-      const handleClickProfile = vi.fn();
       renderWithRouter(
         <Header types="student" userName="홍길동" alarm={false} />
       );
 
       const profileIcons = screen.getAllByRole("img");
       await userEvent.click(profileIcons[1]);
-      expect(handleClickProfile).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/mypage");
     });
 
     it("toggles alarm container and shows empty state when no notifications", async () => {

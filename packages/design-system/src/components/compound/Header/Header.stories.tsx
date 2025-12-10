@@ -59,10 +59,6 @@ const meta: Meta<typeof Header> = {
       control: "text",
       description: "학생 헤더에서 표시될 사용자 이름"
     },
-    onClickProfile: {
-      action: "onClickProfile",
-      description: "학생 헤더에서 프로필 아이콘 클릭 이벤트"
-    },
     onClickLogo: {
       action: "onClickLogo",
       description: "로고 클릭 이벤트"
@@ -102,7 +98,6 @@ export const Student: Story = {
     userName: "홍길동",
     alarm: true,
     notifications: mockNotifications,
-    onClickProfile: fn(),
     onClickLogo: fn()
   }
 };
