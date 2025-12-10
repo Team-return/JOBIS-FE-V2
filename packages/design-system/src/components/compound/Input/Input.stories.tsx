@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn, userEvent, within, expect } from "storybook/test";
 import { Input } from "./Input";
-import * as icons from "../../../../assets/icons";
+import * as icons from "../../../icons";
 
 const meta: Meta<typeof Input> = {
   title: "components/compound/Input",

@@ -3,6 +3,12 @@ import { withCustomTheme } from "./withCustomTheme";
 import docs from "@storybook/addon-docs";
 import a11y from "@storybook/addon-a11y";
 
+if (typeof document !== "undefined" && !document.getElementById("toast-root")) {
+  const div = document.createElement("div");
+  div.id = "toast-root";
+  document.body.appendChild(div);
+}
+
 const preview = definePreview({
   parameters: {
     controls: {
