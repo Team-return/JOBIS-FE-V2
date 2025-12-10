@@ -6,7 +6,8 @@
       "@jobis/design-system": ["../../packages/design-system/src/index"],
       "@jobis/api": ["../../packages/api/src/index"]
     },
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [

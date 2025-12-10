@@ -1,11 +1,16 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useNavigate } from "react-router-dom";
 import { Header } from "@jobis/design-system";
 
-export const Router: ReturnType<typeof createBrowserRouter> =
+const CompanyHeader = () => {
+  const navigate = useNavigate();
+  return <Header types="company" onClickLogo={() => navigate("/")} />;
+};
+
+export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <Header types="company" />,
+      element: <CompanyHeader />,
       children: [
         {
           path: "/recruitment",
@@ -16,7 +21,7 @@ export const Router: ReturnType<typeof createBrowserRouter> =
             },
             { path: "write", element: <div>모집의뢰서 작성</div> },
             {
-              path: "write?winter=true",
+              path: "write/winter",
               element: <div>동계 체험 모집의뢰서 작성</div>
             }
           ]
@@ -27,7 +32,7 @@ export const Router: ReturnType<typeof createBrowserRouter> =
             { index: true, element: <div>기업정보 등록</div> },
             { path: "detail", element: <div>내 기업정보</div> },
             {
-              path: "detail/edit/",
+              path: "detail/edit",
               element: <div>기업 정보 수정</div>
             }
           ]
