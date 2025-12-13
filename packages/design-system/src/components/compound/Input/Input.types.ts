@@ -11,4 +11,5 @@ export interface Props {
   $errorMessage?: string;
   $iconName?: IconName;
   onIconClick?: () => void;
+  type?: "text" | "password";
 }

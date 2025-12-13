@@ -62,7 +62,9 @@ const StyledInput = styled.input`
   outline: none;
   background-color: transparent;
   color: ${({ theme }) => theme.color.grayScale[80]};
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.font.body2.fontSize};
+  line-height: ${({ theme }) => theme.font.body2.lineHeight};
+  font-weight: ${({ theme }) => theme.fontWeight.regular};
 
   &::placeholder {
     color: ${({ theme }) => theme.color.grayScale[50]};
@@ -85,6 +87,7 @@ export const Input = ({
   $iconName,
   onIconClick,
   disabled,
+  type = "text",
   ...props
 }: Props) => {
   const { currentTheme } = useTheme();
@@ -107,6 +110,7 @@ export const Input = ({
           onChange={handleChange}
           aria-invalid={!!$errorMessage}
           disabled={disabled}
+          type={type}
           {...props}
         />
         {$iconName && (
