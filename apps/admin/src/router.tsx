@@ -1,5 +1,6 @@
 import { Header } from "@jobis/design-system";
 import { createBrowserRouter, useNavigate } from "react-router-dom";
+import { Login } from "./pages/Login";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
@@ -63,6 +64,6 @@ export const router: ReturnType<typeof createBrowserRouter> =
     },
     {
       path: "/login",
-      element: <div>login</div>
+      element: <Login />
     }
   ]);
