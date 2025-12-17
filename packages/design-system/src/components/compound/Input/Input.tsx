@@ -86,8 +86,10 @@ export const Input = ({
   $width,
   $iconName,
   onIconClick,
+  onKeyDown,
   disabled,
   type = "text",
+  autoComplete,
   ...props
 }: Props) => {
   const { currentTheme } = useTheme();
@@ -108,9 +110,11 @@ export const Input = ({
           id={id}
           value={value}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           aria-invalid={!!$errorMessage}
           disabled={disabled}
           type={type}
+          autoComplete={autoComplete}
           {...props}
         />
         {$iconName && (
