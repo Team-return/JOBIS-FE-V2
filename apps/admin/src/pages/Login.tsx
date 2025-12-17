@@ -4,9 +4,7 @@ import {
   Button,
   Checkbox,
   Flex,
-  idRegex,
   Input,
-  passwordRegex,
   Surface,
   Text,
   useTheme,
@@ -23,6 +21,11 @@ export const Login = () => {
   const [idError, setIdError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { success, error } = useToast();
+
+  const idRegex = /^[A-Za-z]*$/;
+
+  const passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
 
   const validateId = (id: string) => {
     if (id.length > 30) {
