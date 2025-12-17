@@ -10,7 +10,8 @@ import {
   useTheme,
   useToast
 } from "@jobis/design-system";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const { currentTheme } = useTheme();
@@ -21,18 +22,29 @@ export const Login = () => {
   const [idError, setIdError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { success, error } = useToast();
+  const navigation = useNavigate();
 
+  /**
+   * 0~30자의 영문자만 허용합니다. 공백 입력 여부는 정규식 전에 별도 검사합니다.
+   */
   const idRegex = /^[A-Za-z]*$/;
 
+  /**
+   * 8~16자, 영문 1개 이상, 숫자 1개 이상, 특수문자(@$!%*#?&) 1개 이상을 요구합니다.
+   */
   const passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
 
   const validateId = (id: string) => {
+    if (!id || id.trim().length === 0) {
+      setIdError("아이디를 입력해주세요.");
+      return true;
+    }
     if (id.length > 30) {
       setIdError("아이디는 최대 30자까지 입력 가능합니다.");
       return true;
     }
-    if (id && !idRegex.test(id)) {
+    if (!idRegex.test(id)) {
       setIdError("아이디는 영문만 입력 가능합니다.");
       return true;
     }
@@ -41,6 +53,10 @@ export const Login = () => {
   };
 
   const validatePassword = (password: string) => {
+    if (!password || password.trim().length === 0) {
+      setPasswordError("비밀번호를 입력해주세요.");
+      return true;
+    }
     if (!passwordRegex.test(password)) {
       setPasswordError(
         "비밀번호는 영문, 숫자, 특수문자를 포함하여 8-16자여야 합니다."
@@ -58,6 +74,7 @@ export const Login = () => {
         refreshToken: data.refresh_token
       });
       success("로그인에 성공했습니다.");
+      navigation("/recruitment");
     },
     onError: status => {
       switch (status) {
@@ -82,6 +99,11 @@ export const Login = () => {
     }
 
     login({ account_id: accountId, password, platform_type: "WEB" });
+  };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      onSubmit(id, password);
+    }
   };
 
   return (
@@ -119,6 +141,7 @@ export const Login = () => {
                 value={id}
                 onChange={setId}
                 $errorMessage={idError}
+                onKeyDown={handleKeyDown}
               />
               <Input
                 placeholder="비밀번호를 입력해주세요."
@@ -129,6 +152,8 @@ export const Login = () => {
                 onIconClick={() => setEyeOpen(!eyeOpen)}
                 type={eyeOpen ? "text" : "password"}
                 $errorMessage={passwordError}
+                autoComplete="current-password"
+                onKeyDown={handleKeyDown}
               />
             </Flex>
             <Flex $justify="flex-start">
