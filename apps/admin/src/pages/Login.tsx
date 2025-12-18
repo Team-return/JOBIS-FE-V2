@@ -82,7 +82,7 @@ export const Login = () => {
           error("아이디가 공백일 수 없습니다.");
           break;
         case 401:
-          error("비밀번호가 공백일 수 없습니다.");
+          error("비밀번호가 올바르지 않습니다.");
           break;
         case 404:
           error("아이디가 올바르지 않습니다.");
