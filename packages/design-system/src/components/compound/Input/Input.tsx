@@ -89,8 +89,7 @@ export const Input = ({
   onKeyDown,
   disabled,
   type = "text",
-  autoComplete,
-  ...props
+  autoComplete
 }: Props) => {
   const { currentTheme } = useTheme();
   const id = useId();
@@ -115,7 +114,6 @@ export const Input = ({
           disabled={disabled}
           type={type}
           autoComplete={autoComplete}
-          {...props}
         />
         {$iconName && (
           <IconWrapper onClick={onIconClick}>
