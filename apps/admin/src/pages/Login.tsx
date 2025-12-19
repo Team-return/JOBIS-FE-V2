@@ -69,10 +69,7 @@ export const Login = () => {
 
   const { mutate: login } = useLogin({
     onSuccess: data => {
-      setToken({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token
-      });
+      setToken(data);
       success("로그인에 성공했습니다.");
       navigation("/recruitment");
     },
