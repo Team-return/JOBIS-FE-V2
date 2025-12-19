@@ -1,6 +1,7 @@
 # envenvironment
 .env
-**/.env
+.env.*
+!.env.example
 
 # compiled output
 dist
@@ -26,10 +27,13 @@ node_modules
 .DS_Store
 Thumbs.db
 
+# nx local data
 .nx/cache
 .nx/workspace-data
 
+# transpile temp
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
+# yarn local state
 .yarn/install-state.gz
