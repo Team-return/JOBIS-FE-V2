@@ -32,7 +32,7 @@ export const setCookie = (key: string, value: string, expires?: Date) => {
 };
 
 export const removeCookie = (key: string) => {
-  cookie.remove(key);
+  cookie.remove(key, { path: "/" });
 };
 
 export const setToken = (data: AuthData) => {
@@ -69,16 +69,21 @@ instance.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (error.response?.status && error.response.status >= 500) {
+    const statusCode = error.response?.status ?? error.status;
+    if (statusCode && statusCode >= 500) {
       try {
         await axios.get(`${config.baseUrl}/`);
       } catch (healthError) {
-        config.onServerError?.(healthError);
+        if (healthError instanceof AxiosError) {
+          config.onServerError?.(healthError);
+        } else {
+          throw statusCode;
+        }
       }
-      throw error.status;
+      throw statusCode;
     }
 
-    if (error.response?.status === 403 && !originalRequest._retry) {
+    if (statusCode === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -112,6 +117,6 @@ instance.interceptors.response.use(
       }
     }
 
-    throw error.status;
+    throw statusCode;
   }
 );
