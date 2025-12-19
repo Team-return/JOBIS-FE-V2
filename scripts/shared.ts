@@ -49,7 +49,13 @@ export const git = {
 
   async getDiff(): Promise<string> {
     try {
-      const { stdout } = await execa("git", ["diff", "--cached"]);
+      const { stdout } = await execa("git", [
+        "diff",
+        "--cached",
+        "--",
+        ".",
+        `:!yarn.lock`
+      ]);
       return stdout;
     } catch (error) {
       logger.error("Git diff 조회 실패", error);
