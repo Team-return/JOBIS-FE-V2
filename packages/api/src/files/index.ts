@@ -39,9 +39,7 @@ export const usePresignLogoFile = (options?: MutationOptions<File, string>) => {
         return new Promise<string>(resolve => {
           axios
             .put(url.pre_signed_url, presignedFile)
-            .then(() =>
-              resolve(`${import.meta.env.VITE_FILE_URL}${url.file_path}`)
-            );
+            .then(() => resolve(`${import.meta.env.FILE_URL}${url.file_path}`));
         });
       })
   });
