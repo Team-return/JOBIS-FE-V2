@@ -14,5 +14,14 @@ export interface Props {
   $errorMessage?: string;
   $iconName?: IconName;
   type?: "text" | "password";
-  autoComplete?: "username" | "current-password" | "new-password";
+  autoComplete?:
+    | "email"
+    | "username"
+    | "name"
+    | "tel"
+    | "address-line1"
+    | "postal-code"
+    | "current-password"
+    | "new-password"
+    | "off";
 }
