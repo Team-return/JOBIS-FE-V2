@@ -3,11 +3,11 @@ interface Config {
   timeout: number;
   staleTime: number;
   gcTime: number;
-  onServerError: (error: unknown) => void;
+  onServerError?: (error: unknown) => void;
 }
 
 export const config: Config = {
-  baseUrl: import.meta.env.VITE_BASE_URL,
+  baseUrl: import.meta.env.BASE_URL!,
   timeout: 10000,
   staleTime: 60000,
   gcTime: 600000,
