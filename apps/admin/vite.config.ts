@@ -39,7 +39,7 @@ const sentryPlugin = sentryVitePlugin({
       env: mode
     }
   },
-  authToken: env.VITE_SENTRY_AUTH_TOKEN,
+  authToken: env.SENTRY_AUTH_TOKEN,
   telemetry: false,
   sourcemaps: {
     assets: ["./dist/assets/**"],
@@ -52,7 +52,7 @@ export default defineConfig({
     sourcemap: true
   },
   define: {
-    "import.meta.env.MODE": JSON.stringify(env.MODE),
+    "import.meta.env.MODE": JSON.stringify(mode),
     "import.meta.env.BASE_URL": JSON.stringify(env.BASE_URL)
   },
   plugins: [react(), tsconfigPaths(), sentryPlugin]
