@@ -19,6 +19,7 @@ export const SCOPE_MAP: Record<string, string> = {
   ST: "Student",
   DS: "Design System",
   AP: "API",
+  SY: "Sentry",
   RT: "Root"
 };
 
@@ -27,7 +28,8 @@ export const COMMIT_SCOPES = [
   { code: "CO", path: "apps/company/" },
   { code: "ST", path: "apps/student/" },
   { code: "AP", path: "packages/api/" },
-  { code: "DS", path: "packages/design-system/" }
+  { code: "DS", path: "packages/design-system/" },
+  { code: "SY", path: "packages/sentry/" }
 ];
 
 export const COMMIT_REGEX = /^(\p{Emoji}\uFE0F?)\s\(([A-Z]{2})\)\s::\s(.*)$/u;
