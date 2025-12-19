@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "@jobis/design-system": ["../../packages/design-system/src/index"],
-      "@jobis/api": ["../../packages/api/src/index"]
+      "@jobis/api": ["../../packages/api/src/index"],
+      "@jobis/sentry": ["../../packages/sentry/src/index"]
     },
-    "outDir": "dist",
-    "rootDir": "src"
+    "outDir": "dist"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
@@ -16,6 +16,9 @@
     },
     {
       "path": "../../packages/api"
+    },
+    {
+      "path": "../../packages/sentry"
     }
   ]
 }
