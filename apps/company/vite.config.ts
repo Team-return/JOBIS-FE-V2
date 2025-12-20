@@ -25,7 +25,7 @@ const mode: Mode = (await isLocal())
   : ((process.env.MODE ?? "development") as Mode);
 const env =
   mode === "development" ? loadEnv(mode, envFolderPath, "") : process.env;
-const sentryProjectName = projectName.split("/").pop();
+const sentryProjectName = projectName.split("/").pop()!;
 
 const sentryPlugin = sentryVitePlugin({
   org: "team-return",
@@ -53,7 +53,12 @@ export default defineConfig({
   },
   define: {
     "import.meta.env.MODE": JSON.stringify(mode),
-    "import.meta.env.BASE_URL": JSON.stringify(env.BASE_URL)
+    "import.meta.env.BASE_URL": JSON.stringify(env.BASE_URL),
+    "import.meta.env.SENTRY_DSN": JSON.stringify(
+      env[`SENTRY_${sentryProjectName.toUpperCase()}_DSN`]
+    ),
+    "import.meta.env.VERSION": JSON.stringify(version),
+    "import.meta.env.APP_DIST": JSON.stringify(sentryProjectName)
   },
   plugins: [react(), tsconfigPaths(), sentryPlugin]
 });
