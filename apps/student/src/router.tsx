@@ -5,7 +5,7 @@ const StudentHeader = () => {
   const navigate = useNavigate();
   return (
     <Header
-      types="student"
+      type="student"
       userName="홍길동"
       onClickLogo={() => navigate("/")}
     />
