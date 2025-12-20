@@ -4,7 +4,7 @@ import { Login } from "./pages/Login";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
-  return <Header types="admin" onClickLogo={() => navigate("/")} />;
+  return <Header type="admin" onClickLogo={() => navigate("/")} />;
 };
 
 export const router: ReturnType<typeof createBrowserRouter> =
