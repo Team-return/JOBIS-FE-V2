@@ -182,7 +182,7 @@ export const setUser = (user: {
   role?: string;
   subscription?: string;
 }) => {
-  if (!IS_PRODUCTION) {
+  if (!(IS_PRODUCTION || IS_STAGING)) {
     console.log("[SENTRY] User set:", user);
     return;
   }
