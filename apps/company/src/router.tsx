@@ -3,7 +3,7 @@ import { Header } from "@jobis/design-system";
 
 const CompanyHeader = () => {
   const navigate = useNavigate();
-  return <Header types="company" onClickLogo={() => navigate("/")} />;
+  return <Header type="company" onClickLogo={() => navigate("/")} />;
 };
 
 export const router: ReturnType<typeof createBrowserRouter> =
