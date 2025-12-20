@@ -13,10 +13,10 @@ export const Component = styled.div`
   justify-content: space-around;
 `;
 
-export const MenuContainer = styled.div<Pick<Props, "types">>`
+export const MenuContainer = styled.div<Pick<Props, "type">>`
   display: flex;
-  gap: ${({ types }) =>
-    types === "admin" ? "34px" : types === "student" ? "40px" : "48px"};
+  gap: ${({ type }) =>
+    type === "admin" ? "34px" : type === "student" ? "40px" : "48px"};
 `;
 
 export const TextContainer = styled.div<{ $active?: boolean }>`
@@ -42,7 +42,7 @@ export const LogoContainer = styled.div`
 `;
 
 export const Header = (props: Props) => {
-  const { types, onClickLogo } = props;
+  const { type, onClickLogo } = props;
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,13 +67,13 @@ export const Header = (props: Props) => {
     navigate(path);
   };
 
-  return types === "admin" ? (
+  return type === "admin" ? (
     <>
       <Component>
         <LogoContainer onClick={onClickLogo}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
-        <MenuContainer types={types}>
+        <MenuContainer type={type}>
           {adminMenu.map(item => {
             const isActive = location.pathname.startsWith(item.path);
             const textColor = isActive
@@ -96,7 +96,7 @@ export const Header = (props: Props) => {
       </Component>
       <Outlet />
     </>
-  ) : types === "student" ? (
+  ) : type === "student" ? (
     <>
       <HeaderStudent
         userName={props.userName}
@@ -106,13 +106,13 @@ export const Header = (props: Props) => {
       />
       <Outlet />
     </>
-  ) : types === "company" ? (
+  ) : type === "company" ? (
     <>
       <Component>
         <LogoContainer onClick={onClickLogo}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
-        <MenuContainer types={types}>
+        <MenuContainer type={type}>
           {companyMenu.map(item => {
             const isActive = location.pathname.startsWith(item.path);
             const textColor = isActive

@@ -10,20 +10,20 @@ interface Notification {
   new: boolean;
 }
 interface BaseProps {
-  types: HeaderTypes;
+  type: HeaderTypes;
   onClickLogo?: () => void;
 }
 
 interface AdminProps extends BaseProps {
-  types: "admin";
+  type: "admin";
 }
 
 interface CompanyProps extends BaseProps {
-  types: "company";
+  type: "company";
 }
 
 interface StudentProps extends BaseProps {
-  types: "student";
+  type: "student";
   userName: string;
   alarm?: boolean;
   notifications?: Notification[];

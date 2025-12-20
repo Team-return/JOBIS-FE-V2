@@ -12,9 +12,9 @@ import {
 import { useState } from "react";
 import type { Props as HeaderProps } from "./Header.types";
 import { useNavigate } from "react-router-dom";
-type StudentProps = Extract<HeaderProps, { types: "student" }>;
+type StudentProps = Extract<HeaderProps, { type: "student" }>;
 
-type Props = Omit<StudentProps, "types">;
+type Props = Omit<StudentProps, "type">;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -116,7 +116,7 @@ export const HeaderStudent = ({
       <LogoContainer onClick={onClickLogo}>
         <Icon icon="LogoWithText" width={90} height={26} />
       </LogoContainer>
-      <MenuContainer types="student">
+      <MenuContainer type="student">
         {studentMenu.map(item => {
           const isActive = location.pathname.startsWith(item.path);
           const textColor = isActive
