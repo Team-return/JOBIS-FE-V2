@@ -6,17 +6,20 @@ import type {
   CreateEmploymentRequest,
   DeleteAcceptanceRequest
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
+import { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { acceptancesKeys } from "./keys";
 
 const DOMAIN = "/acceptances";
 
+export { acceptancesKeys };
+
 export const useAcceptanceDetail = (
   companyId: number,
-  options: QueryOptions<AcceptanceDetailResponse>
+  options?: QueryOptions<AcceptanceDetailResponse>
 ) => {
   return useQuery({
-    queryKey: ["acceptance-detail", companyId],
+    queryKey: acceptancesKeys.acceptanceDetail(companyId),
     queryFn: async () => {
       const { data } = await instance.get<AcceptanceDetailResponse>(
         `${DOMAIN}/${companyId}`

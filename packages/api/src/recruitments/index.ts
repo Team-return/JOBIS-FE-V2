@@ -24,8 +24,11 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { recruitmentsKeys } from "./keys";
 
 const DOMAIN = "/recruitments";
+
+export { recruitmentsKeys };
 
 export const useCreateRecruitment = (
   options?: MutationOptions<CreateRecruitmentRequest>
@@ -112,7 +115,7 @@ export const useRecruitmentList = (
   options?: QueryOptions<StudentRecruitmentListResponse>
 ) => {
   return useQuery({
-    queryKey: ["recruitment-list", params],
+    queryKey: recruitmentsKeys.recruitmentList(params),
     queryFn: async () => {
       const { data } = await instance.get<StudentRecruitmentListResponse>(
         `${DOMAIN}/student`,
@@ -129,7 +132,7 @@ export const useStudentRecruitmentCount = (
   options?: QueryOptions<StudentRecruitmentCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["student-recruitment-count", params],
+    queryKey: recruitmentsKeys.studentRecruitmentCount(params),
     queryFn: async () => {
       const { data } = await instance.get<StudentRecruitmentCountResponse>(
         `${DOMAIN}/student/count`,
@@ -146,7 +149,7 @@ export const useRecruitmentCount = (
   options?: QueryOptions<RecruitmentCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["recruitment-count", params],
+    queryKey: recruitmentsKeys.recruitmentCount(params),
     queryFn: async () => {
       const { data } = await instance.get<RecruitmentCountResponse>(
         `${DOMAIN}/count`,
@@ -165,7 +168,7 @@ export const useRecruitmentDetail = (
   options?: QueryOptions<RecruitmentDetailResponse>
 ) => {
   return useQuery({
-    queryKey: ["recruitment-detail", recruitmentId],
+    queryKey: recruitmentsKeys.recruitmentDetail(recruitmentId),
     queryFn: async () => {
       const { data } = await instance.get<RecruitmentDetailResponse>(
         `${DOMAIN}/${recruitmentId}`
@@ -181,7 +184,7 @@ export const useTeacherRecruitmentList = (
   options?: QueryOptions<TeacherRecruitmentListResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-recruitment-list", params],
+    queryKey: recruitmentsKeys.teacherRecruitmentList(params),
     queryFn: async () => {
       const { data } = await instance.get<TeacherRecruitmentListResponse>(
         `${DOMAIN}/teacher`,
@@ -198,7 +201,7 @@ export const useTeacherRecruitmentCount = (
   options?: QueryOptions<TeacherRecruitmentCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-recruitment-count", params],
+    queryKey: recruitmentsKeys.teacherRecruitmentCount(params),
     queryFn: async () => {
       const { data } = await instance.get<TeacherRecruitmentCountResponse>(
         `${DOMAIN}/teacher/count`,
@@ -214,7 +217,7 @@ export const useTeacherRecruitmentListNoPage = (
   params?: TeacherRecruitmentNoPageQueryParams
 ) => {
   return useQuery({
-    queryKey: ["teacher-recruitment-list-no-page", params],
+    queryKey: recruitmentsKeys.teacherRecruitmentListNoPage(params),
     queryFn: async () => {
       const { data } = await instance.get<TeacherRecruitmentListResponse>(
         `${DOMAIN}/teacher/no-page`,
@@ -229,7 +232,7 @@ export const useMyRecruitments = (
   options?: QueryOptions<MyRecruitmentsResponse>
 ) => {
   return useQuery({
-    queryKey: ["my-recruitments"],
+    queryKey: recruitmentsKeys.myRecruitments(),
     queryFn: async () => {
       const { data } = await instance.get<MyRecruitmentsResponse>(
         `${DOMAIN}/my`
@@ -244,7 +247,7 @@ export const useMyRecentRecruitment = (
   options?: QueryOptions<MyRecentRecruitmentResponse>
 ) => {
   return useQuery({
-    queryKey: ["my-recent-recruitment"],
+    queryKey: recruitmentsKeys.myRecentRecruitment(),
     queryFn: async () => {
       const { data } = await instance.get<MyRecentRecruitmentResponse>(
         `${DOMAIN}/my/recent`
@@ -259,7 +262,7 @@ export const useRecruitmentFileDownload = (
   options?: QueryOptions<RecruitmentFileResponse>
 ) => {
   return useQuery({
-    queryKey: ["recruitment-file"],
+    queryKey: recruitmentsKeys.recruitmentFileDownload(),
     queryFn: async () => {
       const { data } = await instance.get<RecruitmentFileResponse>(
         `${DOMAIN}/file`,
@@ -277,7 +280,7 @@ export const useRecruitmentExists = (
   options?: QueryOptions<RecruitmentExistsResponse>
 ) => {
   return useQuery({
-    queryKey: ["recruitment-exists"],
+    queryKey: recruitmentsKeys.recruitmentExists(),
     queryFn: async () => {
       const { data } = await instance.get<RecruitmentExistsResponse>(
         `${DOMAIN}/exists`
@@ -292,7 +295,7 @@ export const useTeacherManualRecruitmentList = (
   options?: QueryOptions<TeacherManualRecruitmentListResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-manual-recruitment-list"],
+    queryKey: recruitmentsKeys.teacherManualRecruitmentList(),
     queryFn: async () => {
       const { data } = await instance.get<TeacherManualRecruitmentListResponse>(
         `${DOMAIN}/teacher/manual`

@@ -6,8 +6,11 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { codesKeys } from "./keys";
 
 const DOMAIN = "/codes";
+
+export { codesKeys };
 
 export const useCodeList = (
   type: string,
@@ -16,7 +19,7 @@ export const useCodeList = (
   options?: QueryOptions<CodeListResponse>
 ) => {
   return useQuery({
-    queryKey: ["code-list", type, keyword, parentCode],
+    queryKey: codesKeys.codeList(type, keyword, parentCode),
     queryFn: async () => {
       const { data } = await instance.get<CodeListResponse>(DOMAIN, {
         params: { type, keyword, parent_code: parentCode }

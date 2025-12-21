@@ -6,8 +6,11 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { bannersKeys } from "./keys";
 
 const DOMAIN = "/banners";
+
+export { bannersKeys };
 
 export const useCreateBanner = (
   options?: MutationOptions<CreateBannerRequest>
@@ -33,7 +36,7 @@ export const useDeleteBanner = (
 
 export const useBannerList = (options?: QueryOptions<BannerListResponse>) => {
   return useQuery({
-    queryKey: ["banner-list"],
+    queryKey: bannersKeys.bannerList(),
     queryFn: async () => {
       const { data } = await instance.get<BannerListResponse>(DOMAIN);
       return data;
@@ -47,7 +50,7 @@ export const useTeacherBannerList = (
   options?: QueryOptions<TeacherBannerListResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-banner-list", isOpened],
+    queryKey: bannersKeys.teacherBannerList(isOpened),
     queryFn: async () => {
       const { data } = await instance.get<TeacherBannerListResponse>(
         `${DOMAIN}/teacher`,
