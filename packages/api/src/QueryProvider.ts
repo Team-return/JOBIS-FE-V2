@@ -27,6 +27,20 @@ const client = new QueryClient({
   }
 });
 
+export const query = {
+  async prefetch(queryKey: unknown[]) {
+    await client.prefetchQuery({
+      queryKey
+    });
+  },
+  async invalidate(queryKey: unknown[]) {
+    await client.invalidateQueries({ queryKey });
+  },
+  remove(queryKey: unknown[]) {
+    client.removeQueries({ queryKey });
+  }
+} as const;
+
 export const QueryProvider = ({ children }: { children: ReactNode }) => {
   return createElement(QueryClientProvider, { client }, children);
 };
