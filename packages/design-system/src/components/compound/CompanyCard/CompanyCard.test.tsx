@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { CompanyCard } from "./CompanyCard";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("CompanyCard", () => {
   const defaultProps = {

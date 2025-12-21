@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, describe, it, vi } from "vitest";
 import { Radio } from "./Radio";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("Radio", () => {
   it("renders correctly with default props", () => {

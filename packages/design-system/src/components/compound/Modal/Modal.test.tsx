@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Modal } from "./Modal";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("Modal", () => {
   const onConfirm = vi.fn();

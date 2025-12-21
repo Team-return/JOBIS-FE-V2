@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 import { expect, describe, it } from "vitest";
 import { Box } from "./Box";
 import type { Props } from "./Box.types";

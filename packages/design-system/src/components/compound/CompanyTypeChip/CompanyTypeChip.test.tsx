@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { CompanyTypeChip } from "./CompanyTypeChip";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("CompanyTypeClip", () => {
   it("renders correctly with participation type", () => {

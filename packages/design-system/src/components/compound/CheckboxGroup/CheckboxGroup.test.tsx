@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, describe, it, vi } from "vitest";
 import { CheckboxGroup } from "./CheckboxGroup";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("CheckboxGroup", () => {
   const mockOptions = [
