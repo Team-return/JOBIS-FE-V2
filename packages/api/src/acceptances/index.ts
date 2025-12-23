@@ -6,7 +6,7 @@ import type {
   CreateEmploymentRequest,
   DeleteAcceptanceRequest
 } from "./types";
-import { QueryOptions, MutationOptions } from "@/QueryProvider";
+import { QueryOptions, MutationOptions } from "../QueryProvider";
 import { instance } from "@/instance";
 import { acceptancesKeys } from "./keys";
 
