@@ -2,9 +2,19 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": [
-    {
-      "path": "./apps/admin"
+  "compilerOptions": {
+    "paths": {
+      "@jobis/api": ["./packages/api/src/index.ts"],
+      "@jobis/design-system": ["./packages/design-system/src/index.ts"],
+      "@jobis/sentry": ["./packages/sentry/src/index.ts"]
     }
+  },
+  "references": [
+    { "path": "./packages/api" },
+    { "path": "./packages/design-system" },
+    { "path": "./packages/sentry" },
+    { "path": "./apps/admin" },
+    { "path": "./apps/company" },
+    { "path": "./apps/student" }
   ]
 }
