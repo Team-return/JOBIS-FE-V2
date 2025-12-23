@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "rootDir": "src",
     "lib": ["es2020", "dom"],
     "types": ["vite/client"],
     "paths": {
@@ -9,6 +10,7 @@
     },
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
+    "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist"
   },
