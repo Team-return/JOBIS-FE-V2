@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
@@ -10,13 +11,9 @@ export default defineConfig({
   plugins: [
     react({
       jsxImportSource: "@emotion/react"
-    })
+    }),
+    tsconfigPaths()
   ],
-  resolve: {
-    alias: {
-      "@": resolve(DIR_NAME, "src")
-    }
-  },
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),

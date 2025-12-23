@@ -5,15 +5,18 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { notificationsKeys } from "./keys";
 
 const DOMAIN = "/notifications";
+
+export { notificationsKeys };
 
 export const useNotificationList = (
   isNew?: boolean,
   options?: QueryOptions<NotificationListResponse>
 ) => {
   return useQuery({
-    queryKey: ["notification-list", isNew],
+    queryKey: notificationsKeys.notificationList(isNew),
     queryFn: async () => {
       const { data } = await instance.get<NotificationListResponse>(DOMAIN, {
         params: { is_new: isNew }
@@ -63,7 +66,7 @@ export const useNotificationTopicStatus = (
   options?: QueryOptions<NotificationTopicResponse>
 ) => {
   return useQuery({
-    queryKey: ["notification-topic-status"],
+    queryKey: notificationsKeys.notificationTopicStatus(),
     queryFn: async () => {
       const { data } = await instance.get<NotificationTopicResponse>(
         `${DOMAIN}/topic`

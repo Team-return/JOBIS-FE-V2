@@ -20,8 +20,11 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { companiesKeys } from "./keys";
 
 const DOMAIN = "/companies";
+
+export { companiesKeys };
 
 export const useCompanyStudentList = (
   page?: number,
@@ -29,7 +32,7 @@ export const useCompanyStudentList = (
   options?: QueryOptions<CompanyStudentListResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-student-list", page, name],
+    queryKey: companiesKeys.companyStudentList(page, name),
     queryFn: async () => {
       const { data } = await instance.get<CompanyStudentListResponse>(
         `${DOMAIN}/student`,
@@ -46,7 +49,7 @@ export const useCompanyStudentCount = (
   options?: QueryOptions<CompanyStudentCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-student-count", name],
+    queryKey: companiesKeys.companyStudentCount(name),
     queryFn: async () => {
       const { data } = await instance.get<CompanyStudentCountResponse>(
         `${DOMAIN}/student/count`,
@@ -62,7 +65,7 @@ export const useCompanyReviewList = (
   options?: QueryOptions<CompanyReviewListResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-review-list"],
+    queryKey: companiesKeys.companyReviewList(),
     queryFn: async () => {
       const { data } = await instance.get<CompanyReviewListResponse>(
         `${DOMAIN}/review`
@@ -78,7 +81,7 @@ export const useCompanyDetail = (
   options?: QueryOptions<CompanyDetailResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-detail", companyId],
+    queryKey: companiesKeys.companyDetail(companyId),
     queryFn: async () => {
       const { data } = await instance.get<CompanyDetailResponse>(
         `${DOMAIN}/${companyId}`
@@ -91,7 +94,7 @@ export const useCompanyDetail = (
 
 export const useCompanyMy = (options?: QueryOptions<CompanyMyResponse>) => {
   return useQuery({
-    queryKey: ["company-my"],
+    queryKey: companiesKeys.companyMy(),
     queryFn: async () => {
       const { data } = await instance.get<CompanyMyResponse>(`${DOMAIN}/my`);
       return data;
@@ -132,7 +135,7 @@ export const useCompanyExists = (
   options?: QueryOptions<CompanyExistsResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-exists", businessNumber],
+    queryKey: companiesKeys.companyExists(businessNumber),
     queryFn: async () => {
       const { data } = await instance.get<CompanyExistsResponse>(
         `${DOMAIN}/exists/${businessNumber}`
@@ -161,7 +164,13 @@ export const useTeacherCompanyList = (
   options?: QueryOptions<TeacherCompanyListResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-company-list", page, type, name, region, businessArea],
+    queryKey: companiesKeys.teacherCompanyList(
+      page,
+      type,
+      name,
+      region,
+      businessArea
+    ),
     queryFn: async () => {
       const { data } = await instance.get<TeacherCompanyListResponse>(
         `${DOMAIN}/teacher`,
@@ -182,7 +191,13 @@ export const useTeacherCompanyCount = (
   options?: QueryOptions<TeacherCompanyCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-company-count", page, type, name, region, businessArea],
+    queryKey: companiesKeys.teacherCompanyCount(
+      page,
+      type,
+      name,
+      region,
+      businessArea
+    ),
     queryFn: async () => {
       const { data } = await instance.get<TeacherCompanyCountResponse>(
         `${DOMAIN}/teacher/count`,
@@ -202,7 +217,12 @@ export const useEmploymentCompanyList = (
   options?: QueryOptions<EmploymentCompanyListResponse>
 ) => {
   return useQuery({
-    queryKey: ["employment-company-list", page, companyName, companyType, year],
+    queryKey: companiesKeys.employmentCompanyList(
+      page,
+      companyName,
+      companyType,
+      year
+    ),
     queryFn: async () => {
       const { data } = await instance.get<EmploymentCompanyListResponse>(
         `${DOMAIN}/employment`,
@@ -228,7 +248,11 @@ export const useEmploymentCompanyCount = (
   options?: QueryOptions<EmploymentCompanyCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["employment-company-count", companyName, companyType, year],
+    queryKey: companiesKeys.employmentCompanyCount(
+      companyName,
+      companyType,
+      year
+    ),
     queryFn: async () => {
       const { data } = await instance.get<EmploymentCompanyCountResponse>(
         `${DOMAIN}/employment/count`,
@@ -261,7 +285,7 @@ export const useCompanyCount = (
   options?: QueryOptions<CompanyCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-count", type, name, region, businessArea],
+    queryKey: companiesKeys.companyCount(type, name, region, businessArea),
     queryFn: async () => {
       const { data } = await instance.get<CompanyCountResponse>(
         `${DOMAIN}/count`,
@@ -277,7 +301,7 @@ export const useCompanyCount = (
 
 export const useCompanyFileDownload = (options?: QueryOptions<Blob>) => {
   return useQuery({
-    queryKey: ["company-file"],
+    queryKey: companiesKeys.companyFileDownload(),
     queryFn: async () => {
       const { data } = await instance.get<Blob>(`${DOMAIN}/file`, {
         responseType: "blob"

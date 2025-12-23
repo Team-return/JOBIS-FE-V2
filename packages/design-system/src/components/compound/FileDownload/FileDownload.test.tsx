@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, describe, it, vi } from "vitest";
 import { FileDownload } from "./FileDownload";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("FileDownload", () => {
   it("renders correctly with a label", () => {

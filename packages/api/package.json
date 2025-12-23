@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "main": "dist/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc -b --force",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },

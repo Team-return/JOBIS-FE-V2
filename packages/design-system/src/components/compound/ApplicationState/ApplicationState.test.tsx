@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { ApplicationState } from "./ApplicationState";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 import { lightTheme } from "@/themes";
 
 describe("ApplicationState", () => {

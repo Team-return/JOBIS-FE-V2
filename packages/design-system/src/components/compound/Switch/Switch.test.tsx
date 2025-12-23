@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { expect, describe, it, vi } from "vitest";
 import { Switch } from "./Switch";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 import { ThemeProvider } from "@emotion/react";
 import { darkTheme } from "@/themes";
 

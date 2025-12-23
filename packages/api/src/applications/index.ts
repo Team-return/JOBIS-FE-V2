@@ -11,14 +11,17 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { applicationsKeys } from "./keys";
 
 const DOMAIN = "/applications";
+
+export { applicationsKeys };
 
 export const useEmploymentCount = (
   options?: QueryOptions<EmploymentCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["employment-count"],
+    queryKey: applicationsKeys.employmentCount(),
     queryFn: async () => {
       const { data } = await instance.get<EmploymentCountResponse>(
         `${DOMAIN}/employment/count`
@@ -34,7 +37,7 @@ export const usePass = (
   options?: QueryOptions<PassResponse>
 ) => {
   return useQuery({
-    queryKey: ["pass", companyId],
+    queryKey: applicationsKeys.pass(companyId),
     queryFn: async () => {
       const { data } = await instance.get<PassResponse>(
         `${DOMAIN}/pass/${companyId}`
@@ -49,7 +52,7 @@ export const useCompanyApplications = (
   options?: QueryOptions<CompanyApplicationResponse>
 ) => {
   return useQuery({
-    queryKey: ["company-applications"],
+    queryKey: applicationsKeys.companyApplications(),
     queryFn: async () => {
       const { data } = await instance.get<CompanyApplicationResponse>(
         `${DOMAIN}/company`
@@ -64,7 +67,7 @@ export const useStudentApplications = (
   options?: QueryOptions<StudentApplicationResponse>
 ) => {
   return useQuery({
-    queryKey: ["student-applications"],
+    queryKey: applicationsKeys.studentApplications(),
     queryFn: async () => {
       const { data } = await instance.get<StudentApplicationResponse>(
         `${DOMAIN}/students`
@@ -85,15 +88,14 @@ export const useTeacherApplications = (
   options?: QueryOptions<TeacherApplicationResponse>
 ) => {
   return useQuery({
-    queryKey: [
-      "teacher-applications",
+    queryKey: applicationsKeys.teacherApplications(
       applicationStatus,
       studentName,
       recruitmentId,
       winterIntern,
       page,
       year
-    ],
+    ),
     queryFn: async () => {
       const { data } = await instance.get<TeacherApplicationResponse>(
         `${DOMAIN}`,
@@ -120,7 +122,10 @@ export const useTeacherApplicationCount = (
   options?: QueryOptions<TeacherApplicationCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["teacher-application-count", applicationStatus, studentName],
+    queryKey: applicationsKeys.teacherApplicationCount(
+      applicationStatus,
+      studentName
+    ),
     queryFn: async () => {
       const { data } = await instance.get<TeacherApplicationCountResponse>(
         `${DOMAIN}/teacher/count`,
@@ -219,7 +224,7 @@ export const useRejection = (
   options?: QueryOptions<RejectionResponse>
 ) => {
   return useQuery({
-    queryKey: ["rejection", applicationId],
+    queryKey: applicationsKeys.rejection(applicationId),
     queryFn: async () => {
       const { data } = await instance.get<RejectionResponse>(
         `${DOMAIN}/rejection/${applicationId}`
@@ -251,14 +256,13 @@ export const useApplicationCount = (
   options?: QueryOptions<{ count: number }>
 ) => {
   return useQuery({
-    queryKey: [
-      "application-count",
+    queryKey: applicationsKeys.applicationCount(
       applicationStatus,
       studentName,
       recruitmentId,
       winterIntern,
       year
-    ],
+    ),
     queryFn: async () => {
       const { data } = await instance.get<{ count: number }>(
         `${DOMAIN}/count`,
@@ -291,7 +295,7 @@ export const useDeleteApplications = (options?: MutationOptions<string>) => {
 
 export const useEmployment = (options?: QueryOptions<EmploymentResponse>) => {
   return useQuery({
-    queryKey: ["employment"],
+    queryKey: applicationsKeys.employment(),
     queryFn: async () => {
       const { data } = await instance.get<EmploymentResponse>(
         `${DOMAIN}/employment`

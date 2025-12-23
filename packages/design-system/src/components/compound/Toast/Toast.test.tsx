@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 import { Toast } from "./Toast";
 
 describe("Toast", () => {

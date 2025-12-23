@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { Pagination } from "./Pagination";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 import { lightTheme } from "@/themes";
 
 describe("Pagination", () => {

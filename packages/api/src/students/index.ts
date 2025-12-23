@@ -9,12 +9,15 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { studentsKeys } from "./keys";
 
 const DOMAIN = "/students";
 
+export { studentsKeys };
+
 export const useStudentMy = (options?: QueryOptions<StudentMyResponse>) => {
   return useQuery({
-    queryKey: ["student-my"],
+    queryKey: studentsKeys.studentMy(),
     queryFn: async () => {
       const { data } = await instance.get<StudentMyResponse>(`${DOMAIN}/my`);
       return data;
@@ -29,7 +32,7 @@ export const useStudentExists = (
   options?: QueryOptions<boolean>
 ) => {
   return useQuery({
-    queryKey: ["student-exists", gcn, name],
+    queryKey: studentsKeys.studentExists(gcn, name),
     queryFn: async () => {
       try {
         await instance.get(`${DOMAIN}/exists`, { params: { gcn, name } });

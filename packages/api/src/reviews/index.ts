@@ -11,15 +11,18 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { reviewsKeys } from "./keys";
 
 const DOMAIN = "/reviews";
+
+export { reviewsKeys };
 
 export const useReviewDetail = (
   reviewId: string,
   options?: QueryOptions<ReviewDetailResponse>
 ) => {
   return useQuery({
-    queryKey: ["review-detail", reviewId],
+    queryKey: reviewsKeys.reviewDetail(reviewId),
     queryFn: async () => {
       const { data } = await instance.get<ReviewDetailResponse>(
         `${DOMAIN}/${reviewId}`
@@ -45,7 +48,7 @@ export const useReviewQuestions = (
   options?: QueryOptions<ReviewQuestionsResponse>
 ) => {
   return useQuery({
-    queryKey: ["review-questions"],
+    queryKey: reviewsKeys.reviewQuestions(),
     queryFn: async () => {
       const { data } = await instance.get<ReviewQuestionsResponse>(
         `${DOMAIN}/questions`
@@ -72,7 +75,7 @@ export const useReviewList = (
   options?: QueryOptions<ReviewListResponse>
 ) => {
   return useQuery({
-    queryKey: ["review-list", params],
+    queryKey: reviewsKeys.reviewList(params),
     queryFn: async () => {
       const { data } = await instance.get<ReviewListResponse>(DOMAIN, {
         params
@@ -88,7 +91,7 @@ export const useReviewCount = (
   options?: QueryOptions<ReviewCountResponse>
 ) => {
   return useQuery({
-    queryKey: ["review-count", params],
+    queryKey: reviewsKeys.reviewCount(params),
     queryFn: async () => {
       const { data } = await instance.get<ReviewCountResponse>(
         `${DOMAIN}/count`,
@@ -102,7 +105,7 @@ export const useReviewCount = (
 
 export const useMyReviews = (options?: QueryOptions<MyReviewsResponse>) => {
   return useQuery({
-    queryKey: ["my-reviews"],
+    queryKey: reviewsKeys.myReviews(),
     queryFn: async () => {
       const { data } = await instance.get<MyReviewsResponse>(`${DOMAIN}/my`);
       return data;

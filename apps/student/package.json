@@ -9,6 +9,11 @@
     "preview": "vite preview",
     "lint": "eslint ."
   },
+  "dependencies": {
+    "@jobis/api": "workspace:*",
+    "@jobis/design-system": "workspace:*",
+    "@jobis/sentry": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^24.2.1",
     "typescript": "5.8.3",

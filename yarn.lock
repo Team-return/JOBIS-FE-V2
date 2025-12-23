@@ -2933,13 +2933,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jobis/admin@workspace:apps/admin"
   dependencies:
+    "@jobis/api": "workspace:*"
+    "@jobis/design-system": "workspace:*"
+    "@jobis/sentry": "workspace:*"
     "@types/node": "npm:^24.2.1"
     typescript: "npm:5.8.3"
     vite: "npm:5.3.1"
   languageName: unknown
   linkType: soft
 
-"@jobis/api@workspace:packages/api":
+"@jobis/api@workspace:*, @jobis/api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@jobis/api@workspace:packages/api"
   dependencies:
@@ -2960,13 +2963,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jobis/company@workspace:apps/company"
   dependencies:
+    "@jobis/api": "workspace:*"
+    "@jobis/design-system": "workspace:*"
+    "@jobis/sentry": "workspace:*"
     "@types/node": "npm:^24.2.1"
     typescript: "npm:5.8.3"
     vite: "npm:5.3.1"
   languageName: unknown
   linkType: soft
 
-"@jobis/design-system@workspace:packages/design-system":
+"@jobis/design-system@workspace:*, @jobis/design-system@workspace:packages/design-system":
   version: 0.0.0-use.local
   resolution: "@jobis/design-system@workspace:packages/design-system"
   dependencies:
@@ -3007,7 +3013,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jobis/sentry@workspace:packages/sentry":
+"@jobis/sentry@workspace:*, @jobis/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@jobis/sentry@workspace:packages/sentry"
   dependencies:
@@ -3030,6 +3036,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jobis/student@workspace:apps/student"
   dependencies:
+    "@jobis/api": "workspace:*"
+    "@jobis/design-system": "workspace:*"
+    "@jobis/sentry": "workspace:*"
     "@types/node": "npm:^24.2.1"
     typescript: "npm:5.8.3"
     vite: "npm:5.3.1"
