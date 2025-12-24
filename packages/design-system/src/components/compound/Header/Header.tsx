@@ -48,13 +48,13 @@ export const Header = (props: Props) => {
   const location = useLocation();
 
   const companyMenu = [
-    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "모집의뢰서", path: "/" },
     { label: "지원자", path: "/application" },
     { label: "내 기업정보", path: "/company/detail" }
   ];
 
   const adminMenu = [
-    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "모집의뢰서", path: "/" },
     { label: "기업", path: "/company" },
     { label: "학생", path: "/student" },
     { label: "학생 후기", path: "/review" },
