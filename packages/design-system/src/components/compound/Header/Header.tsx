@@ -42,7 +42,7 @@ export const LogoContainer = styled.div`
 `;
 
 export const Header = (props: Props) => {
-  const { type, onClickLogo } = props;
+  const { type } = props;
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,14 +63,10 @@ export const Header = (props: Props) => {
     { label: "배너", path: "/banner" }
   ];
 
-  const handleMenuClick = (path: string) => {
-    navigate(path);
-  };
-
   return type === "admin" ? (
     <>
       <Component>
-        <LogoContainer onClick={onClickLogo}>
+        <LogoContainer onClick={() => navigate("/")}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
         <MenuContainer type={type}>
@@ -84,7 +80,7 @@ export const Header = (props: Props) => {
               <TextContainer
                 key={item.label}
                 $active={isActive}
-                onClick={() => handleMenuClick(item.path)}
+                onClick={() => navigate(item.path)}
               >
                 <Text $span $size="body2" $color={textColor}>
                   {item.label}
@@ -100,16 +96,14 @@ export const Header = (props: Props) => {
     <>
       <HeaderStudent
         userName={props.userName}
-        alarm={props.alarm}
         notifications={props.notifications}
-        onClickLogo={onClickLogo}
       />
       <Outlet />
     </>
   ) : type === "company" ? (
     <>
       <Component>
-        <LogoContainer onClick={onClickLogo}>
+        <LogoContainer onClick={() => navigate("/")}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
         <MenuContainer type={type}>
@@ -123,7 +117,7 @@ export const Header = (props: Props) => {
               <TextContainer
                 key={item.label}
                 $active={isActive}
-                onClick={() => handleMenuClick(item.path)}
+                onClick={() => navigate(item.path)}
               >
                 <Text $span $size="body2" $color={textColor}>
                   {item.label}

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { fn } from "storybook/test";
 import { Header } from "./Header";
-import { headerTypes } from "./Header.types";
+
+export const headerTypes = ["admin", "company", "student"] as const;
 
 const mockNotifications = [
   {
@@ -50,7 +50,7 @@ const meta: Meta<typeof Header> = {
     layout: "fullscreen"
   },
   argTypes: {
-    types: {
+    type: {
       control: "select",
       options: headerTypes,
       description: "헤더 타입 (admin, company, student)"
@@ -58,14 +58,6 @@ const meta: Meta<typeof Header> = {
     userName: {
       control: "text",
       description: "학생 헤더에서 표시될 사용자 이름"
-    },
-    onClickLogo: {
-      action: "onClickLogo",
-      description: "로고 클릭 이벤트"
-    },
-    alarm: {
-      control: "boolean",
-      description: "학생 헤더에서 알림 뱃지 표시 여부"
     },
     notifications: {
       control: "object",
@@ -80,31 +72,26 @@ type Story = StoryObj<typeof Header>;
 
 export const Admin: Story = {
   args: {
-    types: "admin",
-    onClickLogo: fn()
+    type: "admin"
   }
 };
 
 export const Company: Story = {
   args: {
-    types: "company",
-    onClickLogo: fn()
+    type: "company"
   }
 };
 
 export const Student: Story = {
   args: {
-    types: "student",
+    type: "student",
     userName: "홍길동",
-    alarm: true,
-    notifications: mockNotifications,
-    onClickLogo: fn()
+    notifications: mockNotifications
   }
 };
 
 export const Default: Story = {
   args: {
-    types: "admin",
-    onClickLogo: fn()
+    type: "admin"
   }
 };

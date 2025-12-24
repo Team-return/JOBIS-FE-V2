@@ -1,5 +1,6 @@
-export const headerTypes = ["admin", "company", "student"] as const;
-export type HeaderTypes = (typeof headerTypes)[number];
+import { headerTypes } from "./Header.stories";
+
+export type HeaderType = (typeof headerTypes)[number];
 interface Notification {
   notification_id: number;
   title: string;
@@ -10,8 +11,7 @@ interface Notification {
   new: boolean;
 }
 interface BaseProps {
-  type: HeaderTypes;
-  onClickLogo?: () => void;
+  type: HeaderType;
 }
 
 interface AdminProps extends BaseProps {
@@ -25,7 +25,6 @@ interface CompanyProps extends BaseProps {
 interface StudentProps extends BaseProps {
   type: "student";
   userName: string;
-  alarm?: boolean;
   notifications?: Notification[];
 }
 
