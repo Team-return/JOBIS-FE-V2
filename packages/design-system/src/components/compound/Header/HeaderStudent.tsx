@@ -84,15 +84,10 @@ const AlarmContainer = styled.div`
   }
 `;
 
-export const HeaderStudent = ({
-  userName,
-  alarm,
-  onClickLogo,
-  notifications
-}: Props) => {
+export const HeaderStudent = ({ userName, notifications }: Props) => {
   const { currentTheme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
-  const [hasUnread, setHasUnread] = useState(alarm);
+  const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);
   const navigate = useNavigate();
 
   const studentMenu = [
@@ -103,17 +98,9 @@ export const HeaderStudent = ({
     { label: "마이페이지", path: "/mypage" }
   ];
 
-  const handleMenuClick = (path: string) => {
-    navigate(path);
-  };
-
-  const onClickProfile = () => {
-    navigate("/mypage");
-  };
-
   return (
     <Component>
-      <LogoContainer onClick={onClickLogo}>
+      <LogoContainer onClick={() => navigate("/")}>
         <Icon icon="LogoWithText" width={90} height={26} />
       </LogoContainer>
       <MenuContainer type="student">
@@ -126,7 +113,7 @@ export const HeaderStudent = ({
             <TextContainer
               key={item.label}
               $active={isActive}
-              onClick={() => handleMenuClick(item.path)}
+              onClick={() => navigate(item.path)}
             >
               <Text $span $size="body2" $color={textColor}>
                 {item.label}
@@ -138,14 +125,13 @@ export const HeaderStudent = ({
       <HeaderWrapper>
         <Icon
           icon="HeaderProfile"
-          onClick={onClickProfile}
+          onClick={() => navigate("/mypage")}
           style={{ cursor: "pointer" }}
         />
         <HeaderContainer
           onClick={() => {
-            const next = !isAlarm;
-            setIsAlarm(next);
-            if (next) setHasUnread(false);
+            setIsAlarm(!isAlarm);
+            setIsNew(false);
           }}
         >
           <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
@@ -154,7 +140,7 @@ export const HeaderStudent = ({
           <ChevronIcon $isOpen={isAlarm}>
             <Icon icon="ChevronDown" size={18} />
           </ChevronIcon>
-          {hasUnread && <AlarmDot aria-label="alarm-indicator" />}
+          {isNew && <AlarmDot aria-label="alarm-indicator" />}
         </HeaderContainer>
         {isAlarm && (
           <AlarmContainer>
