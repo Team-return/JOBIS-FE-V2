@@ -87,6 +87,7 @@ export const Input = ({
   $iconName,
   onIconClick,
   onKeyDown,
+  placeholder,
   disabled,
   type = "text",
   autoComplete
@@ -110,6 +111,7 @@ export const Input = ({
           value={value}
           onChange={handleChange}
           onKeyDown={onKeyDown}
+          placeholder={placeholder}
           aria-invalid={!!$errorMessage}
           disabled={disabled}
           type={type}
