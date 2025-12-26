@@ -4,7 +4,6 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
-    "composite": true,
     "lib": ["es2020", "dom"],
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {

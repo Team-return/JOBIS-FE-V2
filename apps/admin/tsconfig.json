@@ -1,24 +1,13 @@
 {
   "extends": "../../tsconfig.app.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@jobis/design-system": ["../../packages/design-system/src/index"],
-      "@jobis/api": ["../../packages/api/src/index"],
-      "@jobis/sentry": ["../../packages/sentry/src/index"]
-    },
+    "baseUrl": "../../",
     "outDir": "dist"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
-    {
-      "path": "../../packages/design-system",
-    },
-    {
-      "path": "../../packages/api"
-    },
-    {
-      "path": "../../packages/sentry"
-    }
+    { "path": "../../packages/api" },
+    { "path": "../../packages/design-system" },
+    { "path": "../../packages/sentry" }
   ]
 }

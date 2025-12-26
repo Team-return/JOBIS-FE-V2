@@ -2,12 +2,13 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "composite": true,
+    "rootDir": "src",
     "lib": ["es2020", "dom"],
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]
     },
+    "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist"
   },

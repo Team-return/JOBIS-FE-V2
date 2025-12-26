@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { expect, describe, it, vi } from "vitest";
 import { NotificationItem } from "./NotificationItem";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("NotificationItem", () => {
   it("renders correctly with default props", () => {

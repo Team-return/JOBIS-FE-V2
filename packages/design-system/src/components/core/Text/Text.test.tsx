@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { expect, describe, it } from "vitest";
 import { Text } from "./Text";
-import { renderWithTheme } from "@/utils";
+import { renderWithTheme } from "@/utils/render";
 
 describe("Text", () => {
   it("renders children correctly", () => {

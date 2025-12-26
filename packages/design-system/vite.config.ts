@@ -20,7 +20,9 @@ export default defineConfig({
       exclude: [
         "src/setupTests.ts",
         ".storybook/*",
+        "**/*.stories.ts",
         "**/*.stories.tsx",
+        "**/*.test.ts",
         "**/*.test.tsx"
       ]
     })

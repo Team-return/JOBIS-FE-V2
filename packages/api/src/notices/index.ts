@@ -7,8 +7,11 @@ import type {
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
+import { noticesKeys } from "./keys";
 
 const DOMAIN = "/notices";
+
+export { noticesKeys };
 
 export const useCreateNotice = (
   options?: MutationOptions<CreateNoticeRequest>
@@ -49,7 +52,7 @@ export const useNoticeDetail = (
   options?: QueryOptions<NoticeDetailResponse>
 ) => {
   return useQuery({
-    queryKey: ["notice-detail", noticeId],
+    queryKey: noticesKeys.noticeDetail(noticeId),
     queryFn: async () => {
       const { data } = await instance.get<NoticeDetailResponse>(
         `${DOMAIN}/${noticeId}`
@@ -62,7 +65,7 @@ export const useNoticeDetail = (
 
 export const useNoticeList = (options?: QueryOptions<NoticeListResponse>) => {
   return useQuery({
-    queryKey: ["notice-list"],
+    queryKey: noticesKeys.noticeList(),
     queryFn: async () => {
       const { data } = await instance.get<NoticeListResponse>(DOMAIN);
       return data;
