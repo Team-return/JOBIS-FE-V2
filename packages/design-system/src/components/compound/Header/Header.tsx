@@ -6,20 +6,19 @@ import { Icon, Text } from "@/components";
 import { HeaderStudent } from "./HeaderStudent";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
-export const Component = styled.div`
+const Component = styled.header`
   padding: 21px 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
 `;
 
-export const MenuContainer = styled.div<Pick<Props, "type">>`
+const MenuContainer = styled.div<Pick<Props, "type">>`
   display: flex;
-  gap: ${({ type }) =>
-    type === "admin" ? "34px" : type === "student" ? "40px" : "48px"};
+  gap: ${({ type }) => (type === "admin" ? "34px" : "48px")};
 `;
 
-export const TextContainer = styled.div<{ $active?: boolean }>`
+const TextContainer = styled.div<{ $active?: boolean }>`
   > span {
     cursor: pointer;
     ${({ $active, theme }) =>
@@ -37,7 +36,7 @@ export const TextContainer = styled.div<{ $active?: boolean }>`
   }
 `;
 
-export const LogoContainer = styled.div`
+const LogoContainer = styled.div`
   cursor: pointer;
 `;
 

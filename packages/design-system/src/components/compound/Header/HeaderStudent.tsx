@@ -1,17 +1,10 @@
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
-import {
-  Component,
-  Icon,
-  MenuContainer,
-  Text,
-  TextContainer,
-  NotificationItem,
-  LogoContainer
-} from "@/components";
+import { Icon, Text, NotificationItem } from "@/components";
 import { useState } from "react";
 import type { Props as HeaderProps } from "./Header.types";
 import { useNavigate } from "react-router-dom";
+import { css } from "@emotion/react";
 type StudentProps = Extract<HeaderProps, { type: "student" }>;
 
 type Props = Omit<StudentProps, "type">;
@@ -23,6 +16,40 @@ const HeaderContainer = styled.div`
   gap: 8px;
   cursor: pointer;
   position: relative;
+`;
+
+const MenuContainer = styled.div`
+  display: flex;
+  gap: 40px;
+`;
+
+const TextContainer = styled.div<{ $active?: boolean }>`
+  > span {
+    cursor: pointer;
+    ${({ $active, theme }) =>
+      $active &&
+      css`
+        color: ${theme.color.grayScale[90]};
+        font-weight: ${theme.fontWeight.bold};
+        font-size: ${theme.font.body2.fontSize};
+      `}
+    &:hover {
+      color: ${({ theme }) => theme.color.grayScale[90]};
+      font-weight: ${({ theme }) => theme.fontWeight.bold};
+      font-size: ${({ theme }) => theme.font.body2.fontSize};
+    }
+  }
+`;
+
+const LogoContainer = styled.div`
+  cursor: pointer;
+`;
+
+const Component = styled.header`
+  padding: 21px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 `;
 
 const AlarmDot = styled.div`
@@ -103,7 +130,7 @@ export const HeaderStudent = ({ userName, notifications }: Props) => {
       <LogoContainer onClick={() => navigate("/")}>
         <Icon icon="LogoWithText" width={90} height={26} />
       </LogoContainer>
-      <MenuContainer type="student">
+      <MenuContainer>
         {studentMenu.map(item => {
           const isActive = location.pathname.startsWith(item.path);
           const textColor = isActive
