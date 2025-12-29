@@ -132,7 +132,10 @@ export const HeaderStudent = ({ userName, notifications }: Props) => {
       </LogoContainer>
       <MenuContainer>
         {studentMenu.map(item => {
-          const isActive = location.pathname.startsWith(item.path);
+          const isActive =
+            item.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(item.path);
           const textColor = isActive
             ? currentTheme.color.grayScale[90]
             : currentTheme.color.grayScale[80];

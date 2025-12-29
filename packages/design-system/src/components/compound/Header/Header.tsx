@@ -70,7 +70,10 @@ export const Header = (props: Props) => {
         </LogoContainer>
         <MenuContainer type={type}>
           {adminMenu.map(item => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.path);
             const textColor = isActive
               ? currentTheme.color.grayScale[90]
               : currentTheme.color.grayScale[80];
@@ -107,7 +110,10 @@ export const Header = (props: Props) => {
         </LogoContainer>
         <MenuContainer type={type}>
           {companyMenu.map(item => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.path);
             const textColor = isActive
               ? currentTheme.color.grayScale[90]
               : currentTheme.color.grayScale[80];
