@@ -17,7 +17,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       element: <Header type="student" userName="홍길동" />,
       children: [
         {
-          path: "/",
+          index: true,
           element: <div>메인페이지</div>
         },
         {
