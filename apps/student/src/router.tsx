@@ -40,7 +40,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
               element: <div>기업 목록</div>
             },
             {
-              path: "detail/:companyId",
+              path: "/detail/:companyId",
               loader: ({ params }) => {
                 const id = Number(params.companyId);
                 if (!params.companyId || Number.isNaN(id)) {
@@ -65,7 +65,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
               element: <div>모집의뢰서 목록</div>
             },
             {
-              path: "detail/:recruitmentId",
+              path: "/detail/:recruitmentId",
               loader: ({ params }) => {
                 const id = Number(params.recruitmentId);
                 if (!params.recruitmentId || Number.isNaN(id)) {
@@ -90,7 +90,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
               element: <div>공지사항 목록</div>
             },
             {
-              path: "detail/:noticeId",
+              path: "/detail/:noticeId",
               loader: ({ params }) => {
                 const id = Number(params.noticeId);
                 if (!params.noticeId || Number.isNaN(id)) {
@@ -114,9 +114,9 @@ export const router: ReturnType<typeof createBrowserRouter> =
               },
               element: <div>후기 목록</div>
             },
-            { path: "write", element: <div>후기 작성</div> },
+            { path: "/write", element: <div>후기 작성</div> },
             {
-              path: "detail/:reviewId",
+              path: "/detail/:reviewId",
               loader: ({ params }) => {
                 const id = String(params.reviewId);
                 if (!params.reviewId) {
