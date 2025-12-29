@@ -15,9 +15,9 @@ export const router: ReturnType<typeof createBrowserRouter> =
               index: true,
               element: <div>동계 체험 or 현장 실습 선택 페이지</div>
             },
-            { path: "/write", element: <div>모집의뢰서 작성</div> },
+            { path: "write", element: <div>모집의뢰서 작성</div> },
             {
-              path: "/write/winter",
+              path: "write/winter",
               element: <div>동계 체험 모집의뢰서 작성</div>
             }
           ]
@@ -27,7 +27,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             { index: true, element: <div>기업정보 등록</div> },
             {
-              path: "/detail",
+              path: "detail",
               loader: () => {
                 query.prefetch(companiesKeys.companyMy());
                 return null;
@@ -35,7 +35,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
               element: <div>내 기업정보</div>
             },
             {
-              path: "/detail/edit",
+              path: "detail/edit",
               loader: () => {
                 query.prefetch(companiesKeys.companyMy());
                 return null;
