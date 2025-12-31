@@ -1,19 +1,15 @@
-import { createBrowserRouter, useNavigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { Header } from "@jobis/design-system";
-
-const CompanyHeader = () => {
-  const navigate = useNavigate();
-  return <Header types="company" onClickLogo={() => navigate("/")} />;
-};
+import { applicationsKeys, companiesKeys, query } from "@jobis/api";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <CompanyHeader />,
+      element: <Header type="company" />,
       children: [
         {
-          path: "/recruitment",
+          path: "/",
           children: [
             {
               index: true,
@@ -30,9 +26,20 @@ export const router: ReturnType<typeof createBrowserRouter> =
           path: "/company",
           children: [
             { index: true, element: <div>기업정보 등록</div> },
-            { path: "detail", element: <div>내 기업정보</div> },
+            {
+              path: "detail",
+              loader: () => {
+                query.prefetch(companiesKeys.companyMy());
+                return null;
+              },
+              element: <div>내 기업정보</div>
+            },
             {
               path: "detail/edit",
+              loader: () => {
+                query.prefetch(companiesKeys.companyMy());
+                return null;
+              },
               element: <div>기업 정보 수정</div>
             }
           ]
@@ -40,6 +47,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
 
         {
           path: "/application",
+          loader: () => {
+            query.prefetch(applicationsKeys.companyApplications());
+            return null;
+          },
           element: <div>지원자</div>
         }
       ]

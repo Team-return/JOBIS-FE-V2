@@ -34,8 +34,7 @@ describe("Header", () => {
 
   describe("Admin Header", () => {
     it("renders admin menu items correctly", () => {
-      const handleClickLogo = vi.fn();
-      renderWithRouter(<Header types="admin" onClickLogo={handleClickLogo} />);
+      renderWithRouter(<Header type="admin" />);
 
       expect(screen.getByText("모집의뢰서")).toBeInTheDocument();
       expect(screen.getByText("기업")).toBeInTheDocument();
@@ -46,20 +45,19 @@ describe("Header", () => {
       expect(screen.getByText("배너")).toBeInTheDocument();
     });
 
-    it("handles logo click event", async () => {
-      const handleClickLogo = vi.fn();
-      renderWithRouter(<Header types="admin" onClickLogo={handleClickLogo} />);
+    it("navigates to home when logo is clicked", async () => {
+      renderWithRouter(<Header type="admin" />);
 
-      const logo = screen.getByRole("img");
+      const logo = screen.getByRole("img", { name: "LogoWithText" });
       await userEvent.click(logo.parentElement!);
-      expect(handleClickLogo).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 
     it("navigates to correct path when menu item is clicked", async () => {
-      renderWithRouter(<Header types="admin" onClickLogo={() => {}} />);
+      renderWithRouter(<Header type="admin" />);
 
       await userEvent.click(screen.getByText("모집의뢰서"));
-      expect(mockNavigate).toHaveBeenCalledWith("/recruitment");
+      expect(mockNavigate).toHaveBeenCalledWith("/");
 
       await userEvent.click(screen.getByText("기업"));
       expect(mockNavigate).toHaveBeenCalledWith("/company");
@@ -83,32 +81,26 @@ describe("Header", () => {
 
   describe("Company Header", () => {
     it("renders company menu items correctly", () => {
-      const handleClickLogo = vi.fn();
-      renderWithRouter(
-        <Header types="company" onClickLogo={handleClickLogo} />
-      );
+      renderWithRouter(<Header type="company" />);
 
       expect(screen.getByText("모집의뢰서")).toBeInTheDocument();
       expect(screen.getByText("지원자")).toBeInTheDocument();
       expect(screen.getByText("내 기업정보")).toBeInTheDocument();
     });
 
-    it("handles logo click event", async () => {
-      const handleClickLogo = vi.fn();
-      renderWithRouter(
-        <Header types="company" onClickLogo={handleClickLogo} />
-      );
+    it("navigates to home when logo is clicked", async () => {
+      renderWithRouter(<Header type="company" />);
 
-      const logo = screen.getByRole("img");
+      const logo = screen.getByRole("img", { name: "LogoWithText" });
       await userEvent.click(logo.parentElement!);
-      expect(handleClickLogo).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 
     it("navigates to correct path when menu item is clicked", async () => {
-      renderWithRouter(<Header types="company" onClickLogo={() => {}} />);
+      renderWithRouter(<Header type="company" />);
 
       await userEvent.click(screen.getByText("모집의뢰서"));
-      expect(mockNavigate).toHaveBeenCalledWith("/recruitment");
+      expect(mockNavigate).toHaveBeenCalledWith("/");
 
       await userEvent.click(screen.getByText("지원자"));
       expect(mockNavigate).toHaveBeenCalledWith("/application");
@@ -120,9 +112,7 @@ describe("Header", () => {
 
   describe("Student Header", () => {
     it("renders student menu items correctly", () => {
-      renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={false} />
-      );
+      renderWithRouter(<Header type="student" userName="홍길동" />);
 
       expect(screen.getByText("기업체")).toBeInTheDocument();
       expect(screen.getByText("모집의뢰서")).toBeInTheDocument();
@@ -132,80 +122,154 @@ describe("Header", () => {
     });
 
     it("displays user name correctly", () => {
-      renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={false} />
-      );
+      renderWithRouter(<Header type="student" userName="홍길동" />);
       expect(screen.getByText("홍길동")).toBeInTheDocument();
     });
 
-    it("shows alarm dot when alarm is true", () => {
+    it("shows alarm dot when notifications have new property set to true", () => {
+      const notifications = [
+        {
+          notification_id: 1,
+          title: "새로운 공지",
+          content: "새 공지가 있습니다",
+          topic: "notice",
+          detail_id: 1,
+          created_at: "2025-12-24T10:00:00Z",
+          new: true
+        }
+      ];
+
       renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={true} />
+        <Header
+          type="student"
+          userName="홍길동"
+          notifications={notifications}
+        />
       );
       expect(screen.getByLabelText("alarm-indicator")).toBeInTheDocument();
     });
 
-    it("does not show alarm dot when alarm is false", () => {
+    it("does not show alarm dot when no notifications have new property", () => {
+      const notifications = [
+        {
+          notification_id: 1,
+          title: "기존 공지",
+          content: "이미 읽은 공지",
+          topic: "notice",
+          detail_id: 1,
+          created_at: "2025-12-24T10:00:00Z",
+          new: false
+        }
+      ];
+
       renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={false} />
+        <Header
+          type="student"
+          userName="홍길동"
+          notifications={notifications}
+        />
       );
       expect(
         screen.queryByLabelText("alarm-indicator")
       ).not.toBeInTheDocument();
     });
 
-    it("handles profile click event", async () => {
+    it("does not show alarm dot when notifications array is empty", () => {
       renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={false} />
+        <Header type="student" userName="홍길동" notifications={[]} />
       );
-
-      const profileIcons = screen.getAllByRole("img");
-      await userEvent.click(profileIcons[1]);
-      expect(mockNavigate).toHaveBeenCalledWith("/mypage");
+      expect(
+        screen.queryByLabelText("alarm-indicator")
+      ).not.toBeInTheDocument();
     });
 
-    it("toggles alarm container and shows empty state when no notifications", async () => {
-      renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={true} />
-      );
-
-      expect(screen.queryByText("알림이 없습니다.")).not.toBeInTheDocument();
-      await userEvent.click(screen.getByText("홍길동"));
-      expect(screen.getByText("알림이 없습니다.")).toBeInTheDocument();
-    });
-
-    it("handles logo click event", async () => {
-      const handleClickLogo = vi.fn();
-      renderWithRouter(
-        <Header
-          types="student"
-          userName="홍길동"
-          alarm={false}
-          onClickLogo={handleClickLogo}
-        />
-      );
+    it("navigates to home when logo is clicked", async () => {
+      renderWithRouter(<Header type="student" userName="홍길동" />);
 
       const logo = screen.getByRole("img", { name: "LogoWithText" });
       await userEvent.click(logo.parentElement!);
-      expect(handleClickLogo).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith("/");
+    });
+
+    it("navigates to mypage when profile icon is clicked", async () => {
+      renderWithRouter(<Header type="student" userName="홍길동" />);
+
+      const profileIcon = screen.getByRole("img", { name: "HeaderProfile" });
+      await userEvent.click(profileIcon);
+      expect(mockNavigate).toHaveBeenCalledWith("/mypage");
+    });
+
+    it("toggles alarm dropdown when user name is clicked", async () => {
+      renderWithRouter(
+        <Header type="student" userName="홍길동" notifications={[]} />
+      );
+
+      expect(screen.queryByText("알림이 없습니다.")).not.toBeInTheDocument();
+
+      await userEvent.click(screen.getByText("홍길동"));
+      expect(screen.getByText("알림이 없습니다.")).toBeInTheDocument();
+
+      await userEvent.click(screen.getByText("홍길동"));
+      expect(screen.queryByText("알림이 없습니다.")).not.toBeInTheDocument();
+    });
+
+    it("displays notifications in alarm dropdown", async () => {
+      const notifications = [
+        {
+          notification_id: 1,
+          title: "채용공고 마감",
+          content: "마감 12시간 전입니다",
+          topic: "recruitment",
+          detail_id: 1,
+          created_at: "2025-12-24T10:00:00Z",
+          new: true
+        },
+        {
+          notification_id: 2,
+          title: "새로운 소식",
+          content: "새로운 소식이 있습니다",
+          topic: "notice",
+          detail_id: 2,
+          created_at: "2025-12-24T09:00:00Z",
+          new: false
+        }
+      ];
+
+      renderWithRouter(
+        <Header
+          type="student"
+          userName="홍길동"
+          notifications={notifications}
+        />
+      );
+
+      await userEvent.click(screen.getByText("홍길동"));
+      expect(screen.getByText("채용공고 마감")).toBeInTheDocument();
+      expect(screen.getByText("새로운 소식")).toBeInTheDocument();
     });
 
     it("navigates to correct path when menu item is clicked", async () => {
-      renderWithRouter(
-        <Header types="student" userName="홍길동" alarm={false} />
-      );
+      renderWithRouter(<Header type="student" userName="홍길동" />);
 
       await userEvent.click(screen.getByText("기업체"));
       expect(mockNavigate).toHaveBeenCalledWith("/company");
 
+      mockNavigate.mockClear();
+
       await userEvent.click(screen.getByText("모집의뢰서"));
       expect(mockNavigate).toHaveBeenCalledWith("/recruitment");
+
+      mockNavigate.mockClear();
 
       await userEvent.click(screen.getByText("공지사항"));
       expect(mockNavigate).toHaveBeenCalledWith("/notice");
 
+      mockNavigate.mockClear();
+
       await userEvent.click(screen.getByText("후기"));
       expect(mockNavigate).toHaveBeenCalledWith("/review");
+
+      mockNavigate.mockClear();
 
       await userEvent.click(screen.getByText("마이페이지"));
       expect(mockNavigate).toHaveBeenCalledWith("/mypage");

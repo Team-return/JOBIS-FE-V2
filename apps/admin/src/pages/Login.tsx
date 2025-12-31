@@ -71,7 +71,7 @@ export const Login = () => {
     onSuccess: data => {
       setToken(data);
       success("로그인에 성공했습니다.");
-      navigation("/recruitment");
+      navigation("/");
     },
     onError: status => {
       switch (status) {

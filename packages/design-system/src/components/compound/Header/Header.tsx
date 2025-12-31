@@ -6,20 +6,19 @@ import { Icon, Text } from "@/components";
 import { HeaderStudent } from "./HeaderStudent";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
-export const Component = styled.div`
+const Component = styled.header`
   padding: 21px 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
 `;
 
-export const MenuContainer = styled.div<Pick<Props, "types">>`
+const MenuContainer = styled.div<Pick<Props, "type">>`
   display: flex;
-  gap: ${({ types }) =>
-    types === "admin" ? "34px" : types === "student" ? "40px" : "48px"};
+  gap: ${({ type }) => (type === "admin" ? "34px" : "48px")};
 `;
 
-export const TextContainer = styled.div<{ $active?: boolean }>`
+const TextContainer = styled.div<{ $active?: boolean }>`
   > span {
     cursor: pointer;
     ${({ $active, theme }) =>
@@ -37,24 +36,24 @@ export const TextContainer = styled.div<{ $active?: boolean }>`
   }
 `;
 
-export const LogoContainer = styled.div`
+const LogoContainer = styled.div`
   cursor: pointer;
 `;
 
 export const Header = (props: Props) => {
-  const { types, onClickLogo } = props;
+  const { type } = props;
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
   const companyMenu = [
-    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "모집의뢰서", path: "/" },
     { label: "지원자", path: "/application" },
     { label: "내 기업정보", path: "/company/detail" }
   ];
 
   const adminMenu = [
-    { label: "모집의뢰서", path: "/recruitment" },
+    { label: "모집의뢰서", path: "/" },
     { label: "기업", path: "/company" },
     { label: "학생", path: "/student" },
     { label: "학생 후기", path: "/review" },
@@ -63,19 +62,18 @@ export const Header = (props: Props) => {
     { label: "배너", path: "/banner" }
   ];
 
-  const handleMenuClick = (path: string) => {
-    navigate(path);
-  };
-
-  return types === "admin" ? (
+  return type === "admin" ? (
     <>
       <Component>
-        <LogoContainer onClick={onClickLogo}>
+        <LogoContainer onClick={() => navigate("/")}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
-        <MenuContainer types={types}>
+        <MenuContainer type={type}>
           {adminMenu.map(item => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.path);
             const textColor = isActive
               ? currentTheme.color.grayScale[90]
               : currentTheme.color.grayScale[80];
@@ -84,7 +82,7 @@ export const Header = (props: Props) => {
               <TextContainer
                 key={item.label}
                 $active={isActive}
-                onClick={() => handleMenuClick(item.path)}
+                onClick={() => navigate(item.path)}
               >
                 <Text $span $size="body2" $color={textColor}>
                   {item.label}
@@ -96,25 +94,26 @@ export const Header = (props: Props) => {
       </Component>
       <Outlet />
     </>
-  ) : types === "student" ? (
+  ) : type === "student" ? (
     <>
       <HeaderStudent
         userName={props.userName}
-        alarm={props.alarm}
         notifications={props.notifications}
-        onClickLogo={onClickLogo}
       />
       <Outlet />
     </>
-  ) : types === "company" ? (
+  ) : type === "company" ? (
     <>
       <Component>
-        <LogoContainer onClick={onClickLogo}>
+        <LogoContainer onClick={() => navigate("/")}>
           <Icon icon="LogoWithText" width={90} height={26} />
         </LogoContainer>
-        <MenuContainer types={types}>
+        <MenuContainer type={type}>
           {companyMenu.map(item => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.path);
             const textColor = isActive
               ? currentTheme.color.grayScale[90]
               : currentTheme.color.grayScale[80];
@@ -123,7 +122,7 @@ export const Header = (props: Props) => {
               <TextContainer
                 key={item.label}
                 $active={isActive}
-                onClick={() => handleMenuClick(item.path)}
+                onClick={() => navigate(item.path)}
               >
                 <Text $span $size="body2" $color={textColor}>
                   {item.label}

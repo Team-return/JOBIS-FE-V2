@@ -83,7 +83,7 @@ instance.interceptors.response.use(
       throw statusCode;
     }
 
-    if (statusCode === 403 && !originalRequest._retry) {
+    if (statusCode === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {

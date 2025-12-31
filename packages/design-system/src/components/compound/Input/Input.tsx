@@ -69,6 +69,16 @@ const StyledInput = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.color.grayScale[50]};
   }
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px ${({ theme }) => theme.color.grayScale[20]}
+      inset !important;
+    -webkit-text-fill-color: ${({ theme }) =>
+      theme.color.grayScale[80]} !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 `;
 
 const IconWrapper = styled.div<{ onClick?: () => void }>`
@@ -87,6 +97,7 @@ export const Input = ({
   $iconName,
   onIconClick,
   onKeyDown,
+  placeholder,
   disabled,
   type = "text",
   autoComplete
@@ -110,6 +121,7 @@ export const Input = ({
           value={value}
           onChange={handleChange}
           onKeyDown={onKeyDown}
+          placeholder={placeholder}
           aria-invalid={!!$errorMessage}
           disabled={disabled}
           type={type}
