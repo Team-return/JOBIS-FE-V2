@@ -55,7 +55,7 @@ const StyledRadio = styled.div<Pick<Props, "$checked">>`
     background-color: ${({ theme }) => theme.color.primary[20]};
     transform: ${({ $checked }) =>
       $checked
-        ? "translate(-50%, -50%) scale(1)"
+        ? "translate(-50%, -50%) scale(0.8)"
         : "translate(-50%, -50%) scale(0)"};
     transition: transform 0.2s ease-in-out;
   }

@@ -64,7 +64,13 @@ export const Search = ({
   return (
     <Wrapper>
       <InputWrapper $width={$width}>
-        <StyledInput id={id} value={value} onChange={handleChange} {...props} />
+        <StyledInput
+          id={id}
+          value={value}
+          onChange={handleChange}
+          role="search"
+          {...props}
+        />
         <IconWrapper onClick={onIconClick}>
           <Icon
             icon={"Search"}
