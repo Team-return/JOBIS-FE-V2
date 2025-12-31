@@ -57,7 +57,7 @@ describe("Header", () => {
       renderWithRouter(<Header type="admin" />);
 
       await userEvent.click(screen.getByText("모집의뢰서"));
-      expect(mockNavigate).toHaveBeenCalledWith("/recruitment");
+      expect(mockNavigate).toHaveBeenCalledWith("/");
 
       await userEvent.click(screen.getByText("기업"));
       expect(mockNavigate).toHaveBeenCalledWith("/company");
@@ -100,7 +100,7 @@ describe("Header", () => {
       renderWithRouter(<Header type="company" />);
 
       await userEvent.click(screen.getByText("모집의뢰서"));
-      expect(mockNavigate).toHaveBeenCalledWith("/recruitment");
+      expect(mockNavigate).toHaveBeenCalledWith("/");
 
       await userEvent.click(screen.getByText("지원자"));
       expect(mockNavigate).toHaveBeenCalledWith("/application");
