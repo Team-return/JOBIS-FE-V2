@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { type PluginOption, defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { version, name as projectName } from "./package.json";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -60,5 +60,5 @@ export default defineConfig({
     "import.meta.env.VERSION": JSON.stringify(version),
     "import.meta.env.APP_DIST": JSON.stringify(sentryProjectName)
   },
-  plugins: [react(), tsconfigPaths(), sentryPlugin]
+  plugins: [react(), tsconfigPaths(), sentryPlugin] as PluginOption[]
 });
