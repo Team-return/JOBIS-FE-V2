@@ -16,9 +16,11 @@
     "test": "vitest --run",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --run --ui",
+    "test:coverage": "vitest --run --coverage",
+    "test:coverage:ui": "vitest --run --coverage --ui",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "generate-icons": "svgr ./assets/icons --out-dir ./src/icons --typescript --no-index --jsx-runtime automatic"
+    "generate-icons": "svgr ./assets/icons --out-dir ./src/icons --config-file ./svgr.config.mjs --no-index"
   },
   "dependencies": {
     "@emotion/react": "11.11.4",
@@ -28,13 +30,9 @@
     "zustand": "5.0.6"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "11.11.0",
-    "@storybook/addon-a11y": "9.0.15",
-    "@storybook/addon-docs": "9.0.15",
-    "@storybook/addon-links": "9.0.15",
-    "@storybook/addon-onboarding": "9.0.15",
-    "@storybook/addon-themes": "9.0.15",
-    "@storybook/react-vite": "9.0.15",
+    "@storybook/addon-docs": "10.1.10",
+    "@storybook/addon-vitest": "^10.1.10",
+    "@storybook/react-vite": "10.1.10",
     "@svgr/cli": "^8.1.0",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.4.6",
@@ -45,17 +43,19 @@
     "@types/react-dom": "18.3.1",
     "@typescript-eslint/eslint-plugin": "8.35.1",
     "@typescript-eslint/parser": "8.35.1",
-    "@vitest/ui": "3.2.4",
+    "@vitest/browser": "3.1.0",
+    "@vitest/coverage-v8": "3.1.0",
+    "@vitest/ui": "3.1.0",
     "eslint": "9.33.0",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-refresh": "0.4.7",
-    "eslint-plugin-storybook": "9.0.15",
+    "eslint-plugin-storybook": "10.1.10",
     "jsdom": "24.1.0",
-    "storybook": "9.0.15",
+    "playwright": "^1.57.0",
+    "storybook": "10.1.10",
     "typescript": "5.8.3",
-    "vite": "5.3.1",
+    "vite": "6.0.7",
     "vite-plugin-dts": "^4.5.0",
-    "vite-plugin-static-copy": "^3.1.4",
-    "vitest": "3.2.4"
+    "vitest": "3.1.0"
   }
 }
