@@ -13,6 +13,7 @@ const Component = styled.div`
   gap: 24px;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
   box-shadow: 0px 4px 20px 0px rgba(112, 144, 176, 0.12);
+  user-select: none;
 `;
 
 const Header = styled.div`

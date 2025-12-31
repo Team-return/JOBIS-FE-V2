@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { type PluginOption, defineConfig } from "vite";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -7,7 +7,7 @@ const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths()] as PluginOption[],
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),

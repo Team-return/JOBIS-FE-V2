@@ -52,14 +52,27 @@ export const Default: Story = {};
 export const Period: Story = {
   args: {
     types: "period",
-    checked: false
+    checked: false,
+    $placeholder: "기간 설정"
   },
   argTypes: {
     onCheckChange: { action: "check changed" }
   }
 };
+
 export const SupportJob: Story = {
   args: {
-    types: "supportJob"
+    types: "supportJob",
+    $placeholder: "지원 직무 검색",
+    options: [
+      { label: "프론트엔드 개발자", value: "frontend" },
+      { label: "백엔드 개발자", value: "backend" },
+      { label: "풀스택 개발자", value: "fullstack" },
+      { label: "UI/UX 디자이너", value: "designer" },
+      { label: "데브옵스 엔지니어", value: "devops" },
+      { label: "데이터 사이언티스트", value: "data-scientist" },
+      { label: "모바일 개발자", value: "mobile" },
+      { label: "QA 엔지니어", value: "qa" }
+    ]
   }
 };

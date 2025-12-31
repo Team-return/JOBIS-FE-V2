@@ -1,5 +1,6 @@
 import * as icons from "../../../icons";
 import { Props, IconName } from "./Icon.types";
+import { useTheme } from "@/hooks";
 
 const WHITE_FILL_ICONS: readonly IconName[] = [
   "ToastError",
@@ -11,15 +12,22 @@ const WHITE_FILL_ICONS: readonly IconName[] = [
 
 export const Icon = ({
   icon,
-  size = 28,
+  size,
+  width = 20,
+  height = 20,
   fillColor,
   strokeColor,
   ...props
 }: Props) => {
+  const { currentTheme } = useTheme();
   const SvgIcon = icons[icon];
+  if (size) {
+    width = size;
+    height = size;
+  }
 
   const defaultFillColor = WHITE_FILL_ICONS.includes(icon)
-    ? fillColor || "#ffffff"
+    ? fillColor || currentTheme.color.grayScale[10]
     : fillColor;
 
   const defaultStrokeColor =
@@ -27,13 +35,18 @@ export const Icon = ({
 
   return (
     <SvgIcon
-      width={size}
-      height={size}
+      {...props}
+      width={width}
+      height={height}
       fill={defaultFillColor}
       stroke={defaultStrokeColor}
       aria-label={icon}
       role="img"
-      {...props}
+      style={{
+        width: size,
+        height: size,
+        ...props.style
+      }}
     />
   );
 };

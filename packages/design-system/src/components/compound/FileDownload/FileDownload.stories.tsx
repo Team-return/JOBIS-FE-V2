@@ -34,9 +34,12 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const component = canvas.getByRole("button");
-    expect(component).toBeInTheDocument();
-    await userEvent.click(component);
+    const buttons = canvas.getAllByRole("button");
+    const fileDownloadButton = buttons.find(button =>
+      button.textContent?.includes("File Download")
+    );
+    expect(fileDownloadButton).toBeInTheDocument();
+    await userEvent.click(fileDownloadButton!);
   }
 };
 

@@ -76,7 +76,12 @@ const ThemeToggleButton = styled.button`
 
 export const withCustomTheme = (Story: StoryFn, context: StoryContext) => {
   return (
-    <MemoryRouter>
+    <MemoryRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <ThemeDecorator Story={Story} context={context} />
     </MemoryRouter>
   );

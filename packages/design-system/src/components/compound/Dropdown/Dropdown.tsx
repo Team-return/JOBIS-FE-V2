@@ -101,6 +101,10 @@ const PeriodOptions = styled.div`
   border-radius: 8px;
   width: 398px;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 `;
 
 const DateContainer = styled.div<{ $disabled?: boolean }>`
@@ -305,7 +309,7 @@ export const Dropdown = ({
                     >
                       <DateInput
                         type="text"
-                        placeholder="yyyy.mm.dd"
+                        placeholder="YYYY.MM.DD"
                         readOnly
                         value={formatDate(startDate)}
                       />
@@ -324,7 +328,7 @@ export const Dropdown = ({
                     >
                       <DateInput
                         type="text"
-                        placeholder="yyyy.mm.dd"
+                        placeholder="YYYY.MM.DD"
                         readOnly
                         value={formatDate(endDate)}
                       />

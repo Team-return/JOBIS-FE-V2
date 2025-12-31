@@ -1,11 +1,10 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { type PluginOption, defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import tsconfigPaths from "vite-tsconfig-paths";
 import dts from "vite-plugin-dts";
-
 const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
@@ -26,7 +25,7 @@ export default defineConfig({
         "**/*.test.tsx"
       ]
     })
-  ],
+  ] as PluginOption[],
   build: {
     lib: {
       entry: resolve(DIR_NAME, "src/index.ts"),
@@ -54,11 +53,5 @@ export default defineConfig({
         }
       }
     }
-  },
-  // @ts-expect-error: intentional cross-package vite plugin assignment
-  test: {
-    environment: "jsdom",
-    globals: true,
-    setupFiles: "./src/setupTests.ts"
   }
 });
