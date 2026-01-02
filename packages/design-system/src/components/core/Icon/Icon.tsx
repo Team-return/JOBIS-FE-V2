@@ -19,7 +19,7 @@ export const Icon = ({
   strokeColor,
   ...props
 }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const SvgIcon = icons[icon];
   if (size) {
     width = size;
@@ -27,7 +27,7 @@ export const Icon = ({
   }
 
   const defaultFillColor = WHITE_FILL_ICONS.includes(icon)
-    ? fillColor || currentTheme.color.grayScale[10]
+    ? fillColor || theme.color.grayScale[10]
     : fillColor;
 
   const defaultStrokeColor =

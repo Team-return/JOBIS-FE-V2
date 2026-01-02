@@ -11,18 +11,18 @@ const Component = styled.footer`
 `;
 
 export const Footer = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
 
   return (
     <Component>
       <div>
-        <Text $size="caption" $color={currentTheme.color.grayScale[10]}>
+        <Text $size="caption" $color={theme.color.grayScale[10]}>
           {"연락처) 042-866-8843"}
         </Text>
-        <Text $size="caption" $color={currentTheme.color.grayScale[10]}>
+        <Text $size="caption" $color={theme.color.grayScale[10]}>
           {"이메일) team-return@dsm.hs.kr"}
         </Text>
-        <Text $size="caption" $color={currentTheme.color.grayScale[10]}>
+        <Text $size="caption" $color={theme.color.grayScale[10]}>
           {"주소) 대전광역시 유성구 가정북로 76 (창의관 산학협력부)"}
         </Text>
       </div>
@@ -56,7 +56,7 @@ export const Footer = () => {
             />
           </svg>
         </Stack>
-        <Text $size="caption" $color={currentTheme.color.grayScale[10]}>
+        <Text $size="caption" $color={theme.color.grayScale[10]}>
           {`©${new Date().getFullYear()} Copyright team-return  ALL RIGHTS RESERVED.`}
         </Text>
       </Flex>

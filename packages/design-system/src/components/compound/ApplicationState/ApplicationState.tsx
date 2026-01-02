@@ -105,9 +105,9 @@ export const ApplicationState = ({
   onCancle
 }: Props) => {
   const statusText = STATUS_MAP[types] || "";
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const currentStatusStyle = getStatusStyle(currentTheme, types);
+  const currentStatusStyle = getStatusStyle(theme, types);
 
   return (
     <Component>
@@ -122,7 +122,7 @@ export const ApplicationState = ({
               <Text
                 $size="caption"
                 $weight="regular"
-                $color={currentTheme.color.grayScale[60]}
+                $color={theme.color.grayScale[60]}
               >
                 {date}
               </Text>
@@ -156,7 +156,7 @@ export const ApplicationState = ({
               onRetry?.();
             }}
           >
-            <Text $size="caption" $color={currentTheme.color.grayScale[80]}>
+            <Text $size="caption" $color={theme.color.grayScale[80]}>
               재지원
             </Text>
           </ClickAria>
@@ -166,7 +166,7 @@ export const ApplicationState = ({
               onCancle?.();
             }}
           >
-            <Text $size="caption" $color={currentTheme.color.grayScale[80]}>
+            <Text $size="caption" $color={theme.color.grayScale[80]}>
               지원 취소
             </Text>
           </ClickAria>

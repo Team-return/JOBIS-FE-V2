@@ -112,7 +112,7 @@ const AlarmContainer = styled.div`
 `;
 
 export const HeaderStudent = ({ userName, notifications }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
   const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);
   const navigate = useNavigate();
@@ -137,8 +137,8 @@ export const HeaderStudent = ({ userName, notifications }: Props) => {
               ? location.pathname === "/"
               : location.pathname.startsWith(item.path);
           const textColor = isActive
-            ? currentTheme.color.grayScale[90]
-            : currentTheme.color.grayScale[80];
+            ? theme.color.grayScale[90]
+            : theme.color.grayScale[80];
           return (
             <TextContainer
               key={item.label}
@@ -164,7 +164,7 @@ export const HeaderStudent = ({ userName, notifications }: Props) => {
             setIsNew(false);
           }}
         >
-          <Text $span $size="body2" $color={currentTheme.color.grayScale[80]}>
+          <Text $span $size="body2" $color={theme.color.grayScale[80]}>
             {userName}
           </Text>
           <ChevronIcon $isOpen={isAlarm}>
@@ -184,7 +184,7 @@ export const HeaderStudent = ({ userName, notifications }: Props) => {
                 />
               ))
             ) : (
-              <Text $size="body3" $color={currentTheme.color.grayScale[60]}>
+              <Text $size="body3" $color={theme.color.grayScale[60]}>
                 알림이 없습니다.
               </Text>
             )}

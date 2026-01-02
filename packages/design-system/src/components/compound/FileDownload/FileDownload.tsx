@@ -20,7 +20,7 @@ const Component = styled.button<Pick<Props, "$done">>`
 `;
 
 export const FileDownload = ({ label, fileUrl, $done = false }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = fileUrl;
@@ -36,7 +36,7 @@ export const FileDownload = ({ label, fileUrl, $done = false }: Props) => {
         $span
         $size="caption"
         $weight="regular"
-        $color={currentTheme.color.grayScale[60]}
+        $color={theme.color.grayScale[60]}
         $underline={$done}
       >
         {label}

@@ -19,7 +19,7 @@ export const CompanyCard = ({
   onBookmarkClick,
   onClick
 }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   return (
     <Flex $direction="column" $gap={16} onClick={onClick}>
       <Img src={imgUrl} alt={companyName} />
@@ -31,7 +31,7 @@ export const CompanyCard = ({
           <Text
             $size="body3"
             $weight="regular"
-            $color={currentTheme.color.grayScale[60]}
+            $color={theme.color.grayScale[60]}
           >
             {annualSales}
           </Text>

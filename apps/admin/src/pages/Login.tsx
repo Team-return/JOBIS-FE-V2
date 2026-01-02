@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const [checked, setChecked] = useState(false);
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -114,7 +114,7 @@ export const Login = () => {
         <Surface
           $radius="8px"
           $shadow
-          $bg={currentTheme.color.grayScale[10]}
+          $bg={theme.color.grayScale[10]}
           $padding="36px"
         >
           <Flex
@@ -156,7 +156,7 @@ export const Login = () => {
             <Flex $justify="flex-start">
               <Checkbox
                 label="로그인 유지"
-                $labelColor={currentTheme.color.grayScale[50]}
+                $labelColor={theme.color.grayScale[50]}
                 $labelSize="body2"
                 $checked={checked}
                 onChange={setChecked}

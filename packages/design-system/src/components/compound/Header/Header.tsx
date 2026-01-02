@@ -42,7 +42,7 @@ const LogoContainer = styled.div`
 
 export const Header = (props: Props) => {
   const { type } = props;
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,8 +75,8 @@ export const Header = (props: Props) => {
                 ? location.pathname === "/"
                 : location.pathname.startsWith(item.path);
             const textColor = isActive
-              ? currentTheme.color.grayScale[90]
-              : currentTheme.color.grayScale[80];
+              ? theme.color.grayScale[90]
+              : theme.color.grayScale[80];
 
             return (
               <TextContainer
@@ -115,8 +115,8 @@ export const Header = (props: Props) => {
                 ? location.pathname === "/"
                 : location.pathname.startsWith(item.path);
             const textColor = isActive
-              ? currentTheme.color.grayScale[90]
-              : currentTheme.color.grayScale[80];
+              ? theme.color.grayScale[90]
+              : theme.color.grayScale[80];
 
             return (
               <TextContainer

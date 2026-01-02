@@ -102,7 +102,7 @@ export const Input = ({
   type = "text",
   autoComplete
 }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const id = useId();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange?.(e.target.value);
@@ -138,7 +138,7 @@ export const Input = ({
           $span
           $size="body3"
           $weight="regular"
-          $color={currentTheme.color.subColor.red[20]}
+          $color={theme.color.subColor.red[20]}
         >
           {$errorMessage}
         </Text>

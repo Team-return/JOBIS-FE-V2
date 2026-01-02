@@ -191,7 +191,7 @@ export const Dropdown = ({
           opt.label.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : options;
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   return (
     <Wrapper>
       <TriggerButton
@@ -202,14 +202,14 @@ export const Dropdown = ({
         <Text
           $size="body3"
           $weight="regular"
-          $color={currentTheme.color.grayScale[60]}
+          $color={theme.color.grayScale[60]}
         >
           {selectedLabel || $placeholder || "선택"}
         </Text>
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
-          fillColor={currentTheme.color.grayScale[60]}
+          fillColor={theme.color.grayScale[60]}
         />
       </TriggerButton>
 
@@ -237,12 +237,12 @@ export const Dropdown = ({
                   placeholder="검색어를 입력해주세요"
                   onChange={value => setSearchTerm(value)}
                   value={searchTerm}
-                  IconFillColor={currentTheme.color.grayScale[60]}
+                  IconFillColor={theme.color.grayScale[60]}
                 />
                 <div
                   style={{
                     height: "1px",
-                    backgroundColor: currentTheme.color.grayScale[40]
+                    backgroundColor: theme.color.grayScale[40]
                   }}
                 />
                 <Flex $wrap $gap={10}>
@@ -256,7 +256,7 @@ export const Dropdown = ({
                         <Text
                           $size="caption"
                           $weight="regular"
-                          $color={currentTheme.color.subColor.blue[30]}
+                          $color={theme.color.subColor.blue[30]}
                         >
                           {opt.label}
                         </Text>
@@ -266,7 +266,7 @@ export const Dropdown = ({
                     <Text
                       $size="body3"
                       $weight="regular"
-                      $color={currentTheme.color.grayScale[60]}
+                      $color={theme.color.grayScale[60]}
                     >
                       검색 결과가 없습니다.
                     </Text>
@@ -287,14 +287,14 @@ export const Dropdown = ({
                     <Icon
                       icon="Refresh"
                       size={24}
-                      strokeColor={currentTheme.color.grayScale[70]}
-                      fillColor={currentTheme.color.grayScale[10]}
+                      strokeColor={theme.color.grayScale[70]}
+                      fillColor={theme.color.grayScale[10]}
                     />
                   </Flex>
                   <Icon
                     icon="Close"
                     size={24}
-                    fillColor={currentTheme.color.grayScale[60]}
+                    fillColor={theme.color.grayScale[60]}
                     style={{ cursor: "pointer" }}
                     onClick={() =>
                       calendarFor ? setCalendarFor(null) : setIsOpen(false)
@@ -318,7 +318,7 @@ export const Dropdown = ({
                     <Text
                       $size="h5"
                       $weight="regular"
-                      $color={currentTheme.color.grayScale[60]}
+                      $color={theme.color.grayScale[60]}
                     >
                       ~
                     </Text>
@@ -339,7 +339,7 @@ export const Dropdown = ({
                     label="상시모집"
                     $labelSize="body2"
                     $labelWeight="regular"
-                    $labelColor={currentTheme.color.grayScale[60]}
+                    $labelColor={theme.color.grayScale[60]}
                     $checked={checked}
                     onChange={(isChecked: boolean) => {
                       onCheckChange?.(isChecked);
