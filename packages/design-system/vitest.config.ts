@@ -1,5 +1,4 @@
 import { type Plugin, defineConfig } from "vitest/config";
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import tsconfigPaths from "vite-tsconfig-paths";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "url";
@@ -8,27 +7,17 @@ const FILE_NAME = fileURLToPath(import.meta.url);
 const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
-  plugins: [
-    tsconfigPaths() as Plugin,
-    react() as Plugin[],
-    storybookTest({
-      configDir: resolve(DIR_NAME, ".storybook")
-    })
-  ],
+  plugins: [tsconfigPaths() as Plugin, react() as Plugin[]],
   test: {
-    name: "storybook",
-    browser: {
-      enabled: true,
-      headless: true,
-      provider: "playwright",
-      instances: [{ browser: "chromium" }]
-    },
+    name: "design-system",
+    environment: "jsdom",
     setupFiles: ["src/vitest.setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
       "**/.storybook/**",
-      "**/node_modules/@storybook/addon-vitest/**"
+      "**/*.stories.{ts,tsx}"
     ],
     coverage: {
       provider: "v8",
