@@ -1,10 +1,6 @@
 import { type Plugin, defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 import react from "@vitejs/plugin-react";
-import { fileURLToPath } from "url";
-import { dirname, resolve } from "path";
-const FILE_NAME = fileURLToPath(import.meta.url);
-const DIR_NAME = dirname(FILE_NAME);
 
 export default defineConfig({
   plugins: [tsconfigPaths() as Plugin, react() as Plugin[]],

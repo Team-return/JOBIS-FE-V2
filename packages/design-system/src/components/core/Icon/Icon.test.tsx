@@ -14,8 +14,8 @@ describe("Icon", () => {
   it("applies default size", () => {
     render(<Icon icon="Bell" />);
     const iconElement = screen.getByRole("img");
-    expect(iconElement).toHaveAttribute("width", "28");
-    expect(iconElement).toHaveAttribute("height", "28");
+    expect(iconElement).toHaveAttribute("width", "20");
+    expect(iconElement).toHaveAttribute("height", "20");
   });
 
   it("applies custom size", () => {
