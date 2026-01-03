@@ -89,4 +89,45 @@ describe("Dropdown", () => {
 
     expect(handleCheckChange).toHaveBeenCalledWith(true);
   });
+
+  it("works in controlled mode with isOpen and onToggle", async () => {
+    const user = userEvent.setup();
+    const handleToggle = vi.fn();
+
+    renderWithTheme(
+      <Dropdown
+        options={options}
+        isOpen={false}
+        onToggle={handleToggle}
+        $placeholder="제어 모드"
+      />
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    expect(handleToggle).toHaveBeenCalledWith(true);
+
+    // Simulate parent updating isOpen
+    renderWithTheme(
+      <Dropdown
+        options={options}
+        isOpen={true}
+        onToggle={handleToggle}
+        $placeholder="제어 모드"
+      />
+    );
+
+    expect(screen.getByText("프론트엔드")).toBeInTheDocument();
+  });
+
+  it("works in uncontrolled mode without isOpen prop", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} />);
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    expect(screen.getByText("프론트엔드")).toBeInTheDocument();
+  });
 });

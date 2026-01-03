@@ -18,7 +18,6 @@ const TriggerButton = styled.button<{ $isOpen: boolean; $width?: string }>`
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  min-width: 120px;
   padding: 10px 16px;
   border: 1px solid ${({ theme }) => theme.color.grayScale[50]};
   border-radius: 8px;
@@ -146,11 +145,22 @@ export const Dropdown = ({
   types,
   $width,
   checked,
-  onCheckChange
+  onCheckChange,
+  isOpen: externalIsOpen,
+  onToggle
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const [selected, setSelected] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const closeDropdown = () => {
+    if (onToggle) {
+      onToggle(false);
+    } else {
+      setInternalIsOpen(false);
+    }
+  };
 
   // period type state
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -160,7 +170,7 @@ export const Dropdown = ({
   const handleSelect = (value: string) => {
     setSelected(value);
     onChange?.(value);
-    setIsOpen(false);
+    closeDropdown();
   };
 
   const formatDate = (date: Date | null) => {
@@ -181,7 +191,7 @@ export const Dropdown = ({
   };
 
   const handlePeriodSubmit = () => {
-    setIsOpen(false);
+    closeDropdown();
   };
 
   const selectedLabel = options.find(o => o.value === selected)?.label;
@@ -196,7 +206,14 @@ export const Dropdown = ({
     <Wrapper>
       <TriggerButton
         $isOpen={isOpen}
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={() => {
+          const newValue = !isOpen;
+          if (onToggle) {
+            onToggle(newValue);
+          } else {
+            setInternalIsOpen(newValue);
+          }
+        }}
         $width={typeof $width === "number" ? `${$width}px` : $width}
       >
         <Text
@@ -297,7 +314,7 @@ export const Dropdown = ({
                     fillColor={theme.color.grayScale[60]}
                     style={{ cursor: "pointer" }}
                     onClick={() =>
-                      calendarFor ? setCalendarFor(null) : setIsOpen(false)
+                      calendarFor ? setCalendarFor(null) : closeDropdown()
                     }
                   />
                 </Flex>

@@ -14,4 +14,6 @@ export interface Props {
   types?: "supportJob" | "period";
   checked?: boolean;
   onCheckChange?: (checked: boolean) => void;
+  isOpen?: boolean;
+  onToggle?: (isOpen: boolean) => void;
 }

@@ -40,6 +40,14 @@ const meta: Meta<typeof Dropdown> = {
       control: "radio",
       options: [undefined, "supportJob", "period"],
       description: "드롭다운 스타일/타입"
+    },
+    isOpen: {
+      control: "boolean",
+      description: "드롭다운 열림 상태 (제어 컴포넌트)"
+    },
+    onToggle: {
+      action: "toggled",
+      description: "드롭다운 열림/닫힘 상태 변경 이벤트 핸들러"
     }
   }
 };
@@ -74,5 +82,15 @@ export const SupportJob: Story = {
       { label: "모바일 개발자", value: "mobile" },
       { label: "QA 엔지니어", value: "qa" }
     ]
+  }
+};
+
+export const Controlled: Story = {
+  args: {
+    isOpen: false,
+    $placeholder: "제어 모드"
+  },
+  argTypes: {
+    onToggle: { action: "toggled" }
   }
 };
