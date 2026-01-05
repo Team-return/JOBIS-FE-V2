@@ -7,6 +7,7 @@ const WHITE_FILL_ICONS: readonly IconName[] = [
   "ToastWarning",
   "ToastSuccess",
   "ToastInfo",
+  "Print",
   "Refresh"
 ] as const;
 
