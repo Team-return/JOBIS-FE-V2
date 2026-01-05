@@ -18,3 +18,4 @@ export * from "./RecrutementCard";
 export * from "./Search";
 export * from "./Switch";
 export * from "./Toast";
+export * from "./IconButton";
