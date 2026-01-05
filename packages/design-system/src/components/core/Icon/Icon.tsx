@@ -27,11 +27,11 @@ export const Icon = ({
   }
 
   const defaultFillColor = WHITE_FILL_ICONS.includes(icon)
-    ? fillColor || theme.color.grayScale[10]
+    ? theme.color.grayScale[10]
     : fillColor;
 
   const defaultStrokeColor =
-    icon === "Refresh" ? strokeColor || "#000000" : strokeColor;
+    icon === "Refresh" ? strokeColor || theme.color.grayScale[90] : "";
 
   return (
     <SvgIcon

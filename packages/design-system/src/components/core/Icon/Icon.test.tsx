@@ -38,4 +38,24 @@ describe("Icon", () => {
     const iconElement = screen.getByRole("img");
     expect(iconElement).toHaveClass("my-class");
   });
+
+  it("applies theme color for Refresh stroke", () => {
+    render(<Icon icon="Refresh" />);
+    const iconElement = screen.getByRole("img");
+    expect(iconElement).toHaveAttribute("stroke");
+  });
+
+  it("ignores fillColor for WHITE_FILL_ICONS and uses theme color", () => {
+    render(<Icon icon="ToastError" fillColor="#FF0000" />);
+    const iconElement = screen.getByRole("img");
+    // Should use theme.color.grayScale[10] instead of the provided fillColor
+    expect(iconElement).toHaveAttribute("fill");
+  });
+
+  it("applies custom fillColor for non-WHITE_FILL_ICONS", () => {
+    const customColor = "#5B8DEF";
+    render(<Icon icon="Home" fillColor={customColor} />);
+    const iconElement = screen.getByRole("img");
+    expect(iconElement).toHaveAttribute("fill", customColor);
+  });
 });
