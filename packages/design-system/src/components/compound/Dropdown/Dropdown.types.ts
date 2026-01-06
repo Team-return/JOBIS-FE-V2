@@ -5,10 +5,16 @@ export type DropdownOption = {
   value: string;
 };
 
+export type PeriodValue = {
+  startDate: Date | null;
+  endDate: Date | null;
+  isConstant: boolean;
+};
+
 export interface Props {
   options: DropdownOption[];
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string | PeriodValue) => void;
   $width?: DimensionValue;
   $placeholder?: string;
   types?: "supportJob" | "period";
@@ -16,4 +22,5 @@ export interface Props {
   onCheckChange?: (checked: boolean) => void;
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
+  $color?: string;
 }

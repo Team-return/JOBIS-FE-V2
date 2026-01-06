@@ -13,19 +13,22 @@ const Wrapper = styled.div`
   display: inline-block;
 `;
 
-const TriggerButton = styled.button<{ $isOpen: boolean; $width?: string }>`
+const TriggerButton = styled.button<
+  Pick<Props, "isOpen" | "$width" | "$color">
+>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 16px;
-  border: 1px solid ${({ theme }) => theme.color.grayScale[50]};
+  padding: 8px 7px;
+  border: 1px solid
+    ${({ theme, $color }) => $color || theme.color.grayScale[50]};
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
-  width: ${({ $width }) => $width};
-  ${({ $isOpen, theme }) =>
-    $isOpen &&
+  min-width: ${({ $width }) => $width};
+  ${({ isOpen, theme }) =>
+    isOpen &&
     `
       border-color: ${theme.color.grayScale[90]};
     `}
@@ -60,6 +63,10 @@ const DefaultOptions = styled.ul`
 const DefaultOption = styled.li<{ $selected: boolean }>`
   padding: 8px 16px;
   cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.color.primary[30]};
+  }
 
   ${({ $selected, theme }) =>
     $selected &&
@@ -147,12 +154,16 @@ export const Dropdown = ({
   checked,
   onCheckChange,
   isOpen: externalIsOpen,
-  onToggle
+  onToggle,
+  $color
 }: Props) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const [selected, setSelected] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [internalChecked, setInternalChecked] = useState(false);
+  const isChecked = checked !== undefined ? checked : internalChecked;
+  const [tempChecked, setTempChecked] = useState(false);
 
   const closeDropdown = () => {
     if (onToggle) {
@@ -165,6 +176,8 @@ export const Dropdown = ({
   // period type state
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [tempStartDate, setTempStartDate] = useState<Date | null>(null);
+  const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
   const [calendarFor, setCalendarFor] = useState<"start" | "end" | null>(null);
 
   const handleSelect = (value: string) => {
@@ -183,14 +196,30 @@ export const Dropdown = ({
 
   const handleDateChange = (date: Date) => {
     if (calendarFor === "start") {
-      setStartDate(date);
+      setTempStartDate(date);
     } else if (calendarFor === "end") {
-      setEndDate(date);
+      setTempEndDate(date);
     }
     setCalendarFor(null);
   };
 
   const handlePeriodSubmit = () => {
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+    if (checked === undefined) {
+      setInternalChecked(tempChecked);
+    }
+    onCheckChange?.(tempChecked);
+
+    // period 타입일 때 onChange에 날짜 정보 전달
+    if (onChange) {
+      onChange({
+        startDate: tempStartDate,
+        endDate: tempEndDate,
+        isConstant: tempChecked
+      });
+    }
+
     closeDropdown();
   };
 
@@ -202,12 +231,31 @@ export const Dropdown = ({
         )
       : options;
   const { currentTheme: theme } = useTheme();
+
+  const getDisplayText = () => {
+    if (types === "period") {
+      if (isChecked) return "상시모집";
+      if (startDate && endDate) {
+        return `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+      }
+      if (startDate) return formatDate(startDate);
+      if (endDate) return formatDate(endDate);
+    }
+    return selectedLabel || $placeholder || "선택";
+  };
+
   return (
     <Wrapper>
       <TriggerButton
-        $isOpen={isOpen}
+        isOpen={isOpen}
         onClick={() => {
           const newValue = !isOpen;
+          if (newValue && types === "period") {
+            // 드롭다운이 열릴 때 현재 날짜와 체크 상태를 임시 state에 복사
+            setTempStartDate(startDate);
+            setTempEndDate(endDate);
+            setTempChecked(isChecked);
+          }
           if (onToggle) {
             onToggle(newValue);
           } else {
@@ -215,18 +263,19 @@ export const Dropdown = ({
           }
         }}
         $width={typeof $width === "number" ? `${$width}px` : $width}
+        $color={$color}
       >
         <Text
           $size="body3"
           $weight="regular"
-          $color={theme.color.grayScale[60]}
+          $color={$color || theme.color.grayScale[60]}
         >
-          {selectedLabel || $placeholder || "선택"}
+          {getDisplayText()}
         </Text>
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
-          fillColor={theme.color.grayScale[60]}
+          fillColor={$color || theme.color.grayScale[60]}
         />
       </TriggerButton>
 
@@ -321,14 +370,14 @@ export const Dropdown = ({
                 <Flex $direction="column" $gap={8}>
                   <Flex $align="center" $justify="space-between">
                     <DateContainer
-                      $disabled={checked}
-                      onClick={() => !checked && setCalendarFor("start")}
+                      $disabled={tempChecked}
+                      onClick={() => !tempChecked && setCalendarFor("start")}
                     >
                       <DateInput
                         type="text"
                         placeholder="YYYY.MM.DD"
                         readOnly
-                        value={formatDate(startDate)}
+                        value={formatDate(tempStartDate)}
                       />
                       <Icon icon="Date" size={24} />
                     </DateContainer>
@@ -340,14 +389,14 @@ export const Dropdown = ({
                       ~
                     </Text>
                     <DateContainer
-                      $disabled={checked}
-                      onClick={() => !checked && setCalendarFor("end")}
+                      $disabled={tempChecked}
+                      onClick={() => !tempChecked && setCalendarFor("end")}
                     >
                       <DateInput
                         type="text"
                         placeholder="YYYY.MM.DD"
                         readOnly
-                        value={formatDate(endDate)}
+                        value={formatDate(tempEndDate)}
                       />
                       <Icon icon="Date" size={24} />
                     </DateContainer>
@@ -357,12 +406,12 @@ export const Dropdown = ({
                     $labelSize="body2"
                     $labelWeight="regular"
                     $labelColor={theme.color.grayScale[60]}
-                    $checked={checked}
-                    onChange={(isChecked: boolean) => {
-                      onCheckChange?.(isChecked);
-                      if (isChecked) {
-                        setStartDate(null);
-                        setEndDate(null);
+                    $checked={tempChecked}
+                    onChange={(newChecked: boolean) => {
+                      setTempChecked(newChecked);
+                      if (newChecked) {
+                        setTempStartDate(null);
+                        setTempEndDate(null);
                       }
                     }}
                   />
@@ -381,7 +430,7 @@ export const Dropdown = ({
                 <CalendarWrapper>
                   <Calendar
                     value={
-                      (calendarFor === "start" ? startDate : endDate) ||
+                      (calendarFor === "start" ? tempStartDate : tempEndDate) ||
                       new Date()
                     }
                     onChange={handleDateChange}

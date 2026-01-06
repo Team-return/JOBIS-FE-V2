@@ -61,10 +61,14 @@ export const Period: Story = {
   args: {
     types: "period",
     checked: false,
-    $placeholder: "기간 설정"
+    $placeholder: "기간 설정",
+    isOpen: undefined,
+    onToggle: undefined
   },
   argTypes: {
-    onCheckChange: { action: "check changed" }
+    onCheckChange: { action: "check changed" },
+    isOpen: { table: { disable: true } },
+    onToggle: { table: { disable: true } }
   }
 };
 
@@ -72,6 +76,8 @@ export const SupportJob: Story = {
   args: {
     types: "supportJob",
     $placeholder: "지원 직무 검색",
+    isOpen: undefined,
+    onToggle: undefined,
     options: [
       { label: "프론트엔드 개발자", value: "frontend" },
       { label: "백엔드 개발자", value: "backend" },
@@ -82,6 +88,10 @@ export const SupportJob: Story = {
       { label: "모바일 개발자", value: "mobile" },
       { label: "QA 엔지니어", value: "qa" }
     ]
+  },
+  argTypes: {
+    isOpen: { table: { disable: true } },
+    onToggle: { table: { disable: true } }
   }
 };
 
