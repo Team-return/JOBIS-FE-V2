@@ -34,6 +34,10 @@ export const GlobalStyles = () => {
           -moz-osx-font-smoothing: grayscale;
           background-color: ${theme.color.grayScale[10]};
         }
+
+        #root > * {
+          margin: 0 auto;
+        }
       `}
     />
   );
