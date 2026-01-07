@@ -9,6 +9,7 @@ const Container = styled.div<Props>`
   justify-content: ${({ $justify = "flex-start" }) => $justify};
   flex-wrap: ${({ $wrap }) => ($wrap ? "wrap" : "nowrap")};
   ${({ $gap }) => $gap && `gap: ${parseValue($gap)};`}
+  ${({ $fit }) => ($fit ? "width: auto;" : "width: 100%;")}
 `;
 
 export const Flex = ({ children, ...props }: ParentProps<Props>) => {
