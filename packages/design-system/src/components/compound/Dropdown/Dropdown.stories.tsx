@@ -1,19 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Dropdown } from "./Dropdown";
+import { DropdownPeriod } from "./DropdownPeriod";
 
 const meta: Meta<typeof Dropdown> = {
   title: "components/compound/Dropdown",
   component: Dropdown,
   tags: ["autodocs"],
-  args: {
-    $placeholder: "분야 선택",
-    options: [
-      { label: "프론트엔드", value: "frontend" },
-      { label: "백엔드", value: "backend" },
-      { label: "디자이너", value: "designer" },
-      { label: "데브옵스", value: "devops" }
-    ]
-  },
   argTypes: {
     options: {
       control: "object",
@@ -38,7 +30,7 @@ const meta: Meta<typeof Dropdown> = {
     },
     types: {
       control: "radio",
-      options: [undefined, "supportJob", "period"],
+      options: [undefined, "supportJob"],
       description: "드롭다운 스타일/타입"
     },
     isOpen: {
@@ -55,18 +47,17 @@ const meta: Meta<typeof Dropdown> = {
 export default meta;
 type Story = StoryObj<typeof Dropdown>;
 
-export const Default: Story = {};
-
-export const Period: Story = {
+export const Default: Story = {
   args: {
-    types: "period",
-    checked: false,
-    $placeholder: "기간 설정",
-    isOpen: undefined,
-    onToggle: undefined
+    $placeholder: "분야 선택",
+    options: [
+      { label: "프론트엔드", value: "frontend" },
+      { label: "백엔드", value: "backend" },
+      { label: "디자이너", value: "designer" },
+      { label: "데브옵스", value: "devops" }
+    ]
   },
   argTypes: {
-    onCheckChange: { action: "check changed" },
     isOpen: { table: { disable: true } },
     onToggle: { table: { disable: true } }
   }
@@ -76,8 +67,6 @@ export const SupportJob: Story = {
   args: {
     types: "supportJob",
     $placeholder: "지원 직무 검색",
-    isOpen: undefined,
-    onToggle: undefined,
     options: [
       { label: "프론트엔드 개발자", value: "frontend" },
       { label: "백엔드 개발자", value: "backend" },
@@ -95,12 +84,34 @@ export const SupportJob: Story = {
   }
 };
 
-export const Controlled: Story = {
-  args: {
-    isOpen: false,
-    $placeholder: "제어 모드"
-  },
-  argTypes: {
-    onToggle: { action: "toggled" }
-  }
+export const PeriodDefault: Story = {
+  render: () => <DropdownPeriod />,
+  name: "Period Default"
+};
+
+export const PeriodWithInitialValue: Story = {
+  render: () => (
+    <DropdownPeriod
+      value={{
+        startDate: new Date(2024, 0, 1),
+        endDate: new Date(2024, 11, 31),
+        isConstant: false
+      }}
+    />
+  ),
+  name: "Period With Initial Value"
+};
+
+export const PeriodConstantRecruitment: Story = {
+  render: () => (
+    <DropdownPeriod
+      checked={true}
+      value={{
+        startDate: null,
+        endDate: null,
+        isConstant: true
+      }}
+    />
+  ),
+  name: "Period Constant Recruitment"
 };

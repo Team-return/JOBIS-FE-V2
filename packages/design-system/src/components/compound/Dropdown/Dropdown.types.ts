@@ -11,16 +11,34 @@ export type PeriodValue = {
   isConstant: boolean;
 };
 
-export interface Props {
-  options: DropdownOption[];
-  value?: string;
-  onChange?: (value: string | PeriodValue) => void;
+type BaseProps = {
   $width?: DimensionValue;
   $placeholder?: string;
-  types?: "supportJob" | "period";
-  checked?: boolean;
-  onCheckChange?: (checked: boolean) => void;
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
   $color?: string;
-}
+};
+
+type DefaultDropdownProps = BaseProps & {
+  types?: undefined;
+  value?: string;
+  options: DropdownOption[];
+  onChange?: (value: string) => void;
+};
+
+type SupportJobDropdownProps = BaseProps & {
+  types: "supportJob";
+  value?: string;
+  options: DropdownOption[];
+  onChange?: (value: string) => void;
+};
+
+export type Props = DefaultDropdownProps | SupportJobDropdownProps;
+
+// PeriodDropdown 전용 Props
+export type PeriodDropdownProps = BaseProps & {
+  value?: PeriodValue;
+  onChange?: (value: PeriodValue) => void;
+  checked?: boolean;
+  onCheckChange?: (checked: boolean) => void;
+};
