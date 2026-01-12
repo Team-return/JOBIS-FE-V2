@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import type { PeriodValue } from "@jobis/design-system";
 import {
+  useRecruitmentFileDownload,
   useTeacherRecruitmentList,
   useUpdateRecruitmentStatus
 } from "@jobis/api";
@@ -63,7 +64,11 @@ export const Recruitment = () => {
   };
 
   const { data } = useTeacherRecruitmentList(filterParams);
+  const { data: excelData } = useRecruitmentFileDownload();
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
+
+  // 엑셀 다운로드 URL 생성
+  const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
 
   // 상태 변경 핸들러
   const handleStatusChange = (newStatus: string) => {
@@ -143,19 +148,19 @@ export const Recruitment = () => {
   }, [tableRows.length, totalPages, currentPage]);
 
   const stateOptions = [
-    { label: "모집중", value: "recruiting" },
-    { label: "모집전", value: "before_recruitment" },
-    { label: "진행중", value: "in_progress" },
-    { label: "모집종료", value: "recruitment_closed" },
-    { label: "전수완료", value: "completed" },
+    { label: "모집중", value: "RECRUITING" },
+    { label: "모집전", value: "READY" },
+    { label: "진행중", value: "IN_PROGRESS" },
+    { label: "모집종료", value: "DONE" },
+    { label: "접수완료", value: "REQUESTED" },
     {
       label: "겨울인턴",
-      value: "winter_internship"
+      value: "WIN_INTERN"
     }
   ];
   const typeOptions = [
-    { label: "채용형", value: "recruitment" },
-    { label: "체험형", value: "experience" }
+    { label: "채용형", value: "RECRUITMENT" },
+    { label: "체험형", value: "EXPERIENCE" }
   ];
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from(
@@ -232,9 +237,17 @@ export const Recruitment = () => {
               <IconButton iconName="Refresh" onClick={handleResetFilters}>
                 필터 초기화
               </IconButton>
-              <IconButton iconName="Print" onClick={() => void 0}>
-                엑셀 출력
-              </IconButton>
+              {excelUrl ? (
+                <a
+                  href={excelUrl}
+                  download="recruitments.xlsx"
+                  style={{ textDecoration: "none" }}
+                >
+                  <IconButton iconName="Print">엑셀 출력</IconButton>
+                </a>
+              ) : (
+                <IconButton iconName="Print">엑셀 출력</IconButton>
+              )}
               <Dropdown
                 $width={96}
                 options={stateOptions}
