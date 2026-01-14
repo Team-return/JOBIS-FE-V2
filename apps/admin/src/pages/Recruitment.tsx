@@ -118,7 +118,7 @@ export const Recruitment = () => {
 
   const companyTypeLabel: Record<CompanyType, string> = {
     LEAD: "선도기업",
-    PARTICIPATING: "참여",
+    PARTICIPATING: "참여기업",
     MANUAL_ADD: "수동등록"
   };
 
@@ -162,8 +162,9 @@ export const Recruitment = () => {
     }
   ];
   const typeOptions = [
-    { label: "채용형", value: "RECRUITMENT" },
-    { label: "체험형", value: "EXPERIENCE" }
+    { label: "선도기업", value: "LEAD" },
+    { label: "참여기업", value: "PARTICIPATING" },
+    { label: "수동등록", value: "MANUAL_ADD" }
   ];
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from(
