@@ -111,12 +111,15 @@ export const Recruitment = () => {
     REQUESTED: "접수완료",
     READY: "모집전",
     RECRUITING: "모집중",
-    DONE: "모집종료"
+    DONE: "모집종료",
+    MANUAL_ADD: "수동등록",
+    WIN_INTERN: "겨울인턴"
   };
 
   const companyTypeLabel: Record<CompanyType, string> = {
+    LEAD: "선도기업",
     PARTICIPATING: "참여",
-    MANUAL_ADD: "일반"
+    MANUAL_ADD: "수동등록"
   };
 
   // API 데이터를 Table 형식으로 변환
