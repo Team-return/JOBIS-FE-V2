@@ -9,13 +9,26 @@ export type InterviewType =
   | "AI"
   | "CODING_TEST";
 
-export type CompanyType = "LEAD" | "PARTICIPATING" | "DEFAULT";
+export type CompanyType = "LEAD" | "PARTICIPATING" | "MANUAL_ADD";
 
 export type FileType = "LOGO_IMAGE" | "EXTENSION_FILE";
 
-export type JobType = "WEB" | "APP" | "EMBEDDED" | "SECURITY" | "AI" | "ASC";
+export type JobType =
+  | "WEB"
+  | "APP"
+  | "EMBEDDED"
+  | "SECURITY"
+  | "AI"
+  | "ASD"
+  | "ETC";
 
-export type RecruitmentStatus = "REQUESTED" | "READY" | "RECRUITING" | "DONE";
+export type RecruitmentStatus =
+  | "REQUESTED"
+  | "READY"
+  | "RECRUITING"
+  | "DONE"
+  | "MANUAL_ADD"
+  | "WIN_INTERN";
 
 export type ApplicationStatus =
   | "REQUESTED"
