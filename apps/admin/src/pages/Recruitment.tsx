@@ -176,21 +176,23 @@ export const Recruitment = () => {
   );
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
-      {/* 전체 flex 컨테이너 */}
       <Flex $gap={40} $direction="column" $justify="center" $align="center">
-        {/* 모집의뢰서 텍스트와 필터링 드롭다운 */}
         <Flex $direction="column" $gap={16}>
           <Flex $align="flex-end" $justify="flex-start" $gap={8}>
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               모집의뢰서
             </Text>
             <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총{" "}
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {tableRows.length ?? 0}
-              </Text>
-              개
+              총
             </Text>
+            <Flex $align="center" $fit>
+              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
+                {String(tableRows?.length)}
+              </Text>
+              <Text $size="body2" $color={theme.color.grayScale[90]}>
+                개
+              </Text>
+            </Flex>
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
@@ -270,7 +272,6 @@ export const Recruitment = () => {
           </Flex>
         </Flex>
 
-        {/* 모집의뢰서 리스트와 페이지네이션 */}
         <Flex $direction="column" $align="center" $gap={40}>
           <Table
             headers={[
@@ -295,7 +296,7 @@ export const Recruitment = () => {
             end={totalPages}
             current={currentPage}
             onChange={page => {
-              setSelected([]); // 페이지 전환 시 선택 초기화
+              setSelected([]);
               setCurrentPage(page);
             }}
           />
