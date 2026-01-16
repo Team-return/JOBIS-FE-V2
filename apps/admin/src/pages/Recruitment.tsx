@@ -45,14 +45,12 @@ export const Recruitment = () => {
   const [selected, setSelected] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // 필터 상태 관리
   const [period, setPeriod] = useState<PeriodValue | undefined>(undefined);
   const [year, setYear] = useState<string | undefined>(undefined);
   const [type, setType] = useState<string | undefined>(undefined);
   const [state, setState] = useState<string | undefined>(undefined);
   const [search, setSearch] = useState<string>("");
 
-  // 필터 초기화 함수
   const handleResetFilters = () => {
     setPeriod(undefined);
     setYear(undefined);
@@ -83,17 +81,14 @@ export const Recruitment = () => {
   const { data: excelData } = useRecruitmentFileDownload();
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
-  // 엑셀 다운로드 URL 생성
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
 
-  // 상태 변경 핸들러
   const handleStatusChange = (newStatus: string) => {
     if (selected.length === 0) {
       toast.warning("선택된 모집의뢰서가 없습니다.");
       return;
     }
 
-    // 선택된 인덱스를 전체 행 인덱스로 변환 (페이지네이션 고려)
     const recruitmentIds = selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
@@ -114,7 +109,7 @@ export const Recruitment = () => {
       {
         onSuccess: () => {
           toast.success("상태가 변경되었습니다.");
-          setSelected([]); // 선택 초기화
+          setSelected([]);
           setOpenDropdown(null);
         },
         onError: () => {
@@ -124,7 +119,6 @@ export const Recruitment = () => {
     );
   };
 
-  // API 데이터를 Table 형식으로 변환
   const tableRows: string[][] =
     data?.recruitments.map(recruitment => [
       STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
@@ -138,12 +132,10 @@ export const Recruitment = () => {
       recruitment.end_date
     ]) ?? [];
 
-  // 페이지네이션 계산 (5개씩 보여주기)
   const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
-  // 데이터 길이가 변할 때 현재 페이지 보정
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
