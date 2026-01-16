@@ -76,7 +76,7 @@ export const Recruitment = () => {
     status: state as RecruitmentStatus | undefined,
     start: period?.startDate ? formatDate(period.startDate) : undefined,
     end: period?.endDate ? formatDate(period.endDate) : undefined,
-    winter_intern: type === "winter_internship" || undefined
+    winter_intern: state === "WIN_INTERN" || undefined
   };
 
   const { data } = useTeacherRecruitmentList(filterParams);
@@ -130,8 +130,7 @@ export const Recruitment = () => {
       STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
       recruitment.company_name,
       recruitment.hiring_jobs,
-      COMPANY_TYPE_LABEL[recruitment.company_type] ??
-        String(recruitment.company_type),
+      COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
       String(recruitment.total_hiring_count),
       String(recruitment.application_requested_count),
       String(recruitment.application_approved_count),
