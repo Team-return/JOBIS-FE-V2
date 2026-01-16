@@ -4,11 +4,11 @@ import { Table } from "./Table";
 import { renderWithTheme } from "@/utils/render";
 
 describe("Table", () => {
-  const mockHeaders = ["이름", "이메일", "상태"];
+  const mockHeaders = ["name", "email", "status"];
   const mockRows = [
-    ["김철수", "kim@example.com", "활성"],
-    ["이영희", "lee@example.com", "비활성"],
-    ["박민준", "park@example.com", "활성"]
+    ["kim", "kim@example.com", "active"],
+    ["lee", "lee@example.com", "inactive"],
+    ["park", "park@example.com", "active"]
   ];
   const mockColumnWidths = [100, 200, 100];
 
@@ -21,22 +21,22 @@ describe("Table", () => {
       renderWithTheme(<Table headers={mockHeaders} rows={mockRows} />);
 
       // 헤더 확인
-      expect(screen.getByText("이름")).toBeInTheDocument();
-      expect(screen.getByText("이메일")).toBeInTheDocument();
-      expect(screen.getByText("상태")).toBeInTheDocument();
+      expect(screen.getByText("name")).toBeInTheDocument();
+      expect(screen.getByText("email")).toBeInTheDocument();
+      expect(screen.getByText("status")).toBeInTheDocument();
 
       // 데이터 행 확인
-      expect(screen.getByText("김철수")).toBeInTheDocument();
+      expect(screen.getByText("kim")).toBeInTheDocument();
       expect(screen.getByText("kim@example.com")).toBeInTheDocument();
-      expect(screen.getAllByText("활성")).toHaveLength(2);
-      expect(screen.getByText("이영희")).toBeInTheDocument();
-      expect(screen.getByText("박민준")).toBeInTheDocument();
+      expect(screen.getAllByText("active")).toHaveLength(2);
+      expect(screen.getByText("lee")).toBeInTheDocument();
+      expect(screen.getByText("park")).toBeInTheDocument();
     });
 
     it("applies flex layout when columnWidths is not provided", () => {
       renderWithTheme(<Table headers={mockHeaders} rows={mockRows} />);
 
-      const nameHeader = screen.getByText("이름");
+      const nameHeader = screen.getByText("name");
       expect(nameHeader).toBeInTheDocument();
     });
 
@@ -49,8 +49,8 @@ describe("Table", () => {
         />
       );
 
-      expect(screen.getByText("이름")).toBeInTheDocument();
-      expect(screen.getByText("김철수")).toBeInTheDocument();
+      expect(screen.getByText("name")).toBeInTheDocument();
+      expect(screen.getByText("kim")).toBeInTheDocument();
     });
   });
 
@@ -61,7 +61,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 헤더 체크박스 + 각 행의 체크박스 (3개)
       expect(checkboxes).toHaveLength(4);
     });
 
@@ -86,7 +85,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 두 번째 요소가 첫 번째 행의 체크박스
       fireEvent.click(checkboxes[1]);
 
       expect(handleRowSelect).toHaveBeenCalledWith([0]);
@@ -105,7 +103,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 세 번째 요소가 두 번째 행의 체크박스
       fireEvent.click(checkboxes[2]);
 
       expect(handleRowSelect).toHaveBeenCalledWith([0, 1]);
@@ -124,7 +121,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 두 번째 요소가 첫 번째 행의 체크박스
       fireEvent.click(checkboxes[1]);
 
       expect(handleRowSelect).toHaveBeenCalledWith([1]);
@@ -142,7 +138,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 첫 번째 요소가 헤더 체크박스
       fireEvent.click(checkboxes[0]);
 
       expect(handleRowSelect).toHaveBeenCalledWith([0, 1, 2]);
@@ -161,7 +156,6 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 첫 번째 요소가 헤더 체크박스
       fireEvent.click(checkboxes[0]);
 
       expect(handleRowSelect).toHaveBeenCalledWith([]);
@@ -202,10 +196,9 @@ describe("Table", () => {
     it("renders empty table correctly", () => {
       renderWithTheme(<Table headers={mockHeaders} rows={[]} />);
 
-      // 헤더는 렌더링되어야 함
-      expect(screen.getByText("이름")).toBeInTheDocument();
-      expect(screen.getByText("이메일")).toBeInTheDocument();
-      expect(screen.getByText("상태")).toBeInTheDocument();
+      expect(screen.getByText("name")).toBeInTheDocument();
+      expect(screen.getByText("email")).toBeInTheDocument();
+      expect(screen.getByText("status")).toBeInTheDocument();
     });
   });
 
@@ -221,13 +214,10 @@ describe("Table", () => {
       );
 
       const checkboxes = screen.getAllByRole("checkbox");
-      // 헤더는 일부만 선택된 상태이므로 unchecked
+
       expect(checkboxes[0]).toHaveAttribute("aria-checked", "false");
-      // 첫 번째 행은 선택됨
       expect(checkboxes[1]).toHaveAttribute("aria-checked", "true");
-      // 두 번째 행은 선택되지 않음
       expect(checkboxes[2]).toHaveAttribute("aria-checked", "false");
-      // 세 번째 행은 선택됨
       expect(checkboxes[3]).toHaveAttribute("aria-checked", "true");
     });
 
