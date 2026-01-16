@@ -21,13 +21,29 @@ import {
 } from "@jobis/api";
 import type { RecruitmentStatus, CompanyType } from "@jobis/api";
 
+const STATUS_LABEL: Record<RecruitmentStatus, string> = {
+  REQUESTED: "접수완료",
+  READY: "모집전",
+  RECRUITING: "모집중",
+  DONE: "모집종료",
+  MANUAL_ADD: "수동등록",
+  WIN_INTERN: "겨울인턴"
+};
+
+const COMPANY_TYPE_LABEL: Record<CompanyType, string> = {
+  LEAD: "선도기업",
+  PARTICIPATING: "참여기업",
+  MANUAL_ADD: "수동등록"
+};
+
+const PAGE_SIZE = 5;
+
 export const Recruitment = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 5;
 
   // 필터 상태 관리
   const [period, setPeriod] = useState<PeriodValue | undefined>(undefined);
@@ -80,7 +96,7 @@ export const Recruitment = () => {
     // 선택된 인덱스를 전체 행 인덱스로 변환 (페이지네이션 고려)
     const recruitmentIds = selected
       .map(index => {
-        const globalIndex = (currentPage - 1) * pageSize + index;
+        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
         return data?.recruitments[globalIndex]?.id;
       })
       .filter((id): id is number => id !== undefined);
@@ -107,42 +123,27 @@ export const Recruitment = () => {
       }
     );
   };
-  const statusLabel: Record<RecruitmentStatus, string> = {
-    REQUESTED: "접수완료",
-    READY: "모집전",
-    RECRUITING: "모집중",
-    DONE: "모집종료",
-    MANUAL_ADD: "수동등록",
-    WIN_INTERN: "겨울인턴"
-  };
-
-  const companyTypeLabel: Record<CompanyType, string> = {
-    LEAD: "선도기업",
-    PARTICIPATING: "참여기업",
-    MANUAL_ADD: "수동등록"
-  };
 
   // API 데이터를 Table 형식으로 변환
   const tableRows: string[][] =
     data?.recruitments.map(recruitment => [
-      statusLabel[recruitment.status] ?? String(recruitment.status),
-      String(recruitment.company_name),
-      String(recruitment.hiring_jobs),
-      companyTypeLabel[recruitment.company_type] ??
+      STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
+      recruitment.company_name,
+      recruitment.hiring_jobs,
+      COMPANY_TYPE_LABEL[recruitment.company_type] ??
         String(recruitment.company_type),
       String(recruitment.total_hiring_count),
       String(recruitment.application_requested_count),
       String(recruitment.application_approved_count),
-      String(recruitment.start_date),
-      String(recruitment.end_date)
+      recruitment.start_date,
+      recruitment.end_date
     ]) ?? [];
 
   // 페이지네이션 계산 (5개씩 보여주기)
-  const totalPages = Math.max(1, Math.ceil(tableRows.length / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
-
   // 데이터 길이가 변할 때 현재 페이지 보정
   useEffect(() => {
     if (currentPage > totalPages) {
