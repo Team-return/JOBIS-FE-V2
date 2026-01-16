@@ -3,9 +3,6 @@ import { Box, Checkbox, Flex, Text } from "@/components";
 import { Props } from "./Table.types";
 import { useTheme } from "@/hooks";
 
-// props로 table type을 받지 말고, header에 들어갈 값[]과 row에 들어갈 값[][]을 받고 셀의 너비를 순서대로 받아[]서 적용시켜야 한다.
-// header, row, 셀 너비의 길이가 같은지 정도는 컴포넌트 단계에서 체크해야될듯
-
 const Header = styled(Flex)`
   border-bottom: ${({ theme }) => `1px solid ${theme.color.grayScale[50]}`};
   padding: 12px 0px;
@@ -55,30 +52,23 @@ export const Table = ({
 }: Props) => {
   const { currentTheme: theme } = useTheme();
 
-  // Header checkbox 상태: 모든 행이 선택되었으면 true
   const allSelected = rows.length > 0 && selectedRows.length === rows.length;
 
-  // Header checkbox 핸들러
   const handleHeaderCheckboxChange = () => {
     if (onRowSelect) {
       if (allSelected) {
-        // 모두 선택 해제
         onRowSelect([]);
       } else {
-        // 모두 선택
         onRowSelect(rows.map((_, index) => index));
       }
     }
   };
 
-  // Body checkbox 핸들러
   const handleRowCheckboxChange = (rowIndex: number) => {
     if (onRowSelect) {
       if (selectedRows.includes(rowIndex)) {
-        // 선택 해제
         onRowSelect(selectedRows.filter(index => index !== rowIndex));
       } else {
-        // 선택
         onRowSelect([...selectedRows, rowIndex]);
       }
     }
