@@ -1,9 +1,8 @@
-import { expect, afterEach } from "vitest";
+import { expect, beforeAll } from "vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
-import { cleanup } from "@testing-library/react";
+import { setProjectAnnotations } from "@storybook/react-vite";
+import * as previewAnnotations from "../.storybook/preview";
 
 expect.extend(matchers);
-
-afterEach(() => {
-  cleanup();
-});
+const project = setProjectAnnotations(previewAnnotations);
+beforeAll(project.beforeAll);
