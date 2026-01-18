@@ -3,6 +3,14 @@ import { Icon, Text } from "@/components";
 import type { Props, ToastType } from "./Toast.types";
 import type { IconName } from "../../core/Icon/Icon.types";
 import { keyframes } from "@emotion/react";
+import { useTheme } from "@/hooks";
+
+const TOAST_TYPE_ICON: Record<ToastType, IconName> = {
+  success: "ToastSuccess",
+  error: "ToastError",
+  warning: "ToastWarning",
+  info: "ToastInfo"
+};
 
 const slideIn = keyframes`
   from {
@@ -26,13 +34,6 @@ const slideOut = keyframes`
   }
 `;
 
-const ToastTypeIcon: Record<ToastType, IconName> = {
-  success: "ToastSuccess",
-  error: "ToastError",
-  warning: "ToastWarning",
-  info: "ToastInfo"
-};
-
 const Component = styled.div<Omit<Props, "$label"> & { $isClosing?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -55,11 +56,24 @@ const TextWrapper = styled.div`
 `;
 
 export const Toast = ({ $label, $type, $isClosing }: Props) => {
-  const iconName = ToastTypeIcon[$type];
+  const iconName = TOAST_TYPE_ICON[$type];
+  const { currentTheme: theme } = useTheme();
+
+  const getIconColor = (type: ToastType) => {
+    const iconColors = {
+      success: theme.color.subColor.green[20],
+      error: theme.color.subColor.red[20],
+      warning: theme.color.subColor.yellow[20],
+      info: theme.color.subColor.blue[30]
+    };
+    return iconColors[type];
+  };
+
+  const iconColor = getIconColor($type);
 
   return (
     <Component role="alert" $type={$type} $isClosing={$isClosing}>
-      <Icon icon={iconName} size={24} fillColor="white" aria-label={iconName} />
+      <Icon icon={iconName} size={24} color={iconColor} aria-label={iconName} />
       <TextWrapper>
         <Text $size="body1" $weight="regular">
           {$label}

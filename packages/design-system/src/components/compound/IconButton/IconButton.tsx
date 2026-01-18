@@ -25,7 +25,12 @@ export const IconButton = ({
   return (
     <Component $width={$width} $color={$color} onClick={onClick}>
       <Flex $gap="8px" $align="center" $justify="center">
-        <Icon strokeColor={defaultColor} fillColor={defaultColor} icon={icon} />
+        <Icon
+          strokeColor={defaultColor}
+          fillColor={defaultColor}
+          color={defaultColor}
+          icon={icon}
+        />
         <Text $size="body3" $color={defaultColor}>
           {children}
         </Text>
