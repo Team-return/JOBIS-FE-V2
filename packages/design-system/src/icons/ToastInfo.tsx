@@ -7,7 +7,7 @@ const SvgToastInfo = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#237BC9"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
