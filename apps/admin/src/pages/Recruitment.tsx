@@ -1,7 +1,7 @@
 import {
   Container,
   Dropdown,
-  DropdownPeriod,
+  PeriodDropdown,
   Flex,
   IconButton,
   Pagination,
@@ -186,7 +186,7 @@ export const Recruitment = () => {
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
-              <DropdownPeriod
+              <PeriodDropdown
                 $width={96}
                 $placeholder="기간"
                 isOpen={openDropdown === "period"}
