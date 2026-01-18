@@ -11,7 +11,7 @@ const meta: Meta<typeof IconButton> = {
     layout: "centered"
   },
   argTypes: {
-    iconName: {
+    icon: {
       control: "select",
       options: Object.keys(icons),
       description: "사용할 아이콘 이름"
@@ -34,7 +34,7 @@ const meta: Meta<typeof IconButton> = {
     }
   },
   args: {
-    iconName: "Bell",
+    icon: "Bell",
     children: "알림 버튼",
     onClick: fn()
   }

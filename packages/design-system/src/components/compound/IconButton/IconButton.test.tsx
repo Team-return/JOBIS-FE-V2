@@ -6,7 +6,7 @@ import { IconButton } from "./IconButton";
 
 describe("IconButton", () => {
   it("renders icon and label", () => {
-    renderWithTheme(<IconButton iconName="Bell">alarm</IconButton>);
+    renderWithTheme(<IconButton icon="Bell">alarm</IconButton>);
 
     expect(screen.getByText("alarm")).toBeInTheDocument();
     expect(screen.getByLabelText("Bell")).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe("IconButton", () => {
   it("calls onClick when clicked", async () => {
     const handleClick = vi.fn();
     renderWithTheme(
-      <IconButton iconName="Bell" onClick={handleClick}>
+      <IconButton icon="Bell" onClick={handleClick}>
         click
       </IconButton>
     );
@@ -27,7 +27,7 @@ describe("IconButton", () => {
   it("applies custom width and color", () => {
     const color = "#5B8DEF";
     renderWithTheme(
-      <IconButton iconName="Bell" $width="200px" $color={color}>
+      <IconButton icon="Bell" $width="200px" $color={color}>
         style
       </IconButton>
     );

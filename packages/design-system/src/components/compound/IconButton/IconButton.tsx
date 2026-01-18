@@ -15,7 +15,7 @@ const Component = styled.div<Pick<Props, "$width" | "$color">>`
 export const IconButton = ({
   $width,
   $color,
-  iconName,
+  icon,
   onClick,
   children
 }: Props) => {
@@ -25,11 +25,7 @@ export const IconButton = ({
   return (
     <Component $width={$width} $color={$color} onClick={onClick}>
       <Flex $gap="8px" $align="center" $justify="center">
-        <Icon
-          strokeColor={defaultColor}
-          fillColor={defaultColor}
-          icon={iconName}
-        />
+        <Icon strokeColor={defaultColor} fillColor={defaultColor} icon={icon} />
         <Text $size="body3" $color={defaultColor}>
           {children}
         </Text>
