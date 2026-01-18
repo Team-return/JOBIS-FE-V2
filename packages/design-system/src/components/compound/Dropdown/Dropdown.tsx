@@ -111,13 +111,6 @@ export const Dropdown = ({
     externalValue !== undefined ? externalValue : internalSelected;
   const [searchTerm, setSearchTerm] = useState("");
 
-  // value가 undefined로 변경되면 내부 상태도 리셋
-  useEffect(() => {
-    if (externalValue === undefined) {
-      setInternalSelected(null);
-    }
-  }, [externalValue]);
-
   const closeDropdown = () => {
     if (onToggle) {
       onToggle(false);
@@ -146,6 +139,12 @@ export const Dropdown = ({
   const getDisplayText = () => {
     return selectedLabel || $placeholder || "선택";
   };
+
+  useEffect(() => {
+    if (externalValue === undefined) {
+      setInternalSelected(null);
+    }
+  }, [externalValue]);
 
   return (
     <Wrapper>

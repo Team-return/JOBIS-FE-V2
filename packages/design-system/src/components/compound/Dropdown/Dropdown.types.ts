@@ -35,8 +35,7 @@ type SupportJobDropdownProps = BaseProps & {
 
 export type Props = DefaultDropdownProps | SupportJobDropdownProps;
 
-// PeriodDropdown 전용 Props
-export type PeriodDropdownProps = BaseProps & {
+export type DropdownPeriodProps = BaseProps & {
   value?: PeriodValue;
   onChange?: (value: PeriodValue) => void;
   checked?: boolean;
