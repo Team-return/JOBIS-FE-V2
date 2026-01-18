@@ -36,6 +36,28 @@ const COMPANY_TYPE_LABEL: Record<CompanyType, string> = {
   MANUAL_ADD: "수동등록"
 };
 
+const STATE_OPTIONS = [
+  { label: "모집중", value: "RECRUITING" },
+  { label: "모집전", value: "READY" },
+  { label: "진행중", value: "IN_PROGRESS" },
+  { label: "모집종료", value: "DONE" },
+  { label: "접수완료", value: "REQUESTED" },
+  {
+    label: "겨울인턴",
+    value: "WIN_INTERN"
+  }
+];
+const TYPE_OPTIONS = [
+  { label: "선도기업", value: "LEAD" },
+  { label: "참여기업", value: "PARTICIPATING" },
+  { label: "수동등록", value: "MANUAL_ADD" }
+];
+const currentYear = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => ({
+  label: String(2024 + i),
+  value: String(2024 + i)
+}));
+
 const PAGE_SIZE = 5;
 
 export const Recruitment = () => {
@@ -142,30 +164,6 @@ export const Recruitment = () => {
     }
   }, [tableRows.length, totalPages, currentPage]);
 
-  const stateOptions = [
-    { label: "모집중", value: "RECRUITING" },
-    { label: "모집전", value: "READY" },
-    { label: "진행중", value: "IN_PROGRESS" },
-    { label: "모집종료", value: "DONE" },
-    { label: "접수완료", value: "REQUESTED" },
-    {
-      label: "겨울인턴",
-      value: "WIN_INTERN"
-    }
-  ];
-  const typeOptions = [
-    { label: "선도기업", value: "LEAD" },
-    { label: "참여기업", value: "PARTICIPATING" },
-    { label: "수동등록", value: "MANUAL_ADD" }
-  ];
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from(
-    { length: currentYear - 2024 + 1 },
-    (_, i) => ({
-      label: String(2024 + i),
-      value: String(2024 + i)
-    })
-  );
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
       <Flex $gap={40} $direction="column" $justify="center" $align="center">
@@ -197,7 +195,7 @@ export const Recruitment = () => {
                 onChange={val => setPeriod(val)}
               />
               <Dropdown
-                options={yearOptions}
+                options={YEAR_OPTIONS}
                 $width={96}
                 $placeholder="년도"
                 isOpen={openDropdown === "year"}
@@ -206,7 +204,7 @@ export const Recruitment = () => {
                 onChange={val => setYear(val)}
               />
               <Dropdown
-                options={typeOptions}
+                options={TYPE_OPTIONS}
                 $width={96}
                 $placeholder="구분"
                 isOpen={openDropdown === "type"}
@@ -215,7 +213,7 @@ export const Recruitment = () => {
                 onChange={val => setType(val)}
               />
               <Dropdown
-                options={stateOptions}
+                options={STATE_OPTIONS}
                 $width={96}
                 $placeholder="상태"
                 isOpen={openDropdown === "state"}
@@ -232,7 +230,7 @@ export const Recruitment = () => {
             </Flex>
             <Spacer />
             <Flex $align="center" $gap={8} $fit>
-              <IconButton iconName="Refresh" onClick={handleResetFilters}>
+              <IconButton icon="Refresh" onClick={handleResetFilters}>
                 필터 초기화
               </IconButton>
               {excelUrl ? (
@@ -241,14 +239,14 @@ export const Recruitment = () => {
                   download="recruitments.xlsx"
                   style={{ textDecoration: "none" }}
                 >
-                  <IconButton iconName="Print">엑셀 출력</IconButton>
+                  <IconButton icon="Print">엑셀 출력</IconButton>
                 </a>
               ) : (
-                <IconButton iconName="Print">엑셀 출력</IconButton>
+                <IconButton icon="Print">엑셀 출력</IconButton>
               )}
               <Dropdown
                 $width={96}
-                options={stateOptions}
+                options={STATE_OPTIONS}
                 $placeholder="상태변경"
                 isOpen={openDropdown === "stateChange"}
                 onToggle={isOpen =>
