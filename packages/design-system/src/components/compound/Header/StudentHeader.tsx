@@ -111,7 +111,7 @@ const AlarmContainer = styled.div`
   }
 `;
 
-export const HeaderStudent = ({ userName, notifications }: Props) => {
+export const StudentHeader = ({ userName, notifications }: Props) => {
   const { currentTheme: theme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
   const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Props } from "./Header.types";
 import { Icon, Text } from "@/components";
-import { HeaderStudent } from "./HeaderStudent";
+import { StudentHeader } from "./StudentHeader";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const Component = styled.header`
@@ -96,7 +96,7 @@ export const Header = (props: Props) => {
     </>
   ) : type === "student" ? (
     <>
-      <HeaderStudent
+      <StudentHeader
         userName={props.userName}
         notifications={props.notifications}
       />
