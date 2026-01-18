@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
-import type { DropdownPeriodProps } from "./Dropdown.types";
+import type { PeriodDropdownProps } from "./Dropdown.types";
 import { Checkbox } from "../Checkbox";
 import { Button } from "../../core/Button";
 import { Calendar } from "../Calendar";
@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 `;
 
 const TriggerButton = styled.button<
-  Pick<DropdownPeriodProps, "isOpen" | "$width" | "$color">
+  Pick<PeriodDropdownProps, "isOpen" | "$width" | "$color">
 >`
   display: flex;
   align-items: center;
@@ -90,7 +90,7 @@ const CalendarWrapper = styled.div`
   height: 100%;
 `;
 
-export const DropdownPeriod = ({
+export const PeriodDropdown = ({
   onChange,
   $placeholder,
   $width,
@@ -100,7 +100,7 @@ export const DropdownPeriod = ({
   value: externalValue,
   checked,
   onCheckChange
-}: DropdownPeriodProps) => {
+}: PeriodDropdownProps) => {
   const { currentTheme: theme } = useTheme();
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;

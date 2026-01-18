@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Dropdown } from "./Dropdown";
-import { DropdownPeriod } from "./DropdownPeriod";
+import { PeriodDropdown } from "./PeriodDropdown";
 
 const meta: Meta<typeof Dropdown> = {
   title: "components/compound/Dropdown",
@@ -85,13 +85,13 @@ export const SupportJob: Story = {
 };
 
 export const PeriodDefault: Story = {
-  render: () => <DropdownPeriod />,
+  render: () => <PeriodDropdown />,
   name: "Period Default"
 };
 
 export const PeriodWithInitialValue: Story = {
   render: () => (
-    <DropdownPeriod
+    <PeriodDropdown
       value={{
         startDate: new Date(2024, 0, 1),
         endDate: new Date(2024, 11, 31),
@@ -104,7 +104,7 @@ export const PeriodWithInitialValue: Story = {
 
 export const PeriodConstantRecruitment: Story = {
   render: () => (
-    <DropdownPeriod
+    <PeriodDropdown
       checked={true}
       value={{
         startDate: null,

@@ -3,7 +3,7 @@ import { screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithTheme } from "@/utils/render";
 import { Dropdown } from "./Dropdown";
-import { DropdownPeriod } from "./DropdownPeriod";
+import { PeriodDropdown } from "./PeriodDropdown";
 
 const options = [
   { label: "프론트엔드", value: "frontend" },
@@ -125,13 +125,13 @@ describe("Dropdown", () => {
 
 describe("DropdownPeriod", () => {
   it("renders with placeholder text", () => {
-    renderWithTheme(<DropdownPeriod $placeholder="기간 설정" />);
+    renderWithTheme(<PeriodDropdown $placeholder="기간 설정" />);
     expect(screen.getByText("기간 설정")).toBeInTheDocument();
   });
 
   it("opens and shows period options when clicked", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<DropdownPeriod />);
+    renderWithTheme(<PeriodDropdown />);
     const trigger = screen.getByRole("button");
 
     await user.click(trigger);
@@ -145,7 +145,7 @@ describe("DropdownPeriod", () => {
     const handleCheckChange = vi.fn();
 
     renderWithTheme(
-      <DropdownPeriod checked={false} onCheckChange={handleCheckChange} />
+      <PeriodDropdown checked={false} onCheckChange={handleCheckChange} />
     );
 
     const trigger = screen.getByRole("button");
@@ -164,14 +164,14 @@ describe("DropdownPeriod", () => {
       isConstant: false
     };
 
-    renderWithTheme(<DropdownPeriod value={testValue} />);
+    renderWithTheme(<PeriodDropdown value={testValue} />);
 
     expect(screen.getByText("2024.01.01 ~ 2024.12.31")).toBeInTheDocument();
   });
 
   it("displays 상시모집 when checked is true", () => {
     renderWithTheme(
-      <DropdownPeriod
+      <PeriodDropdown
         checked={true}
         value={{
           startDate: null,
@@ -188,7 +188,7 @@ describe("DropdownPeriod", () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();
 
-    renderWithTheme(<DropdownPeriod onChange={handleChange} />);
+    renderWithTheme(<PeriodDropdown onChange={handleChange} />);
 
     const trigger = screen.getByRole("button");
     await user.click(trigger);
@@ -208,7 +208,7 @@ describe("DropdownPeriod", () => {
 
   it("closes dropdown when 확인 button is clicked", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<DropdownPeriod />);
+    renderWithTheme(<PeriodDropdown />);
 
     const trigger = screen.getByRole("button");
     await user.click(trigger);
@@ -225,7 +225,7 @@ describe("DropdownPeriod", () => {
     const user = userEvent.setup();
     const handleToggle = vi.fn();
 
-    renderWithTheme(<DropdownPeriod isOpen={false} onToggle={handleToggle} />);
+    renderWithTheme(<PeriodDropdown isOpen={false} onToggle={handleToggle} />);
 
     const trigger = screen.getByRole("button");
     await user.click(trigger);
@@ -240,13 +240,13 @@ describe("DropdownPeriod", () => {
       isConstant: false
     };
 
-    renderWithTheme(<DropdownPeriod value={testValue} />);
+    renderWithTheme(<PeriodDropdown value={testValue} />);
 
     expect(screen.getByText("2024.01.01 ~ 2024.12.31")).toBeInTheDocument();
 
     cleanup();
 
-    renderWithTheme(<DropdownPeriod value={undefined} />);
+    renderWithTheme(<PeriodDropdown value={undefined} />);
 
     expect(screen.queryByText(/2024\.01\.01/)).not.toBeInTheDocument();
   });

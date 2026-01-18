@@ -1,5 +1,5 @@
 export { Dropdown } from "./Dropdown";
-export { DropdownPeriod } from "./DropdownPeriod";
+export { PeriodDropdown } from "./PeriodDropdown";
 export type {
   PeriodDropdownProps,
   PeriodValue,
