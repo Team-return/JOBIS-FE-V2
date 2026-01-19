@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Props } from "./Header.types";
 import { Icon, Text } from "@/components";
-import { HeaderStudent } from "./HeaderStudent";
+import { StudentHeader } from "./StudentHeader";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const Component = styled.header`
@@ -42,7 +42,7 @@ const LogoContainer = styled.div`
 
 export const Header = (props: Props) => {
   const { type } = props;
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,8 +75,8 @@ export const Header = (props: Props) => {
                 ? location.pathname === "/"
                 : location.pathname.startsWith(item.path);
             const textColor = isActive
-              ? currentTheme.color.grayScale[90]
-              : currentTheme.color.grayScale[80];
+              ? theme.color.grayScale[90]
+              : theme.color.grayScale[80];
 
             return (
               <TextContainer
@@ -96,7 +96,7 @@ export const Header = (props: Props) => {
     </>
   ) : type === "student" ? (
     <>
-      <HeaderStudent
+      <StudentHeader
         userName={props.userName}
         notifications={props.notifications}
       />
@@ -115,8 +115,8 @@ export const Header = (props: Props) => {
                 ? location.pathname === "/"
                 : location.pathname.startsWith(item.path);
             const textColor = isActive
-              ? currentTheme.color.grayScale[90]
-              : currentTheme.color.grayScale[80];
+              ? theme.color.grayScale[90]
+              : theme.color.grayScale[80];
 
             return (
               <TextContainer

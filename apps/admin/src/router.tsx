@@ -10,6 +10,7 @@ import {
   noticesKeys,
   bannersKeys
 } from "@jobis/api";
+import { Recruitment } from "./pages/Recruitment";
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
@@ -22,7 +23,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
             query.prefetch(recruitmentsKeys.teacherRecruitmentList(params));
             return null;
           },
-          element: <div>모집의뢰서</div>
+          element: <Recruitment />
         },
         {
           path: "/company",

@@ -60,5 +60,6 @@ export default defineConfig({
     "import.meta.env.VERSION": JSON.stringify(version),
     "import.meta.env.APP_DIST": JSON.stringify(sentryProjectName)
   },
-  plugins: [react(), tsconfigPaths(), sentryPlugin] as PluginOption[]
+  plugins: [react(), tsconfigPaths(), sentryPlugin] as PluginOption[],
+  publicDir: "../../public"
 });

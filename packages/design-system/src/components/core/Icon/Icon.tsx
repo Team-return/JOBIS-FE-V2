@@ -7,6 +7,7 @@ const WHITE_FILL_ICONS: readonly IconName[] = [
   "ToastWarning",
   "ToastSuccess",
   "ToastInfo",
+  "Print",
   "Refresh"
 ] as const;
 
@@ -19,7 +20,7 @@ export const Icon = ({
   strokeColor,
   ...props
 }: Props) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const SvgIcon = icons[icon];
   if (size) {
     width = size;
@@ -27,11 +28,11 @@ export const Icon = ({
   }
 
   const defaultFillColor = WHITE_FILL_ICONS.includes(icon)
-    ? fillColor || currentTheme.color.grayScale[10]
+    ? theme.color.grayScale[10]
     : fillColor;
 
   const defaultStrokeColor =
-    icon === "Refresh" ? strokeColor || "#000000" : strokeColor;
+    icon === "Refresh" ? strokeColor || theme.color.grayScale[90] : "";
 
   return (
     <SvgIcon

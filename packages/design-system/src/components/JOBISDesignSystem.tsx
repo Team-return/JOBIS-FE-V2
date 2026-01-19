@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { GlobalStyles } from "@/themes";
 
 export const JOBISDesignSystem = ({ children }: { children: ReactNode }) => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
 
   const modalContainer = document.createElement("div");
   modalContainer.id = "modal-root";
@@ -16,7 +16,7 @@ export const JOBISDesignSystem = ({ children }: { children: ReactNode }) => {
   document.body.appendChild(toastContainer);
 
   return (
-    <ThemeProvider theme={currentTheme}>
+    <ThemeProvider theme={theme}>
       <GlobalStyles />
       <ModalManager />
       <ToastManager />

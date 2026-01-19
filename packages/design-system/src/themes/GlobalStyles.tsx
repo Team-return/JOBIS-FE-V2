@@ -3,7 +3,7 @@ import { useTheme } from "@/hooks";
 import font from "../../assets/fonts/pretendard-variable.woff2";
 
 export const GlobalStyles = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   return (
     <Global
       styles={css`
@@ -32,7 +32,11 @@ export const GlobalStyles = () => {
             sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          background-color: ${currentTheme.color.grayScale[10]};
+          background-color: ${theme.color.grayScale[10]};
+        }
+
+        #root > * {
+          margin: 0 auto;
         }
       `}
     />

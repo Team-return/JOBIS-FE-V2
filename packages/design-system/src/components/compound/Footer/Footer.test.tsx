@@ -21,7 +21,8 @@ describe("Footer", () => {
   it("renders social media icons", () => {
     renderWithTheme(<Footer />);
 
-    const svgElements = screen.getAllByRole("img", { hidden: true });
+    const container = screen.getByRole("contentinfo");
+    const svgElements = container.querySelectorAll("svg");
     expect(svgElements).toHaveLength(2);
   });
 
@@ -31,7 +32,9 @@ describe("Footer", () => {
     const currentYear = new Date().getFullYear();
     expect(
       screen.getByText(
-        `©${currentYear} Copyright team-return  ALL RIGHTS RESERVED.`
+        new RegExp(
+          `©${currentYear} Copyright team-return\\s+ALL RIGHTS RESERVED\\.`
+        )
       )
     ).toBeInTheDocument();
   });

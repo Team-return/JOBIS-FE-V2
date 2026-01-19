@@ -14,4 +14,5 @@ export interface Props extends HTMLAttributes<HTMLDivElement> {
     | "space-evenly";
   $wrap?: boolean;
   $inline?: boolean;
+  $fit?: boolean;
 }

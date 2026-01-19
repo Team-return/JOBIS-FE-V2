@@ -9,10 +9,18 @@ interface AuthData {
   refresh_expires_at: string;
 }
 
+interface RetryConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 
 const cookie = new Cookies();
+
+const forHealthCheck = axios.create({
+  baseURL: config.baseUrl
+});
 
 const forRefresh = axios.create({
   baseURL: config.baseUrl,
@@ -27,6 +35,8 @@ export const instance = axios.create({
 export const setCookie = (key: string, value: string, expires?: Date) => {
   cookie.set(key, value, {
     path: "/",
+    secure: true,
+    sameSite: "strict",
     expires
   });
 };
@@ -65,14 +75,12 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
+    const originalRequest = error.config as RetryConfig;
 
-    const statusCode = error.response?.status ?? error.status;
+    const statusCode = error.response?.status;
     if (statusCode && statusCode >= 500) {
       try {
-        await axios.get(`${config.baseUrl}/`);
+        await forHealthCheck.get("/");
       } catch (healthError) {
         if (healthError instanceof AxiosError) {
           config.onServerError?.(healthError);
@@ -83,7 +91,7 @@ instance.interceptors.response.use(
       throw statusCode;
     }
 
-    if (statusCode === 401 && !originalRequest._retry) {
+    if ((statusCode === 401 || statusCode === 403) && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -92,7 +100,7 @@ instance.interceptors.response.use(
         if (!refreshToken) {
           resetToken();
           window.location.href = "/login";
-          return;
+          throw 401;
         }
 
         const { data } = await forRefresh.put<AuthData>(
@@ -110,10 +118,10 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
 
         return instance(originalRequest);
-      } catch (refreshError) {
+      } catch {
         resetToken();
         window.location.href = "/login";
-        return Promise.reject(refreshError);
+        throw 401;
       }
     }
 

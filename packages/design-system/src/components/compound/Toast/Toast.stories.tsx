@@ -12,11 +12,11 @@ const meta: Meta<typeof Toast> = {
     layout: "centered"
   },
   argTypes: {
-    $label: {
+    label: {
       control: "text",
       description: "토스트에 표시될 내용"
     },
-    $type: {
+    type: {
       control: "select",
       options: ["success", "error", "warning", "info"],
       description: "토스트의 종류"
@@ -55,13 +55,13 @@ const ToastWithHook = ({
 
 export const Default: Story = {
   args: {
-    $label: "This is a toast message.",
-    $type: "success"
+    label: "This is a toast message.",
+    type: "success"
   },
   render: args => (
     <ToastWithHook
-      label={args.$label as string}
-      type={args.$type as "success" | "error" | "warning" | "info"}
+      label={args.label as string}
+      type={args.type as "success" | "error" | "warning" | "info"}
     />
   )
 };

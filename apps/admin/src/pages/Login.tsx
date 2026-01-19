@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   const [checked, setChecked] = useState(false);
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -24,14 +24,8 @@ export const Login = () => {
   const { success, error } = useToast();
   const navigation = useNavigate();
 
-  /**
-   * 0~30자의 영문자만 허용합니다. 공백 입력 여부는 정규식 전에 별도 검사합니다.
-   */
   const idRegex = /^[A-Za-z]*$/;
 
-  /**
-   * 8~16자, 영문 1개 이상, 숫자 1개 이상, 특수문자(@$!%*#?&) 1개 이상을 요구합니다.
-   */
   const passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
 
@@ -114,7 +108,7 @@ export const Login = () => {
         <Surface
           $radius="8px"
           $shadow
-          $bg={currentTheme.color.grayScale[10]}
+          $bg={theme.color.grayScale[10]}
           $padding="36px"
         >
           <Flex
@@ -156,7 +150,7 @@ export const Login = () => {
             <Flex $justify="flex-start">
               <Checkbox
                 label="로그인 유지"
-                $labelColor={currentTheme.color.grayScale[50]}
+                $labelColor={theme.color.grayScale[50]}
                 $labelSize="body2"
                 $checked={checked}
                 onChange={setChecked}

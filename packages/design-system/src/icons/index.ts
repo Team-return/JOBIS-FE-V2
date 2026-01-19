@@ -48,3 +48,4 @@ export { default as ToastWarning } from "./ToastWarning";
 export { default as Refresh } from "./Refresh";
 export { default as LogoWithText } from "./LogoWithText";
 export { default as HeaderProfile } from "./HeaderProfile";
+export { default as Print } from "./Print";
