@@ -24,14 +24,8 @@ export const Login = () => {
   const { success, error } = useToast();
   const navigation = useNavigate();
 
-  /**
-   * 0~30자의 영문자만 허용합니다. 공백 입력 여부는 정규식 전에 별도 검사합니다.
-   */
   const idRegex = /^[A-Za-z]*$/;
 
-  /**
-   * 8~16자, 영문 1개 이상, 숫자 1개 이상, 특수문자(@$!%*#?&) 1개 이상을 요구합니다.
-   */
   const passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
 
