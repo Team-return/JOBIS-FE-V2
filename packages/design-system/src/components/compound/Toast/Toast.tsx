@@ -34,7 +34,7 @@ const slideOut = keyframes`
   }
 `;
 
-const Component = styled.div<Omit<Props, "$label"> & { $isClosing?: boolean }>`
+const Component = styled.div<{ $isClosing?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 40px;
@@ -55,8 +55,8 @@ const TextWrapper = styled.div`
   white-space: normal;
 `;
 
-export const Toast = ({ $label, $type, $isClosing }: Props) => {
-  const iconName = TOAST_TYPE_ICON[$type];
+export const Toast = ({ label, type, $isClosing }: Props) => {
+  const iconName = TOAST_TYPE_ICON[type];
   const { currentTheme: theme } = useTheme();
 
   const getIconColor = (type: ToastType) => {
@@ -69,14 +69,14 @@ export const Toast = ({ $label, $type, $isClosing }: Props) => {
     return iconColors[type];
   };
 
-  const iconColor = getIconColor($type);
+  const iconColor = getIconColor(type);
 
   return (
-    <Component role="alert" $type={$type} $isClosing={$isClosing}>
+    <Component role="alert" $isClosing={$isClosing}>
       <Icon icon={iconName} size={24} color={iconColor} aria-label={iconName} />
       <TextWrapper>
         <Text $size="body1" $weight="regular">
-          {$label}
+          {label}
         </Text>
       </TextWrapper>
     </Component>
