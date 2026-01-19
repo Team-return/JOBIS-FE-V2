@@ -37,7 +37,7 @@ export const useToast = () => {
     type: "success" | "error" | "warning" | "info"
   ) => {
     const id = `toast-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-    const component = createElement(Toast, { $label: message, $type: type });
+    const component = createElement(Toast, { label: message, type: type });
     openToast({ id, component, isClosing: false });
 
     const timerId = setTimeout(() => {
