@@ -1,4 +1,10 @@
-import { useLogin, setToken } from "@jobis/api";
+import {
+  useLogin,
+  setToken,
+  setCookie,
+  removeCookie,
+  getCookie
+} from "@jobis/api";
 import {
   Box,
   Button,
@@ -12,22 +18,18 @@ import {
 } from "@jobis/design-system";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ADMIN_ID_KEY, ID_REGEX, PASSWORD_REGEX } from "../utils";
 
 export const Login = () => {
   const { currentTheme: theme } = useTheme();
   const [checked, setChecked] = useState(false);
-  const [id, setId] = useState("");
+  const [id, setId] = useState(getCookie(ADMIN_ID_KEY));
   const [password, setPassword] = useState("");
   const [eyeOpen, setEyeOpen] = useState(false);
   const [idError, setIdError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { success, error } = useToast();
   const navigation = useNavigate();
-
-  const idRegex = /^[A-Za-z]*$/;
-
-  const passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
 
   const validateId = (id: string) => {
     if (!id || id.trim().length === 0) {
@@ -38,7 +40,7 @@ export const Login = () => {
       setIdError("아이디는 최대 30자까지 입력 가능합니다.");
       return true;
     }
-    if (!idRegex.test(id)) {
+    if (!ID_REGEX.test(id)) {
       setIdError("아이디는 영문만 입력 가능합니다.");
       return true;
     }
@@ -51,7 +53,7 @@ export const Login = () => {
       setPasswordError("비밀번호를 입력해주세요.");
       return true;
     }
-    if (!passwordRegex.test(password)) {
+    if (!PASSWORD_REGEX.test(password)) {
       setPasswordError(
         "비밀번호는 영문, 숫자, 특수문자를 포함하여 8-16자여야 합니다."
       );
@@ -63,6 +65,7 @@ export const Login = () => {
 
   const { mutate: login } = useLogin({
     onSuccess: data => {
+      if (checked) setCookie(ADMIN_ID_KEY, id);
       setToken(data);
       success("로그인에 성공했습니다.");
       navigation("/");
@@ -89,6 +92,7 @@ export const Login = () => {
       return;
     }
 
+    if (!checked) removeCookie(ADMIN_ID_KEY);
     login({ account_id: accountId, password, platform_type: "WEB" });
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -149,7 +153,7 @@ export const Login = () => {
             </Flex>
             <Flex $justify="flex-start">
               <Checkbox
-                label="로그인 유지"
+                label="아이디 저장"
                 $labelColor={theme.color.grayScale[50]}
                 $labelSize="body2"
                 $checked={checked}
