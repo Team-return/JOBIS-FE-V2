@@ -75,7 +75,7 @@ export const Table = ({
   };
 
   return (
-    <Box height={486}>
+    <Box>
       <Header $justify="space-evenly">
         {headers.map((header, index) => (
           <Cell
