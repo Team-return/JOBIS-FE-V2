@@ -1,7 +1,7 @@
 export * from "./config";
 export * from "./enum";
 export { QueryProvider, query } from "./QueryProvider";
-export { setToken, resetToken, setCookie, removeCookie } from "./instance";
+export { setToken, resetToken, setCookie, removeCookie, getCookie } from "./instance";
 
 export * from "./acceptances";
 export * from "./applications";
