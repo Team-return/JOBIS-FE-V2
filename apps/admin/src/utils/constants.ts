@@ -72,6 +72,6 @@ export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
 
-export const PAGE_SIZE = 10;
+export const PAGE_SIZE = 5;
 export const RECRUITMENT_PAGE_SIZE = 5;
 export const ADMIN_ID_KEY = "admin_id";
