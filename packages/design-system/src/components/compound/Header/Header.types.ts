@@ -1,6 +1,5 @@
-import { headerTypes } from "./Header.stories";
+export type HeaderType = "admin" | "company" | "student";
 
-export type HeaderType = (typeof headerTypes)[number];
 interface Notification {
   notification_id: number;
   title: string;

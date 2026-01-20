@@ -7,7 +7,7 @@ const SvgToastWarning = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="currentColor"
+      stroke="#F1C40F"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

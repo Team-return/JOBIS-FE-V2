@@ -1,18 +1,18 @@
 import type { SVGProps } from "react";
-const SvgToastSuccess = (props: SVGProps<SVGSVGElement>) => (
+const SvgRegister = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="currentColor"
-    viewBox="0 0 24 24"
+    viewBox="0 0 20 20"
     {...props}
   >
     <path
-      stroke="#2ECC71"
+      stroke="#2F53FF"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
-      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"
+      d="m7.5 10.625 2.5 2.5m0 0 2.5-2.5m-2.5 2.5v-6.25M17.5 10a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0"
     />
   </svg>
 );
-export default SvgToastSuccess;
+export default SvgRegister;
