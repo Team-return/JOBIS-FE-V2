@@ -46,8 +46,8 @@ export const removeCookie = (key: string) => {
 };
 
 export const getCookie = (key: string) => {
-  return cookie.get(key) as string;
-}
+  return (cookie.get(key) ?? "") as string;
+};
 
 export const setToken = (data: AuthData) => {
   setCookie(
