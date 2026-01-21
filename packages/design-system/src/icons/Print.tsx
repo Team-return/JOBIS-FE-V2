@@ -2,12 +2,12 @@ import type { SVGProps } from "react";
 const SvgPrint = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
+    fill="none"
     viewBox="0 0 20 20"
     {...props}
   >
     <path
-      stroke="#2F53FF"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

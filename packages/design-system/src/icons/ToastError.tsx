@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 const SvgToastError = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
+    fill="none"
     viewBox="0 0 24 24"
     {...props}
   >
