@@ -14,9 +14,10 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import {
   useTeacherCompanyList,
-  useCompanyFileDownload,
   useUpdateCompanyType,
-  useUpdateMou
+  useUpdateMou,
+  companiesKeys,
+  query
 } from "@jobis/api";
 import type { CompanyType } from "@jobis/api";
 import {
@@ -55,48 +56,55 @@ export const Company = () => {
     setCurrentPage(1);
   };
 
-  const handleExcelDownload = () => {
-    if (!excelData) {
-      toast.info("파일이 준비중입니다.");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = excelUrl!;
-    link.download = `${new Date().toISOString()}-companies.xlsx`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("엑셀 파일이 다운로드되었습니다.");
-  };
-
-  const handleParticipatingCompanyRegistration = () => {
-    if (selected.length === 0) {
-      toast.warning("선택된 기업이 없습니다.");
-      return;
-    }
-
-    const companyIds = selected
+  const getSelectedCompanyIds = (): number[] => {
+    return selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
         return data?.companies[globalIndex]?.company_id;
       })
       .filter((id): id is number => id !== undefined);
+  };
 
-    if (companyIds.length === 0) {
-      toast.warning("선택된 기업 ID를 찾을 수 없습니다.");
-      return;
+  const validateSelectedCompanies = (): boolean => {
+    if (selected.length === 0) {
+      toast.warning("선택된 기업이 없습니다.");
+      return false;
     }
 
+    const companyIds = getSelectedCompanyIds();
+    if (companyIds.length === 0) {
+      toast.warning("유효한 기업이 없습니다.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const invalidateCompanyQueries = async () => {
+    await Promise.all([
+      query.invalidate(companiesKeys.teacherCompanyList()),
+      query.invalidate(companiesKeys.companyFileDownload())
+    ]);
+  };
+
+  const resetSelection = () => {
+    setSelected([]);
+  };
+
+  const handleParticipatingCompanyRegistration = () => {
+    if (!validateSelectedCompanies()) return;
+
+    const companyIds = getSelectedCompanyIds();
     updateCompanyType(
       {
         company_ids: companyIds,
         company_type: "PARTICIPATING"
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("참여기업으로 등록되었습니다.");
-          setSelected([]);
+          await invalidateCompanyQueries();
+          resetSelection();
         },
         onError: () => {
           toast.error("참여기업 등록에 실패했습니다.");
@@ -106,32 +114,19 @@ export const Company = () => {
   };
 
   const handleLeadingCompanyRegistration = () => {
-    if (selected.length === 0) {
-      toast.warning("선택된 기업이 없습니다.");
-      return;
-    }
+    if (!validateSelectedCompanies()) return;
 
-    const companyIds = selected
-      .map(index => {
-        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.companies[globalIndex]?.company_id;
-      })
-      .filter((id): id is number => id !== undefined);
-
-    if (companyIds.length === 0) {
-      toast.warning("선택된 기업 ID를 찾을 수 없습니다.");
-      return;
-    }
-
+    const companyIds = getSelectedCompanyIds();
     updateCompanyType(
       {
         company_ids: companyIds,
         company_type: "LEADING"
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("선도기업으로 등록되었습니다.");
-          setSelected([]);
+          await invalidateCompanyQueries();
+          resetSelection();
         },
         onError: () => {
           toast.error("선도기업 등록에 실패했습니다.");
@@ -141,31 +136,18 @@ export const Company = () => {
   };
 
   const handleMouRegistration = () => {
-    if (selected.length === 0) {
-      toast.warning("선택된 기업이 없습니다.");
-      return;
-    }
+    if (!validateSelectedCompanies()) return;
 
-    const companyIds = selected
-      .map(index => {
-        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.companies[globalIndex]?.company_id;
-      })
-      .filter((id): id is number => id !== undefined);
-
-    if (companyIds.length === 0) {
-      toast.warning("선택된 기업 ID를 찾을 수 없습니다.");
-      return;
-    }
-
+    const companyIds = getSelectedCompanyIds();
     updateMou(
       {
         company_ids: companyIds
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("협약이 등록되었습니다.");
-          setSelected([]);
+          await invalidateCompanyQueries();
+          resetSelection();
         },
         onError: () => {
           toast.error("협약 등록에 실패했습니다.");
@@ -193,11 +175,8 @@ export const Company = () => {
     filterParams.businessArea
   );
 
-  const { data: excelData } = useCompanyFileDownload();
   const { mutate: updateCompanyType } = useUpdateCompanyType();
   const { mutate: updateMou } = useUpdateMou();
-
-  const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
 
   const tableRows: string[][] =
     data?.companies.map(company => [
@@ -290,9 +269,6 @@ export const Company = () => {
             <Flex $align="center" $gap={8} $fit>
               <IconButton icon="Refresh" onClick={handleResetFilters}>
                 초기화
-              </IconButton>
-              <IconButton icon="Print" onClick={handleExcelDownload}>
-                엑셀 출력
               </IconButton>
               <IconButton
                 icon="Company"

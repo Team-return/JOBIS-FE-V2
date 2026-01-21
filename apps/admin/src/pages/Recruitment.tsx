@@ -17,7 +17,9 @@ import type { PeriodValue } from "@jobis/design-system";
 import {
   useRecruitmentFileDownload,
   useTeacherRecruitmentList,
-  useUpdateRecruitmentStatus
+  useUpdateRecruitmentStatus,
+  recruitmentsKeys,
+  query
 } from "@jobis/api";
 import type { RecruitmentStatus } from "@jobis/api";
 import {
@@ -75,34 +77,56 @@ export const Recruitment = () => {
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
 
-  const handleStatusChange = (newStatus: string) => {
-    if (selected.length === 0) {
-      toast.warning("선택된 모집의뢰서가 없습니다.");
-      return;
-    }
-
-    const recruitmentIds = selected
+  const getSelectedRecruitmentIds = (): number[] => {
+    return selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
         return data?.recruitments[globalIndex]?.id;
       })
       .filter((id): id is number => id !== undefined);
+  };
 
-    if (recruitmentIds.length === 0) {
-      toast.warning("선택된 모집의뢰서 ID를 찾을 수 없습니다.");
-      return;
+  const validateSelectedRecruitments = (): boolean => {
+    if (selected.length === 0) {
+      toast.warning("선택된 모집의뢰서가 없습니다.");
+      return false;
     }
 
+    const recruitmentIds = getSelectedRecruitmentIds();
+    if (recruitmentIds.length === 0) {
+      toast.warning("유효한 모집의뢰서가 없습니다.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const invalidateRecruitmentQueries = async () => {
+    await Promise.all([
+      query.invalidate(recruitmentsKeys.teacherRecruitmentList()),
+      query.invalidate(recruitmentsKeys.recruitmentFileDownload())
+    ]);
+  };
+
+  const resetSelection = () => {
+    setSelected([]);
+    setOpenDropdown(null);
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    if (!validateSelectedRecruitments()) return;
+
+    const recruitmentIds = getSelectedRecruitmentIds();
     updateRecruitmentStatus(
       {
         status: newStatus as RecruitmentStatus,
         recruitment_ids: recruitmentIds
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("상태가 변경되었습니다.");
-          setSelected([]);
-          setOpenDropdown(null);
+          await invalidateRecruitmentQueries();
+          resetSelection();
         },
         onError: () => {
           toast.error("상태 변경에 실패했습니다.");
