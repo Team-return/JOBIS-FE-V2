@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-const SvgRefresh = (props: SVGProps<SVGSVGElement>) => (
+const SvgRegister = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -7,11 +7,13 @@ const SvgRefresh = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
+      fill="none"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
-      d="M13.353 7.79h4.16l-2.651-2.653A6.875 6.875 0 0 0 3.359 8.221m-.871 8.149v-4.16m0 0h4.16m-4.16 0 2.65 2.652A6.874 6.874 0 0 0 16.64 11.78m.872-8.149v4.158"
+      d="m7.5 10.625 2.5 2.5m0 0 2.5-2.5m-2.5 2.5v-6.25M17.5 10a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0"
     />
   </svg>
 );
-export default SvgRefresh;
+export default SvgRegister;

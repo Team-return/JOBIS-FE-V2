@@ -1,6 +1,5 @@
 import { Header } from "@jobis/design-system";
 import { createBrowserRouter, redirect } from "react-router-dom";
-import { Login } from "./pages/Login";
 import {
   companiesKeys,
   recruitmentsKeys,
@@ -10,7 +9,7 @@ import {
   noticesKeys,
   bannersKeys
 } from "@jobis/api";
-import { Recruitment } from "./pages/Recruitment";
+import { Company, Login, Recruitment } from "./pages";
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
@@ -28,7 +27,14 @@ export const router: ReturnType<typeof createBrowserRouter> =
         {
           path: "/company",
           children: [
-            { index: true, element: <div>기업 목록</div> },
+            {
+              index: true,
+              loader: () => {
+                // query.prefetch(companiesKeys.teacherCompanyList(params));
+                return null;
+              },
+              element: <Company />
+            },
             {
               path: "detail/:companyId",
               loader: ({ params }) => {

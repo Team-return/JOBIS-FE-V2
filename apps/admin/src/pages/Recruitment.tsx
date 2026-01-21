@@ -12,53 +12,26 @@ import {
   useTheme,
   useToast
 } from "@jobis/design-system";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { PeriodValue } from "@jobis/design-system";
 import {
   useRecruitmentFileDownload,
   useTeacherRecruitmentList,
-  useUpdateRecruitmentStatus
+  useUpdateRecruitmentStatus,
+  recruitmentsKeys,
+  query
 } from "@jobis/api";
-import type { RecruitmentStatus, CompanyType } from "@jobis/api";
-
-const STATUS_LABEL: Record<RecruitmentStatus, string> = {
-  REQUESTED: "접수완료",
-  READY: "모집전",
-  RECRUITING: "모집중",
-  DONE: "모집종료",
-  MANUAL_ADD: "수동등록",
-  WIN_INTERN: "겨울인턴"
-};
-
-const COMPANY_TYPE_LABEL: Record<CompanyType, string> = {
-  LEAD: "선도기업",
-  PARTICIPATING: "참여기업",
-  MANUAL_ADD: "수동등록"
-};
-
-const STATE_OPTIONS = [
-  { label: "모집중", value: "RECRUITING" },
-  { label: "모집전", value: "READY" },
-  { label: "진행중", value: "IN_PROGRESS" },
-  { label: "모집종료", value: "DONE" },
-  { label: "접수완료", value: "REQUESTED" },
-  {
-    label: "겨울인턴",
-    value: "WIN_INTERN"
-  }
-];
-const TYPE_OPTIONS = [
-  { label: "선도기업", value: "LEAD" },
-  { label: "참여기업", value: "PARTICIPATING" },
-  { label: "수동등록", value: "MANUAL_ADD" }
-];
-const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => ({
-  label: String(2024 + i),
-  value: String(2024 + i)
-}));
-
-const PAGE_SIZE = 5;
+import type { RecruitmentStatus } from "@jobis/api";
+import {
+  useDebounce,
+  RECRUITMENT_STATUS_LABEL,
+  RECRUITMENT_STATE_OPTIONS,
+  COMPANY_TYPE_LABEL,
+  COMPANY_TYPE_OPTIONS,
+  YEAR_OPTIONS,
+  PAGE_SIZE,
+  formatDate
+} from "../utils";
 
 export const Recruitment = () => {
   const { currentTheme: theme } = useTheme();
@@ -73,6 +46,8 @@ export const Recruitment = () => {
   const [state, setState] = useState<string | undefined>(undefined);
   const [search, setSearch] = useState<string>("");
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const handleResetFilters = () => {
     setPeriod(undefined);
     setYear(undefined);
@@ -84,20 +59,17 @@ export const Recruitment = () => {
     setCurrentPage(1);
   };
 
-  const formatDate = (date?: Date | string) => {
-    if (!date) return undefined;
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return dateObj.toISOString().split("T")[0];
-  };
-
-  const filterParams = {
-    company_name: search || undefined,
-    year: year ? Number(year) : undefined,
-    status: state as RecruitmentStatus | undefined,
-    start: period?.startDate ? formatDate(period.startDate) : undefined,
-    end: period?.endDate ? formatDate(period.endDate) : undefined,
-    winter_intern: state === "WIN_INTERN" || undefined
-  };
+  const filterParams = useMemo(
+    () => ({
+      company_name: debouncedSearch || undefined,
+      year: year ? Number(year) : undefined,
+      status: state as RecruitmentStatus | undefined,
+      start: period?.startDate ? formatDate(period.startDate) : undefined,
+      end: period?.endDate ? formatDate(period.endDate) : undefined,
+      winter_intern: state === "WIN_INTERN" || undefined
+    }),
+    [debouncedSearch, year, state, period]
+  );
 
   const { data } = useTeacherRecruitmentList(filterParams);
   const { data: excelData } = useRecruitmentFileDownload();
@@ -105,34 +77,56 @@ export const Recruitment = () => {
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
 
-  const handleStatusChange = (newStatus: string) => {
-    if (selected.length === 0) {
-      toast.warning("선택된 모집의뢰서가 없습니다.");
-      return;
-    }
-
-    const recruitmentIds = selected
+  const getSelectedRecruitmentIds = (): number[] => {
+    return selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
         return data?.recruitments[globalIndex]?.id;
       })
       .filter((id): id is number => id !== undefined);
+  };
 
-    if (recruitmentIds.length === 0) {
-      toast.warning("선택된 모집의뢰서 ID를 찾을 수 없습니다.");
-      return;
+  const validateSelectedRecruitments = (): boolean => {
+    if (selected.length === 0) {
+      toast.warning("선택된 모집의뢰서가 없습니다.");
+      return false;
     }
 
+    const recruitmentIds = getSelectedRecruitmentIds();
+    if (recruitmentIds.length === 0) {
+      toast.warning("유효한 모집의뢰서가 없습니다.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const invalidateRecruitmentQueries = async () => {
+    await Promise.all([
+      query.invalidate(recruitmentsKeys.teacherRecruitmentList()),
+      query.invalidate(recruitmentsKeys.recruitmentFileDownload())
+    ]);
+  };
+
+  const resetSelection = () => {
+    setSelected([]);
+    setOpenDropdown(null);
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    if (!validateSelectedRecruitments()) return;
+
+    const recruitmentIds = getSelectedRecruitmentIds();
     updateRecruitmentStatus(
       {
         status: newStatus as RecruitmentStatus,
         recruitment_ids: recruitmentIds
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("상태가 변경되었습니다.");
-          setSelected([]);
-          setOpenDropdown(null);
+          await invalidateRecruitmentQueries();
+          resetSelection();
         },
         onError: () => {
           toast.error("상태 변경에 실패했습니다.");
@@ -141,18 +135,38 @@ export const Recruitment = () => {
     );
   };
 
+  const handleExcelDownload = () => {
+    if (!excelUrl) {
+      toast.info("파일이 준비중입니다.");
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = excelUrl;
+    link.download = `${new Date().toISOString()}-recruitments.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const tableRows: string[][] =
-    data?.recruitments.map(recruitment => [
-      STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
-      recruitment.company_name,
-      recruitment.hiring_jobs,
-      COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
-      String(recruitment.total_hiring_count),
-      String(recruitment.application_requested_count),
-      String(recruitment.application_approved_count),
-      recruitment.start_date,
-      recruitment.end_date
-    ]) ?? [];
+    data?.recruitments
+      .filter(
+        recruitment => type === undefined || recruitment.company_type === type
+      )
+      .map(recruitment => [
+        RECRUITMENT_STATUS_LABEL[recruitment.status] ??
+          String(recruitment.status),
+        recruitment.company_name,
+        recruitment.hiring_jobs,
+        COMPANY_TYPE_LABEL[recruitment.company_type] ??
+          recruitment.company_type,
+        String(recruitment.total_hiring_count),
+        String(recruitment.application_requested_count),
+        String(recruitment.application_approved_count),
+        recruitment.start_date || "-",
+        recruitment.end_date || "-"
+      ]) ?? [];
 
   const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
   const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -204,7 +218,7 @@ export const Recruitment = () => {
                 onChange={val => setYear(val)}
               />
               <Dropdown
-                options={TYPE_OPTIONS}
+                options={COMPANY_TYPE_OPTIONS}
                 $width={96}
                 $placeholder="구분"
                 isOpen={openDropdown === "type"}
@@ -213,7 +227,7 @@ export const Recruitment = () => {
                 onChange={val => setType(val)}
               />
               <Dropdown
-                options={STATE_OPTIONS}
+                options={RECRUITMENT_STATE_OPTIONS}
                 $width={96}
                 $placeholder="상태"
                 isOpen={openDropdown === "state"}
@@ -233,20 +247,12 @@ export const Recruitment = () => {
               <IconButton icon="Refresh" onClick={handleResetFilters}>
                 필터 초기화
               </IconButton>
-              {excelUrl ? (
-                <a
-                  href={excelUrl}
-                  download="recruitments.xlsx"
-                  style={{ textDecoration: "none" }}
-                >
-                  <IconButton icon="Print">엑셀 출력</IconButton>
-                </a>
-              ) : (
-                <IconButton icon="Print">엑셀 출력</IconButton>
-              )}
+              <IconButton icon="Print" onClick={handleExcelDownload}>
+                엑셀 출력
+              </IconButton>
               <Dropdown
                 $width={96}
-                options={STATE_OPTIONS}
+                options={RECRUITMENT_STATE_OPTIONS}
                 $placeholder="상태변경"
                 isOpen={openDropdown === "stateChange"}
                 onToggle={isOpen =>

@@ -6,10 +6,23 @@ export default {
     '#000000': 'currentColor',
     'black': 'currentColor',
     '#E74C3C': 'currentColor',
-    '#e74c3c': 'currentColor'
+    '#e74c3c': 'currentColor',
+    '#2F53FF': 'currentColor'
   },
-  svgProps: {
-    fill: 'currentColor'
+  svgoConfig: {
+    plugins: [
+      {
+        name: 'preset-default',
+        params: {
+          overrides: {
+            removeViewBox: false,
+            cleanupIds: false,
+            removeUselessStrokeAndFill: false,
+            removeUnknownsAndDefaults: false
+          }
+        }
+      }
+    ]
   },
   dimensions: false, // width, height 속성을 제거
 };

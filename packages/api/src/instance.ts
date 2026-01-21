@@ -45,6 +45,10 @@ export const removeCookie = (key: string) => {
   cookie.remove(key, { path: "/" });
 };
 
+export const getCookie = (key: string) => {
+  return (cookie.get(key) ?? "") as string;
+};
+
 export const setToken = (data: AuthData) => {
   setCookie(
     ACCESS_TOKEN_KEY,

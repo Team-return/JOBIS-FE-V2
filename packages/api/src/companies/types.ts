@@ -141,7 +141,7 @@ export interface TeacherCompany {
   region: string;
   business_area: string;
   workers_count: number;
-  sales: number;
+  take: number;
   company_type: string;
   convention: boolean;
   personal_contact: boolean;
