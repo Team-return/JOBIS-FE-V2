@@ -22,7 +22,7 @@ import { ADMIN_ID_KEY, ID_REGEX, PASSWORD_REGEX } from "../utils";
 
 export const Login = () => {
   const { currentTheme: theme } = useTheme();
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(!!getCookie(ADMIN_ID_KEY));
   const [id, setId] = useState(getCookie(ADMIN_ID_KEY));
   const [password, setPassword] = useState("");
   const [eyeOpen, setEyeOpen] = useState(false);
