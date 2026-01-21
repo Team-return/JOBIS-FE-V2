@@ -29,15 +29,18 @@ const client = new QueryClient({
 
 export const query = {
   async prefetch(queryKey: unknown[]) {
+    const vaildQueryKey = queryKey.filter(key => key !== undefined);
     await client.prefetchQuery({
-      queryKey
+      queryKey: vaildQueryKey
     });
   },
   async invalidate(queryKey: unknown[]) {
-    await client.invalidateQueries({ queryKey });
+    const vaildQueryKey = queryKey.filter(key => key !== undefined);
+    await client.invalidateQueries({ queryKey: vaildQueryKey });
   },
   remove(queryKey: unknown[]) {
-    client.removeQueries({ queryKey });
+    const vaildQueryKey = queryKey.filter(key => key !== undefined);
+    client.removeQueries({ queryKey: vaildQueryKey });
   }
 } as const;
 
