@@ -282,7 +282,7 @@ export const Company = () => {
               >
                 선도기업 등록
               </IconButton>
-              <IconButton icon="Upload" onClick={handleMouRegistration}>
+              <IconButton icon="Register" onClick={handleMouRegistration}>
                 협약등록
               </IconButton>
             </Flex>
