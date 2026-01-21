@@ -1,5 +1,5 @@
-import { Header } from "@jobis/design-system";
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { Header, Footer } from "@jobis/design-system";
+import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
 import {
   companiesKeys,
   recruitmentsKeys,
@@ -14,7 +14,15 @@ export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <Header type="admin" />,
+      element: (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Header type="admin" />
+          <main style={{ flex: 1 }}>
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      ),
       children: [
         {
           index: true,

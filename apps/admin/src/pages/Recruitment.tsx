@@ -172,6 +172,7 @@ export const Recruitment = () => {
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
+
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
