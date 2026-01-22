@@ -1,26 +1,23 @@
-import { defineConfig } from "vite";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
+import { type PluginOption, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { createViteConfig } from "../../vite.config.common";
 
-const FILE_NAME = fileURLToPath(import.meta.url);
-const DIR_NAME = dirname(FILE_NAME);
+const baseConfig = createViteConfig({
+  lib: {
+    name: "sentry"
+  }
+});
 
 export default defineConfig({
+  ...baseConfig,
   plugins: [
+    ...(baseConfig.plugins as PluginOption[]),
     react({
       jsxImportSource: "@emotion/react"
-    }),
-    tsconfigPaths()
+    })
   ],
   build: {
-    lib: {
-      entry: resolve(DIR_NAME, "src/index.ts"),
-      name: "jobis-sentry",
-      fileName: "index",
-      formats: ["es"]
-    },
+    ...baseConfig.build,
     rollupOptions: {
       external: [
         "react",
