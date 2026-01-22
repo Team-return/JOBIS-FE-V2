@@ -11,49 +11,53 @@ import {
   useTheme,
   useToast
 } from "@jobis/design-system";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import {
   useTeacherCompanyList,
   useUpdateCompanyType,
   useUpdateMou,
   companiesKeys,
-  query
+  query,
+  type CompanyType
 } from "@jobis/api";
-import type { CompanyType } from "@jobis/api";
 import {
   useDebounce,
+  useQueryParams,
   COMPANY_TYPE_LABEL,
   COMPANY_TYPE_OPTIONS,
   REGION_OPTIONS,
   BUSINESS_AREA_OPTIONS,
   PAGE_SIZE,
+  LoaderData,
   booleanToYN
-} from "../utils";
+} from "../../utils";
+import type { CompanyQuery } from "./loader";
 
 export const Company = () => {
+  const { params: initialParams } = useLoaderData() as LoaderData<CompanyQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
+
+  const { updateParams, resetParams, getParam, getParamAsNumber } =
+    useQueryParams();
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [localSearch, setLocalSearch] = useState(initialParams.name || "");
 
-  const [companyType, setCompanyType] = useState<string | undefined>(undefined);
-  const [region, setRegion] = useState<string | undefined>(undefined);
-  const [businessArea, setBusinessArea] = useState<string | undefined>(
-    undefined
-  );
-  const [search, setSearch] = useState<string>("");
+  const companyType = getParam("type");
+  const region = getParam("region");
+  const businessArea = getParam("business-area");
+  const currentPage = getParamAsNumber("page", 1);
 
-  const debouncedSearch = useDebounce(search, 300);
+  const debouncedSearch = useDebounce(localSearch, 300);
 
   const handleResetFilters = () => {
-    setCompanyType(undefined);
-    setRegion(undefined);
-    setBusinessArea(undefined);
-    setSearch("");
+    setLocalSearch("");
     setSelected([]);
     setOpenDropdown(null);
-    setCurrentPage(1);
+    resetParams();
   };
 
   const getSelectedCompanyIds = (): number[] => {
@@ -156,23 +160,12 @@ export const Company = () => {
     );
   };
 
-  const filterParams = useMemo(
-    () => ({
-      page: currentPage,
-      type: companyType,
-      name: debouncedSearch || undefined,
-      region: region,
-      businessArea: businessArea ? Number(businessArea) : undefined
-    }),
-    [currentPage, companyType, debouncedSearch, region, businessArea]
-  );
-
   const { data } = useTeacherCompanyList(
-    filterParams.page,
-    filterParams.type,
-    filterParams.name,
-    filterParams.region,
-    filterParams.businessArea
+    currentPage,
+    companyType,
+    getParam("name"),
+    region,
+    businessArea ? parseInt(businessArea, 10) : undefined
   );
 
   const { mutate: updateCompanyType } = useUpdateCompanyType();
@@ -200,10 +193,11 @@ export const Company = () => {
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    const currentSearchValue = getParam("name") ?? "";
+    if (debouncedSearch !== currentSearchValue) {
+      updateParams({ name: debouncedSearch || undefined, page: undefined });
     }
-  }, [totalPages, currentPage]);
+  }, [debouncedSearch, updateParams, getParam]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
@@ -236,7 +230,7 @@ export const Company = () => {
                   setOpenDropdown(isOpen ? "companyType" : null)
                 }
                 value={companyType}
-                onChange={val => setCompanyType(val)}
+                onChange={val => updateParams({ type: val, page: undefined })}
               />
               <Dropdown
                 options={REGION_OPTIONS}
@@ -245,7 +239,7 @@ export const Company = () => {
                 isOpen={openDropdown === "region"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "region" : null)}
                 value={region}
-                onChange={val => setRegion(val)}
+                onChange={val => updateParams({ region: val, page: undefined })}
               />
               <Dropdown
                 options={BUSINESS_AREA_OPTIONS}
@@ -256,13 +250,15 @@ export const Company = () => {
                   setOpenDropdown(isOpen ? "businessArea" : null)
                 }
                 value={businessArea}
-                onChange={val => setBusinessArea(val)}
+                onChange={val =>
+                  updateParams({ businessArea: val, page: undefined })
+                }
               />
               <Search
                 placeholder="기업명을 입력해주세요"
                 $width={359}
-                value={search}
-                onChange={val => setSearch(val)}
+                value={localSearch}
+                onChange={setLocalSearch}
               />
             </Flex>
             <Spacer />
@@ -316,7 +312,7 @@ export const Company = () => {
             current={currentPage}
             onChange={page => {
               setSelected([]);
-              setCurrentPage(page);
+              updateParams({ page });
             }}
           />
         </Flex>

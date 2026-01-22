@@ -2,14 +2,20 @@ import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
 import {
   companiesKeys,
-  recruitmentsKeys,
   reviewsKeys,
   applicationsKeys,
   query,
   noticesKeys,
   bannersKeys
 } from "@jobis/api";
-import { Company, Login, Recruitment } from "./pages";
+import {
+  Company,
+  companyLoader,
+  Login,
+  Recruitment,
+  recruitmentLoader
+} from "./pages";
+
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
@@ -26,10 +32,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           index: true,
-          loader: ({ params }) => {
-            query.prefetch(recruitmentsKeys.teacherRecruitmentList(params));
-            return null;
-          },
+          loader: recruitmentLoader,
           element: <Recruitment />
         },
         {
@@ -37,10 +40,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              loader: () => {
-                // query.prefetch(companiesKeys.teacherCompanyList(params));
-                return null;
-              },
+              loader: companyLoader,
               element: <Company />
             },
             {

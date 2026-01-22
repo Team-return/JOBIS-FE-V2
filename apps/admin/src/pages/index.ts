@@ -1,3 +1,3 @@
-export * from "./Company";
-export * from "./Login";
-export * from "./Recruitment";
+export * from "./company";
+export * from "./login";
+export * from "./recruitment";

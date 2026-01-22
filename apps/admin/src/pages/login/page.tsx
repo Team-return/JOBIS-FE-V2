@@ -18,7 +18,7 @@ import {
 } from "@jobis/design-system";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ADMIN_ID_KEY, ID_REGEX, PASSWORD_REGEX } from "../utils";
+import { ADMIN_ID_KEY, ID_REGEX, PASSWORD_REGEX } from "../../utils";
 
 export const Login = () => {
   const { currentTheme: theme } = useTheme();
