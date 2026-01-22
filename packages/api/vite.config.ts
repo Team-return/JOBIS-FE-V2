@@ -1,20 +1,16 @@
-import { type PluginOption, defineConfig } from "vite";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from "vite";
+import { createViteConfig } from "../../vite.config.common";
 
-const FILE_NAME = fileURLToPath(import.meta.url);
-const DIR_NAME = dirname(FILE_NAME);
+const baseConfig = createViteConfig({
+  lib: {
+    name: "api"
+  }
+});
 
 export default defineConfig({
-  plugins: [tsconfigPaths()] as PluginOption[],
+  ...baseConfig,
   build: {
-    lib: {
-      entry: resolve(DIR_NAME, "src/index.ts"),
-      name: "jobis-api",
-      fileName: "index",
-      formats: ["es"]
-    },
+    ...baseConfig.build,
     rollupOptions: {
       external: ["@tanstack/react-query", "axios"],
       output: {
