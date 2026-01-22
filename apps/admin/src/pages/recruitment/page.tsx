@@ -10,18 +10,19 @@ import {
   Table,
   Text,
   useTheme,
-  useToast
+  useToast,
+  type PeriodValue
 } from "@jobis/design-system";
-import { useEffect, useState, useMemo } from "react";
-import type { PeriodValue } from "@jobis/design-system";
+import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import {
   useRecruitmentFileDownload,
   useTeacherRecruitmentList,
   useUpdateRecruitmentStatus,
   recruitmentsKeys,
-  query
+  query,
+  type RecruitmentStatus
 } from "@jobis/api";
-import type { RecruitmentStatus } from "@jobis/api";
 import {
   useDebounce,
   RECRUITMENT_STATUS_LABEL,
@@ -30,48 +31,70 @@ import {
   COMPANY_TYPE_OPTIONS,
   YEAR_OPTIONS,
   PAGE_SIZE,
-  formatDate
-} from "../utils";
+  formatDate,
+  type LoaderData,
+  useQueryParams
+} from "../../utils";
+import type { RecruitmentQuery } from "./loader";
 
 export const Recruitment = () => {
+  const { params: initialParams } =
+    useLoaderData() as LoaderData<RecruitmentQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
+
+  const { updateParams, resetParams, getParam, getParamAsNumber } =
+    useQueryParams();
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [period, setPeriod] = useState<PeriodValue | undefined>(undefined);
-  const [year, setYear] = useState<string | undefined>(undefined);
-  const [type, setType] = useState<string | undefined>(undefined);
-  const [state, setState] = useState<string | undefined>(undefined);
-  const [search, setSearch] = useState<string>("");
+  const currentPage = getParamAsNumber("page", 1);
+  const year = getParam("year");
+  const type = getParam("type");
+  const state = getParam("status");
+  const startDate = getParam("start");
+  const endDate = getParam("end");
 
-  const debouncedSearch = useDebounce(search, 300);
+  const period: PeriodValue | undefined =
+    startDate && endDate
+      ? {
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          isConstant: false
+        }
+      : undefined;
 
-  const handleResetFilters = () => {
-    setPeriod(undefined);
-    setYear(undefined);
-    setType(undefined);
-    setState(undefined);
-    setSearch("");
-    setSelected([]);
-    setOpenDropdown(null);
-    setCurrentPage(1);
-  };
-
-  const filterParams = useMemo(
-    () => ({
-      company_name: debouncedSearch || undefined,
-      year: year ? Number(year) : undefined,
-      status: state as RecruitmentStatus | undefined,
-      start: period?.startDate ? formatDate(period.startDate) : undefined,
-      end: period?.endDate ? formatDate(period.endDate) : undefined,
-      winter_intern: state === "WIN_INTERN" || undefined
-    }),
-    [debouncedSearch, year, state, period]
+  const [localSearch, setLocalSearch] = useState(
+    initialParams.company_name || ""
   );
 
-  const { data } = useTeacherRecruitmentList(filterParams);
+  const debouncedSearch = useDebounce(localSearch, 300);
+
+  const handleResetFilters = () => {
+    setLocalSearch("");
+    setSelected([]);
+    setOpenDropdown(null);
+    resetParams();
+  };
+
+  const handlePeriodChange = (val: PeriodValue | undefined) => {
+    updateParams({
+      start: val?.startDate ? formatDate(val.startDate) : undefined,
+      end: val?.endDate ? formatDate(val.endDate) : undefined,
+      page: undefined
+    });
+  };
+
+  const { data } = useTeacherRecruitmentList({
+    company_name: getParam("company-name"),
+    year: year ? parseInt(year, 10) : undefined,
+    status: state as RecruitmentStatus,
+    start: startDate,
+    end: endDate,
+    winter_intern: initialParams.winter_intern
+  });
+
   const { data: excelData } = useRecruitmentFileDownload();
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
@@ -172,11 +195,16 @@ export const Recruitment = () => {
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
+
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    const currentSearchValue = getParam("company-name") ?? "";
+    if (debouncedSearch !== currentSearchValue) {
+      updateParams({
+        company_name: debouncedSearch || undefined,
+        page: undefined
+      });
     }
-  }, [tableRows.length, totalPages, currentPage]);
+  }, [debouncedSearch, updateParams, getParam]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
@@ -206,7 +234,7 @@ export const Recruitment = () => {
                 isOpen={openDropdown === "period"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "period" : null)}
                 value={period}
-                onChange={val => setPeriod(val)}
+                onChange={handlePeriodChange}
               />
               <Dropdown
                 options={YEAR_OPTIONS}
@@ -215,7 +243,7 @@ export const Recruitment = () => {
                 isOpen={openDropdown === "year"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "year" : null)}
                 value={year}
-                onChange={val => setYear(val)}
+                onChange={val => updateParams({ year: val, page: undefined })}
               />
               <Dropdown
                 options={COMPANY_TYPE_OPTIONS}
@@ -224,7 +252,7 @@ export const Recruitment = () => {
                 isOpen={openDropdown === "type"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "type" : null)}
                 value={type}
-                onChange={val => setType(val)}
+                onChange={val => updateParams({ type: val, page: undefined })}
               />
               <Dropdown
                 options={RECRUITMENT_STATE_OPTIONS}
@@ -233,13 +261,13 @@ export const Recruitment = () => {
                 isOpen={openDropdown === "state"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "state" : null)}
                 value={state}
-                onChange={val => setState(val)}
+                onChange={val => updateParams({ status: val, page: undefined })}
               />
               <Search
                 placeholder="기업명을 입력해주세요"
                 $width={359}
-                value={search}
-                onChange={val => setSearch(val)}
+                value={localSearch}
+                onChange={setLocalSearch}
               />
             </Flex>
             <Spacer />
@@ -293,7 +321,7 @@ export const Recruitment = () => {
             current={currentPage}
             onChange={page => {
               setSelected([]);
-              setCurrentPage(page);
+              updateParams({ page });
             }}
           />
         </Flex>

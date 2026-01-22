@@ -4,7 +4,7 @@ import { useTheme } from "@/hooks";
 import { Props } from "./Header.types";
 import { Icon, Text } from "@/components";
 import { StudentHeader } from "./StudentHeader";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Component = styled.header`
   padding: 21px 0;
@@ -63,76 +63,67 @@ export const Header = (props: Props) => {
   ];
 
   return type === "admin" ? (
-    <>
-      <Component>
-        <LogoContainer onClick={() => navigate("/")}>
-          <Icon icon="LogoWithText" width={90} height={26} />
-        </LogoContainer>
-        <MenuContainer type={type}>
-          {adminMenu.map(item => {
-            const isActive =
-              item.path === "/"
-                ? location.pathname === "/"
-                : location.pathname.startsWith(item.path);
-            const textColor = isActive
-              ? theme.color.grayScale[90]
-              : theme.color.grayScale[80];
+    <Component>
+      <LogoContainer onClick={() => navigate("/")}>
+        <Icon icon="LogoWithText" width={90} height={26} />
+      </LogoContainer>
+      <MenuContainer type={type}>
+        {adminMenu.map(item => {
+          const isActive =
+            item.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(item.path);
+          const textColor = isActive
+            ? theme.color.grayScale[90]
+            : theme.color.grayScale[80];
 
-            return (
-              <TextContainer
-                key={item.label}
-                $active={isActive}
-                onClick={() => navigate(item.path)}
-              >
-                <Text $span $size="body2" $color={textColor}>
-                  {item.label}
-                </Text>
-              </TextContainer>
-            );
-          })}
-        </MenuContainer>
-      </Component>
-      <Outlet />
-    </>
+          return (
+            <TextContainer
+              key={item.label}
+              $active={isActive}
+              onClick={() => navigate(item.path)}
+            >
+              <Text $span $size="body2" $color={textColor}>
+                {item.label}
+              </Text>
+            </TextContainer>
+          );
+        })}
+      </MenuContainer>
+    </Component>
   ) : type === "student" ? (
-    <>
-      <StudentHeader
-        userName={props.userName}
-        notifications={props.notifications}
-      />
-      <Outlet />
-    </>
+    <StudentHeader
+      userName={props.userName}
+      notifications={props.notifications}
+    />
   ) : type === "company" ? (
-    <>
-      <Component>
-        <LogoContainer onClick={() => navigate("/")}>
-          <Icon icon="LogoWithText" width={90} height={26} />
-        </LogoContainer>
-        <MenuContainer type={type}>
-          {companyMenu.map(item => {
-            const isActive =
-              item.path === "/"
-                ? location.pathname === "/"
-                : location.pathname.startsWith(item.path);
-            const textColor = isActive
-              ? theme.color.grayScale[90]
-              : theme.color.grayScale[80];
+    <Component>
+      <LogoContainer onClick={() => navigate("/")}>
+        <Icon icon="LogoWithText" width={90} height={26} />
+      </LogoContainer>
+      <MenuContainer type={type}>
+        {companyMenu.map(item => {
+          const isActive =
+            item.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(item.path);
+          const textColor = isActive
+            ? theme.color.grayScale[90]
+            : theme.color.grayScale[80];
 
-            return (
-              <TextContainer
-                key={item.label}
-                $active={isActive}
-                onClick={() => navigate(item.path)}
-              >
-                <Text $span $size="body2" $color={textColor}>
-                  {item.label}
-                </Text>
-              </TextContainer>
-            );
-          })}
-        </MenuContainer>
-      </Component>
-      <Outlet />
-    </>
+          return (
+            <TextContainer
+              key={item.label}
+              $active={isActive}
+              onClick={() => navigate(item.path)}
+            >
+              <Text $span $size="body2" $color={textColor}>
+                {item.label}
+              </Text>
+            </TextContainer>
+          );
+        })}
+      </MenuContainer>
+    </Component>
   ) : null;
 };

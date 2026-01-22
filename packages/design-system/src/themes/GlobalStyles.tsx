@@ -35,7 +35,7 @@ export const GlobalStyles = () => {
           background-color: ${theme.color.grayScale[10]};
         }
 
-        #root > * {
+        main {
           margin: 0 auto;
         }
       `}
