@@ -11,7 +11,8 @@ import {
   Text,
   useTheme,
   useToast,
-  type PeriodValue
+  type PeriodValue,
+  Box
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -286,7 +287,7 @@ export const Recruitment = () => {
                 onToggle={isOpen =>
                   setOpenDropdown(isOpen ? "stateChange" : null)
                 }
-                value={undefined}
+                value="상태변경"
                 onChange={val => {
                   if (val) handleStatusChange(val);
                 }}
@@ -294,36 +295,47 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-        </Flex>
-
-        <Flex $direction="column" $align="center" $gap={40}>
-          <Table
-            headers={[
-              "상태",
-              "기업명",
-              "직군",
-              "구분",
-              "모집인원",
-              "지원요청",
-              "지원자",
-              "모집시작일",
-              "모집종료일"
-            ]}
-            rows={paginatedRows}
-            columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
-            checkbox
-            selectedRows={selected}
-            onRowSelect={setSelected}
-          />
-          <Pagination
-            start={1}
-            end={totalPages}
-            current={currentPage}
-            onChange={page => {
-              setSelected([]);
-              updateParams({ page });
-            }}
-          />
+          {data?.recruitments.length === 0 ? (
+            <Box $margin={[300, 474.8]}>
+              <Text
+                $size="h5"
+                $weight="medium"
+                $color={theme.color.grayScale[60]}
+              >
+                등록된 모집 의뢰서가 없습니다.
+              </Text>
+            </Box>
+          ) : (
+            <Flex $direction="column" $align="center" $gap={40}>
+              <Table
+                headers={[
+                  "상태",
+                  "기업명",
+                  "직군",
+                  "구분",
+                  "모집인원",
+                  "지원요청",
+                  "지원자",
+                  "모집시작일",
+                  "모집종료일"
+                ]}
+                rows={paginatedRows}
+                columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
+                checkbox
+                selectedRows={selected}
+                onRowSelect={setSelected}
+              />
+              <Pagination
+                start={1}
+                end={totalPages}
+                current={currentPage}
+                onChange={page => {
+                  setSelected([]);
+                  updateParams({ page });
+                }}
+              />
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Container>

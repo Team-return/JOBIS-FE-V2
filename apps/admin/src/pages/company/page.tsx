@@ -1,4 +1,5 @@
 import {
+  Box,
   Container,
   Dropdown,
   Flex,
@@ -283,38 +284,51 @@ export const Company = () => {
               </IconButton>
             </Flex>
           </Flex>
-        </Flex>
-
-        <Flex $direction="column" $align="center" $gap={40}>
-          <Table
-            headers={[
-              "기업명",
-              "지역",
-              "사업분야",
-              "근로자수",
-              "매출액(억)",
-              "기업구분",
-              "협약여부",
-              "개인컨텍",
-              "최근 의뢰년도",
-              "총 취업 학생수",
-              "후기등록"
-            ]}
-            rows={paginatedRows}
-            columnWidths={[164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115]}
-            checkbox
-            selectedRows={selected}
-            onRowSelect={setSelected}
-          />
-          <Pagination
-            start={1}
-            end={totalPages}
-            current={currentPage}
-            onChange={page => {
-              setSelected([]);
-              updateParams({ page });
-            }}
-          />
+          {data?.companies.length === 0 ? (
+            <Box $margin={[300, 511.2]}>
+              <Text
+                $size="h5"
+                $weight="medium"
+                $color={theme.color.grayScale[60]}
+              >
+                등록된 기업이 없습니다.
+              </Text>
+            </Box>
+          ) : (
+            <Flex $direction="column" $align="center" $gap={40}>
+              <Table
+                headers={[
+                  "기업명",
+                  "지역",
+                  "사업분야",
+                  "근로자수",
+                  "매출액(억)",
+                  "기업구분",
+                  "협약여부",
+                  "개인컨텍",
+                  "최근 의뢰년도",
+                  "총 취업 학생수",
+                  "후기등록"
+                ]}
+                rows={paginatedRows}
+                columnWidths={[
+                  164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
+                ]}
+                checkbox
+                selectedRows={selected}
+                onRowSelect={setSelected}
+              />
+              <Pagination
+                start={1}
+                end={totalPages}
+                current={currentPage}
+                onChange={page => {
+                  setSelected([]);
+                  updateParams({ page });
+                }}
+              />
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Container>
