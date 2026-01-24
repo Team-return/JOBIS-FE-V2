@@ -13,7 +13,7 @@ const shimmer = keyframes`
 `;
 
 const Container = styled.div<Props>`
-  ${({ width }) => width && `width: ${width};`}
+  ${({ width }) => width && `width: ${parseValue(width)};`}
   ${({ height }) => height && `height: ${parseValue(height)};`}
   ${({ $radius }) => $radius && `border-radius: ${parseList($radius)};`}
   background-color: ${({ theme }) => theme.color.grayScale[40]};
@@ -28,6 +28,6 @@ const Container = styled.div<Props>`
   background-repeat: no-repeat;
 `;
 
-export const Skeleton = ({ ...props }: Props) => {
-  return <Container {...props} />;
+export const Skeleton = ({ width, height, $radius }: Props) => {
+  return <Container width={width} height={height} $radius={$radius} />;
 };
