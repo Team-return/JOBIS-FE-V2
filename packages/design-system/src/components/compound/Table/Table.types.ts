@@ -6,3 +6,9 @@ export interface Props {
   selectedRows?: number[];
   onRowSelect?: (selectedIndices: number[]) => void;
 }
+
+export interface SkeletonProps {
+  checkbox?: boolean;
+  columnWidths: number[];
+  rows: number;
+}
