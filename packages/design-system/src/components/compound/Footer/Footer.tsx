@@ -29,6 +29,7 @@ export const Footer = () => {
       <Flex $gap={18} $direction="column" $align="flex-end">
         <Stack $direction="row" $gap={32}>
           <svg
+            key={"github"}
             width="36"
             height="36"
             viewBox="0 0 36 36"
@@ -42,6 +43,7 @@ export const Footer = () => {
             />
           </svg>
           <svg
+            key={"team-return"}
             width="36"
             height="36"
             viewBox="0 0 36 36"
