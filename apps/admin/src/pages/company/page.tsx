@@ -8,6 +8,7 @@ import {
   Search,
   Spacer,
   Table,
+  TableSkeleton,
   Text,
   useTheme,
   useToast
@@ -161,7 +162,7 @@ export const Company = () => {
     );
   };
 
-  const { data } = useTeacherCompanyList(
+  const { data, isLoading } = useTeacherCompanyList(
     currentPage,
     companyType,
     getParam("name"),
@@ -213,8 +214,9 @@ export const Company = () => {
             </Text>
             <Flex $align="center" $fit>
               <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {String(tableRows?.length)}
+                {isLoading ? "-" : String(tableRows?.length)}
               </Text>
+
               <Text $size="body2" $color={theme.color.grayScale[90]}>
                 개
               </Text>
@@ -296,28 +298,39 @@ export const Company = () => {
             </Box>
           ) : (
             <Flex $direction="column" $align="center" $gap={40}>
-              <Table
-                headers={[
-                  "기업명",
-                  "지역",
-                  "사업분야",
-                  "근로자수",
-                  "매출액(억)",
-                  "기업구분",
-                  "협약여부",
-                  "개인컨텍",
-                  "최근 의뢰년도",
-                  "총 취업 학생수",
-                  "후기등록"
-                ]}
-                rows={paginatedRows}
-                columnWidths={[
-                  164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
-                ]}
-                checkbox
-                selectedRows={selected}
-                onRowSelect={setSelected}
-              />
+              {isLoading ? (
+                <TableSkeleton
+                  checkbox
+                  columnWidths={[
+                    164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
+                  ]}
+                  rows={5}
+                />
+              ) : (
+                <Table
+                  headers={[
+                    "기업명",
+                    "지역",
+                    "사업분야",
+                    "근로자수",
+                    "매출액(억)",
+                    "기업구분",
+                    "협약여부",
+                    "개인컨텍",
+                    "최근 의뢰년도",
+                    "총 취업 학생수",
+                    "후기등록"
+                  ]}
+                  rows={paginatedRows}
+                  columnWidths={[
+                    164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
+                  ]}
+                  checkbox
+                  selectedRows={selected}
+                  onRowSelect={setSelected}
+                />
+              )}
+
               <Pagination
                 start={1}
                 end={totalPages}

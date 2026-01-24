@@ -12,7 +12,8 @@ import {
   useTheme,
   useToast,
   type PeriodValue,
-  Box
+  Box,
+  TableSkeleton
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -87,7 +88,7 @@ export const Recruitment = () => {
     });
   };
 
-  const { data } = useTeacherRecruitmentList({
+  const { data, isLoading } = useTeacherRecruitmentList({
     company_name: getParam("company-name"),
     year: year ? parseInt(year, 10) : undefined,
     status: state as RecruitmentStatus,
@@ -220,7 +221,7 @@ export const Recruitment = () => {
             </Text>
             <Flex $align="center" $fit>
               <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {String(tableRows?.length)}
+                {isLoading ? "-" : String(tableRows?.length)}
               </Text>
               <Text $size="body2" $color={theme.color.grayScale[90]}>
                 개
@@ -307,24 +308,33 @@ export const Recruitment = () => {
             </Box>
           ) : (
             <Flex $direction="column" $align="center" $gap={40}>
-              <Table
-                headers={[
-                  "상태",
-                  "기업명",
-                  "직군",
-                  "구분",
-                  "모집인원",
-                  "지원요청",
-                  "지원자",
-                  "모집시작일",
-                  "모집종료일"
-                ]}
-                rows={paginatedRows}
-                columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
-                checkbox
-                selectedRows={selected}
-                onRowSelect={setSelected}
-              />
+              {isLoading ? (
+                <TableSkeleton
+                  rows={5}
+                  checkbox
+                  columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
+                />
+              ) : (
+                <Table
+                  headers={[
+                    "상태",
+                    "기업명",
+                    "직군",
+                    "구분",
+                    "모집인원",
+                    "지원요청",
+                    "지원자",
+                    "모집시작일",
+                    "모집종료일"
+                  ]}
+                  rows={paginatedRows}
+                  columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
+                  checkbox
+                  selectedRows={selected}
+                  onRowSelect={setSelected}
+                />
+              )}
+
               <Pagination
                 start={1}
                 end={totalPages}
