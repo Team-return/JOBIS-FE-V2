@@ -162,7 +162,7 @@ export const Company = () => {
     );
   };
 
-  const { data, isLoading } = useTeacherCompanyList(
+  const { data, isLoading, error } = useTeacherCompanyList(
     currentPage,
     companyType,
     getParam("name"),
@@ -201,6 +201,17 @@ export const Company = () => {
     }
   }, [debouncedSearch, updateParams, getParam]);
 
+  useEffect(() => {
+    if (!error) return;
+    const message =
+      error && typeof error === "object" && "message" in error
+        ? (error as Error).message
+        : typeof error === "string"
+          ? error
+          : "알 수 없는 오류가 발생했습니다.";
+    toast.error(message);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
       <Flex $gap={40} $direction="column" $justify="center" $align="center">
@@ -286,7 +297,8 @@ export const Company = () => {
               </IconButton>
             </Flex>
           </Flex>
-          {data?.companies.length === 0 ? (
+          {data?.companies.length === 0 ||
+          (tableRows?.length === 0 && !isLoading) ? (
             <Box $margin={[300, 511.2]}>
               <Text
                 $size="h5"

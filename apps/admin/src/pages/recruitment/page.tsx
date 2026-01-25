@@ -307,7 +307,8 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-          {data?.recruitments.length === 0 || tableRows?.length === 0 ? (
+          {data?.recruitments.length === 0 ||
+          (tableRows?.length === 0 && !isLoading) ? (
             <Box $margin={[300, 474.8]}>
               <Text
                 $size="h5"
