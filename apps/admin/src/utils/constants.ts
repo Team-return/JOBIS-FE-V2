@@ -54,7 +54,7 @@ export const BUSINESS_AREA_OPTIONS = [
   { label: "게임 개발", value: "4" },
   { label: "AI/머신러닝", value: "5" },
   { label: "데이터 분석", value: "6" },
-  { label: "보안", value: "7" },
+
   { label: "임베디드", value: "8" },
   { label: "기타", value: "9" }
 ];

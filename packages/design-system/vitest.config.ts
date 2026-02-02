@@ -24,12 +24,7 @@ export default defineConfig({
       instances: [{ browser: "chromium" }]
     },
     setupFiles: ["src/vitest.setup.ts"],
-    exclude: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/.storybook/**",
-      "**/node_modules/@storybook/addon-vitest/**"
-    ],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/.storybook/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

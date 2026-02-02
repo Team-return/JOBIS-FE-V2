@@ -11,7 +11,9 @@ import {
   Text,
   useTheme,
   useToast,
-  type PeriodValue
+  type PeriodValue,
+  Box,
+  TableSkeleton
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -86,7 +88,7 @@ export const Recruitment = () => {
     });
   };
 
-  const { data } = useTeacherRecruitmentList({
+  const { data, isLoading } = useTeacherRecruitmentList({
     company_name: getParam("company-name"),
     year: year ? parseInt(year, 10) : undefined,
     status: state as RecruitmentStatus,
@@ -219,7 +221,7 @@ export const Recruitment = () => {
             </Text>
             <Flex $align="center" $fit>
               <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {String(tableRows?.length)}
+                {isLoading ? "-" : String(tableRows?.length)}
               </Text>
               <Text $size="body2" $color={theme.color.grayScale[90]}>
                 개
@@ -286,7 +288,7 @@ export const Recruitment = () => {
                 onToggle={isOpen =>
                   setOpenDropdown(isOpen ? "stateChange" : null)
                 }
-                value={undefined}
+                value="상태변경"
                 onChange={val => {
                   if (val) handleStatusChange(val);
                 }}
@@ -294,36 +296,57 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-        </Flex>
+          {data?.recruitments.length === 0 ||
+          (tableRows?.length === 0 && !isLoading) ? (
+            <Box $margin={[300, 474.8]}>
+              <Text
+                $size="h5"
+                $weight="medium"
+                $color={theme.color.grayScale[60]}
+              >
+                등록된 모집 의뢰서가 없습니다.
+              </Text>
+            </Box>
+          ) : (
+            <Flex $direction="column" $align="center" $gap={40}>
+              {isLoading ? (
+                <TableSkeleton
+                  rows={5}
+                  checkbox
+                  columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
+                />
+              ) : (
+                <Table
+                  headers={[
+                    "상태",
+                    "기업명",
+                    "직군",
+                    "구분",
+                    "모집인원",
+                    "지원요청",
+                    "지원자",
+                    "모집시작일",
+                    "모집종료일"
+                  ]}
+                  rows={paginatedRows}
+                  columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
+                  checkbox
+                  selectedRows={selected}
+                  onRowSelect={setSelected}
+                />
+              )}
 
-        <Flex $direction="column" $align="center" $gap={40}>
-          <Table
-            headers={[
-              "상태",
-              "기업명",
-              "직군",
-              "구분",
-              "모집인원",
-              "지원요청",
-              "지원자",
-              "모집시작일",
-              "모집종료일"
-            ]}
-            rows={paginatedRows}
-            columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
-            checkbox
-            selectedRows={selected}
-            onRowSelect={setSelected}
-          />
-          <Pagination
-            start={1}
-            end={totalPages}
-            current={currentPage}
-            onChange={page => {
-              setSelected([]);
-              updateParams({ page });
-            }}
-          />
+              <Pagination
+                start={1}
+                end={totalPages}
+                current={currentPage}
+                onChange={page => {
+                  setSelected([]);
+                  updateParams({ page });
+                }}
+              />
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Container>

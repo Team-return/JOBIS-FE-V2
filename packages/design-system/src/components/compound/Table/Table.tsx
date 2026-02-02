@@ -16,30 +16,19 @@ const Cell = styled.div<{
   $width?: number;
   $flex?: boolean;
   $align?: "start" | "center";
-  $clamp?: number;
 }>`
+  display: flex;
+  align-items: center;
+
   ${({ $width, $flex }) =>
     $flex
       ? "flex: 1;"
       : $width
         ? `width: ${$width}px; flex-shrink: 0;`
         : "flex-shrink: 0;"}
-  ${({ $clamp, $align }) =>
-    $clamp
-      ? `
-        display: -webkit-box;
-        -webkit-line-clamp: ${$clamp};
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: break-word;
-        text-align: ${$align === "center" ? "center" : "left"};
-      `
-      : `
-        display: flex;
-        align-items: center;
-        justify-content: ${$align === "center" ? "center" : "flex-start"};
-      `}
+
+  justify-content: ${({ $align }) =>
+    $align === "center" ? "center" : "flex-start"};
 `;
 
 export const Table = ({

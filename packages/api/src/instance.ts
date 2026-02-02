@@ -79,6 +79,11 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
+    if (error.code === "ECONNABORTED") {
+      return Promise.reject(
+        new Error("서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.")
+      );
+    }
     const originalRequest = error.config as RetryConfig;
 
     const statusCode = error.response?.status;
