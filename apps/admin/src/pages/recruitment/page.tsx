@@ -88,7 +88,7 @@ export const Recruitment = () => {
     });
   };
 
-  const { data, isLoading, error } = useTeacherRecruitmentList({
+  const { data, isLoading } = useTeacherRecruitmentList({
     company_name: getParam("company-name"),
     year: year ? parseInt(year, 10) : undefined,
     status: state as RecruitmentStatus,
@@ -208,17 +208,6 @@ export const Recruitment = () => {
     }
   }, [debouncedSearch, updateParams, getParam]);
 
-  useEffect(() => {
-    if (!error) return;
-    const message =
-      error && typeof error === "object" && "message" in error
-        ? (error as Error).message
-        : typeof error === "string"
-          ? error
-          : "알 수 없는 오류가 발생했습니다.";
-    toast.error(message);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={1248}>
       <Flex $gap={40} $direction="column" $justify="center" $align="center">
