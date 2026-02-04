@@ -3,12 +3,13 @@ import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
 import {
   companiesKeys,
   reviewsKeys,
-  applicationsKeys,
   query,
   noticesKeys,
   bannersKeys
 } from "@jobis/api";
 import {
+  Application,
+  applicationLoader,
   Company,
   companyLoader,
   Login,
@@ -100,11 +101,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "application",
-          loader: () => {
-            query.prefetch(applicationsKeys.teacherApplications());
-            return null;
-          },
-          element: <div>지원서</div>
+          loader: applicationLoader,
+          element: <Application />
         },
         {
           path: "/notice",
