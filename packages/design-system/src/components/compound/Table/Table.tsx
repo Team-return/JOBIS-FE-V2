@@ -100,6 +100,7 @@ export const Table = ({
               $width={columnWidths ? columnWidths[cellIndex] : undefined}
               $flex={!columnWidths}
               $align="center"
+              style={{ position: "relative" }}
             >
               {cellIndex === 0 && checkbox ? (
                 <Flex $justify="flex-start" $gap={30}>
@@ -107,14 +108,20 @@ export const Table = ({
                     $checked={selectedRows.includes(rowIndex)}
                     onChange={() => handleRowCheckboxChange(rowIndex)}
                   />
-                  <Text $size="body2" $color={theme.color.grayScale[60]}>
-                    {cell}
-                  </Text>
+                  {typeof cell === "string" ? (
+                    <Text $size="body2" $color={theme.color.grayScale[60]}>
+                      {cell}
+                    </Text>
+                  ) : (
+                    cell
+                  )}
                 </Flex>
-              ) : (
+              ) : typeof cell === "string" ? (
                 <Text $size="body2" $color={theme.color.grayScale[60]}>
                   {cell}
                 </Text>
+              ) : (
+                cell
               )}
             </Cell>
           ))}

@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 export interface Props {
   headers: string[];
-  rows: string[][];
+  rows: ReactNode[][];
   columnWidths?: number[];
   checkbox?: boolean;
   selectedRows?: number[];
