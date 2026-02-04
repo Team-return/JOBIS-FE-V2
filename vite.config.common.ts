@@ -65,6 +65,7 @@ export const createViteConfig = ({
       define: {
         "import.meta.env.MODE": JSON.stringify(mode),
         "import.meta.env.BASE_URL": JSON.stringify(env.BASE_URL),
+        "import.meta.env.FILE_URL": JSON.stringify(env.FILE_URL),
         "import.meta.env.SENTRY_DSN": JSON.stringify(
           env[`SENTRY_${sentryProjectName.toUpperCase()}_DSN`]
         ),
