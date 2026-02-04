@@ -225,7 +225,7 @@ export const Application = () => {
     getParam("student-name"),
     undefined,
     undefined,
-    currentPage,
+    undefined,
     yearFilter
   );
 
@@ -241,7 +241,8 @@ export const Application = () => {
   const getSelectedApplicationIds = (): number[] => {
     return selected
       .map(index => {
-        return data?.applications[index]?.application_id;
+        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
+        return data?.applications[globalIndex]?.application_id;
       })
       .filter((id): id is number => id !== undefined);
   };
@@ -310,6 +311,9 @@ export const Application = () => {
     ]) ?? [];
 
   const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const paginatedRows = tableRows.slice(startIndex, endIndex);
 
   useEffect(() => {
     const currentSearchValue = getParam("student-name") ?? "";
@@ -423,7 +427,7 @@ export const Application = () => {
                     "지원일자",
                     "첨부파일"
                   ]}
-                  rows={tableRows}
+                  rows={paginatedRows}
                   columnWidths={[124, 124, 124, 124, 173, 124, 405]}
                   checkbox
                   selectedRows={selected}
