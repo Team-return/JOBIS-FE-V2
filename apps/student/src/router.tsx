@@ -7,14 +7,23 @@ import {
   reviewsKeys,
   studentsKeys
 } from "@jobis/api";
-import { Header } from "@jobis/design-system";
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { Header, Footer } from "@jobis/design-system";
+import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
+import { CompanyList } from "./pages/company-list/page";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <Header type="student" userName="홍길동" />,
+      element: (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Header type="student" userName="홍길동" />
+          <main style={{ flex: 1 }}>
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      ),
       children: [
         {
           index: true,
@@ -37,7 +46,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 query.prefetch(companiesKeys.companyStudentList(page, name));
                 return null;
               },
-              element: <div>기업 목록</div>
+              element: <CompanyList />
             },
             {
               path: "detail/:companyId",
