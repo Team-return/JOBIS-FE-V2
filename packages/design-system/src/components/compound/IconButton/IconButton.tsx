@@ -6,9 +6,9 @@ import { useTheme } from "@/hooks";
 
 const Component = styled.div<Pick<Props, "$width" | "$color">>`
   cursor: pointer;
-  padding: 8px 0;
+  padding: 8px 9px;
   border-radius: 8px;
-  width: ${({ $width }) => ($width ? $width : "123px")};
+  width: ${({ $width }) => ($width ? $width : "130px")};
   border: 1px solid ${({ $color, theme }) => $color || theme.color.primary[20]};
 `;
 
