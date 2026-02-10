@@ -24,12 +24,10 @@ export const CompanyList = () => {
     <Container $maxWidth={960} $padding={[68, 0, 120, 0]}>
       <Flex $direction="column" $gap={32} $align="center">
         <Flex $justify="space-between">
-          <Flex>
-            <Text $size="h4" $weight="bold">
-              🏢기업체
-            </Text>
-          </Flex>
-          <Flex $direction="column" $align="flex-end" $gap={20}>
+          <Text $size="h4" $weight="bold">
+            🏢 기업체
+          </Text>
+          <Flex $direction="column" $align="flex-end" $gap={20} $fit>
             <Search placeholder="검색어를 입력해 주세요." $width={359} />
             <Dropdown
               $width={70}
