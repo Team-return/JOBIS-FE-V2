@@ -1,8 +1,11 @@
+import { CompanySortType } from "./types";
+
 export const companiesKeys = {
-  companyStudentList: (page?: number, name?: string) => [
+  companyStudentList: (page?: number, name?: string, sortType?: CompanySortType ) => [
     "company-student-list",
     page,
-    name
+    name,
+    sortType
   ],
   companyStudentCount: (name?: string) => ["company-student-count", name],
   companyReviewList: () => ["company-review-list"],
