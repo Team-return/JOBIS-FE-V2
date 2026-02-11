@@ -80,7 +80,11 @@ export const CompanyDetail = () => {
               </Flex>
             )}
 
-            <Button $variant="outline" $size="sm">
+            <Button
+              $variant="outline"
+              $size="sm"
+              onClick={() => navigate(`/company/detail/edit/${companyId}`)}
+            >
               수정
             </Button>
           </Flex>
