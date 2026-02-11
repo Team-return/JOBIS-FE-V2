@@ -10,6 +10,7 @@ import {
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
 import { CompanyList } from "./pages/company-list/page";
+import { RecruitmentList } from "./pages/recruitment-list";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -71,7 +72,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 query.prefetch(recruitmentsKeys.recruitmentList(params));
                 return null;
               },
-              element: <div>모집의뢰서 목록</div>
+              element: <RecruitmentList />
             },
             {
               path: "detail/:recruitmentId",
