@@ -41,7 +41,7 @@ const CompanyName = ({ name, id }: { name: string; id: number }) => {
   return (
     <div
       onClick={() => navigate(`/company/detail/${id}`)}
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "pointer", textDecoration: "underline" }}
     >
       {name}
     </div>
