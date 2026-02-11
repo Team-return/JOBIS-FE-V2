@@ -17,6 +17,7 @@ export * from "./RadioGroup";
 export * from "./RecrutementCard";
 export * from "./Search";
 export * from "./Switch";
+export * from "./TextArea";
 export * from "./Toast";
 export * from "./IconButton";
 export * from "./Table";
