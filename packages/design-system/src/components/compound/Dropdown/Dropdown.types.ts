@@ -41,3 +41,10 @@ export type PeriodDropdownProps = BaseProps & {
   checked?: boolean;
   onCheckChange?: (checked: boolean) => void;
 };
+
+export type SortDropdownProps = BaseProps & {
+  types?: undefined;
+  value?: string;
+  onChange?: (value: string) => void;
+  isRecruitment: boolean;
+};
