@@ -20,10 +20,12 @@ const Component = styled.div`
   }
 `;
 
-const Clip = styled.div`
+const Clip = styled.div<{ $isRecruit: boolean }>`
   padding: 4px 8px;
   height: 18px;
-  border: 1px solid ${({ theme }) => theme.color.primary[20]};
+  border: 1px solid
+    ${({ theme, $isRecruit }) =>
+      $isRecruit ? theme.color.primary[20] : theme.color.subColor.red[20]};
   border-radius: 18px;
   display: flex;
   justify-content: center;
@@ -34,8 +36,8 @@ export const RecrutementCard = ({
   companyName,
   companyProfileUrl,
   hiringJobs,
-  trainPay,
   militarySupport,
+  isRecruit,
   bookmarked,
   onClick
 }: Props) => {
@@ -62,12 +64,20 @@ export const RecrutementCard = ({
               <Bookmark $checked={bookmarked} />
             </Flex>
             <Stack $direction="row" $gap={12}>
-              <Clip>
-                <Text $span $size="caption" $color={theme.color.primary[20]}>
-                  {`실습수당 ${trainPay}만원`}
+              <Clip $isRecruit={isRecruit}>
+                <Text
+                  $span
+                  $size="caption"
+                  $color={
+                    isRecruit
+                      ? theme.color.primary[20]
+                      : theme.color.subColor.red[20]
+                  }
+                >
+                  {isRecruit ? "모집중" : "모집 종료"}
                 </Text>
               </Clip>
-              <Clip>
+              <Clip $isRecruit={true}>
                 <Text $span $size="caption" $color={theme.color.primary[20]}>
                   {`병역특례 ${militarySupport ? "O" : "X"}`}
                 </Text>
