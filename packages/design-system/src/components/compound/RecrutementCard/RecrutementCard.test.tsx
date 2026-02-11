@@ -10,6 +10,7 @@ describe("RecrutementCard", () => {
     companyProfileUrl: "https://placehold.co/222x144",
     trainPay: 200,
     militarySupport: true,
+    isRecruit: true,
     bookmarked: false
   };
 

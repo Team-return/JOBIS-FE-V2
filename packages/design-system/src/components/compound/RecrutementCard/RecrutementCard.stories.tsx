@@ -20,9 +20,9 @@ const meta: Meta<typeof RecrutementCard> = {
       control: "text",
       description: "회사 프로필 이미지 URL"
     },
-    trainPay: {
-      control: "number",
-      description: "실습 수당 (만원)"
+    isRecruit: {
+      control: "boolean",
+      description: "모집 여부"
     },
     militarySupport: {
       control: "boolean",
@@ -41,7 +41,7 @@ const meta: Meta<typeof RecrutementCard> = {
     hiringJobs: "프론트엔드 개발자",
     companyName: "자비스",
     companyProfileUrl: "https://placehold.co/222x144",
-    trainPay: 200,
+    isRecruit: true,
     militarySupport: true,
     bookmarked: false
   }
