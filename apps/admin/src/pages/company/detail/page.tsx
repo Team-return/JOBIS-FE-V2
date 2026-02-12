@@ -29,7 +29,7 @@ export const CompanyDetail = () => {
   const infos: Array<[string, string]> = [
     ["대표 서비스명", formatValue(data?.service_name)],
     ["대표자", formatValue(data?.representative_name)],
-    ["대표번호", formatPhone(data?.representative_phone_no)],
+    ["대표번호", formatPhone(formatValue(data?.representative_phone_no))],
     ["설립일", formatValue(data?.founded_at)],
     ["담당자", formatValue(data?.manager_name)],
     ["전화번호", formatValue(data?.manager_phone_no)],
@@ -51,7 +51,7 @@ export const CompanyDetail = () => {
             <IconButton
               icon="ArrowLeft"
               $width="131"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/company")}
             >
               돌아가기
             </IconButton>
