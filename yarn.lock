@@ -10971,6 +10971,7 @@ __metadata:
     prettier: "npm:3.6.2"
     prompts: "npm:2.4.2"
     react: "npm:18.3.1"
+    react-daum-postcode: "npm:^3.2.0"
     react-dom: "npm:18.3.1"
     react-router-dom: "npm:6.29.0"
     tslib: "npm:2.3.0"
@@ -13354,6 +13355,15 @@ __metadata:
   peerDependencies:
     react: ">= 16.3.0"
   checksum: 10c0/af6136c79129d7ffd78a399b169b814c5ea1f05324bfd5ca65e5361e7bdf66de7699fc6d2303641cd7d6c5cc3364b3682510a7a1bdc7f59a721afa01bf13b79f
+  languageName: node
+  linkType: hard
+
+"react-daum-postcode@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "react-daum-postcode@npm:3.2.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 10c0/3ddb92430d6b8590a05e3938c7c26a29c4cf9ba5e8f35e5c30f0433e7d46b77863d6c7ee3a06f66ba6c2bee4bee389be75b62dae23339bb54cd7fe09c372904c
   languageName: node
   linkType: hard
 
