@@ -13,6 +13,7 @@ import { useState } from "react";
 export const RecruitmentList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const recruitmentState = [
+    { label: "모집전", value: "모집전" },
     { label: "모집중", value: "모집중" },
     { label: "모집 종료", value: "모집 종료" }
   ];
