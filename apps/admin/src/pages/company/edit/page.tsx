@@ -1,4 +1,9 @@
-import { useCompanyDetail, useUpdateCompany } from "@jobis/api";
+import {
+  companiesKeys,
+  query,
+  useCompanyDetail,
+  useUpdateCompany
+} from "@jobis/api";
 import {
   Box,
   Button,
@@ -274,6 +279,12 @@ export const CompanyEdit = () => {
 
   const closePostcode = () => setIsPostcodeOpen(false);
 
+  const invalidateCompanyQueries = async () => {
+    await Promise.all([
+      query.invalidate(companiesKeys.companyDetail(Number(companyId)))
+    ]);
+  };
+
   const handleUpdateCompany = () => {
     const updateData = {
       service_name: formState.serviceName,
@@ -291,8 +302,9 @@ export const CompanyEdit = () => {
       main_address_detail: data?.main_address_detail
     };
     updateCompany(updateData, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("회사가 성공적으로 수정되었습니다.");
+        await invalidateCompanyQueries();
         navigate(`/company/detail/${companyId}`);
       },
       onError: () => {

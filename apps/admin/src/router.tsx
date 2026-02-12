@@ -8,6 +8,7 @@ import {
   CompanyDetail,
   companyDetailLoader,
   CompanyEdit,
+  companyEditLoader,
   companyLoader,
   Login,
   Recruitment,
@@ -48,7 +49,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/edit/:companyId",
-              loader: companyDetailLoader,
+              loader: companyEditLoader,
               element: <CompanyEdit />
             }
           ]
