@@ -20,12 +20,16 @@ const Component = styled.div`
   }
 `;
 
-const Clip = styled.div<{ $isRecruit: boolean }>`
+const Clip = styled.div<Pick<Props, "recruitmentStatus">>`
   padding: 4px 8px;
   height: 18px;
   border: 1px solid
-    ${({ theme, $isRecruit }) =>
-      $isRecruit ? theme.color.primary[20] : theme.color.subColor.red[20]};
+    ${({ theme, recruitmentStatus }) =>
+      recruitmentStatus === "모집중"
+        ? theme.color.primary[20]
+        : recruitmentStatus === "모집 종료"
+          ? theme.color.subColor.red[20]
+          : theme.color.grayScale[60]};
   border-radius: 18px;
   display: flex;
   justify-content: center;
@@ -37,7 +41,7 @@ export const RecrutementCard = ({
   companyProfileUrl,
   hiringJobs,
   militarySupport,
-  isRecruit,
+  recruitmentStatus: recruitmentStatus,
   bookmarked,
   onClick
 }: Props) => {
@@ -64,20 +68,22 @@ export const RecrutementCard = ({
               <Bookmark $checked={bookmarked} />
             </Flex>
             <Stack $direction="row" $gap={12}>
-              <Clip $isRecruit={isRecruit}>
+              <Clip recruitmentStatus={recruitmentStatus}>
                 <Text
                   $span
                   $size="caption"
                   $color={
-                    isRecruit
+                    recruitmentStatus === "모집중"
                       ? theme.color.primary[20]
-                      : theme.color.subColor.red[20]
+                      : recruitmentStatus === "모집 종료"
+                        ? theme.color.subColor.red[20]
+                        : theme.color.grayScale[60]
                   }
                 >
-                  {isRecruit ? "모집중" : "모집 종료"}
+                  {recruitmentStatus}
                 </Text>
               </Clip>
-              <Clip $isRecruit={true}>
+              <Clip recruitmentStatus="모집중">
                 <Text $span $size="caption" $color={theme.color.primary[20]}>
                   {`병역특례 ${militarySupport ? "O" : "X"}`}
                 </Text>

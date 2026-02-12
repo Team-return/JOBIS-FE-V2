@@ -6,7 +6,6 @@ import {
   Pagination,
   RecrutementCard,
   Search,
-  SortDropdown,
   Text
 } from "@jobis/design-system";
 import { useState } from "react";
@@ -21,6 +20,14 @@ export const RecruitmentList = () => {
     { label: "2026", value: "2026" },
     { label: "2025", value: "2025" },
     { label: "2024", value: "2024" }
+  ];
+  const sortType = [
+    { label: "기본순", value: "기본순" },
+    { label: "매출순", value: "매출순" },
+    { label: "직원", value: "직원-desc" },
+    { label: "직원", value: "직원-asc" },
+    { label: "공고마감", value: "공고마감-desc" },
+    { label: "공고마감", value: "공고마감-asc" }
   ];
 
   /* 더미 데이터 */
@@ -42,7 +49,7 @@ export const RecruitmentList = () => {
     description: "여기에 기업 설명이 들어갑니다.",
     hiringJobs: "프론트엔드 엔지니어",
     militarySupport: true,
-    isRecruit: true,
+    recruitmentState: "모집중",
     bookmarked: false
   }));
 
@@ -89,7 +96,14 @@ export const RecruitmentList = () => {
           </Flex>
         </Flex>
         <Flex $justify="flex-end">
-          <SortDropdown $width={70} types={undefined} isRecruitment={true} />
+          <Dropdown
+            $width={70}
+            types={undefined}
+            isNoneBorder={true}
+            isValueDefault={true}
+            options={sortType}
+            $optionsWidth={103}
+          />
         </Flex>
       </Flex>
 
@@ -106,7 +120,7 @@ export const RecruitmentList = () => {
                       companyProfileUrl="."
                       hiringJobs={company.hiringJobs}
                       militarySupport={company.militarySupport}
-                      isRecruit={company.isRecruit}
+                      recruitmentStatus="모집 종료"
                       bookmarked={company.bookmarked}
                     />
                   );

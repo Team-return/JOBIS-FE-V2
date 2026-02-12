@@ -20,7 +20,7 @@ const meta: Meta<typeof RecrutementCard> = {
       control: "text",
       description: "회사 프로필 이미지 URL"
     },
-    isRecruit: {
+    recruitmentStatus: {
       control: "boolean",
       description: "모집 여부"
     },
