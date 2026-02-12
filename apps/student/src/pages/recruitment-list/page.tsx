@@ -49,7 +49,7 @@ export const RecruitmentList = () => {
     description: "여기에 기업 설명이 들어갑니다.",
     hiringJobs: "프론트엔드 엔지니어",
     militarySupport: true,
-    recruitmentState: "모집중",
+    recruitmentState: "모집중" as const,
     bookmarked: false
   }));
 
@@ -120,7 +120,7 @@ export const RecruitmentList = () => {
                       companyProfileUrl="."
                       hiringJobs={company.hiringJobs}
                       militarySupport={company.militarySupport}
-                      recruitmentStatus="모집 종료"
+                      recruitmentStatus={company.recruitmentState}
                       bookmarked={company.bookmarked}
                     />
                   );

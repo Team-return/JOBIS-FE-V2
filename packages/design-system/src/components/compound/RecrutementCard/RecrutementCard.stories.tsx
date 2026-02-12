@@ -41,7 +41,7 @@ const meta: Meta<typeof RecrutementCard> = {
     hiringJobs: "프론트엔드 개발자",
     companyName: "자비스",
     companyProfileUrl: "https://placehold.co/222x144",
-    isRecruit: true,
+    recruitmentStatus: "모집중" as const,
     militarySupport: true,
     bookmarked: false
   }
