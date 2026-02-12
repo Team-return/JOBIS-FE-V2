@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const TriggerButton = styled.button<
-  Pick<Props, "isOpen" | "$width" | "$color">
+  Pick<Props, "isOpen" | "$width" | "$color" | "isNoneBorder">
 >`
   display: flex;
   align-items: center;
@@ -20,6 +20,11 @@ const TriggerButton = styled.button<
   padding: 8px 7px;
   border: 1px solid
     ${({ theme, $color }) => $color || theme.color.grayScale[50]};
+  ${({ isNoneBorder }) =>
+    isNoneBorder &&
+    `
+      border: none;
+    `}
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
@@ -39,11 +44,11 @@ const OptionsWrapper = styled.div`
   z-index: 10;
 `;
 
-const DefaultOptions = styled.ul`
+const DefaultOptions = styled.ul<Pick<Props, "$optionsWidth">>`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 100%;
+  width: ${({ $optionsWidth }) => $optionsWidth}px;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
@@ -63,6 +68,10 @@ const DefaultOption = styled.li<{ $selected: boolean }>`
 
   &:hover {
     color: ${({ theme }) => theme.color.primary[30]};
+  }
+
+  &:hover svg {
+    fill: ${({ theme }) => theme.color.primary[30]};
   }
 
   ${({ $selected, theme }) =>
@@ -98,15 +107,20 @@ export const Dropdown = ({
   $placeholder,
   types,
   $width,
+  $optionsWidth,
   isOpen: externalIsOpen,
   onToggle,
   $color,
   value: externalValue,
-  options
+  options,
+  isNoneBorder,
+  isValueDefault
 }: Props) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
-  const [internalSelected, setInternalSelected] = useState<string | null>(null);
+  const [internalSelected, setInternalSelected] = useState<string | null>(
+    isValueDefault ? (options[0]?.value ?? null) : null
+  );
   const selected =
     externalValue !== undefined ? externalValue : internalSelected;
   const [searchTerm, setSearchTerm] = useState("");
@@ -127,6 +141,7 @@ export const Dropdown = ({
     closeDropdown();
   };
 
+  const selectedValue = options.find(o => o.value === selected)?.value;
   const selectedLabel = options.find(o => o.value === selected)?.label;
   const filteredOptions =
     types === "supportJob"
@@ -137,14 +152,36 @@ export const Dropdown = ({
   const { currentTheme: theme } = useTheme();
 
   const getDisplayText = () => {
-    return selectedLabel || $placeholder || "선택";
-  };
+    const inOrder = selectedValue?.split("-")[1];
 
-  useEffect(() => {
-    if (externalValue === undefined) {
-      setInternalSelected(null);
+    if (inOrder === undefined) {
+      return (
+        <Flex
+          $gap={2}
+          $align="center"
+          style={{ color: theme.color.grayScale[60] }}
+        >
+          {selectedLabel || $placeholder || "선택"}
+        </Flex>
+      );
     }
-  }, [externalValue]);
+    const isAsc = inOrder === "asc";
+
+    return (
+      <Flex
+        $gap={2}
+        $align="center"
+        style={{ color: theme.color.grayScale[60] }}
+      >
+        {selectedLabel}
+        <Icon
+          icon={isAsc ? "SortAsc" : "SortDesc"}
+          size={13}
+          fillColor={theme.color.grayScale[60]}
+        />
+      </Flex>
+    );
+  };
 
   return (
     <Wrapper>
@@ -160,14 +197,9 @@ export const Dropdown = ({
         }}
         $width={typeof $width === "number" ? `${$width}px` : $width}
         $color={$color}
+        isNoneBorder={isNoneBorder}
       >
-        <Text
-          $size="body3"
-          $weight="regular"
-          $color={$color || theme.color.grayScale[60]}
-        >
-          {getDisplayText()}
-        </Text>
+        {getDisplayText()}
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
@@ -178,16 +210,34 @@ export const Dropdown = ({
       {isOpen && (
         <OptionsWrapper>
           {types === undefined && (
-            <DefaultOptions>
-              {options.map(opt => (
-                <DefaultOption
-                  key={opt.value}
-                  $selected={opt.value === selected}
-                  onClick={() => handleSelect(opt.value)}
-                >
-                  {opt.label}
-                </DefaultOption>
-              ))}
+            <DefaultOptions $optionsWidth={$optionsWidth}>
+              {options.map(opt => {
+                const inOrder = opt.value?.split("-")[1];
+                console.log(inOrder);
+
+                return (
+                  <DefaultOption
+                    key={opt.value}
+                    $selected={opt.value === selected}
+                    onClick={() => handleSelect(opt.value)}
+                  >
+                    <Flex $gap={2} $justify="flex-end" $align="center">
+                      {opt.label}
+                      {inOrder && (
+                        <Icon
+                          size={13}
+                          icon={inOrder === "asc" ? "SortAsc" : "SortDesc"}
+                          fillColor={
+                            opt.value === selected
+                              ? theme.color.primary[30]
+                              : theme.color.grayScale[60]
+                          }
+                        />
+                      )}
+                    </Flex>
+                  </DefaultOption>
+                );
+              })}
             </DefaultOptions>
           )}
 

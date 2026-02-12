@@ -13,6 +13,9 @@ export type PeriodValue = {
 
 type BaseProps = {
   $width?: DimensionValue;
+  $optionsWidth?: DimensionValue;
+  isNoneBorder?: boolean;
+  isValueDefault?: boolean;
   $placeholder?: string;
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
@@ -40,11 +43,4 @@ export type PeriodDropdownProps = BaseProps & {
   onChange?: (value: PeriodValue) => void;
   checked?: boolean;
   onCheckChange?: (checked: boolean) => void;
-};
-
-export type SortDropdownProps = BaseProps & {
-  types?: undefined;
-  value?: string;
-  onChange?: (value: string) => void;
-  isRecruitment: boolean;
 };
