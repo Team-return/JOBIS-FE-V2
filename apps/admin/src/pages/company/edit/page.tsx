@@ -290,7 +290,7 @@ export const CompanyEdit = () => {
       service_name: formState.serviceName,
       representative_phone_no: formatNumber(formState.representativePhoneNo),
       manager_name: formState.managerName,
-      manager_phone_no: formState.managerPhoneNo,
+      manager_phone_no: formatNumber(formState.managerPhoneNo),
       take: Number(formState.take),
       worker_number: Number(formState.workerNumber),
       email: formState.email,
