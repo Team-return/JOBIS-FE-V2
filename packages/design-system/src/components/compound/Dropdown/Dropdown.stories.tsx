@@ -28,7 +28,7 @@ const meta: Meta<typeof Dropdown> = {
       control: "text",
       description: "선택되지 않았을 때 표시할 플레이스홀더"
     },
-    types: {
+    type: {
       control: "radio",
       options: [undefined, "supportJob"],
       description: "드롭다운 스타일/타입"
@@ -65,7 +65,7 @@ export const Default: Story = {
 
 export const SupportJob: Story = {
   args: {
-    types: "supportJob",
+    type: "supportJob",
     $placeholder: "지원 직무 검색",
     options: [
       { label: "프론트엔드 개발자", value: "frontend" },

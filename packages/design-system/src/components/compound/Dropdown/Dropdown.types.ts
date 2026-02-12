@@ -20,14 +20,14 @@ type BaseProps = {
 };
 
 type DefaultDropdownProps = BaseProps & {
-  types?: undefined;
+  type?: undefined;
   value?: string;
   options: DropdownOption[];
   onChange?: (value: string) => void;
 };
 
 type SupportJobDropdownProps = BaseProps & {
-  types: "supportJob";
+  type: "supportJob";
   value?: string;
   options: DropdownOption[];
   onChange?: (value: string) => void;
