@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Table } from "./Table";
+import { TableSkeleton } from "./TableSkeleton";
 
 const meta: Meta<typeof Table> = {
   title: "components/compound/Table",
@@ -90,4 +91,14 @@ export const AutoWidth: Story = {
       ["김철수", "kim@example.com", "010-9876-5432"]
     ]
   }
+};
+
+export const Skeleton: Story = {
+  render: () => (
+    <TableSkeleton
+      checkbox
+      columnWidths={[100, 150, 120, 80, 90, 90, 80, 120, 120]}
+      rows={2}
+    />
+  )
 };
