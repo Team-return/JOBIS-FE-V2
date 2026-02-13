@@ -75,3 +75,10 @@ export type NotificationTopic =
 export type InterviewMethod = "INDIVIDUAL" | "GROUP" | "OTHER";
 
 export type InterviewLocation = "DAEJEON" | "SEOUL" | "GYEONGGI" | "OTHER";
+
+export type ListSortType =
+  | "WORKERS_COUNT_ASC"
+  | "WORKERS_COUNT_DESC"
+  | "FOUNDED_AT_ASC"
+  | "FOUNDED_AT_DESC"
+  | "TAKE";
