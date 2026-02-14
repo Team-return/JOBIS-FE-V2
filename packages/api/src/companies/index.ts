@@ -17,7 +17,7 @@ import type {
   UpdateCompanyTypeRequest,
   CompanyCountResponse,
   CreateTeacherCompanyRequest,
-  CompanySortType
+  CompanyStudentList
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
 import { instance } from "@/instance";
@@ -28,17 +28,15 @@ const DOMAIN = "/companies";
 export { companiesKeys };
 
 export const useCompanyStudentList = (
-  page?: number,
-  name?: string,
-  sortType?: CompanySortType,
+  params?: CompanyStudentList,
   options?: QueryOptions<CompanyStudentListResponse>
 ) => {
   return useQuery({
-    queryKey: companiesKeys.companyStudentList(page, name, sortType),
+    queryKey: companiesKeys.companyStudentList(params),
     queryFn: async () => {
       const { data } = await instance.get<CompanyStudentListResponse>(
         `${DOMAIN}/student`,
-        { params: { page, name, sortType } }
+        { params: params }
       );
       return data;
     },
