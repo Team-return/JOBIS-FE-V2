@@ -36,7 +36,7 @@ export const useCompanyStudentList = (
     queryFn: async () => {
       const { data } = await instance.get<CompanyStudentListResponse>(
         `${DOMAIN}/student`,
-        { params: { params } }
+        { params: params }
       );
       return data;
     },

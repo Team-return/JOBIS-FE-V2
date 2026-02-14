@@ -43,7 +43,9 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 if (Number.isNaN(page)) {
                   redirect("/");
                 }
-                query.prefetch(companiesKeys.companyStudentList(page, name));
+                query.prefetch(
+                  companiesKeys.companyStudentList({ page, name })
+                );
                 return null;
               },
               element: <CompanyList />
