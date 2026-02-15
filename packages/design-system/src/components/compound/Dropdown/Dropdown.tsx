@@ -35,6 +35,7 @@ const TriggerButton = styled.button<
       border-color: ${theme.color.grayScale[90]};
     `}
   color: ${({ theme }) => theme.color.grayScale[60]};
+  white-space: nowrap;
 `;
 
 const OptionsWrapper = styled.div`
