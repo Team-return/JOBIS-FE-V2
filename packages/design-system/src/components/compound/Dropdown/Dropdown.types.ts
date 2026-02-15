@@ -13,6 +13,8 @@ export type PeriodValue = {
 
 type BaseProps = {
   $width?: DimensionValue;
+  $isNoneBorder?: boolean;
+  $defaultValue?: string;
   $placeholder?: string;
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;

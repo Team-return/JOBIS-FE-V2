@@ -20,10 +20,16 @@ const Component = styled.div`
   }
 `;
 
-const Clip = styled.div`
+const Clip = styled.div<Pick<Props, "recruitmentStatus">>`
   padding: 4px 8px;
   height: 18px;
-  border: 1px solid ${({ theme }) => theme.color.primary[20]};
+  border: 1px solid
+    ${({ theme, recruitmentStatus }) =>
+      recruitmentStatus === "모집중"
+        ? theme.color.primary[20]
+        : recruitmentStatus === "모집 종료"
+          ? theme.color.subColor.red[20]
+          : theme.color.grayScale[60]};
   border-radius: 18px;
   display: flex;
   justify-content: center;
@@ -34,8 +40,8 @@ export const RecrutementCard = ({
   companyName,
   companyProfileUrl,
   hiringJobs,
-  trainPay,
   militarySupport,
+  recruitmentStatus: recruitmentStatus,
   bookmarked,
   onClick
 }: Props) => {
@@ -62,12 +68,22 @@ export const RecrutementCard = ({
               <Bookmark $checked={bookmarked} />
             </Flex>
             <Stack $direction="row" $gap={12}>
-              <Clip>
-                <Text $span $size="caption" $color={theme.color.primary[20]}>
-                  {`실습수당 ${trainPay}만원`}
+              <Clip recruitmentStatus={recruitmentStatus}>
+                <Text
+                  $span
+                  $size="caption"
+                  $color={
+                    recruitmentStatus === "모집중"
+                      ? theme.color.primary[20]
+                      : recruitmentStatus === "모집 종료"
+                        ? theme.color.subColor.red[20]
+                        : theme.color.grayScale[60]
+                  }
+                >
+                  {recruitmentStatus}
                 </Text>
               </Clip>
-              <Clip>
+              <Clip recruitmentStatus="모집중">
                 <Text $span $size="caption" $color={theme.color.primary[20]}>
                   {`병역특례 ${militarySupport ? "O" : "X"}`}
                 </Text>

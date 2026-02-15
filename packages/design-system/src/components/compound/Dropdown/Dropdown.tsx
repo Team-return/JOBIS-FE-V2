@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const TriggerButton = styled.button<
-  Pick<Props, "isOpen" | "$width" | "$color">
+  Pick<Props, "isOpen" | "$width" | "$color" | "$isNoneBorder">
 >`
   display: flex;
   align-items: center;
@@ -20,6 +20,11 @@ const TriggerButton = styled.button<
   padding: 8px 7px;
   border: 1px solid
     ${({ theme, $color }) => $color || theme.color.grayScale[50]};
+  ${({ $isNoneBorder }) =>
+    $isNoneBorder &&
+    `
+      border: none;
+    `}
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
@@ -29,6 +34,7 @@ const TriggerButton = styled.button<
     `
       border-color: ${theme.color.grayScale[90]};
     `}
+  color: ${({ theme }) => theme.color.grayScale[60]};
 `;
 
 const OptionsWrapper = styled.div`
@@ -58,6 +64,7 @@ const DefaultOptions = styled.ul`
 `;
 
 const DefaultOption = styled.li<{ $selected: boolean }>`
+  white-space: nowrap;
   padding: 8px 16px;
   cursor: pointer;
 
@@ -102,11 +109,15 @@ export const Dropdown = ({
   onToggle,
   $color,
   value: externalValue,
-  options
+  options,
+  $isNoneBorder,
+  $defaultValue
 }: Props) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
-  const [internalSelected, setInternalSelected] = useState<string | null>(null);
+  const [internalSelected, setInternalSelected] = useState<string | null>(
+    $defaultValue ? $defaultValue : null
+  );
   const selected =
     externalValue !== undefined ? externalValue : internalSelected;
   const [searchTerm, setSearchTerm] = useState("");
@@ -140,12 +151,6 @@ export const Dropdown = ({
     return selectedLabel || $placeholder || "선택";
   };
 
-  useEffect(() => {
-    if (externalValue === undefined) {
-      setInternalSelected(null);
-    }
-  }, [externalValue]);
-
   return (
     <Wrapper>
       <TriggerButton
@@ -160,14 +165,9 @@ export const Dropdown = ({
         }}
         $width={typeof $width === "number" ? `${$width}px` : $width}
         $color={$color}
+        $isNoneBorder={$isNoneBorder}
       >
-        <Text
-          $size="body3"
-          $weight="regular"
-          $color={$color || theme.color.grayScale[60]}
-        >
-          {getDisplayText()}
-        </Text>
+        {getDisplayText()}
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
@@ -179,15 +179,17 @@ export const Dropdown = ({
         <OptionsWrapper>
           {types === undefined && (
             <DefaultOptions>
-              {options.map(opt => (
-                <DefaultOption
-                  key={opt.value}
-                  $selected={opt.value === selected}
-                  onClick={() => handleSelect(opt.value)}
-                >
-                  {opt.label}
-                </DefaultOption>
-              ))}
+              {options.map(opt => {
+                return (
+                  <DefaultOption
+                    key={opt.value}
+                    $selected={opt.value === selected}
+                    onClick={() => handleSelect(opt.value)}
+                  >
+                    {opt.label}
+                  </DefaultOption>
+                );
+              })}
             </DefaultOptions>
           )}
 
