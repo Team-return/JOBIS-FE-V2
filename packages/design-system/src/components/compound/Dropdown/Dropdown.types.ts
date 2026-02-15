@@ -3,6 +3,7 @@ import type { DimensionValue } from "../../../utils/type";
 export type DropdownOption = {
   label: string;
   value: string;
+  suffixIcon?: "SortAsc" | "SortDesc";
 };
 
 export type PeriodValue = {
@@ -13,9 +14,8 @@ export type PeriodValue = {
 
 type BaseProps = {
   $width?: DimensionValue;
-  $optionsWidth?: DimensionValue;
-  isNoneBorder?: boolean;
-  isValueDefault?: boolean;
+  $isNoneBorder?: boolean;
+  $defaultValue?: string;
   $placeholder?: string;
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;

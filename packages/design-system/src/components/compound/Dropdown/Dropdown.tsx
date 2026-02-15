@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const TriggerButton = styled.button<
-  Pick<Props, "isOpen" | "$width" | "$color" | "isNoneBorder">
+  Pick<Props, "isOpen" | "$width" | "$color" | "$isNoneBorder">
 >`
   display: flex;
   align-items: center;
@@ -20,8 +20,8 @@ const TriggerButton = styled.button<
   padding: 8px 7px;
   border: 1px solid
     ${({ theme, $color }) => $color || theme.color.grayScale[50]};
-  ${({ isNoneBorder }) =>
-    isNoneBorder &&
+  ${({ $isNoneBorder }) =>
+    $isNoneBorder &&
     `
       border: none;
     `}
@@ -44,11 +44,11 @@ const OptionsWrapper = styled.div`
   z-index: 10;
 `;
 
-const DefaultOptions = styled.ul<Pick<Props, "$optionsWidth">>`
+const DefaultOptions = styled.ul`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: ${({ $optionsWidth }) => $optionsWidth}px;
+  width: 100%;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
@@ -63,6 +63,7 @@ const DefaultOptions = styled.ul<Pick<Props, "$optionsWidth">>`
 `;
 
 const DefaultOption = styled.li<{ $selected: boolean }>`
+  white-space: nowrap;
   padding: 8px 16px;
   cursor: pointer;
 
@@ -107,19 +108,18 @@ export const Dropdown = ({
   $placeholder,
   types,
   $width,
-  $optionsWidth,
   isOpen: externalIsOpen,
   onToggle,
   $color,
   value: externalValue,
   options,
-  isNoneBorder,
-  isValueDefault
+  $isNoneBorder,
+  $defaultValue
 }: Props) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const [internalSelected, setInternalSelected] = useState<string | null>(
-    isValueDefault ? (options[0]?.value ?? null) : null
+    $defaultValue ? $defaultValue : null
   );
   const selected =
     externalValue !== undefined ? externalValue : internalSelected;
@@ -141,7 +141,9 @@ export const Dropdown = ({
     closeDropdown();
   };
 
-  const selectedValue = options.find(o => o.value === selected)?.value;
+  const selectedSuffixIcon = options.find(
+    o => o.value === selected
+  )?.suffixIcon;
   const selectedLabel = options.find(o => o.value === selected)?.label;
   const filteredOptions =
     types === "supportJob"
@@ -152,9 +154,7 @@ export const Dropdown = ({
   const { currentTheme: theme } = useTheme();
 
   const getDisplayText = () => {
-    const inOrder = selectedValue?.split("-")[1];
-
-    if (inOrder === undefined) {
+    if (selectedSuffixIcon === undefined) {
       return (
         <Flex
           $gap={2}
@@ -165,7 +165,6 @@ export const Dropdown = ({
         </Flex>
       );
     }
-    const isAsc = inOrder === "asc";
 
     return (
       <Flex
@@ -175,7 +174,7 @@ export const Dropdown = ({
       >
         {selectedLabel}
         <Icon
-          icon={isAsc ? "SortAsc" : "SortDesc"}
+          icon={selectedSuffixIcon}
           size={13}
           fillColor={theme.color.grayScale[60]}
         />
@@ -197,7 +196,7 @@ export const Dropdown = ({
         }}
         $width={typeof $width === "number" ? `${$width}px` : $width}
         $color={$color}
-        isNoneBorder={isNoneBorder}
+        $isNoneBorder={$isNoneBorder}
       >
         {getDisplayText()}
         <Icon
@@ -210,11 +209,8 @@ export const Dropdown = ({
       {isOpen && (
         <OptionsWrapper>
           {types === undefined && (
-            <DefaultOptions $optionsWidth={$optionsWidth}>
+            <DefaultOptions>
               {options.map(opt => {
-                const inOrder = opt.value?.split("-")[1];
-                console.log(inOrder);
-
                 return (
                   <DefaultOption
                     key={opt.value}
@@ -223,10 +219,10 @@ export const Dropdown = ({
                   >
                     <Flex $gap={2} $justify="flex-end" $align="center">
                       {opt.label}
-                      {inOrder && (
+                      {opt.suffixIcon && (
                         <Icon
                           size={13}
-                          icon={inOrder === "asc" ? "SortAsc" : "SortDesc"}
+                          icon={opt.suffixIcon}
                           fillColor={
                             opt.value === selected
                               ? theme.color.primary[30]

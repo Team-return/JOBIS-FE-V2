@@ -25,10 +25,14 @@ export const RecruitmentList = () => {
   const sortType = [
     { label: "기본순", value: "기본순" },
     { label: "매출순", value: "매출순" },
-    { label: "직원", value: "직원-desc" },
-    { label: "직원", value: "직원-asc" },
-    { label: "공고마감", value: "공고마감-desc" },
-    { label: "공고마감", value: "공고마감-asc" }
+    { label: "직원", value: "직원-desc", suffixIcon: "SortDesc" } as const,
+    { label: "직원", value: "직원-asc", suffixIcon: "SortAsc" } as const,
+    {
+      label: "공고마감",
+      value: "공고마감-desc",
+      suffixIcon: "SortDesc"
+    } as const,
+    { label: "공고마감", value: "공고마감-asc", suffixIcon: "SortAsc" } as const
   ];
 
   /* 더미 데이터 */
@@ -100,10 +104,9 @@ export const RecruitmentList = () => {
           <Dropdown
             $width={70}
             types={undefined}
-            isNoneBorder={true}
-            isValueDefault={true}
+            $isNoneBorder={true}
+            $defaultValue="기본순"
             options={sortType}
-            $optionsWidth={103}
           />
         </Flex>
       </Flex>
