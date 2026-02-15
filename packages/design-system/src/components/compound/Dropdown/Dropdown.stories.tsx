@@ -15,7 +15,14 @@ const meta: Meta<typeof Dropdown> = {
       control: "text",
       description: "선택된 값 (제어 컴포넌트)"
     },
-
+    $isNoneBorder: {
+      control: "boolean",
+      description: "드롭다운 박스 border 여부"
+    },
+    $defaultValue: {
+      control: "text",
+      description: "기본으로 표시할 옵션"
+    },
     onChange: {
       action: "changed",
       description: "선택 값 변경 이벤트 핸들러"
@@ -55,6 +62,24 @@ export const Default: Story = {
       { label: "백엔드", value: "backend" },
       { label: "디자이너", value: "designer" },
       { label: "데브옵스", value: "devops" }
+    ]
+  },
+  argTypes: {
+    isOpen: { table: { disable: true } },
+    onToggle: { table: { disable: true } }
+  }
+};
+
+export const Sort: Story = {
+  args: {
+    $placeholder: "기본순",
+    $defaultValue: "기본순",
+    $isNoneBorder: true,
+    options: [
+      { label: "기본순", value: "기본순" },
+      { label: "매출순", value: "매출순" },
+      { label: "직원", value: "직원-desc", suffixIcon: "SortDesc" },
+      { label: "직원", value: "직원-asc", suffixIcon: "SortAsc" }
     ]
   },
   argTypes: {
