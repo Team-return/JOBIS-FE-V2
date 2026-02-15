@@ -34,6 +34,7 @@ const TriggerButton = styled.button<
     `
       border-color: ${theme.color.grayScale[90]};
     `}
+  color: ${({ theme }) => theme.color.grayScale[60]};
 `;
 
 const OptionsWrapper = styled.div`
@@ -69,10 +70,6 @@ const DefaultOption = styled.li<{ $selected: boolean }>`
 
   &:hover {
     color: ${({ theme }) => theme.color.primary[30]};
-  }
-
-  &:hover svg {
-    fill: ${({ theme }) => theme.color.primary[30]};
   }
 
   ${({ $selected, theme }) =>
@@ -141,9 +138,6 @@ export const Dropdown = ({
     closeDropdown();
   };
 
-  const selectedSuffixIcon = options.find(
-    o => o.value === selected
-  )?.suffixIcon;
   const selectedLabel = options.find(o => o.value === selected)?.label;
   const filteredOptions =
     types === "supportJob"
@@ -154,32 +148,7 @@ export const Dropdown = ({
   const { currentTheme: theme } = useTheme();
 
   const getDisplayText = () => {
-    if (selectedSuffixIcon === undefined) {
-      return (
-        <Flex
-          $gap={2}
-          $align="center"
-          style={{ color: theme.color.grayScale[60] }}
-        >
-          {selectedLabel || $placeholder || "선택"}
-        </Flex>
-      );
-    }
-
-    return (
-      <Flex
-        $gap={2}
-        $align="center"
-        style={{ color: theme.color.grayScale[60] }}
-      >
-        {selectedLabel}
-        <Icon
-          icon={selectedSuffixIcon}
-          size={13}
-          fillColor={theme.color.grayScale[60]}
-        />
-      </Flex>
-    );
+    return selectedLabel || $placeholder || "선택";
   };
 
   return (
@@ -217,20 +186,7 @@ export const Dropdown = ({
                     $selected={opt.value === selected}
                     onClick={() => handleSelect(opt.value)}
                   >
-                    <Flex $gap={2} $justify="flex-end" $align="center">
-                      {opt.label}
-                      {opt.suffixIcon && (
-                        <Icon
-                          size={13}
-                          icon={opt.suffixIcon}
-                          fillColor={
-                            opt.value === selected
-                              ? theme.color.primary[30]
-                              : theme.color.grayScale[60]
-                          }
-                        />
-                      )}
-                    </Flex>
+                    {opt.label}
                   </DefaultOption>
                 );
               })}

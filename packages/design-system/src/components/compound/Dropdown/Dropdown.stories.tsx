@@ -70,7 +70,7 @@ export const Default: Story = {
   }
 };
 
-export const Sort: Story = {
+export const NoneBoderDefault: Story = {
   args: {
     $placeholder: "기본순",
     $defaultValue: "기본순",
@@ -78,8 +78,8 @@ export const Sort: Story = {
     options: [
       { label: "기본순", value: "기본순" },
       { label: "매출순", value: "매출순" },
-      { label: "직원", value: "직원-desc", suffixIcon: "SortDesc" },
-      { label: "직원", value: "직원-asc", suffixIcon: "SortAsc" }
+      { label: "직원", value: "직원-desc" },
+      { label: "직원", value: "직원-asc" }
     ]
   },
   argTypes: {

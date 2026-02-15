@@ -51,5 +51,3 @@ export { default as Refresh } from "./Refresh";
 export { default as LogoWithText } from "./LogoWithText";
 export { default as HeaderProfile } from "./HeaderProfile";
 export { default as Print } from "./Print";
-export { default as SortDesc } from "./SortDesc";
-export { default as SortAsc } from "./SortAsc";

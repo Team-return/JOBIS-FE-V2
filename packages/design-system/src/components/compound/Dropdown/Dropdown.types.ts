@@ -3,7 +3,6 @@ import type { DimensionValue } from "../../../utils/type";
 export type DropdownOption = {
   label: string;
   value: string;
-  suffixIcon?: "SortAsc" | "SortDesc";
 };
 
 export type PeriodValue = {

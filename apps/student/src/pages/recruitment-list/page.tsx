@@ -25,14 +25,10 @@ export const RecruitmentList = () => {
   const sortType = [
     { label: "기본순", value: "기본순" },
     { label: "매출순", value: "매출순" },
-    { label: "직원", value: "직원-desc", suffixIcon: "SortDesc" } as const,
-    { label: "직원", value: "직원-asc", suffixIcon: "SortAsc" } as const,
-    {
-      label: "공고마감",
-      value: "공고마감-desc",
-      suffixIcon: "SortDesc"
-    } as const,
-    { label: "공고마감", value: "공고마감-asc", suffixIcon: "SortAsc" } as const
+    { label: "직원 ↓", value: "직원-desc", suffixIcon: "SortDesc" },
+    { label: "직원 ↑", value: "직원-asc", suffixIcon: "SortAsc" },
+    { label: "공고마감 ↓", value: "공고마감-desc" },
+    { label: "공고마감 ↑", value: "공고마감-asc" }
   ];
 
   /* 더미 데이터 */
