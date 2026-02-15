@@ -2,7 +2,8 @@ import type {
   InterviewType,
   JobType,
   RecruitmentStatus,
-  CompanyType
+  CompanyType,
+  ListSortType
 } from "@/enum";
 
 interface RecruitmentArea {
@@ -79,6 +80,9 @@ export interface StudentRecruitmentListQueryParams {
   tech_code?: string;
   winter_intern?: boolean;
   military_support?: boolean;
+  years?: number;
+  status?: RecruitmentStatus;
+  sort_type?: ListSortType;
 }
 
 interface StudentRecruitment {
@@ -89,6 +93,8 @@ interface StudentRecruitment {
   military_support: boolean;
   hiring_jobs: string;
   bookmarked: boolean;
+  status: string;
+  year: number;
 }
 
 export interface StudentRecruitmentListResponse {
