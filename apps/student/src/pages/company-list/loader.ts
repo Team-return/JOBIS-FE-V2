@@ -11,7 +11,7 @@ import { companiesKeys, query, ListSortType } from "@jobis/api";
 export interface CompanyQuery {
   name?: string;
   page: number;
-  sortType?: ListSortType;
+  sort_type?: ListSortType;
 }
 
 const companyQueryParser: QueryParamParser<CompanyQuery> = {
@@ -19,7 +19,7 @@ const companyQueryParser: QueryParamParser<CompanyQuery> = {
     return {
       name: parseOptionalString(params.get("name")),
       page: parseOptionalNumber(params.get("page")) || 1,
-      sortType: parseOptionalString(params.get("sort_type")) as ListSortType
+      sort_type: parseOptionalString(params.get("sort_type")) as ListSortType
     };
   },
   validate: data => {
@@ -36,7 +36,7 @@ export async function companyLoader({
     companiesKeys.companyStudentList({
       page: queryParams.page,
       name: queryParams.name,
-      sortType: queryParams.sortType
+      sort_type: queryParams.sort_type
     })
   );
 
