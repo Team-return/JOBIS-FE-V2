@@ -11,7 +11,7 @@ export interface CompanyStudent {
 export interface CompanyStudentList {
   page?: number;
   name?: string;
-  sortType?: ListSortType;
+  sort_type?: ListSortType;
 }
 
 export interface CompanyStudentListResponse {
