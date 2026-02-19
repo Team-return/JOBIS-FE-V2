@@ -103,7 +103,7 @@ const SupportJobTag = styled.button<{ $selected: boolean }>`
 export const Dropdown = ({
   onChange,
   $placeholder,
-  types,
+  type,
   $width,
   isOpen: externalIsOpen,
   onToggle,
@@ -140,7 +140,7 @@ export const Dropdown = ({
 
   const selectedLabel = options.find(o => o.value === selected)?.label;
   const filteredOptions =
-    types === "supportJob"
+    type === "supportJob"
       ? options.filter(opt =>
           opt.label.toLowerCase().includes(searchTerm.toLowerCase())
         )
@@ -177,7 +177,7 @@ export const Dropdown = ({
 
       {isOpen && (
         <OptionsWrapper>
-          {types === undefined && (
+          {type === undefined && (
             <DefaultOptions>
               {options.map(opt => {
                 return (
@@ -193,7 +193,7 @@ export const Dropdown = ({
             </DefaultOptions>
           )}
 
-          {types === "supportJob" && (
+          {type === "supportJob" && (
             <SupportJobOptions>
               <Flex $direction="column" $gap={16}>
                 <Search

@@ -8,7 +8,8 @@ const WHITE_FILL_ICONS: readonly IconName[] = [
   "ToastSuccess",
   "ToastInfo",
   "Print",
-  "Refresh"
+  "Refresh",
+  "Speaker"
 ] as const;
 
 export const Icon = ({

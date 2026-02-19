@@ -1,16 +1,14 @@
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
-import {
-  companiesKeys,
-  reviewsKeys,
-  query,
-  noticesKeys,
-  bannersKeys
-} from "@jobis/api";
+import { reviewsKeys, query, noticesKeys, bannersKeys } from "@jobis/api";
 import {
   Application,
   applicationLoader,
   Company,
+  CompanyDetail,
+  companyDetailLoader,
+  CompanyEdit,
+  companyEditLoader,
   companyLoader,
   Login,
   Recruitment,
@@ -46,27 +44,13 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/:companyId",
-              loader: ({ params }) => {
-                const id = Number(params.companyId);
-                if (!params.companyId || Number.isNaN(id)) {
-                  throw redirect("/company");
-                }
-                query.prefetch(companiesKeys.companyDetail(id));
-                return null;
-              },
-              element: <div>기업 상세</div>
+              loader: companyDetailLoader,
+              element: <CompanyDetail />
             },
             {
               path: "detail/edit/:companyId",
-              loader: ({ params }) => {
-                const id = Number(params.companyId);
-                if (!params.companyId || Number.isNaN(id)) {
-                  throw redirect("/company");
-                }
-                query.prefetch(companiesKeys.companyDetail(id));
-                return null;
-              },
-              element: <div>기업 상세 수정</div>
+              loader: companyEditLoader,
+              element: <CompanyEdit />
             }
           ]
         },

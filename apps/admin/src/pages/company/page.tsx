@@ -13,8 +13,8 @@ import {
   useTheme,
   useToast
 } from "@jobis/design-system";
-import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import {
   useTeacherCompanyList,
   useUpdateCompanyType,
@@ -35,6 +35,18 @@ import {
   booleanToYN
 } from "../../utils";
 import type { CompanyQuery } from "./loader";
+
+const CompanyName = ({ name, id }: { name: string; id: number }) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      onClick={() => navigate(`/company/detail/${id}`)}
+      style={{ cursor: "pointer", textDecoration: "underline" }}
+    >
+      {name}
+    </div>
+  );
+};
 
 export const Company = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<CompanyQuery>;
@@ -173,9 +185,9 @@ export const Company = () => {
   const { mutate: updateCompanyType } = useUpdateCompanyType();
   const { mutate: updateMou } = useUpdateMou();
 
-  const tableRows: string[][] =
+  const tableRows: ReactNode[][] =
     data?.companies.map(company => [
-      company.company_name,
+      <CompanyName name={company.company_name} id={company.company_id} />,
       company.region,
       company.business_area,
       String(company.workers_count),
