@@ -1,7 +1,7 @@
-import type { DimensionValue } from "@/utils";
+import type { PixelValue } from "@/utils";
 
 export interface Props {
   $columns?: string;
   $rows?: string;
-  $gap?: DimensionValue;
+  $gap?: PixelValue | [PixelValue, PixelValue];
 }
