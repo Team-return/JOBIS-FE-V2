@@ -1,10 +1,11 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
 import { redirect } from "react-router-dom";
 import { companiesKeys, query } from "@jobis/api";
+import { LoaderData } from "apps/admin/src/utils";
 
 export async function companyEditLoader({
   params
-}: LoaderFunctionArgs): Promise<null> {
+}: LoaderFunctionArgs): Promise<LoaderData<number>> {
   const id = Number(params.companyId);
 
   if (!params.companyId || Number.isNaN(id)) {
@@ -13,5 +14,5 @@ export async function companyEditLoader({
 
   query.prefetch(companiesKeys.companyDetail(id));
 
-  return null;
+  return { params: id };
 }

@@ -21,12 +21,13 @@ import {
   useToast
 } from "@jobis/design-system";
 import { useEffect, useReducer, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import { Address } from "react-daum-postcode";
 import {
   DATE_REGEX,
   EMAIL_REGEX,
+  LoaderData,
   NUMBER_REGEX,
   PHONE_REGEX
 } from "../../../utils";
@@ -114,8 +115,24 @@ const PhoneFields: Array<keyof FormState> = [
 const NumberFields: Array<keyof FormState> = ["take", "workerNumber"];
 const DateFields: Array<keyof FormState> = ["foundedAt"];
 const EmailFields: Array<keyof FormState> = ["email"];
+const RequiredFields: Array<keyof FormState> = [
+  "serviceName",
+  "representativeName",
+  "representativePhoneNo",
+  "foundedAt",
+  "managerName",
+  "managerPhoneNo",
+  "take",
+  "workerNumber",
+  "businessArea",
+  "mainAddress",
+  "mainZipCode",
+  "email",
+  "companyIntroduce"
+];
 
-export const formatPhone = (value: string) => {
+export const formatPhone = (value: string | null | undefined) => {
+  if (!value) return "";
   const digits = value.replace(/\D/g, "");
 
   if (digits.startsWith("02")) {
@@ -133,14 +150,13 @@ export const formatPhone = (value: string) => {
 };
 
 export const CompanyEdit = () => {
+  const { params: id } = useLoaderData() as LoaderData<number>;
   const toast = useToast();
   const { currentTheme: theme } = useTheme();
   const { companyId } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading } = useCompanyDetail(Number(companyId));
-  const { mutate: updateCompany } = useUpdateCompany(
-    companyId ? Number(companyId) : 0
-  );
+  const { data, isLoading } = useCompanyDetail(id);
+  const { mutate: updateCompany } = useUpdateCompany(id);
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [addressField, setAddressField] = useState<
     "mainAddress" | "branchAddress"
@@ -187,6 +203,9 @@ export const CompanyEdit = () => {
 
   const formatInputValue = (value: string | number | null | undefined) =>
     value === null || value === undefined ? "" : String(value);
+
+  const getFieldLabel = (field: keyof FormState) =>
+    InfoFields.find(info => info.key === field)?.label ?? field;
 
   useEffect(() => {
     if (!data) return;
@@ -286,6 +305,35 @@ export const CompanyEdit = () => {
   };
 
   const handleUpdateCompany = () => {
+    const nextErrors: FormErrors = {};
+
+    RequiredFields.forEach(field => {
+      if (!formState[field].trim()) {
+        nextErrors[field] =
+          `${getFieldLabel(field)}은(는) 필수 입력 항목입니다.`;
+      }
+    });
+
+    (Object.keys(formState) as Array<keyof FormState>).forEach(field => {
+      if (nextErrors[field]) return;
+      const message = validateField(field, formState[field]);
+      if (message) {
+        nextErrors[field] = message;
+      }
+    });
+
+    dispatchError({ type: "RESET_ERRORS" });
+    (Object.keys(nextErrors) as Array<keyof FormErrors>).forEach(field => {
+      const message = nextErrors[field];
+      if (!message) return;
+      dispatchError({ type: "SET_ERROR", field, message });
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      toast.error("필수 입력 항목을 확인해주세요.");
+      return;
+    }
+
     const updateData = {
       service_name: formState.serviceName,
       representative_phone_no: formatNumber(formState.representativePhoneNo),
@@ -376,6 +424,7 @@ export const CompanyEdit = () => {
             <TextArea
               value={formState["companyIntroduce"]}
               onChange={handleChange("companyIntroduce")}
+              $errorMessage={formErrors.companyIntroduce}
             />
           )}
         </Flex>
@@ -433,6 +482,11 @@ export const CompanyEdit = () => {
                               ? "mainZipCode"
                               : "branchZipCode"
                           )}
+                          $errorMessage={
+                            key === "mainAddress"
+                              ? formErrors.mainZipCode
+                              : formErrors.branchZipCode
+                          }
                           disabled
                         />
                         <Button
@@ -453,6 +507,7 @@ export const CompanyEdit = () => {
                         $width={280}
                         value={formState[key]}
                         onChange={handleChange(key)}
+                        $errorMessage={formErrors[key]}
                         disabled
                       />
                     </Flex>

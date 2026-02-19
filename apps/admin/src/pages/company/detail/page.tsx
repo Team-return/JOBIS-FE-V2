@@ -12,16 +12,17 @@ import {
   Text,
   useTheme
 } from "@jobis/design-system";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { formatPhone } from "../edit";
+import { LoaderData } from "apps/admin/src/utils/query-params";
 
 const FILE_URL = import.meta.env.FILE_URL;
 
 export const CompanyDetail = () => {
+  const { params: id } = useLoaderData() as LoaderData<number>;
   const { currentTheme: theme } = useTheme();
-  const { companyId } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading } = useCompanyDetail(Number(companyId));
+  const { data, isLoading } = useCompanyDetail(id);
 
   const formatValue = (value: string | number | null | undefined) =>
     value === null || value === undefined ? "-" : String(value);
@@ -32,7 +33,7 @@ export const CompanyDetail = () => {
     ["대표번호", formatPhone(formatValue(data?.representative_phone_no))],
     ["설립일", formatValue(data?.founded_at)],
     ["담당자", formatValue(data?.manager_name)],
-    ["전화번호", formatValue(data?.manager_phone_no)],
+    ["전화번호", formatPhone(formatValue(data?.manager_phone_no))],
     ["담당자2", "-"],
     ["전화번호2", "-"],
     ["매출액", formatValue(data?.take)],
@@ -84,7 +85,7 @@ export const CompanyDetail = () => {
             <Button
               $variant="outline"
               $size="sm"
-              onClick={() => navigate(`/company/detail/edit/${companyId}`)}
+              onClick={() => navigate(`/company/detail/edit/${id}`)}
             >
               수정
             </Button>
