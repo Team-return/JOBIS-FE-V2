@@ -40,7 +40,9 @@ export const CompanyList = () => {
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);
 
-  const { data: companyCountData } = useCompanyStudentCount(currentName);
+  const { data: companyCountData } = useCompanyStudentCount({
+    name: currentName
+  });
   const { data: companyListData, isLoading } = useCompanyStudentList({
     page: currentPage,
     name: currentName,
@@ -83,7 +85,7 @@ export const CompanyList = () => {
             />
             <Dropdown
               $width={70}
-              types={undefined}
+              type={undefined}
               $isNoneBorder={true}
               $defaultValue={currentSort || ""}
               onChange={value =>
