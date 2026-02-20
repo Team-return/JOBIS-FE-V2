@@ -28,8 +28,7 @@ const getCurrentBranch = async () => {
 
 const runLintChecks = async () => {
   try {
-    await execa("yarn", ["lint", "--fix"], { stdio: "inherit" });
-    await execa("yarn", ["lint"], { stdio: "inherit" });
+    await execa("yarn", ["lint:fix"], { stdio: "inherit" });
     return true;
   } catch {
     logger.error("lint 오류를 해결해주세요.");
