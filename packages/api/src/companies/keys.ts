@@ -5,7 +5,10 @@ export const companiesKeys = {
     "company-student-list",
     params
   ],
-  companyStudentCount: (name?: string) => ["company-student-count", name],
+  companyStudentCount: (params?: { name?: string }) => [
+    "company-student-count",
+    params?.name
+  ],
   companyReviewList: () => ["company-review-list"],
   companyDetail: (companyId: number) => ["company-detail", companyId],
   companyMy: () => ["company-my"],

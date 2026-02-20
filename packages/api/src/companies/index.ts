@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   CompanyStudentListResponse,
   CompanyStudentCountResponse,
@@ -19,166 +18,104 @@ import type {
   CreateTeacherCompanyRequest,
   CompanyStudentList
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
+import {
+  createQueryHook,
+  createMutationHook,
+  createIdMutationHook
+} from "@/create-hook";
 import { instance } from "@/instance";
+import { useQuery } from "@tanstack/react-query";
 import { companiesKeys } from "./keys";
 
 const DOMAIN = "/companies";
 
 export { companiesKeys };
 
-export const useCompanyStudentList = (
-  params?: CompanyStudentList,
-  options?: QueryOptions<CompanyStudentListResponse>
-) => {
-  return useQuery({
-    queryKey: companiesKeys.companyStudentList(params),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyStudentListResponse>(
-        `${DOMAIN}/student`,
-        { params: params }
-      );
-      return data;
-    },
-    ...options
-  });
+export const useCompanyStudentList = (params?: CompanyStudentList) => {
+  return createQueryHook<CompanyStudentList, CompanyStudentListResponse>({
+    domain: `${DOMAIN}/student`,
+    queryKey: () => companiesKeys.companyStudentList(params)
+  })(params);
 };
 
-export const useCompanyStudentCount = (
-  name?: string,
-  options?: QueryOptions<CompanyStudentCountResponse>
-) => {
-  return useQuery({
-    queryKey: companiesKeys.companyStudentCount(name),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyStudentCountResponse>(
-        `${DOMAIN}/student/count`,
-        { params: { name } }
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyStudentCount = createQueryHook<
+  { name?: string },
+  CompanyStudentCountResponse
+>({
+  domain: `${DOMAIN}/student/count`,
+  queryKey: companiesKeys.companyStudentCount
+});
 
-export const useCompanyReviewList = (
-  options?: QueryOptions<CompanyReviewListResponse>
-) => {
-  return useQuery({
-    queryKey: companiesKeys.companyReviewList(),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyReviewListResponse>(
-        `${DOMAIN}/review`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyReviewList = createQueryHook<
+  void,
+  CompanyReviewListResponse
+>({
+  domain: `${DOMAIN}/review`,
+  queryKey: companiesKeys.companyReviewList
+});
 
-export const useCompanyDetail = (
-  companyId: number,
-  options?: QueryOptions<CompanyDetailResponse>
-) => {
-  return useQuery({
-    queryKey: companiesKeys.companyDetail(companyId),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyDetailResponse>(
-        `${DOMAIN}/${companyId}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyDetail = createQueryHook<number, CompanyDetailResponse>({
+  domain: companyId => `${DOMAIN}/${companyId}`,
+  queryKey: companiesKeys.companyDetail
+});
 
-export const useCompanyMy = (options?: QueryOptions<CompanyMyResponse>) => {
-  return useQuery({
-    queryKey: companiesKeys.companyMy(),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyMyResponse>(`${DOMAIN}/my`);
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyMy = createQueryHook<void, CompanyMyResponse>({
+  domain: `${DOMAIN}/my`,
+  queryKey: companiesKeys.companyMy
+});
 
-export const useUpdateCompany = (
-  companyId: number,
-  options?: MutationOptions<UpdateCompanyRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/${companyId}`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateCompany = createIdMutationHook<
+  UpdateCompanyRequest,
+  void
+>({
+  domain: DOMAIN,
+  method: "patch"
+});
 
-export const useCreateCompany = (
-  options?: MutationOptions<CreateCompanyRequest, CreateCompanyResponse>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      const { data } = await instance.post<CreateCompanyResponse>(
-        DOMAIN,
-        request
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCreateCompany = createMutationHook<
+  CreateCompanyRequest,
+  CreateCompanyResponse
+>({
+  domain: DOMAIN,
+  method: "post"
+});
 
-export const useCompanyExists = (
-  businessNumber: string,
-  options?: QueryOptions<CompanyExistsResponse>
-) => {
-  return useQuery({
-    queryKey: companiesKeys.companyExists(businessNumber),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyExistsResponse>(
-        `${DOMAIN}/exists/${businessNumber}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyExists = createQueryHook<string, CompanyExistsResponse>({
+  domain: businessNumber => `${DOMAIN}/exists/${businessNumber}`,
+  queryKey: companiesKeys.companyExists
+});
 
-export const useUpdateMou = (options?: MutationOptions<UpdateMouRequest>) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/mou`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateMou = createMutationHook<UpdateMouRequest, void>({
+  domain: `${DOMAIN}/mou`,
+  method: "patch"
+});
 
 export const useTeacherCompanyList = (
   page?: number,
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number,
-  options?: QueryOptions<TeacherCompanyListResponse>
+  businessArea?: number
 ) => {
-  return useQuery({
-    queryKey: companiesKeys.teacherCompanyList(
-      page,
-      type,
-      name,
-      region,
-      businessArea
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<TeacherCompanyListResponse>(
-        `${DOMAIN}/teacher`,
-        { params: { page, type, name, region, business_area: businessArea } }
-      );
-      return data;
+  return createQueryHook<
+    {
+      page?: number;
+      type?: string;
+      name?: string;
+      region?: string;
+      business_area?: number;
     },
-    ...options
+    TeacherCompanyListResponse
+  >({
+    domain: `${DOMAIN}/teacher`,
+    queryKey: () =>
+      companiesKeys.teacherCompanyList(page, type, name, region, businessArea)
+  })({
+    page,
+    type,
+    name,
+    region,
+    business_area: businessArea
   });
 };
 
@@ -187,25 +124,27 @@ export const useTeacherCompanyCount = (
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number,
-  options?: QueryOptions<TeacherCompanyCountResponse>
+  businessArea?: number
 ) => {
-  return useQuery({
-    queryKey: companiesKeys.teacherCompanyCount(
-      page,
-      type,
-      name,
-      region,
-      businessArea
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<TeacherCompanyCountResponse>(
-        `${DOMAIN}/teacher/count`,
-        { params: { page, type, name, region, business_area: businessArea } }
-      );
-      return data;
+  return createQueryHook<
+    {
+      page?: number;
+      type?: string;
+      name?: string;
+      region?: string;
+      business_area?: number;
     },
-    ...options
+    TeacherCompanyCountResponse
+  >({
+    domain: `${DOMAIN}/teacher/count`,
+    queryKey: () =>
+      companiesKeys.teacherCompanyCount(page, type, name, region, businessArea)
+  })({
+    page,
+    type,
+    name,
+    region,
+    business_area: businessArea
   });
 };
 
@@ -213,93 +152,81 @@ export const useEmploymentCompanyList = (
   page?: number,
   companyName?: string,
   companyType?: string,
-  year?: number,
-  options?: QueryOptions<EmploymentCompanyListResponse>
+  year?: number
 ) => {
-  return useQuery({
-    queryKey: companiesKeys.employmentCompanyList(
-      page,
-      companyName,
-      companyType,
-      year
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<EmploymentCompanyListResponse>(
-        `${DOMAIN}/employment`,
-        {
-          params: {
-            page,
-            company_name: companyName,
-            company_type: companyType,
-            year
-          }
-        }
-      );
-      return data;
+  return createQueryHook<
+    {
+      page?: number;
+      company_name?: string;
+      company_type?: string;
+      year?: number;
     },
-    ...options
+    EmploymentCompanyListResponse
+  >({
+    domain: `${DOMAIN}/employment`,
+    queryKey: () =>
+      companiesKeys.employmentCompanyList(page, companyName, companyType, year)
+  })({
+    page,
+    company_name: companyName,
+    company_type: companyType,
+    year
   });
 };
 
 export const useEmploymentCompanyCount = (
   companyName?: string,
   companyType?: string,
-  year?: number,
-  options?: QueryOptions<EmploymentCompanyCountResponse>
+  year?: number
 ) => {
-  return useQuery({
-    queryKey: companiesKeys.employmentCompanyCount(
-      companyName,
-      companyType,
-      year
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<EmploymentCompanyCountResponse>(
-        `${DOMAIN}/employment/count`,
-        {
-          params: { company_name: companyName, company_type: companyType, year }
-        }
-      );
-      return data;
-    },
-    ...options
+  return createQueryHook<
+    { company_name?: string; company_type?: string; year?: number },
+    EmploymentCompanyCountResponse
+  >({
+    domain: `${DOMAIN}/employment/count`,
+    queryKey: () =>
+      companiesKeys.employmentCompanyCount(companyName, companyType, year)
+  })({
+    company_name: companyName,
+    company_type: companyType,
+    year
   });
 };
 
-export const useUpdateCompanyType = (
-  options?: MutationOptions<UpdateCompanyTypeRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/type`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateCompanyType = createMutationHook<
+  UpdateCompanyTypeRequest,
+  void
+>({
+  domain: `${DOMAIN}/type`,
+  method: "patch"
+});
 
 export const useCompanyCount = (
   type?: string,
   name?: string,
   region?: string,
-  businessArea?: number,
-  options?: QueryOptions<CompanyCountResponse>
+  businessArea?: number
 ) => {
-  return useQuery({
-    queryKey: companiesKeys.companyCount(type, name, region, businessArea),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyCountResponse>(
-        `${DOMAIN}/count`,
-        {
-          params: { type, name, region, business_area: businessArea }
-        }
-      );
-      return data;
+  return createQueryHook<
+    {
+      type?: string;
+      name?: string;
+      region?: string;
+      business_area?: number;
     },
-    ...options
+    CompanyCountResponse
+  >({
+    domain: `${DOMAIN}/count`,
+    queryKey: () => companiesKeys.companyCount(type, name, region, businessArea)
+  })({
+    type,
+    name,
+    region,
+    business_area: businessArea
   });
 };
 
-export const useCompanyFileDownload = (options?: QueryOptions<Blob>) => {
+export const useCompanyFileDownload = () => {
   return useQuery({
     queryKey: companiesKeys.companyFileDownload(),
     queryFn: async () => {
@@ -307,18 +234,14 @@ export const useCompanyFileDownload = (options?: QueryOptions<Blob>) => {
         responseType: "blob"
       });
       return data;
-    },
-    ...options
+    }
   });
 };
 
-export const useCreateTeacherCompany = (
-  options?: MutationOptions<CreateTeacherCompanyRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.post(`${DOMAIN}/teacher`, request);
-    },
-    ...options
-  });
-};
+export const useCreateTeacherCompany = createMutationHook<
+  CreateTeacherCompanyRequest,
+  void
+>({
+  domain: `${DOMAIN}/teacher`,
+  method: "post"
+});
