@@ -72,25 +72,25 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="상태"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentState}
             />
             <Dropdown
               $placeholder="연도"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentyear}
             />
             <Dropdown
               $placeholder="분야"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={jobTypeCode}
             />
             <Dropdown
               $placeholder="기술스택"
               $width={120}
-              types="supportJob"
+              type="supportJob"
               options={keywordCode}
             />
             <Search placeholder="검색어를 입력해 주세요." $width={291} />
@@ -99,7 +99,7 @@ export const RecruitmentList = () => {
         <Flex $justify="flex-end">
           <Dropdown
             $width={70}
-            types={undefined}
+            type={undefined}
             $isNoneBorder={true}
             $defaultValue="기본순"
             options={sortType}

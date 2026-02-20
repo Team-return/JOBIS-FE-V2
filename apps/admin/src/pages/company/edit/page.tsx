@@ -21,7 +21,7 @@ import {
   useToast
 } from "@jobis/design-system";
 import { useEffect, useReducer, useState } from "react";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import { Address } from "react-daum-postcode";
 import {
@@ -153,7 +153,6 @@ export const CompanyEdit = () => {
   const { params: id } = useLoaderData() as LoaderData<number>;
   const toast = useToast();
   const { currentTheme: theme } = useTheme();
-  const { companyId } = useParams();
   const navigate = useNavigate();
   const { data, isLoading } = useCompanyDetail(id);
   const { mutate: updateCompany } = useUpdateCompany(id);
@@ -299,9 +298,7 @@ export const CompanyEdit = () => {
   const closePostcode = () => setIsPostcodeOpen(false);
 
   const invalidateCompanyQueries = async () => {
-    await Promise.all([
-      query.invalidate(companiesKeys.companyDetail(Number(companyId)))
-    ]);
+    await Promise.all([query.invalidate(companiesKeys.companyDetail(id))]);
   };
 
   const handleUpdateCompany = () => {
@@ -353,7 +350,7 @@ export const CompanyEdit = () => {
       onSuccess: async () => {
         toast.success("회사가 성공적으로 수정되었습니다.");
         await invalidateCompanyQueries();
-        navigate(`/company/detail/${companyId}`);
+        navigate(`/company/detail/${id}`);
       },
       onError: () => {
         toast.error("회사를 수정하는 중에 오류가 발생했습니다.");

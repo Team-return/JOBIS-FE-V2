@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   EmploymentCountResponse,
   PassResponse,
@@ -9,74 +8,45 @@ import type {
   RejectionResponse,
   EmploymentResponse
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
-import { instance } from "@/instance";
+import {
+  createQueryHook,
+  createMutationHook,
+  createIdMutationHook
+} from "@/create-hook";
 import { applicationsKeys } from "./keys";
 
 const DOMAIN = "/applications";
 
 export { applicationsKeys };
 
-export const useEmploymentCount = (
-  options?: QueryOptions<EmploymentCountResponse>
-) => {
-  return useQuery({
-    queryKey: applicationsKeys.employmentCount(),
-    queryFn: async () => {
-      const { data } = await instance.get<EmploymentCountResponse>(
-        `${DOMAIN}/employment/count`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useEmploymentCount = createQueryHook<
+  void,
+  EmploymentCountResponse
+>({
+  domain: `${DOMAIN}/employment/count`,
+  queryKey: applicationsKeys.employmentCount
+});
 
-export const usePass = (
-  companyId: number,
-  options?: QueryOptions<PassResponse>
-) => {
-  return useQuery({
-    queryKey: applicationsKeys.pass(companyId),
-    queryFn: async () => {
-      const { data } = await instance.get<PassResponse>(
-        `${DOMAIN}/pass/${companyId}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const usePass = createQueryHook<number, PassResponse>({
+  domain: companyId => `${DOMAIN}/pass/${companyId}`,
+  queryKey: applicationsKeys.pass
+});
 
-export const useCompanyApplications = (
-  options?: QueryOptions<CompanyApplicationResponse>
-) => {
-  return useQuery({
-    queryKey: applicationsKeys.companyApplications(),
-    queryFn: async () => {
-      const { data } = await instance.get<CompanyApplicationResponse>(
-        `${DOMAIN}/company`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyApplications = createQueryHook<
+  void,
+  CompanyApplicationResponse
+>({
+  domain: `${DOMAIN}/company`,
+  queryKey: applicationsKeys.companyApplications
+});
 
-export const useStudentApplications = (
-  options?: QueryOptions<StudentApplicationResponse>
-) => {
-  return useQuery({
-    queryKey: applicationsKeys.studentApplications(),
-    queryFn: async () => {
-      const { data } = await instance.get<StudentApplicationResponse>(
-        `${DOMAIN}/students`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useStudentApplications = createQueryHook<
+  void,
+  StudentApplicationResponse
+>({
+  domain: `${DOMAIN}/students`,
+  queryKey: applicationsKeys.studentApplications
+});
 
 export const useTeacherApplications = (
   applicationStatus?: string,
@@ -84,238 +54,158 @@ export const useTeacherApplications = (
   recruitmentId?: number,
   winterIntern?: boolean,
   page?: number,
-  year?: string,
-  options?: QueryOptions<TeacherApplicationResponse>
+  year?: string
 ) => {
-  return useQuery({
-    queryKey: applicationsKeys.teacherApplications(
-      applicationStatus,
-      studentName,
-      recruitmentId,
-      winterIntern,
-      page,
-      year
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<TeacherApplicationResponse>(
-        `${DOMAIN}`,
-        {
-          params: {
-            application_status: applicationStatus,
-            student_name: studentName,
-            recruitment_id: recruitmentId,
-            winter_intern: winterIntern,
-            page,
-            year
-          }
-        }
-      );
-      return data;
+  return createQueryHook<
+    {
+      application_status?: string;
+      student_name?: string;
+      recruitment_id?: number;
+      winter_intern?: boolean;
+      page?: number;
+      year?: string;
     },
-    ...options
+    TeacherApplicationResponse
+  >({
+    domain: DOMAIN,
+    queryKey: () =>
+      applicationsKeys.teacherApplications(
+        applicationStatus,
+        studentName,
+        recruitmentId,
+        winterIntern,
+        page,
+        year
+      )
+  })({
+    application_status: applicationStatus,
+    student_name: studentName,
+    recruitment_id: recruitmentId,
+    winter_intern: winterIntern,
+    page,
+    year
   });
 };
 
 export const useTeacherApplicationCount = (
   applicationStatus?: string,
-  studentName?: string,
-  options?: QueryOptions<TeacherApplicationCountResponse>
+  studentName?: string
 ) => {
-  return useQuery({
-    queryKey: applicationsKeys.teacherApplicationCount(
-      applicationStatus,
-      studentName
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<TeacherApplicationCountResponse>(
-        `${DOMAIN}/teacher/count`,
-        {
-          params: {
-            application_status: applicationStatus,
-            student_name: studentName
-          }
-        }
-      );
-      return data;
+  return createQueryHook<
+    {
+      application_status?: string;
+      student_name?: string;
     },
-    ...options
+    TeacherApplicationCountResponse
+  >({
+    domain: `${DOMAIN}/teacher/count`,
+    queryKey: () =>
+      applicationsKeys.teacherApplicationCount(applicationStatus, studentName)
+  })({
+    application_status: applicationStatus,
+    student_name: studentName
   });
 };
 
-export const useDeleteApplication = (
-  options?: MutationOptions<{ applicationId: number }>
-) => {
-  return useMutation({
-    mutationFn: async ({ applicationId }) => {
-      await instance.delete(`${DOMAIN}/${applicationId}`);
-    },
-    ...options
-  });
-};
+export const useDeleteApplication = createIdMutationHook<void, void>({
+  domain: DOMAIN,
+  method: "delete"
+});
 
-export const useCreateApplication = (
-  recruitmentId: number,
-  options?: MutationOptions<{ url: string; type: string }[]>
-) => {
-  return useMutation({
-    mutationFn: async attachments => {
-      await instance.post(`${DOMAIN}/${recruitmentId}`, { attachments });
-    },
-    ...options
-  });
-};
+export const useCreateApplication = createIdMutationHook<
+  { url: string; type: string }[],
+  void
+>({
+  domain: DOMAIN,
+  method: "post"
+});
 
-export const useUpdateApplicationStatus = (
-  options?: MutationOptions<{
-    applicationIds: number[];
-    status: string;
-  }>
-) => {
-  return useMutation({
-    mutationFn: async ({ applicationIds, status }) => {
-      await instance.patch(`${DOMAIN}/status`, {
-        application_ids: applicationIds,
-        status
-      });
-    },
-    ...options
-  });
-};
+export const useUpdateApplicationStatus = createMutationHook<
+  { applicationIds: number[]; status: string },
+  void
+>({
+  domain: `${DOMAIN}/status`,
+  method: "patch"
+});
 
-export const useUpdateTrainDate = (
-  options?: MutationOptions<{
-    applicationIds: number[];
-    startDate: string;
-    endDate: string;
-  }>
-) => {
-  return useMutation({
-    mutationFn: async ({ applicationIds, startDate, endDate }) => {
-      await instance.patch(`${DOMAIN}/train-date`, {
-        application_ids: applicationIds,
-        start_date: startDate,
-        end_date: endDate
-      });
-    },
-    ...options
-  });
-};
+export const useUpdateTrainDate = createMutationHook<
+  { applicationIds: number[]; startDate: string; endDate: string },
+  void
+>({
+  domain: `${DOMAIN}/train-date`,
+  method: "patch"
+});
 
-export const useRejectApplication = (
-  applicationId: number,
-  options?: MutationOptions<{
+export const useRejectApplication = createIdMutationHook<
+  {
     reason: string;
     rejectionAttachments: { url: string }[];
-  }>
-) => {
-  return useMutation({
-    mutationFn: async ({ reason, rejectionAttachments }) => {
-      await instance.patch(`${DOMAIN}/rejection/${applicationId}`, {
-        reason,
-        rejection_attachments: rejectionAttachments
-      });
-    },
-    ...options
-  });
-};
+  },
+  void
+>({
+  domain: `${DOMAIN}/rejection`,
+  method: "patch"
+});
 
-export const useRejection = (
-  applicationId: number,
-  options?: QueryOptions<RejectionResponse>
-) => {
-  return useQuery({
-    queryKey: applicationsKeys.rejection(applicationId),
-    queryFn: async () => {
-      const { data } = await instance.get<RejectionResponse>(
-        `${DOMAIN}/rejection/${applicationId}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useRejection = createQueryHook<number, RejectionResponse>({
+  domain: applicationId => `${DOMAIN}/rejection/${applicationId}`,
+  queryKey: applicationsKeys.rejection
+});
 
-export const useReapply = (
-  applicationId: number,
-  options?: MutationOptions<{ url: string; type: string }[]>
-) => {
-  return useMutation({
-    mutationFn: async attachments => {
-      await instance.put(`${DOMAIN}/${applicationId}`, { attachments });
-    },
-    ...options
-  });
-};
+export const useReapply = createIdMutationHook<
+  { url: string; type: string }[],
+  void
+>({
+  domain: DOMAIN,
+  method: "put"
+});
 
 export const useApplicationCount = (
   applicationStatus?: string,
   studentName?: string,
   recruitmentId?: number,
   winterIntern?: boolean,
-  year?: string,
-  options?: QueryOptions<{ count: number }>
+  year?: string
 ) => {
-  return useQuery({
-    queryKey: applicationsKeys.applicationCount(
-      applicationStatus,
-      studentName,
-      recruitmentId,
-      winterIntern,
-      year
-    ),
-    queryFn: async () => {
-      const { data } = await instance.get<{ count: number }>(
-        `${DOMAIN}/count`,
-        {
-          params: {
-            application_status: applicationStatus,
-            student_name: studentName,
-            recruitment_id: recruitmentId,
-            winter_intern: winterIntern,
-            year
-          }
-        }
-      );
-      return data;
+  return createQueryHook<
+    {
+      application_status?: string;
+      student_name?: string;
+      recruitment_id?: number;
+      winter_intern?: boolean;
+      year?: string;
     },
-    ...options
+    { count: number }
+  >({
+    domain: `${DOMAIN}/count`,
+    queryKey: () =>
+      applicationsKeys.applicationCount(
+        applicationStatus,
+        studentName,
+        recruitmentId,
+        winterIntern,
+        year
+      )
+  })({
+    application_status: applicationStatus,
+    student_name: studentName,
+    recruitment_id: recruitmentId,
+    winter_intern: winterIntern,
+    year
   });
 };
 
-export const useDeleteApplications = (options?: MutationOptions<string>) => {
-  return useMutation({
-    mutationFn: async applicationIds => {
-      await instance.delete(`${DOMAIN}`, {
-        params: { application_ids: applicationIds }
-      });
-    },
-    ...options
-  });
-};
+export const useDeleteApplications = createMutationHook<string, void>({
+  domain: DOMAIN,
+  method: "delete"
+});
 
-export const useEmployment = (options?: QueryOptions<EmploymentResponse>) => {
-  return useQuery({
-    queryKey: applicationsKeys.employment(),
-    queryFn: async () => {
-      const { data } = await instance.get<EmploymentResponse>(
-        `${DOMAIN}/employment`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useEmployment = createQueryHook<void, EmploymentResponse>({
+  domain: `${DOMAIN}/employment`,
+  queryKey: applicationsKeys.employment
+});
 
-export const useTeacherApprove = (
-  recruitmentId: number,
-  options?: MutationOptions<string[]>
-) => {
-  return useMutation({
-    mutationFn: async studentGcns => {
-      await instance.post(`${DOMAIN}/teacher/${recruitmentId}`, {
-        student_gcns: studentGcns
-      });
-    },
-    ...options
-  });
-};
+export const useTeacherApprove = createIdMutationHook<string[], void>({
+  domain: `${DOMAIN}/teacher`,
+  method: "post"
+});
