@@ -1,6 +1,5 @@
 import { Header, Footer } from "@jobis/design-system";
-import { createBrowserRouter, redirect, Outlet } from "react-router-dom";
-import { reviewsKeys, query, noticesKeys, bannersKeys } from "@jobis/api";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import {
   Application,
   applicationLoader,
@@ -63,22 +62,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              loader: ({ params }) => {
-                query.prefetch(reviewsKeys.reviewList(params));
-                return null;
-              },
               element: <div>학생 후기 목록</div>
             },
             {
               path: "detail/:reviewId",
-              loader: ({ params }) => {
-                const id = String(params.reviewId);
-                if (!params.reviewId) {
-                  throw redirect("/review");
-                }
-                query.prefetch(reviewsKeys.reviewDetail(id));
-                return null;
-              },
               element: <div>학생 후기 상세</div>
             }
           ]
@@ -93,35 +80,15 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              loader: () => {
-                query.prefetch(noticesKeys.noticeList());
-                return null;
-              },
               element: <div>공지사항 목록</div>
             },
             { path: "write", element: <div>공지사항 등록</div> },
             {
               path: "detail/:noticeId",
-              loader: ({ params }) => {
-                const id = Number(params.noticeId);
-                if (!params.noticeId || Number.isNaN(id)) {
-                  throw redirect("/notice");
-                }
-                query.prefetch(noticesKeys.noticeDetail(id));
-                return null;
-              },
               element: <div>공지사항 상세</div>
             },
             {
               path: "detail/edit/:noticeId",
-              loader: ({ params }) => {
-                const id = Number(params.noticeId);
-                if (!params.noticeId || Number.isNaN(id)) {
-                  throw redirect("/notice");
-                }
-                query.prefetch(noticesKeys.noticeDetail(id));
-                return null;
-              },
               element: <div>공지사항 수정</div>
             }
           ]
@@ -131,14 +98,6 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              loader: ({ request }) => {
-                const url = new URL(request.url);
-                const isOpenedParam = url.searchParams.get("isOpened");
-                const isOpened =
-                  isOpenedParam === null ? undefined : isOpenedParam === "true";
-                query.prefetch(bannersKeys.teacherBannerList(isOpened));
-                return null;
-              },
               element: <div>배너 목록</div>
             },
             { path: "write", element: <div>배너 등록</div> },

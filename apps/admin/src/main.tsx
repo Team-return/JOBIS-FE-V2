@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
 import App from "./App";
 import { JOBISDesignSystem } from "@jobis/design-system";
-import { QueryProvider, setConfig } from "@jobis/api";
+import { QueryProvider, config } from "@jobis/api";
 import { init } from "@jobis/sentry";
 
 const root = ReactDOM.createRoot(
@@ -18,11 +18,9 @@ if (SENTRY_DSN) {
   });
 }
 
-setConfig({
-  onTokenExpired: () => {
-    window.location.href = "/login";
-  }
-});
+config.onTokenExpired = () => {
+  window.location.href = "/login";
+};
 
 root.render(
   <StrictMode>
