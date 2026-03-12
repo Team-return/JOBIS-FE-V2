@@ -1,9 +1,10 @@
 import type { LoginRequest, LoginResponse } from "./types";
-import { createMutationHook } from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 
 const DOMAIN = "/users";
+const { createMutationHook } = createDomainApi(DOMAIN);
 
 export const useLogin = createMutationHook<LoginRequest, LoginResponse>({
-  domain: `${DOMAIN}/login`,
+  path: "/login",
   method: "post"
 });

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MutationOptions } from "@/QueryProvider";
-import { config } from "..";
+import { config } from "@/config";
 import axios from "axios";
 
 export const getFile = async (url: string) => {

@@ -1,41 +1,39 @@
-import type {
+﻿import type {
   CreateNoticeRequest,
   UpdateNoticeRequest,
   NoticeDetailResponse,
   NoticeListResponse
 } from "./types";
-import {
-  createQueryHook,
-  createMutationHook,
-  createIdMutationHook
-} from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { noticesKeys } from "./keys";
 
 const DOMAIN = "/notices";
+const { createQueryHook, createMutationHook, createIdMutationHook } =
+  createDomainApi(DOMAIN);
 
 export { noticesKeys };
 
 export const useCreateNotice = createMutationHook<CreateNoticeRequest, void>({
-  domain: DOMAIN,
+  path: "/",
   method: "post"
 });
 
 export const useUpdateNotice = createIdMutationHook<UpdateNoticeRequest, void>({
-  domain: DOMAIN,
+  path: "/",
   method: "patch"
 });
 
 export const useDeleteNotice = createIdMutationHook<void, void>({
-  domain: DOMAIN,
+  path: "/",
   method: "delete"
 });
 
 export const useNoticeDetail = createQueryHook<number, NoticeDetailResponse>({
-  domain: noticeId => `${DOMAIN}/${noticeId}`,
+  path: noticeId => `/${noticeId}`,
   queryKey: noticesKeys.noticeDetail
 });
 
 export const useNoticeList = createQueryHook<void, NoticeListResponse>({
-  domain: DOMAIN,
+  path: "/",
   queryKey: noticesKeys.noticeList
 });

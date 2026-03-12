@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+﻿import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   StudentMyResponse,
   UpdateStudentProfileRequest,
@@ -8,16 +8,17 @@ import type {
   ChangePwRequest
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
-import { createQueryHook, createMutationHook } from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 import { studentsKeys } from "./keys";
 
 const DOMAIN = "/students";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { studentsKeys };
 
 export const useStudentMy = createQueryHook<void, StudentMyResponse>({
-  domain: `${DOMAIN}/my`,
+  path: "/my",
   queryKey: studentsKeys.studentMy
 });
 
@@ -27,7 +28,7 @@ export const useStudentExists = (
   options?: QueryOptions<boolean>
 ) => {
   return useQuery({
-    queryKey: studentsKeys.studentExists(gcn, name),
+    queryKey: studentsKeys.studentExists({ gcn, name }),
     queryFn: async () => {
       try {
         await instance.get(`${DOMAIN}/exists`, { params: { gcn, name } });
@@ -44,7 +45,7 @@ export const useUpdateStudentProfile = createMutationHook<
   UpdateStudentProfileRequest,
   void
 >({
-  domain: `${DOMAIN}/profile`,
+  path: "/profile",
   method: "patch"
 });
 
@@ -52,7 +53,7 @@ export const useStudentSignup = createMutationHook<
   StudentSignupRequest,
   StudentSignupResponse
 >({
-  domain: DOMAIN,
+  path: "/",
   method: "post"
 });
 
@@ -60,12 +61,12 @@ export const useChangePwByEmail = createMutationHook<
   ChangePwByEmailRequest,
   void
 >({
-  domain: `${DOMAIN}/forgotten_password`,
+  path: "/forgotten_password",
   method: "patch"
 });
 
 export const useChangePw = createMutationHook<ChangePwRequest, void>({
-  domain: `${DOMAIN}/password`,
+  path: "/password",
   method: "patch"
 });
 

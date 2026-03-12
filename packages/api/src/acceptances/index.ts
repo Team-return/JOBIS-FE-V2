@@ -1,14 +1,15 @@
-import type {
+﻿import type {
   AcceptanceDetailResponse,
   UpdateFieldTrainRequest,
   UpdateContractDateRequest,
   CreateEmploymentRequest,
   DeleteAcceptanceRequest
 } from "./types";
-import { createQueryHook, createMutationHook } from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { acceptancesKeys } from "./keys";
 
 const DOMAIN = "/acceptances";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { acceptancesKeys };
 
@@ -16,7 +17,7 @@ export const useAcceptanceDetail = createQueryHook<
   number,
   AcceptanceDetailResponse
 >({
-  domain: companyId => `${DOMAIN}/${companyId}`,
+  path: companyId => `/${companyId}`,
   queryKey: acceptancesKeys.acceptanceDetail
 });
 
@@ -24,7 +25,7 @@ export const useUpdateFieldTrain = createMutationHook<
   UpdateFieldTrainRequest,
   void
 >({
-  domain: `${DOMAIN}/field-train`,
+  path: "/field-train",
   method: "patch"
 });
 
@@ -32,7 +33,7 @@ export const useUpdateContractDate = createMutationHook<
   UpdateContractDateRequest,
   void
 >({
-  domain: `${DOMAIN}/contract-date`,
+  path: "/contract-date",
   method: "patch"
 });
 
@@ -40,7 +41,7 @@ export const useCreateEmployment = createMutationHook<
   CreateEmploymentRequest,
   void
 >({
-  domain: `${DOMAIN}/employment`,
+  path: "/employment",
   method: "post"
 });
 
@@ -48,6 +49,6 @@ export const useDeleteAcceptance = createMutationHook<
   DeleteAcceptanceRequest,
   void
 >({
-  domain: DOMAIN,
+  path: "/",
   method: "delete"
 });

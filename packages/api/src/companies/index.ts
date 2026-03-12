@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   CompanyStudentListResponse,
   CompanyStudentCountResponse,
   CompanyReviewListResponse,
@@ -18,31 +18,30 @@ import type {
   CreateTeacherCompanyRequest,
   CompanyStudentList
 } from "./types";
-import {
-  createQueryHook,
-  createMutationHook,
-  createIdMutationHook
-} from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 import { useQuery } from "@tanstack/react-query";
 import { companiesKeys } from "./keys";
 
 const DOMAIN = "/companies";
+const { createQueryHook, createMutationHook, createIdMutationHook } =
+  createDomainApi(DOMAIN);
 
 export { companiesKeys };
 
-export const useCompanyStudentList = (params?: CompanyStudentList) => {
-  return createQueryHook<CompanyStudentList, CompanyStudentListResponse>({
-    domain: `${DOMAIN}/student`,
-    queryKey: () => companiesKeys.companyStudentList(params)
-  })(params);
-};
+export const useCompanyStudentList = createQueryHook<
+  CompanyStudentList,
+  CompanyStudentListResponse
+>({
+  path: "/student",
+  queryKey: companiesKeys.companyStudentList
+});
 
 export const useCompanyStudentCount = createQueryHook<
   { name?: string },
   CompanyStudentCountResponse
 >({
-  domain: `${DOMAIN}/student/count`,
+  path: "/student/count",
   queryKey: companiesKeys.companyStudentCount
 });
 
@@ -50,17 +49,17 @@ export const useCompanyReviewList = createQueryHook<
   void,
   CompanyReviewListResponse
 >({
-  domain: `${DOMAIN}/review`,
+  path: "/review",
   queryKey: companiesKeys.companyReviewList
 });
 
 export const useCompanyDetail = createQueryHook<number, CompanyDetailResponse>({
-  domain: companyId => `${DOMAIN}/${companyId}`,
+  path: companyId => `/${companyId}`,
   queryKey: companiesKeys.companyDetail
 });
 
 export const useCompanyMy = createQueryHook<void, CompanyMyResponse>({
-  domain: `${DOMAIN}/my`,
+  path: "/my",
   queryKey: companiesKeys.companyMy
 });
 
@@ -68,7 +67,7 @@ export const useUpdateCompany = createIdMutationHook<
   UpdateCompanyRequest,
   void
 >({
-  domain: DOMAIN,
+  path: "/",
   method: "patch"
 });
 
@@ -76,155 +75,89 @@ export const useCreateCompany = createMutationHook<
   CreateCompanyRequest,
   CreateCompanyResponse
 >({
-  domain: DOMAIN,
+  path: "/",
   method: "post"
 });
 
 export const useCompanyExists = createQueryHook<string, CompanyExistsResponse>({
-  domain: businessNumber => `${DOMAIN}/exists/${businessNumber}`,
+  path: businessNumber => `/exists/${businessNumber}`,
   queryKey: companiesKeys.companyExists
 });
 
 export const useUpdateMou = createMutationHook<UpdateMouRequest, void>({
-  domain: `${DOMAIN}/mou`,
+  path: "/mou",
   method: "patch"
 });
 
-export const useTeacherCompanyList = (
-  page?: number,
-  type?: string,
-  name?: string,
-  region?: string,
-  businessArea?: number
-) => {
-  return createQueryHook<
-    {
-      page?: number;
-      type?: string;
-      name?: string;
-      region?: string;
-      business_area?: number;
-    },
-    TeacherCompanyListResponse
-  >({
-    domain: `${DOMAIN}/teacher`,
-    queryKey: () =>
-      companiesKeys.teacherCompanyList(page, type, name, region, businessArea)
-  })({
-    page,
-    type,
-    name,
-    region,
-    business_area: businessArea
-  });
-};
+export const useTeacherCompanyList = createQueryHook<
+  {
+    page?: number;
+    type?: string;
+    name?: string;
+    region?: string;
+    business_area?: number;
+  },
+  TeacherCompanyListResponse
+>({
+  path: "/teacher",
+  queryKey: companiesKeys.teacherCompanyList
+});
 
-export const useTeacherCompanyCount = (
-  page?: number,
-  type?: string,
-  name?: string,
-  region?: string,
-  businessArea?: number
-) => {
-  return createQueryHook<
-    {
-      page?: number;
-      type?: string;
-      name?: string;
-      region?: string;
-      business_area?: number;
-    },
-    TeacherCompanyCountResponse
-  >({
-    domain: `${DOMAIN}/teacher/count`,
-    queryKey: () =>
-      companiesKeys.teacherCompanyCount(page, type, name, region, businessArea)
-  })({
-    page,
-    type,
-    name,
-    region,
-    business_area: businessArea
-  });
-};
+export const useTeacherCompanyCount = createQueryHook<
+  {
+    page?: number;
+    type?: string;
+    name?: string;
+    region?: string;
+    business_area?: number;
+  },
+  TeacherCompanyCountResponse
+>({
+  path: "/teacher/count",
+  queryKey: companiesKeys.teacherCompanyCount
+});
 
-export const useEmploymentCompanyList = (
-  page?: number,
-  companyName?: string,
-  companyType?: string,
-  year?: number
-) => {
-  return createQueryHook<
-    {
-      page?: number;
-      company_name?: string;
-      company_type?: string;
-      year?: number;
-    },
-    EmploymentCompanyListResponse
-  >({
-    domain: `${DOMAIN}/employment`,
-    queryKey: () =>
-      companiesKeys.employmentCompanyList(page, companyName, companyType, year)
-  })({
-    page,
-    company_name: companyName,
-    company_type: companyType,
-    year
-  });
-};
+export const useEmploymentCompanyList = createQueryHook<
+  {
+    page?: number;
+    company_name?: string;
+    company_type?: string;
+    year?: number;
+  },
+  EmploymentCompanyListResponse
+>({
+  path: "/employment",
+  queryKey: companiesKeys.employmentCompanyList
+});
 
-export const useEmploymentCompanyCount = (
-  companyName?: string,
-  companyType?: string,
-  year?: number
-) => {
-  return createQueryHook<
-    { company_name?: string; company_type?: string; year?: number },
-    EmploymentCompanyCountResponse
-  >({
-    domain: `${DOMAIN}/employment/count`,
-    queryKey: () =>
-      companiesKeys.employmentCompanyCount(companyName, companyType, year)
-  })({
-    company_name: companyName,
-    company_type: companyType,
-    year
-  });
-};
+export const useEmploymentCompanyCount = createQueryHook<
+  { company_name?: string; company_type?: string; year?: number },
+  EmploymentCompanyCountResponse
+>({
+  path: "/employment/count",
+  queryKey: companiesKeys.employmentCompanyCount
+});
 
 export const useUpdateCompanyType = createMutationHook<
   UpdateCompanyTypeRequest,
   void
 >({
-  domain: `${DOMAIN}/type`,
+  path: "/type",
   method: "patch"
 });
 
-export const useCompanyCount = (
-  type?: string,
-  name?: string,
-  region?: string,
-  businessArea?: number
-) => {
-  return createQueryHook<
-    {
-      type?: string;
-      name?: string;
-      region?: string;
-      business_area?: number;
-    },
-    CompanyCountResponse
-  >({
-    domain: `${DOMAIN}/count`,
-    queryKey: () => companiesKeys.companyCount(type, name, region, businessArea)
-  })({
-    type,
-    name,
-    region,
-    business_area: businessArea
-  });
-};
+export const useCompanyCount = createQueryHook<
+  {
+    type?: string;
+    name?: string;
+    region?: string;
+    business_area?: number;
+  },
+  CompanyCountResponse
+>({
+  path: "/count",
+  queryKey: companiesKeys.companyCount
+});
 
 export const useCompanyFileDownload = () => {
   return useQuery({
@@ -242,6 +175,6 @@ export const useCreateTeacherCompany = createMutationHook<
   CreateTeacherCompanyRequest,
   void
 >({
-  domain: `${DOMAIN}/teacher`,
+  path: "/teacher",
   method: "post"
 });

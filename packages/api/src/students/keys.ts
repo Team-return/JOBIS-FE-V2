@@ -1,4 +1,7 @@
 export const studentsKeys = {
   studentMy: () => ["student-my"],
-  studentExists: (gcn?: string, name?: string) => ["student-exists", gcn, name]
+  studentExists: (params?: { gcn?: string; name?: string }) => [
+    "student-exists",
+    params
+  ]
 } as const;

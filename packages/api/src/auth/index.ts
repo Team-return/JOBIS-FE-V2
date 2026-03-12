@@ -1,13 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest, LoginResponse } from "./types";
 import type { MutationOptions } from "@/QueryProvider";
-import { createMutationHook } from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 
 const DOMAIN = "/auth";
+const { createMutationHook } = createDomainApi(DOMAIN);
 
 export const useCompanyLogin = createMutationHook<LoginRequest, LoginResponse>({
-  domain: `${DOMAIN}/company`,
+  path: "/company",
   method: "post"
 });
 
@@ -26,6 +27,6 @@ export const useSendAuthCode = createMutationHook<
   { email: string; codeType: string },
   void
 >({
-  domain: `${DOMAIN}/code`,
+  path: "/code",
   method: "post"
 });

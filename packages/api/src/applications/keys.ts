@@ -3,40 +3,25 @@ export const applicationsKeys = {
   pass: (companyId: number) => ["pass", companyId],
   companyApplications: () => ["company-applications"],
   studentApplications: () => ["student-applications"],
-  teacherApplications: (
-    applicationStatus?: string,
-    studentName?: string,
-    recruitmentId?: number,
-    winterIntern?: boolean,
-    page?: number,
-    year?: string
-  ) => [
-    "teacher-applications",
-    applicationStatus,
-    studentName,
-    recruitmentId,
-    winterIntern,
-    page,
-    year
-  ],
-  teacherApplicationCount: (
-    applicationStatus?: string,
-    studentName?: string
-  ) => ["teacher-application-count", applicationStatus, studentName],
+  teacherApplications: (params?: {
+    application_status?: string;
+    student_name?: string;
+    recruitment_id?: number;
+    winter_intern?: boolean;
+    page?: number;
+    year?: string;
+  }) => ["teacher-applications", params],
+  teacherApplicationCount: (params?: {
+    application_status?: string;
+    student_name?: string;
+  }) => ["teacher-application-count", params],
   rejection: (applicationId: number) => ["rejection", applicationId],
-  applicationCount: (
-    applicationStatus?: string,
-    studentName?: string,
-    recruitmentId?: number,
-    winterIntern?: boolean,
-    year?: string
-  ) => [
-    "application-count",
-    applicationStatus,
-    studentName,
-    recruitmentId,
-    winterIntern,
-    year
-  ],
+  applicationCount: (params?: {
+    application_status?: string;
+    student_name?: string;
+    recruitment_id?: number;
+    winter_intern?: boolean;
+    year?: string;
+  }) => ["application-count", params],
   employment: () => ["employment"]
 } as const;

@@ -1,16 +1,16 @@
 import type { AxiosError } from "axios";
 
 interface Config {
-  baseUrl: string;
-  timeout: number;
-  staleTime: number;
-  gcTime: number;
+  readonly baseUrl: string;
+  readonly timeout: number;
+  readonly staleTime: number;
+  readonly gcTime: number;
   onServerError?: (error: AxiosError) => void;
   onTimeout?: (error: AxiosError) => void;
   onTokenExpired?: () => void;
 }
 
-export const createConfig = (): Config => ({
+export const config: Config = {
   baseUrl: import.meta.env.BASE_URL!,
   timeout: 10000,
   staleTime: 60000,
@@ -21,10 +21,4 @@ export const createConfig = (): Config => ({
   onTimeout: error => {
     console.error("서버 응답이 지연되고 있습니다.", error);
   }
-});
-
-export const config = createConfig();
-
-export const setConfig = (overrides: Partial<Config>) => {
-  Object.assign(config, overrides);
 };
