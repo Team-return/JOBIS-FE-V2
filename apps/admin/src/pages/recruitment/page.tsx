@@ -202,8 +202,8 @@ export const Recruitment = () => {
     const currentSearchValue = getParam("company-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
       updateParams({
-        company_name: debouncedSearch || undefined,
-        page: undefined
+        "company-name": debouncedSearch || undefined,
+        "page": undefined
       });
     }
   }, [debouncedSearch, updateParams, getParam]);

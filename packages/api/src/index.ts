@@ -8,7 +8,7 @@ export {
   removeCookie,
   getCookie
 } from "./instance";
-export { createQueryHook, createMutationHook } from "./create-hook";
+export { createDomainApi } from "./create-hook";
 
 export * from "./acceptances";
 export * from "./applications";

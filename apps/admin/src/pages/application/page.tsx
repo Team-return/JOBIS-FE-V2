@@ -229,14 +229,11 @@ export const Application = () => {
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
-  const { data, isLoading } = useTeacherApplications(
-    applicationStatus,
-    getParam("student-name"),
-    undefined,
-    undefined,
-    undefined,
-    yearFilter
-  );
+  const { data, isLoading } = useTeacherApplications({
+    application_status: applicationStatus,
+    student_name: getParam("student-name"),
+    year: yearFilter
+  });
 
   const { mutate: updateApplicationStatus } = useUpdateApplicationStatus();
 
@@ -333,8 +330,8 @@ export const Application = () => {
     const currentSearchValue = getParam("student-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
       updateParams({
-        studentName: debouncedSearch || undefined,
-        page: undefined
+        "student-name": debouncedSearch || undefined,
+        "page": undefined
       });
     }
   }, [debouncedSearch, updateParams, getParam]);
@@ -370,7 +367,7 @@ export const Application = () => {
                 onToggle={isOpen => setOpenDropdown(isOpen ? "status" : null)}
                 value={applicationStatus}
                 onChange={val =>
-                  updateParams({ applicationStatus: val, page: undefined })
+                  updateParams({ "application-status": val, "page": undefined })
                 }
               />
               <Dropdown

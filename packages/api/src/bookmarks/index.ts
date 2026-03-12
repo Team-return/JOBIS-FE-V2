@@ -1,13 +1,14 @@
-import type { BookmarksResponse } from "./types";
-import { createQueryHook, createMutationHook } from "@/create-hook";
+﻿import type { BookmarksResponse } from "./types";
+import { createDomainApi } from "@/create-hook";
 import { bookmarksKeys } from "./keys";
 
 const DOMAIN = "/bookmarks";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { bookmarksKeys };
 
 export const useBookmarks = createQueryHook<void, BookmarksResponse>({
-  domain: DOMAIN,
+  path: "/",
   queryKey: bookmarksKeys.bookmarks
 });
 
@@ -15,6 +16,6 @@ export const useToggleBookmark = createMutationHook<
   { recruitmentId: number },
   void
 >({
-  domain: DOMAIN,
+  path: "/",
   method: "patch"
 });

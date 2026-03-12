@@ -174,13 +174,13 @@ export const Company = () => {
     );
   };
 
-  const { data, isLoading } = useTeacherCompanyList(
-    currentPage,
-    companyType,
-    getParam("name"),
-    region,
-    businessArea ? parseInt(businessArea, 10) : undefined
-  );
+  const { data, isLoading } = useTeacherCompanyList({
+    page: currentPage,
+    type: companyType,
+    name: getParam("name"),
+    region: region,
+    business_area: businessArea ? parseInt(businessArea, 10) : undefined
+  });
 
   const { mutate: updateCompanyType } = useUpdateCompanyType();
   const { mutate: updateMou } = useUpdateMou();
@@ -266,7 +266,7 @@ export const Company = () => {
                 }
                 value={businessArea}
                 onChange={val =>
-                  updateParams({ businessArea: val, page: undefined })
+                  updateParams({ "business-area": val, "page": undefined })
                 }
               />
               <Search

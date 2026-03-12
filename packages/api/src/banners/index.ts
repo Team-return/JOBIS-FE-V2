@@ -1,35 +1,35 @@
-import type {
+﻿import type {
   CreateBannerRequest,
   BannerListResponse,
   TeacherBannerListResponse
 } from "./types";
-import { createQueryHook, createMutationHook } from "@/create-hook";
+import { createDomainApi } from "@/create-hook";
 import { bannersKeys } from "./keys";
 
 const DOMAIN = "/banners";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { bannersKeys };
 
 export const useCreateBanner = createMutationHook<CreateBannerRequest, void>({
-  domain: DOMAIN,
+  path: "/",
   method: "post"
 });
 
 export const useDeleteBanner = createMutationHook<{ bannerId: number }, void>({
-  domain: DOMAIN,
+  path: "/",
   method: "delete"
 });
 
 export const useBannerList = createQueryHook<void, BannerListResponse>({
-  domain: DOMAIN,
+  path: "/",
   queryKey: bannersKeys.bannerList
 });
 
-export const useTeacherBannerList = (isOpened?: boolean) => {
-  return createQueryHook<{ is_opended?: boolean }, TeacherBannerListResponse>({
-    domain: `${DOMAIN}/teacher`,
-    queryKey: () => bannersKeys.teacherBannerList(isOpened)
-  })({
-    is_opended: isOpened
-  });
-};
+export const useTeacherBannerList = createQueryHook<
+  { is_opened?: boolean },
+  TeacherBannerListResponse
+>({
+  path: "/teacher",
+  queryKey: params => bannersKeys.teacherBannerList(params?.is_opened)
+});

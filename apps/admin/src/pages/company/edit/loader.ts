@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
 import { redirect } from "react-router-dom";
-import { companiesKeys, query } from "@jobis/api";
+import { useCompanyDetail } from "@jobis/api";
 import { LoaderData } from "apps/admin/src/utils";
 
 export async function companyEditLoader({
@@ -12,7 +12,7 @@ export async function companyEditLoader({
     throw redirect("/company");
   }
 
-  query.prefetch(companiesKeys.companyDetail(id));
+  await useCompanyDetail.prefetch(id);
 
   return { params: id };
 }
