@@ -22,3 +22,4 @@ export * from "./Toast";
 export * from "./IconButton";
 export * from "./Table";
 export * from "./Dropdown";
+export * from "./DetailHeader";

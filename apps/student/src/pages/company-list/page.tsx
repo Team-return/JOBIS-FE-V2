@@ -12,6 +12,7 @@ import {
   Skeleton
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQueryParams, useDebounce } from "../../utils";
 import {
   useCompanyStudentList,
@@ -32,6 +33,7 @@ const CompanyCardSkeleton = () => {
 
 export const CompanyList = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const navigate = useNavigate();
 
   const currentPage = getParamAsNumber("page", 1);
   const currentName = getParam("name") || "";
@@ -115,6 +117,7 @@ export const CompanyList = () => {
                 imgUrl={company.logo_url}
                 annualSales={`연매출 ${company.take}억`}
                 bookmark={company.has_recruitment}
+                onClick={() => navigate(`/company/detail/${company.id}`)}
               />
             ))
           )}
