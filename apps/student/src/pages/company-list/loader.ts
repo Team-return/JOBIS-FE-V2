@@ -3,23 +3,32 @@ import {
   parseQueryParams,
   parseOptionalString,
   parseOptionalNumber,
+  parseEnum,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
-import { useCompanyStudentList, ListSortType } from "@jobis/api";
+import { useCompanyStudentList, type ListSortType } from "@jobis/api";
 
 export interface CompanyQuery {
   name?: string;
   page: number;
-  sort_type?: ListSortType;
+  sortType?: ListSortType;
 }
+
+const SORT_TYPES = [
+  "WORKERS_COUNT_ASC",
+  "WORKERS_COUNT_DESC",
+  "FOUNDED_AT_ASC",
+  "FOUNDED_AT_DESC",
+  "TAKE"
+] as const;
 
 const companyQueryParser: QueryParamParser<CompanyQuery> = {
   parse: (params: URLSearchParams) => {
     return {
       name: parseOptionalString(params.get("name")),
       page: parseOptionalNumber(params.get("page")) || 1,
-      sort_type: parseOptionalString(params.get("sort_type")) as ListSortType
+      sortType: parseEnum(params.get("sort-type"), SORT_TYPES)
     };
   },
   validate: data => {
@@ -35,7 +44,7 @@ export async function companyLoader({
   await useCompanyStudentList.prefetch({
     page: queryParams.page,
     name: queryParams.name,
-    sort_type: queryParams.sort_type
+    sort_type: queryParams.sortType
   });
 
   return {
