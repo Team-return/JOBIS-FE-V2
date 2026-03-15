@@ -103,35 +103,35 @@ instance.interceptors.response.use(
     if ((statusCode === 401 || statusCode === 403) && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      // try {
-      //   const refreshToken = cookie.get(REFRESH_TOKEN_KEY);
+      try {
+        const refreshToken = cookie.get(REFRESH_TOKEN_KEY);
 
-      //   // if (!refreshToken) {
-      //   //   resetToken();
-      //   //   window.location.href = "/login";
-      //   //   throw 401;
-      //   // }
+        if (!refreshToken) {
+          resetToken();
+          window.location.href = "/login";
+          throw 401;
+        }
 
-      //   const { data } = await forRefresh.put<AuthData>(
-      //     "/auth/reissue?platform-type=WEB",
-      //     null,
-      //     {
-      //       headers: {
-      //         "X-Refresh-Token": refreshToken
-      //       }
-      //     }
-      //   );
+        const { data } = await forRefresh.put<AuthData>(
+          "/auth/reissue?platform-type=WEB",
+          null,
+          {
+            headers: {
+              "X-Refresh-Token": refreshToken
+            }
+          }
+        );
 
-      //   setToken(data);
+        setToken(data);
 
-      //   originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+        originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
 
-      //   return instance(originalRequest);
-      // } catch {
-      //   resetToken();
-      //   window.location.href = "/login";
-      //   throw 401;
-      // }
+        return instance(originalRequest);
+      } catch {
+        resetToken();
+        window.location.href = "/login";
+        throw 401;
+      }
     }
 
     throw statusCode;
