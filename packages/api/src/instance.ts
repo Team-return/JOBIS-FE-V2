@@ -69,7 +69,8 @@ export const resetToken = () => {
 
 instance.interceptors.request.use(
   config => {
-    config.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyNzEiLCJpYXQiOjE3NzMzOTg1NTcsImV4cCI6MTc3MzQwMjE1NywidHlwZSI6IkFDQ0VTUyIsImF1dGhvcml0eSI6IlNUVURFTlQifQ.0WxbYzz2wGuYN6V9N3LkaNyNCAxKlUFCl_V0jZ8SFBU`;
+    const accessToken = cookie.get(ACCESS_TOKEN_KEY);
+    if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
     return config;
   },
   error => Promise.reject(error)
