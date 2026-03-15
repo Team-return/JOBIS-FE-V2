@@ -38,7 +38,7 @@ export const RecruitmentList = () => {
   const currentName = getParam("name") || "";
   const currentSort = getParam("sort-type") || "";
   const state = getParam("status") || "";
-  const years = getParam("years") || "";
+  const year = getParam("year") || "";
   const field = getParam("field") || "";
   const techStack = getParam("techStack") || "";
 
@@ -47,14 +47,14 @@ export const RecruitmentList = () => {
 
   const { data: companyCountData } = useStudentRecruitmentCount({
     name: currentName,
-    years: years ? parseInt(years, 10) : undefined,
+    years: year ? parseInt(year, 10) : undefined,
     status: state as StudentRecruitmentStatus
     // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
   });
   const { data: RecruitmentListData, isLoading } = useRecruitmentList({
     page: currentPage,
     name: currentName,
-    years: years ? parseInt(years, 10) : undefined,
+    years: year ? parseInt(year, 10) : undefined,
     status: state as StudentRecruitmentStatus,
     sort_type: currentSort as ListSortType,
     // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
@@ -127,7 +127,7 @@ export const RecruitmentList = () => {
               $width={96}
               types={undefined}
               options={recruitmentyear}
-              $defaultValue={years || ""}
+              $defaultValue={year || ""}
               onChange={value => updateParams({ year: value || undefined })}
             />
             <Dropdown
