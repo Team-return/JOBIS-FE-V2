@@ -55,12 +55,11 @@ export async function applicationLoader({
 }: LoaderFunctionArgs): Promise<LoaderData<ApplicationQuery>> {
   const queryParams = parseQueryParams(request, applicationQueryParser);
 
-  await useTeacherApplications.prefetch({
+  void useTeacherApplications.prefetch({
     application_status: queryParams.application_status,
     student_name: queryParams.student_name,
     recruitment_id: queryParams.recruitment_id,
     winter_intern: queryParams.winter_intern,
-    page: queryParams.page,
     year: queryParams.year
   });
 

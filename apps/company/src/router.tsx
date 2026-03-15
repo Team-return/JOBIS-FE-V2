@@ -1,11 +1,18 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Header } from "@jobis/design-system";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
-      element: <Header type="company" />,
+      element: (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Header type="company" />
+          <main style={{ flex: 1 }}>
+            <Outlet />
+          </main>
+        </div>
+      ),
       children: [
         {
           path: "/",

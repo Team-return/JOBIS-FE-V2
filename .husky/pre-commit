@@ -1,2 +1,2 @@
-yarn lint:fix
+yarn lint
 yarn type-check:all

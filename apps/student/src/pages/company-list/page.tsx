@@ -17,8 +17,10 @@ import { useQueryParams, useDebounce } from "../../utils";
 import {
   useCompanyStudentList,
   useCompanyStudentCount,
-  ListSortType
+  type ListSortType
 } from "@jobis/api";
+import type { LoaderData } from "../../utils";
+import type { CompanyQuery } from "./loader";
 
 // 스켈레톤
 const CompanyCardSkeleton = () => {
@@ -32,12 +34,15 @@ const CompanyCardSkeleton = () => {
 };
 
 export const CompanyList = () => {
+  const { params: initialParams } = useLoaderData() as LoaderData<CompanyQuery>;
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
   const navigate = useNavigate();
 
-  const currentPage = getParamAsNumber("page", 1);
-  const currentName = getParam("name") || "";
-  const currentSort = getParam("sort-type") || "";
+  const currentPage = getParamAsNumber("page", initialParams.page);
+  const currentName = getParam("name") ?? initialParams.name ?? "";
+  const currentSort = (getParam("sort-type") ??
+    initialParams.sortType ??
+    "") as ListSortType | "";
 
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);
