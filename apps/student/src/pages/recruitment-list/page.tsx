@@ -3,15 +3,83 @@ import {
   Container,
   Dropdown,
   Flex,
+  Grid,
   Pagination,
   RecrutementCard,
   Search,
+  Skeleton,
+  Spacer,
   Text
 } from "@jobis/design-system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebounce, useQueryParams } from "../../utils";
+import {
+  ListSortType,
+  StudentRecruitmentStatus,
+  useRecruitmentList,
+  useStudentRecruitmentCount
+} from "@jobis/api";
+
+const CompanyCardSkeleton = () => {
+  return (
+    <Flex $direction="column" $gap={12} $align="flex-start">
+      <Skeleton width={222} height={144} $radius={12} />
+      <Skeleton width={222} height={24} $radius={12} />
+      <Skeleton width={130} height={24} $radius={12} />
+      <Skeleton width={150} height={24} $radius={12} />
+    </Flex>
+  );
+};
 
 export const RecruitmentList = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+
+  const currentPage = getParamAsNumber("page", 1);
+  const currentName = getParam("name") || "";
+  const currentSort = getParam("sort-type") || "";
+  const state = getParam("status") || "";
+  const years = getParam("years") || "";
+  const field = getParam("field") || "";
+  const techStack = getParam("techStack") || "";
+
+  const [keyword, setKeyword] = useState<string>(currentName);
+  const debouncedKeyword = useDebounce(keyword, 300);
+
+  const { data: companyCountData } = useStudentRecruitmentCount({
+    name: currentName,
+    years: years ? parseInt(years, 10) : undefined,
+    status: state as StudentRecruitmentStatus
+    // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
+  });
+  const { data: RecruitmentListData, isLoading } = useRecruitmentList({
+    page: currentPage,
+    name: currentName,
+    years: years ? parseInt(years, 10) : undefined,
+    status: state as StudentRecruitmentStatus,
+    sort_type: currentSort as ListSortType,
+    // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
+  });
+
+  const recruitments = RecruitmentListData?.recruitments || [];
+
+  const sortType = [
+    { label: "기본순", value: "" },
+    { label: "매출", value: "TAKE" },
+    { label: "직원 ↓", value: "WORKERS_COUNT_DESC" },
+    { label: "직원 ↑", value: "WORKERS_COUNT_ASC" },
+    { label: "설립일 ↓", value: "FOUNDED_AT_DESC" },
+    { label: "설립일 ↑", value: "FOUNDED_AT_ASC" }
+  ];
+
+  useEffect(() => {
+    if (debouncedKeyword === currentName) return;
+
+    updateParams({
+      name: debouncedKeyword || undefined,
+      page: 1
+    });
+  }, [debouncedKeyword, currentName, updateParams]);
+
   const recruitmentState = [
     { label: "모집전", value: "모집전" },
     { label: "모집중", value: "모집중" },
@@ -21,14 +89,6 @@ export const RecruitmentList = () => {
     { label: "2026", value: "2026" },
     { label: "2025", value: "2025" },
     { label: "2024", value: "2024" }
-  ];
-  const sortType = [
-    { label: "기본순", value: "기본순" },
-    { label: "매출순", value: "매출순" },
-    { label: "직원 ↓", value: "직원-desc" },
-    { label: "직원 ↑", value: "직원-asc" },
-    { label: "공고마감 ↓", value: "공고마감-desc" },
-    { label: "공고마감 ↑", value: "공고마감-asc" }
   ];
 
   /* 더미 데이터 */
@@ -44,23 +104,8 @@ export const RecruitmentList = () => {
     { label: "SpringDataJpa", value: "SpringDataJpa" }
   ];
 
-  const companyData = Array.from({ length: 8 }, (_, index) => ({
-    id: index,
-    name: `기업 이름 ${index + 1}`,
-    description: "여기에 기업 설명이 들어갑니다.",
-    hiringJobs: "프론트엔드 엔지니어",
-    militarySupport: true,
-    recruitmentState: "모집중" as const,
-    bookmarked: false
-  }));
-
-  const companyGrid = [];
-  for (let i = 0; i < companyData.length; i += 4) {
-    companyGrid.push(companyData.slice(i, i + 4));
-  }
-
   return (
-    <Container $padding={[68, 0, 180, 0]}>
+    <Container $maxWidth={960} $padding={[68, 0, 180, 0]}>
       <Flex $direction="column" $gap={20}>
         <Flex $justify="space-between">
           <Flex>
@@ -74,26 +119,41 @@ export const RecruitmentList = () => {
               $width={96}
               types={undefined}
               options={recruitmentState}
+              $defaultValue={state || ""}
+              onChange={value => updateParams({ state: value || undefined })}
             />
             <Dropdown
               $placeholder="연도"
               $width={96}
               types={undefined}
               options={recruitmentyear}
+              $defaultValue={years || ""}
+              onChange={value => updateParams({ year: value || undefined })}
             />
             <Dropdown
               $placeholder="분야"
               $width={96}
               types={undefined}
               options={jobTypeCode}
+              $defaultValue={field || ""}
+              onChange={value => updateParams({ field: value || undefined })}
             />
             <Dropdown
               $placeholder="기술스택"
               $width={120}
               types="supportJob"
               options={keywordCode}
+              $defaultValue={techStack || ""}
+              onChange={value =>
+                updateParams({ tech_stack: value || undefined })
+              }
             />
-            <Search placeholder="검색어를 입력해 주세요." $width={291} />
+            <Search
+              placeholder="검색어를 입력해 주세요."
+              $width={291}
+              value={keyword}
+              onChange={setKeyword}
+            />
           </Flex>
         </Flex>
         <Flex $justify="flex-end">
@@ -101,41 +161,50 @@ export const RecruitmentList = () => {
             $width={70}
             types={undefined}
             $isNoneBorder={true}
-            $defaultValue="기본순"
+            $defaultValue={currentSort || ""}
+            onChange={value =>
+              updateParams({ "sort-type": value || undefined })
+            }
             options={sortType}
           />
         </Flex>
       </Flex>
+      <Box $margin={[4, 0]}></Box>
 
-      <Box $padding={[12, 0, 72, 0]}>
-        <Flex $direction="column" $gap={32}>
-          {companyGrid.map((companyRow, index) => {
+      <Grid $columns="repeat(4, 1fr)" $gap={24}>
+        {isLoading &&
+          Array.from({ length: 12 }, (_, index) => (
+            <CompanyCardSkeleton key={index} />
+          ))}
+        {!isLoading && recruitments.length === 0 ? (
+          <>
+            <Spacer />
+            <Box $margin={[50, 76.8]}>
+              <Text $size="body2">검색된 기업이 없습니다.</Text>
+            </Box>
+          </>
+        ) : (
+          recruitments.map(recruitment => {
             return (
-              <Flex $gap={24} key={index}>
-                {companyRow.map(company => {
-                  return (
-                    <RecrutementCard
-                      key={company.id}
-                      companyName={company.name}
-                      companyProfileUrl="."
-                      hiringJobs={company.hiringJobs}
-                      militarySupport={company.militarySupport}
-                      recruitmentStatus={company.recruitmentState}
-                      bookmarked={company.bookmarked}
-                    />
-                  );
-                })}
-              </Flex>
+              <RecrutementCard
+                key={recruitment.id}
+                companyName={recruitment.company_name}
+                companyProfileUrl={recruitment.company_profile_url}
+                hiringJobs={recruitment.hiring_jobs}
+                militarySupport={recruitment.military_support}
+                recruitmentStatus={recruitment.status}
+                bookmarked={recruitment.bookmarked}
+              />
             );
-          })}
-        </Flex>
-      </Box>
+          })
+        )}
+      </Grid>
       <Flex $justify="center">
         <Pagination
           start={1}
-          end={3}
+          end={companyCountData?.total_page_count || 1}
           current={currentPage}
-          onChange={setCurrentPage}
+          onChange={page => updateParams({ page: page })}
         />
       </Flex>
     </Container>

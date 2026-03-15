@@ -93,7 +93,7 @@ interface StudentRecruitment {
   military_support: boolean;
   hiring_jobs: string;
   bookmarked: boolean;
-  status: string;
+  status: "모집전" | "모집중" | "모집 종료";
   year: number;
 }
 

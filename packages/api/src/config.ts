@@ -10,7 +10,8 @@ interface Config {
 }
 
 export const config: Config = {
-  baseUrl: import.meta.env.BASE_URL!,
+  // baseUrl: import.meta.env.BASE_URL!,
+  baseUrl: "https://jobis-api-stag.dsmhs.kr",
   timeout: 10000,
   staleTime: 60000,
   gcTime: 600000,
