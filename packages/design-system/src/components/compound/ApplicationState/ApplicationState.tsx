@@ -112,7 +112,7 @@ export const ApplicationState = ({
   return (
     <Component>
       <Container>
-        <Flex $justify="space-between" $align="center">
+        <Flex $justify="space-around" $align="center">
           <Flex $gap={16} $align="center">
             <CompanyLogo src={imgUrl} />
             <Flex $direction="column">
@@ -128,7 +128,7 @@ export const ApplicationState = ({
               </Text>
             </Flex>
           </Flex>
-          <Flex $gap={12}>
+          <Flex $gap={12} $justify="flex-end" $align="center">
             <Status backgroundColor={currentStatusStyle.backgroundColor || ""}>
               <Text
                 $size="caption"

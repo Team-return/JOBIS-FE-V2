@@ -57,7 +57,7 @@ describe("Dropdown", () => {
 
   it("renders supportJob type and filters with search input", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<Dropdown options={options} types="supportJob" />);
+    renderWithTheme(<Dropdown options={options} type="supportJob" />);
 
     const trigger = screen.getByRole("button");
     await user.click(trigger);

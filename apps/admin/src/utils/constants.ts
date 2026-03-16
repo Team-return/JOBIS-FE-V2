@@ -71,6 +71,10 @@ export const YEAR_OPTIONS = Array.from(
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
+export const PHONE_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+export const NUMBER_REGEX = /^\d+$/;
 
 export const PAGE_SIZE = 5;
 export const RECRUITMENT_PAGE_SIZE = 5;

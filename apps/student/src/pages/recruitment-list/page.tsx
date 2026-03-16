@@ -117,7 +117,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="상태"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentState}
               $defaultValue={state || ""}
               onChange={value => updateParams({ state: value || undefined })}
@@ -125,7 +125,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="연도"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentyear}
               $defaultValue={year || ""}
               onChange={value => updateParams({ year: value || undefined })}
@@ -133,7 +133,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="분야"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={jobTypeCode}
               $defaultValue={field || ""}
               onChange={value => updateParams({ field: value || undefined })}
@@ -141,7 +141,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="기술스택"
               $width={120}
-              types="supportJob"
+              type="supportJob"
               options={keywordCode}
               $defaultValue={techStack || ""}
               onChange={value =>
@@ -159,7 +159,7 @@ export const RecruitmentList = () => {
         <Flex $justify="flex-end">
           <Dropdown
             $width={70}
-            types={undefined}
+            type={undefined}
             $isNoneBorder={true}
             $defaultValue={currentSort || ""}
             onChange={value =>

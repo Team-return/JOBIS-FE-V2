@@ -1,21 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest, LoginResponse } from "./types";
-import type { MutationOptions } from "@/QueryProvider";
-import { instance } from "@/instance";
+import { createDomainApi } from "@/create-hook";
 
 const DOMAIN = "/users";
+const { createMutationHook } = createDomainApi(DOMAIN);
 
-export const useLogin = (
-  options?: MutationOptions<LoginRequest, LoginResponse>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      const { data } = await instance.post<LoginResponse>(
-        `${DOMAIN}/login`,
-        request
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useLogin = createMutationHook<LoginRequest, LoginResponse>({
+  path: "/login",
+  method: "post"
+});

@@ -18,6 +18,7 @@ const InputWrapper = styled.div<Pick<Props, "$width">>`
   padding: 8px 16px;
   border: 1px solid ${({ theme }) => theme.color.grayScale[50]};
   border-radius: 8px;
+  height: 38px;
 `;
 
 const StyledInput = styled.input`

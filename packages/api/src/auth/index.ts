@@ -1,24 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest, LoginResponse } from "./types";
 import type { MutationOptions } from "@/QueryProvider";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 
 const DOMAIN = "/auth";
+const { createMutationHook } = createDomainApi(DOMAIN);
 
-export const useCompanyLogin = (
-  options?: MutationOptions<LoginRequest, LoginResponse>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      const { data } = await instance.post<LoginResponse>(
-        `${DOMAIN}/company`,
-        request
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useCompanyLogin = createMutationHook<LoginRequest, LoginResponse>({
+  path: "/company",
+  method: "post"
+});
 
 export const useAuthCodeCheck = (
   options?: MutationOptions<{ email: string; code: string }>
@@ -31,16 +23,10 @@ export const useAuthCodeCheck = (
   });
 };
 
-export const useSendAuthCode = (
-  options?: MutationOptions<{ email: string; codeType: string }>
-) => {
-  return useMutation({
-    mutationFn: async ({ email, codeType }) => {
-      await instance.post(`${DOMAIN}/code`, {
-        email,
-        auth_code_type: codeType
-      });
-    },
-    ...options
-  });
-};
+export const useSendAuthCode = createMutationHook<
+  { email: string; codeType: string },
+  void
+>({
+  path: "/code",
+  method: "post"
+});

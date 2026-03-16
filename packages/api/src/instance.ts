@@ -108,7 +108,7 @@ instance.interceptors.response.use(
 
         if (!refreshToken) {
           resetToken();
-          window.location.href = "/login";
+          config.onTokenExpired?.();
           throw 401;
         }
 
@@ -129,11 +129,11 @@ instance.interceptors.response.use(
         return instance(originalRequest);
       } catch {
         resetToken();
-        window.location.href = "/login";
+        config.onTokenExpired?.();
         throw 401;
       }
     }
 
-    throw statusCode;
+    throw statusCode ?? error;
   }
 );

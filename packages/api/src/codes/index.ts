@@ -1,43 +1,28 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import type {
+﻿import type {
   CodeListResponse,
   CreateCodeRequest,
   CreateCodeResponse
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
-import { instance } from "@/instance";
+import { createDomainApi } from "@/create-hook";
 import { codesKeys } from "./keys";
 
 const DOMAIN = "/codes";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { codesKeys };
 
-export const useCodeList = (
-  type: string,
-  keyword?: string,
-  parentCode?: number,
-  options?: QueryOptions<CodeListResponse>
-) => {
-  return useQuery({
-    queryKey: codesKeys.codeList(type, keyword, parentCode),
-    queryFn: async () => {
-      const { data } = await instance.get<CodeListResponse>(DOMAIN, {
-        params: { type, keyword, parent_code: parentCode }
-      });
-      return data;
-    },
-    ...options
-  });
-};
+export const useCodeList = createQueryHook<
+  { type: string; keyword?: string; parent_code?: number },
+  CodeListResponse
+>({
+  path: "/",
+  queryKey: codesKeys.codeList
+});
 
-export const useCreateCode = (
-  options?: MutationOptions<CreateCodeRequest, CreateCodeResponse>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      const { data } = await instance.post<CreateCodeResponse>(DOMAIN, request);
-      return data;
-    },
-    ...options
-  });
-};
+export const useCreateCode = createMutationHook<
+  CreateCodeRequest,
+  CreateCodeResponse
+>({
+  path: "/",
+  method: "post"
+});

@@ -101,13 +101,25 @@ export const Recruitment = () => {
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
+  const filteredRecruitments =
+    data?.recruitments.filter(
+      recruitment => type === undefined || recruitment.company_type === type
+    ) ?? [];
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRecruitments.length / PAGE_SIZE)
+  );
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const paginatedRecruitments = filteredRecruitments.slice(
+    startIndex,
+    endIndex
+  );
 
   const getSelectedRecruitmentIds = (): number[] => {
     return selected
-      .map(index => {
-        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.recruitments[globalIndex]?.id;
-      })
+      .map(index => paginatedRecruitments[index]?.id)
       .filter((id): id is number => id !== undefined);
   };
 
@@ -174,36 +186,24 @@ export const Recruitment = () => {
     document.body.removeChild(link);
   };
 
-  const tableRows: string[][] =
-    data?.recruitments
-      .filter(
-        recruitment => type === undefined || recruitment.company_type === type
-      )
-      .map(recruitment => [
-        RECRUITMENT_STATUS_LABEL[recruitment.status] ??
-          String(recruitment.status),
-        recruitment.company_name,
-        recruitment.hiring_jobs,
-        COMPANY_TYPE_LABEL[recruitment.company_type] ??
-          recruitment.company_type,
-        String(recruitment.total_hiring_count),
-        String(recruitment.application_requested_count),
-        String(recruitment.application_approved_count),
-        recruitment.start_date || "-",
-        recruitment.end_date || "-"
-      ]) ?? [];
-
-  const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedRows = tableRows.slice(startIndex, endIndex);
+  const tableRows: string[][] = paginatedRecruitments.map(recruitment => [
+    RECRUITMENT_STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
+    recruitment.company_name,
+    recruitment.hiring_jobs,
+    COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
+    String(recruitment.total_hiring_count),
+    String(recruitment.application_requested_count),
+    String(recruitment.application_approved_count),
+    recruitment.start_date || "-",
+    recruitment.end_date || "-"
+  ]);
 
   useEffect(() => {
     const currentSearchValue = getParam("company-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
       updateParams({
-        company_name: debouncedSearch || undefined,
-        page: undefined
+        "company-name": debouncedSearch || undefined,
+        "page": undefined
       });
     }
   }, [debouncedSearch, updateParams, getParam]);
@@ -221,7 +221,7 @@ export const Recruitment = () => {
             </Text>
             <Flex $align="center" $fit>
               <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(tableRows?.length)}
+                {isLoading ? "-" : String(filteredRecruitments.length)}
               </Text>
               <Text $size="body2" $color={theme.color.grayScale[90]}>
                 개
@@ -296,8 +296,7 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-          {data?.recruitments.length === 0 ||
-          (tableRows?.length === 0 && !isLoading) ? (
+          {filteredRecruitments.length === 0 && !isLoading ? (
             <Box $margin={[300, 474.8]}>
               <Text
                 $size="h5"
@@ -328,7 +327,7 @@ export const Recruitment = () => {
                     "모집시작일",
                     "모집종료일"
                   ]}
-                  rows={paginatedRows}
+                  rows={tableRows}
                   columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
                   checkbox
                   selectedRows={selected}

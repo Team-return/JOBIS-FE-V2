@@ -1,8 +1,7 @@
 export const codesKeys = {
-  codeList: (type: string, keyword?: string, parentCode?: number) => [
-    "code-list",
-    type,
-    keyword,
-    parentCode
-  ]
+  codeList: (params: {
+    type: string;
+    keyword?: string;
+    parent_code?: number;
+  }) => ["code-list", params]
 } as const;

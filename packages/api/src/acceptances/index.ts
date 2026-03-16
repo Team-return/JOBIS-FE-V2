@@ -1,75 +1,54 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type {
+﻿import type {
   AcceptanceDetailResponse,
   UpdateFieldTrainRequest,
   UpdateContractDateRequest,
   CreateEmploymentRequest,
   DeleteAcceptanceRequest
 } from "./types";
-import { QueryOptions, MutationOptions } from "../QueryProvider";
-import { instance } from "@/instance";
+import { createDomainApi } from "@/create-hook";
 import { acceptancesKeys } from "./keys";
 
 const DOMAIN = "/acceptances";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { acceptancesKeys };
 
-export const useAcceptanceDetail = (
-  companyId: number,
-  options?: QueryOptions<AcceptanceDetailResponse>
-) => {
-  return useQuery({
-    queryKey: acceptancesKeys.acceptanceDetail(companyId),
-    queryFn: async () => {
-      const { data } = await instance.get<AcceptanceDetailResponse>(
-        `${DOMAIN}/${companyId}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useAcceptanceDetail = createQueryHook<
+  number,
+  AcceptanceDetailResponse
+>({
+  path: companyId => `/${companyId}`,
+  queryKey: acceptancesKeys.acceptanceDetail
+});
 
-export const useUpdateFieldTrain = (
-  options: MutationOptions<UpdateFieldTrainRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/field-train`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateFieldTrain = createMutationHook<
+  UpdateFieldTrainRequest,
+  void
+>({
+  path: "/field-train",
+  method: "patch"
+});
 
-export const useUpdateContractDate = (
-  options: MutationOptions<UpdateContractDateRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/contract-date`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateContractDate = createMutationHook<
+  UpdateContractDateRequest,
+  void
+>({
+  path: "/contract-date",
+  method: "patch"
+});
 
-export const useCreateEmployment = (
-  options: MutationOptions<CreateEmploymentRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.post(`${DOMAIN}/employment`, request);
-    },
-    ...options
-  });
-};
+export const useCreateEmployment = createMutationHook<
+  CreateEmploymentRequest,
+  void
+>({
+  path: "/employment",
+  method: "post"
+});
 
-export const useDeleteAcceptance = (
-  options: MutationOptions<DeleteAcceptanceRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.delete(DOMAIN, { data: request });
-    },
-    ...options
-  });
-};
+export const useDeleteAcceptance = createMutationHook<
+  DeleteAcceptanceRequest,
+  void
+>({
+  path: "/",
+  method: "delete"
+});

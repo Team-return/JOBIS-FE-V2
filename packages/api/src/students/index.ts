@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+﻿import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   StudentMyResponse,
   UpdateStudentProfileRequest,
@@ -8,23 +8,19 @@ import type {
   ChangePwRequest
 } from "./types";
 import type { QueryOptions, MutationOptions } from "@/QueryProvider";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 import { studentsKeys } from "./keys";
 
 const DOMAIN = "/students";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { studentsKeys };
 
-export const useStudentMy = (options?: QueryOptions<StudentMyResponse>) => {
-  return useQuery({
-    queryKey: studentsKeys.studentMy(),
-    queryFn: async () => {
-      const { data } = await instance.get<StudentMyResponse>(`${DOMAIN}/my`);
-      return data;
-    },
-    ...options
-  });
-};
+export const useStudentMy = createQueryHook<void, StudentMyResponse>({
+  path: "/my",
+  queryKey: studentsKeys.studentMy
+});
 
 export const useStudentExists = (
   gcn?: string,
@@ -32,7 +28,7 @@ export const useStudentExists = (
   options?: QueryOptions<boolean>
 ) => {
   return useQuery({
-    queryKey: studentsKeys.studentExists(gcn, name),
+    queryKey: studentsKeys.studentExists({ gcn, name }),
     queryFn: async () => {
       try {
         await instance.get(`${DOMAIN}/exists`, { params: { gcn, name } });
@@ -45,51 +41,34 @@ export const useStudentExists = (
   });
 };
 
-export const useUpdateStudentProfile = (
-  options?: MutationOptions<UpdateStudentProfileRequest>
-) => {
-  return useMutation({
-    mutationFn: async (request: UpdateStudentProfileRequest) => {
-      await instance.patch(`${DOMAIN}/profile`, request);
-    },
-    ...options
-  });
-};
+export const useUpdateStudentProfile = createMutationHook<
+  UpdateStudentProfileRequest,
+  void
+>({
+  path: "/profile",
+  method: "patch"
+});
 
-export const useStudentSignup = (
-  options?: MutationOptions<StudentSignupRequest, StudentSignupResponse>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      const { data } = await instance.post<StudentSignupResponse>(
-        DOMAIN,
-        request
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useStudentSignup = createMutationHook<
+  StudentSignupRequest,
+  StudentSignupResponse
+>({
+  path: "/",
+  method: "post"
+});
 
-export const useChangePwByEmail = (
-  options?: MutationOptions<ChangePwByEmailRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/forgotten_password`, request);
-    },
-    ...options
-  });
-};
+export const useChangePwByEmail = createMutationHook<
+  ChangePwByEmailRequest,
+  void
+>({
+  path: "/forgotten_password",
+  method: "patch"
+});
 
-export const useChangePw = (options?: MutationOptions<ChangePwRequest>) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.patch(`${DOMAIN}/password`, request);
-    },
-    ...options
-  });
-};
+export const useChangePw = createMutationHook<ChangePwRequest, void>({
+  path: "/password",
+  method: "patch"
+});
 
 export const useCheckPw = (options?: MutationOptions<{ password: string }>) => {
   return useMutation({
