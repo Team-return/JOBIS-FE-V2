@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CompanyCard } from "./CompanyCard";
-import { useState } from "react";
 
 const meta: Meta<typeof CompanyCard> = {
   title: "components/compound/CompanyCard",
@@ -22,14 +21,6 @@ const meta: Meta<typeof CompanyCard> = {
       control: "text",
       description: "연매출 정보"
     },
-    bookmark: {
-      control: "boolean",
-      description: "북마크 여부"
-    },
-    onBookmarkClick: {
-      action: "onBookmarkClick",
-      description: "북마크 버튼 클릭 이벤트"
-    },
     onClick: {
       action: "onClick",
       description: "컴포넌트 클릭 이벤트"
@@ -41,18 +32,11 @@ export default meta;
 type Story = StoryObj<typeof CompanyCard>;
 
 const InteractiveCompanyCard = (args: Story["args"] = {}) => {
-  const [isBookmarked, setIsBookmarked] = useState(args.bookmark ?? false);
-
   return (
     <CompanyCard
       imgUrl={args.imgUrl!}
       companyName={args.companyName!}
       annualSales={args.annualSales!}
-      bookmark={isBookmarked}
-      onBookmarkClick={() => {
-        args.onBookmarkClick?.();
-        setIsBookmarked(prev => !prev);
-      }}
       onClick={() => args.onClick?.()}
     />
   );
@@ -63,16 +47,14 @@ export const Default: Story = {
     imgUrl:
       "https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png",
     companyName: "주식회사 비바리퍼블리카",
-    annualSales: "연매출 1,000억",
-    bookmark: false
+    annualSales: "연매출 1,000억"
   },
   render: args => <InteractiveCompanyCard {...args} />
 };
 
 export const Bookmarked: Story = {
   args: {
-    ...Default.args,
-    bookmark: true
+    ...Default.args
   },
   render: args => <InteractiveCompanyCard {...args} />
 };

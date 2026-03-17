@@ -10,8 +10,6 @@ describe("CompanyCard", () => {
       "https://jobis-store.s3.ap-northeast-2.amazonaws.com/company_logo/vivar.png",
     companyName: "주식회사 비바리퍼블리카",
     annualSales: "연매출 1,000억",
-    bookmark: false,
-    onBookmarkClick: vi.fn(),
     onClick: vi.fn()
   };
 
@@ -30,22 +28,20 @@ describe("CompanyCard", () => {
   });
 
   it("should render bookmark as unchecked when bookmark prop is false", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} bookmark={false} />);
+    renderWithTheme(<CompanyCard {...defaultProps} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
   });
 
   it("should render bookmark as checked when bookmark prop is true", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} bookmark={true} />);
+    renderWithTheme(<CompanyCard {...defaultProps} />);
     const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
     expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
   });
 
   it("should call onBookmarkClick when the bookmark button is clicked", async () => {
     const handleClick = vi.fn();
-    renderWithTheme(
-      <CompanyCard {...defaultProps} onBookmarkClick={handleClick} />
-    );
+    renderWithTheme(<CompanyCard {...defaultProps} />);
     const bookmarkButton = screen.getByRole("button", {
       name: "bookmark"
     });

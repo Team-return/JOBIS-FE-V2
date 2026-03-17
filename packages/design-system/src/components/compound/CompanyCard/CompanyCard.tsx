@@ -1,4 +1,4 @@
-import { Flex, Text, Bookmark } from "@/components";
+import { Flex, Text } from "@/components";
 import type { Props } from "./CompanyCard.types";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
@@ -15,8 +15,6 @@ export const CompanyCard = ({
   imgUrl,
   companyName,
   annualSales,
-  bookmark,
-  onBookmarkClick,
   onClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
@@ -36,7 +34,6 @@ export const CompanyCard = ({
             {annualSales}
           </Text>
         </Flex>
-        <Bookmark $checked={bookmark} onClick={onBookmarkClick} />
       </Flex>
     </Flex>
   );

@@ -86,7 +86,6 @@ export const Home = () => {
                   companyName={company.name}
                   imgUrl={company.logo_url}
                   annualSales={`연매출 ${company.take}억`}
-                  bookmark={company.has_recruitment}
                 />
               ))
             )}
@@ -116,7 +115,6 @@ export const Home = () => {
                   companyName={company.name}
                   imgUrl={company.logo_url}
                   annualSales={`연매출 ${company.take}억`}
-                  bookmark={company.has_recruitment}
                 />
               ))
             )}
