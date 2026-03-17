@@ -11,6 +11,8 @@ import {
 } from "@jobis/design-system";
 import { useQueryParams } from "../../utils";
 import { BandBanner } from "../../../../../packages/design-system/src/components/compound/BandBanner";
+import { useInterests } from "../../../../../packages/api/src/interests";
+import { useBookmarks } from "../../../../../packages/api/src/bookmarks";
 
 const CompanyCardSkeleton = () => {
   return (
@@ -34,24 +36,13 @@ export const Home = () => {
     name: currentName,
     sort_type: currentSort as ListSortType
   });
+  const companies = companyListData?.companies.slice(0, 3) || [];
 
-  const companiesData = companyListData?.companies || [];
-  const companies = companiesData.slice(0, 3);
+  const { data: interestsData } = useInterests();
+  const interests = interestsData?.recruitments.slice(0, 4) || [];
 
-  const companyData = Array.from({ length: 4 }, (_, index) => ({
-    id: index,
-    name: `기업 이름 ${index + 1}`,
-    description: "여기에 기업 설명이 들어갑니다.",
-    hiringJobs: "프론트엔드 엔지니어",
-    militarySupport: true,
-    recruitmentState: "모집중" as const,
-    bookmarked: false
-  }));
-
-  const companyGrid = [];
-  for (let i = 0; i < companyData.length; i += 4) {
-    companyGrid.push(companyData.slice(i, i + 4));
-  }
+  const { data: bookmarksData } = useBookmarks();
+  const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
@@ -126,26 +117,20 @@ export const Home = () => {
           <Text $size="h5" $weight="bold">
             👩‍💻 강용수님의 관심 분야에요
           </Text>
-          <Flex $direction="column" $gap={32}>
-            {companyGrid.map((companyRow, index) => {
-              return (
-                <Flex $gap={24} key={index}>
-                  {companyRow.map(company => {
-                    return (
-                      <RecrutementCard
-                        key={company.id}
-                        companyName={company.name}
-                        companyProfileUrl="."
-                        hiringJobs={company.hiringJobs}
-                        militarySupport={company.militarySupport}
-                        recruitmentStatus={company.recruitmentState}
-                        bookmarked={company.bookmarked}
-                      />
-                    );
-                  })}
-                </Flex>
-              );
-            })}
+          <Flex $gap={24}>
+            {interests.map(interest => (
+              <RecrutementCard
+                key={interest.id}
+                companyName={interest.company_name}
+                companyProfileUrl={interest.company_profile_url}
+                hiringJobs={interest.hiring_jobs}
+                militarySupport={interest.military_support}
+                recruitmentStatus={
+                  interest.status as "모집중" | "모집전" | "모집 종료"
+                }
+                bookmarked={interest.bookmarked}
+              />
+            ))}
           </Flex>
         </Flex>
       </Flex>
@@ -158,24 +143,24 @@ export const Home = () => {
         <Text $size="h5" $weight="bold">
           📌 내가 저장한 모집 의뢰서
         </Text>
-        <Flex $direction="column" $gap={32}>
-          {companyGrid.map((companyRow, index) => {
+        <Flex $gap={24}>
+          {bookmarks.map(bookmark => {
             return (
-              <Flex $gap={24} key={index}>
-                {companyRow.map(company => {
-                  return (
-                    <RecrutementCard
-                      key={company.id}
-                      companyName={company.name}
-                      companyProfileUrl="."
-                      hiringJobs={company.hiringJobs}
-                      militarySupport={company.militarySupport}
-                      recruitmentStatus={company.recruitmentState}
-                      bookmarked={company.bookmarked}
-                    />
-                  );
-                })}
-              </Flex>
+              <RecrutementCard
+                key={bookmark.recruitment_id}
+                companyName={bookmark.company_name}
+                companyProfileUrl={bookmark.company_logo_url}
+                hiringJobs={bookmark.hiring_job}
+                militarySupport={bookmark.military_support}
+                recruitmentStatus={
+                  bookmark.status === "DONE"
+                    ? "모집 종료"
+                    : bookmark.status === "READY"
+                      ? "모집전"
+                      : "모집중"
+                }
+                bookmarked={bookmark.bookmarked}
+              />
             );
           })}
         </Flex>
