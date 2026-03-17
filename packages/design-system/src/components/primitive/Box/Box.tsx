@@ -10,6 +10,7 @@ const Component = styled.div<Props>`
   ${({ $bg }) => $bg && `background: ${$bg};`}
   ${({ $border }) => $border && `border: ${$border};`}
   ${({ $radius }) => $radius && `border-radius: ${parseList($radius)};`}
+  ${({ $cursor }) => $cursor && `cursor: ${$cursor};`}
 `;
 
 export const Box = ({ children, ...props }: ParentProps<Props>) => {

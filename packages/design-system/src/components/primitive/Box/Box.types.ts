@@ -6,6 +6,7 @@ import type {
 } from "@/utils";
 
 export interface Props {
+  $cursor?: "pointer" | "default";
   width?: DimensionValue;
   height?: DimensionValue;
   $padding?: SpacingValue;

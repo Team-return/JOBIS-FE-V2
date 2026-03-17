@@ -3,6 +3,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
+import { Home } from "./pages/home/page";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -20,7 +21,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           index: true,
-          element: <div>메인페이지</div>
+          element: <Home />
         },
         {
           path: "/company",
