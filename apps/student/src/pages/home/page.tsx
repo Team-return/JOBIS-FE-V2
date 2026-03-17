@@ -35,7 +35,8 @@ export const Home = () => {
     sort_type: currentSort as ListSortType
   });
 
-  const companies = companyListData?.companies || [];
+  const companiesData = companyListData?.companies || [];
+  const companies = companiesData.slice(0, 3);
 
   const companyData = Array.from({ length: 4 }, (_, index) => ({
     id: index,
@@ -67,7 +68,7 @@ export const Home = () => {
           <Text $size="h5" $weight="bold">
             👀 최근 본 기업이에요
           </Text>
-          <Flex>
+          <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
                 <CompanyCardSkeleton key={index} />
@@ -96,7 +97,7 @@ export const Home = () => {
           <Text $size="h5" $weight="bold">
             🏢이런 기업은 어떠세요?
           </Text>
-          <Flex>
+          <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
                 <CompanyCardSkeleton key={index} />

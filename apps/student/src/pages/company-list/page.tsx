@@ -114,7 +114,6 @@ export const CompanyList = () => {
                 companyName={company.name}
                 imgUrl={company.logo_url}
                 annualSales={`연매출 ${company.take}억`}
-                bookmark={company.has_recruitment}
               />
             ))
           )}
