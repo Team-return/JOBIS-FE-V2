@@ -30,7 +30,10 @@ export const DetailHeader = ({
       </Flex>
       <Spacer $flex={1} />
       <MenuWrapper>
-        <KebabButton onClick={() => setShowMenu(prev => !prev)}>
+        <KebabButton
+          onClick={() => setShowMenu(prev => !prev)}
+          aria-label="more"
+        >
           <Icon icon="KebapMenu" size={24} />
         </KebabButton>
         {showMenu && (
@@ -42,7 +45,7 @@ export const DetailHeader = ({
             </MenuItem>
             <MenuItem>
               <Text $size="body3" $weight="regular" $color="#7F7F7F">
-                면접후기 조회
+                면접 후기 조회
               </Text>
             </MenuItem>
             <MenuItem>
