@@ -7,7 +7,8 @@ import {
   CompanyCard,
   Spacer,
   Skeleton,
-  RecrutementCard
+  RecrutementCard,
+  ListSection
 } from "@jobis/design-system";
 import { useQueryParams } from "../../utils";
 import { BandBanner } from "../../../../../packages/design-system/src/components/compound/BandBanner";
@@ -56,9 +57,12 @@ export const Home = () => {
       />
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
-          <Text $size="h5" $weight="bold">
-            👀 최근 본 기업이에요
-          </Text>
+          <Flex $gap={12} $align="center">
+            <Text $size="h5" $weight="bold">
+              👀 최근 본 기업이에요
+            </Text>
+            <ListSection onClickViewAll={() => {}} />
+          </Flex>
           <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
@@ -85,9 +89,12 @@ export const Home = () => {
         </Flex>
 
         <Flex $direction="column" $gap={16}>
-          <Text $size="h5" $weight="bold">
-            🏢이런 기업은 어떠세요?
-          </Text>
+          <Flex $gap={12} $align="center">
+            <Text $size="h5" $weight="bold">
+              🏢이런 기업은 어떠세요?
+            </Text>
+            <ListSection onClickViewAll={() => {}} />
+          </Flex>
           <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
@@ -114,9 +121,12 @@ export const Home = () => {
         </Flex>
 
         <Flex $direction="column" $gap={16}>
-          <Text $size="h5" $weight="bold">
-            👩‍💻 강용수님의 관심 분야에요
-          </Text>
+          <Flex $gap={12} $align="center">
+            <Text $size="h5" $weight="bold">
+              👩‍💻 강용수님의 관심 분야에요
+            </Text>
+            <ListSection onClickViewAll={() => {}} />
+          </Flex>
           <Flex $gap={24}>
             {interests.map(interest => (
               <RecrutementCard
@@ -140,9 +150,12 @@ export const Home = () => {
       </Box>
 
       <Flex $direction="column" $gap={16}>
-        <Text $size="h5" $weight="bold">
-          📌 내가 저장한 모집 의뢰서
-        </Text>
+        <Flex $gap={12} $align="center">
+          <Text $size="h5" $weight="bold">
+            📌 내가 저장한 모집 의뢰서
+          </Text>
+          <ListSection onClickViewAll={() => {}} />
+        </Flex>
         <Flex $gap={24}>
           {bookmarks.map(bookmark => {
             return (
