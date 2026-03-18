@@ -24,7 +24,7 @@ export const DetailHeader = ({
             {title}
           </Text>
           <Text $size="body2" $weight="medium" $color="#7f7f7f">
-            {businessNumber}
+            {`사업자 번호 : ${businessNumber}`}
           </Text>
         </Flex>
       </Flex>

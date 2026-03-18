@@ -53,6 +53,7 @@ const TableContainer = styled(Box)`
 const Row = styled(Flex)`
   width: 100%;
   min-height: 44px;
+  height: auto;
   border-bottom: 1px solid ${({ theme }) => theme.color.grayScale[50]};
   &:last-of-type {
     border-bottom: none;
@@ -60,11 +61,13 @@ const Row = styled(Flex)`
 `;
 
 const LabelCell = styled(Flex)`
+  align-self: stretch;
+  justify-content: center;
   align-items: center;
   padding: 12px;
 
   width: 200px;
-  height: 100%;
+  min-height: 44px;
 
   background: rgba(19, 92, 157, 0.08);
   border-right: 1px solid ${({ theme }) => theme.color.grayScale[50]};
@@ -74,5 +77,6 @@ const LabelCell = styled(Flex)`
 const ValueCell = styled(Flex)`
   width: 760px;
   min-height: 44px;
+  padding: 12px 0;
   padding-left: 40px;
 `;
