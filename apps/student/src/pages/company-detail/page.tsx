@@ -51,6 +51,7 @@ export const CompanyDetail = () => {
 
   return (
     <Container $maxWidth={960}>
+      <Box height={56} />
       <Flex $direction="column" $gap={56}>
         <Flex $direction="row" $justify="space-between" $align="center">
           <DetailHeader
