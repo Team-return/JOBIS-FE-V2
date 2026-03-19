@@ -23,7 +23,16 @@ const getAttachmentName = (fileUrl?: string) => {
   if (!fileUrl) return "-";
 
   const path = fileUrl.split("?")[0] ?? "";
-  return decodeURIComponent(path.split("/").pop()?.split(".")?.[0] || fileUrl);
+
+  let fileName = path.split("/").pop() ?? "";
+
+  const lastDotIndex = fileName.lastIndexOf(".");
+
+  if (lastDotIndex > 0) {
+    fileName = fileName.substring(0, lastDotIndex);
+  }
+
+  return decodeURIComponent(fileName || "-");
 };
 
 export const CompanyDetail = () => {
@@ -56,14 +65,6 @@ export const CompanyDetail = () => {
             {
               label: "대표",
               value: data?.representative_name || "-",
-              itemType: "text"
-            },
-            {
-              label: "직원 수",
-              value:
-                data?.worker_number === undefined
-                  ? "-"
-                  : `${data.worker_number}명`,
               itemType: "text"
             },
             {

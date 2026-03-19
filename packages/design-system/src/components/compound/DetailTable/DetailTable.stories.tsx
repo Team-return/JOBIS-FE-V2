@@ -33,12 +33,13 @@ export const Default: Story = {
         itemType: "text"
       },
       { label: "이메일", value: "mittoao205@gmail.com", itemType: "text" },
-      { label: "설립일", value: "2006-10-21", itemType: "text" },
+      { label: "설립일", value: "2006.10.21", itemType: "text" },
+      { label: "직원수", value: "50명", itemType: "text" },
       { label: "연매출", value: "10억", itemType: "text" },
       { label: "사업분야", value: "IT", itemType: "text" },
       {
         label: "첨부파일",
-        value: "2023 사업계획서.pdf",
+        value: "2023 사업계획서",
         itemType: "file",
         fileUrl: "https://example.com/사업자등록증.pdf"
       }
