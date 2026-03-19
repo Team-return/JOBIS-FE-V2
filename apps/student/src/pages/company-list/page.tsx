@@ -12,6 +12,7 @@ import {
   Skeleton
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useQueryParams, useDebounce } from "../../utils";
 import {
