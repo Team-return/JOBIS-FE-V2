@@ -3,6 +3,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
+import { CompanyDetail } from "./pages/company-detail";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -32,7 +33,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/:companyId",
-              element: <div>기업 상세</div>
+              element: <CompanyDetail />
             }
           ]
         },
