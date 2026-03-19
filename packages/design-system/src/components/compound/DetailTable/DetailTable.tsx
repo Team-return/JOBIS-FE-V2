@@ -36,7 +36,6 @@ export const DetailTable = ({ items }: DetailTableProps) => {
           </Row>
         ))}
       </TableContainer>
-      <Box height={516} />
     </>
   );
 };
