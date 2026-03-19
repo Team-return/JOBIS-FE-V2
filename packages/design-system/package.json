@@ -19,7 +19,6 @@
     "test:coverage": "vitest --run --coverage",
     "test:coverage:ui": "vitest --run --coverage --ui",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit",
     "generate-icons": "svgr ./assets/icons --out-dir ./src/icons --config-file ./svgr.config.mjs --no-index"
   },
   "dependencies": {

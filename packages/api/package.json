@@ -11,8 +11,7 @@
   },
   "scripts": {
     "build": "vite build && tsc -b --force",
-    "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "lint": "eslint ."
   },
   "packageManager": "yarn@4.9.2",
   "dependencies": {

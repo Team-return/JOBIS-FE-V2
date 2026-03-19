@@ -53,7 +53,14 @@ export async function recruitmentLoader({
 }: LoaderFunctionArgs): Promise<LoaderData<RecruitmentQuery>> {
   const queryParams = parseQueryParams(request, recruitmentQueryParser);
 
-  await useTeacherRecruitmentList.prefetch(queryParams);
+  void useTeacherRecruitmentList.prefetch({
+    company_name: queryParams.company_name,
+    year: queryParams.year,
+    status: queryParams.status,
+    start: queryParams.start,
+    end: queryParams.end,
+    winter_intern: queryParams.winter_intern
+  });
 
   return {
     params: queryParams
