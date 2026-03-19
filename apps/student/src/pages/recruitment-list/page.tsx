@@ -120,7 +120,6 @@ export const RecruitmentList = () => {
                       companyProfileUrl="."
                       hiringJobs={company.hiringJobs}
                       militarySupport={company.militarySupport}
-                      recruitmentStatus={company.recruitmentState}
                       bookmarked={company.bookmarked}
                     />
                   );

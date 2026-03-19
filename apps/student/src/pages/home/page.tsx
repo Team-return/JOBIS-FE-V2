@@ -135,9 +135,6 @@ export const Home = () => {
                 companyProfileUrl={interest.company_profile_url}
                 hiringJobs={interest.hiring_jobs}
                 militarySupport={interest.military_support}
-                recruitmentStatus={
-                  interest.status as "모집중" | "모집전" | "모집 종료"
-                }
                 bookmarked={interest.bookmarked}
               />
             ))}
@@ -165,13 +162,6 @@ export const Home = () => {
                 companyProfileUrl={bookmark.company_logo_url}
                 hiringJobs={bookmark.hiring_job}
                 militarySupport={bookmark.military_support}
-                recruitmentStatus={
-                  bookmark.status === "DONE"
-                    ? "모집 종료"
-                    : bookmark.status === "READY"
-                      ? "모집전"
-                      : "모집중"
-                }
                 bookmarked={bookmark.bookmarked}
               />
             );
