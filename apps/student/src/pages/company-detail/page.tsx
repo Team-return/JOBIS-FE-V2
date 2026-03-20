@@ -6,7 +6,8 @@ import {
   DetailTable,
   Box
 } from "@jobis/design-system";
-import { useParams } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
+import { LoaderData } from "apps/student/src/utils";
 
 const formatBusinessNumber = (businessNumber?: string) => {
   if (!businessNumber) return "-";
@@ -36,10 +37,9 @@ const getAttachmentName = (fileUrl?: string) => {
 };
 
 export const CompanyDetail = () => {
-  const { Id } = useParams();
-  const companyId = Number(Id);
+  const { params: companyId } = useLoaderData() as LoaderData<number>;
 
-  const { data, isLoading, isError } = useCompanyDetail(companyId || 0);
+  const { data, isLoading, isError } = useCompanyDetail(companyId);
 
   const firstAttachment = data?.attachments?.[0];
 

@@ -4,6 +4,7 @@ import { companyLoader } from "./pages/company-list/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { CompanyDetail } from "./pages/company-detail";
+import { companyDetailLoader } from "./pages/company-detail/loader";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -33,6 +34,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/:companyId",
+              loader: companyDetailLoader,
               element: <CompanyDetail />
             }
           ]
