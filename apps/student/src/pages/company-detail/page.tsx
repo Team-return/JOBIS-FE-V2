@@ -36,10 +36,10 @@ const getAttachmentName = (fileUrl?: string) => {
 };
 
 export const CompanyDetail = () => {
-  const { companyId } = useParams();
-  const CompanyId = Number(companyId);
+  const { Id } = useParams();
+  const companyId = Number(Id);
 
-  const { data, isLoading, isError } = useCompanyDetail(CompanyId || 0);
+  const { data, isLoading, isError } = useCompanyDetail(companyId || 0);
 
   const firstAttachment = data?.attachments?.[0];
 
