@@ -113,7 +113,8 @@ export const CompanyList = () => {
                 key={company.id}
                 companyName={company.name}
                 imgUrl={company.logo_url}
-                annualSales={`연매출 ${company.take}억`}
+                annualSales={company.take}
+                hasRecruitment={company.has_recruitment}
               />
             ))
           )}

@@ -11,16 +11,12 @@ const Img = styled.img`
   object-fit: fill;
 `;
 
-const Clip = styled.div<Pick<Props, "recruitmentStatus">>`
+const Clip = styled.div<{ $boolean: boolean }>`
   padding: 4px 8px;
   height: 18px;
   border: 1px solid
-    ${({ theme, recruitmentStatus }) =>
-      recruitmentStatus === "모집중"
-        ? theme.color.primary[20]
-        : recruitmentStatus === "모집 종료"
-          ? theme.color.subColor.red[20]
-          : theme.color.grayScale[60]};
+    ${({ theme, $boolean }) =>
+      $boolean ? theme.color.primary[20] : theme.color.grayScale[60]};
   border-radius: 18px;
   display: flex;
   justify-content: center;
@@ -31,7 +27,7 @@ export const CompanyCard = ({
   imgUrl,
   companyName,
   annualSales,
-  recruitmentStatus,
+  hasRecruitment,
   onClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
@@ -40,18 +36,39 @@ export const CompanyCard = ({
       <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>
-          <Text $size="h6" $weight="regular">
-            {companyName}
-          </Text>
-          {recruitmentStatus && <Clip recruitmentStatus={recruitmentStatus} />}
-          {annualSales && (
-            <Text
-              $size="body3"
-              $weight="regular"
-              $color={theme.color.grayScale[60]}
-            >
-              {annualSales}
-            </Text>
+          {annualSales ? (
+            <>
+              <Flex $direction="row" $justify="space-between">
+                <Text $size="h6" $weight="regular">
+                  {companyName}
+                </Text>
+                <Clip $boolean={hasRecruitment}>
+                  <Text $span={true} $size="caption">
+                    {hasRecruitment ? "모집중" : "모집 종료"}
+                  </Text>
+                </Clip>
+              </Flex>
+              <Text
+                $size="body3"
+                $weight="regular"
+                $color={theme.color.grayScale[60]}
+              >
+                {`연매출 ${annualSales.toString()}억`}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Flex $direction="row">
+                <Clip $boolean={hasRecruitment}>
+                  <Text $span $size="caption">
+                    {hasRecruitment ? "모집중" : "모집 종료"}
+                  </Text>
+                </Clip>
+              </Flex>
+              <Text $span={true} $size="h6" $weight="regular">
+                {companyName}
+              </Text>
+            </>
           )}
         </Flex>
       </Flex>
