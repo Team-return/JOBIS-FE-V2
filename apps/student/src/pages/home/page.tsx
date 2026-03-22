@@ -12,7 +12,6 @@ import {
 } from "@jobis/design-system";
 import { useQueryParams } from "../../utils";
 import { BandBanner } from "../../../../../packages/design-system/src/components/compound/BandBanner";
-import { useInterests } from "../../../../../packages/api/src/interests";
 import { useBookmarks } from "../../../../../packages/api/src/bookmarks";
 
 const CompanyCardSkeleton = () => {
@@ -38,9 +37,6 @@ export const Home = () => {
     sort_type: currentSort as ListSortType
   });
   const companies = companyListData?.companies.slice(0, 3) || [];
-
-  const { data: interestsData } = useInterests();
-  const interests = interestsData?.recruitments.slice(0, 4) || [];
 
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
@@ -118,27 +114,6 @@ export const Home = () => {
                 />
               ))
             )}
-          </Flex>
-        </Flex>
-
-        <Flex $direction="column" $gap={16}>
-          <Flex $gap={12} $align="center">
-            <Text $size="h5" $weight="bold">
-              👩‍💻 강용수님의 관심 분야에요
-            </Text>
-            <ListSection onClickViewAll={() => {}} />
-          </Flex>
-          <Flex $gap={24}>
-            {interests.map(interest => (
-              <RecrutementCard
-                key={interest.id}
-                companyName={interest.company_name}
-                companyProfileUrl={interest.company_profile_url}
-                hiringJobs={interest.hiring_jobs}
-                militarySupport={interest.military_support}
-                bookmarked={interest.bookmarked}
-              />
-            ))}
           </Flex>
         </Flex>
       </Flex>
