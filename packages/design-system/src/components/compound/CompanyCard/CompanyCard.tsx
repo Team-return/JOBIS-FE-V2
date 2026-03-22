@@ -43,7 +43,15 @@ export const CompanyCard = ({
                   {companyName}
                 </Text>
                 <Clip $boolean={hasRecruitment}>
-                  <Text $span={true} $size="caption">
+                  <Text
+                    $span
+                    $size="caption"
+                    $color={
+                      hasRecruitment
+                        ? theme.color.primary[20]
+                        : theme.color.grayScale[80]
+                    }
+                  >
                     {hasRecruitment ? "모집중" : "모집 종료"}
                   </Text>
                 </Clip>
@@ -60,7 +68,15 @@ export const CompanyCard = ({
             <>
               <Flex $direction="row">
                 <Clip $boolean={hasRecruitment}>
-                  <Text $span $size="caption">
+                  <Text
+                    $span
+                    $size="caption"
+                    $color={
+                      hasRecruitment
+                        ? theme.color.primary[20]
+                        : theme.color.grayScale[80]
+                    }
+                  >
                     {hasRecruitment ? "모집중" : "모집 종료"}
                   </Text>
                 </Clip>
