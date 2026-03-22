@@ -1,7 +1,7 @@
 export interface Props {
   imgUrl: string;
   companyName: string;
-  annualSales?: number;
+  annualSales?: string;
   hasRecruitment: boolean;
   onClick?: () => void;
 }

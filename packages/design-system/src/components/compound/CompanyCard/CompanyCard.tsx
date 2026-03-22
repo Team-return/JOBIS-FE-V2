@@ -61,7 +61,7 @@ export const CompanyCard = ({
                 $weight="regular"
                 $color={theme.color.grayScale[60]}
               >
-                {`연매출 ${annualSales.toString()}억`}
+                {annualSales}
               </Text>
             </>
           ) : (

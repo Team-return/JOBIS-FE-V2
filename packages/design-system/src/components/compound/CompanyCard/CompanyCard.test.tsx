@@ -9,7 +9,7 @@ describe("CompanyCard", () => {
     imgUrl:
       "https://jobis-store.s3.ap-northeast-2.amazonaws.com/company_logo/vivar.png",
     companyName: "주식회사 비바리퍼블리카",
-    annualSales: 1000,
+    annualSales: "연매출 1000억",
     hasRecruitment: true,
     onClick: vi.fn()
   };

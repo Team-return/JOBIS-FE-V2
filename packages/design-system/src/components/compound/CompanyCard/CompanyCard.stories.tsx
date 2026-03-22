@@ -52,7 +52,7 @@ export const Default: Story = {
     imgUrl:
       "https://cdn.inflearn.com/public/files/pages/4f05016d-8cb1-4d17-adb1-36a316c60e62/white-logo.png",
     companyName: "주식회사 비바리퍼블리카",
-    annualSales: 1000,
+    annualSales: "연매출 1000억",
     hasRecruitment: true
   },
   render: args => <InteractiveCompanyCard {...args} />

@@ -118,7 +118,7 @@ export const Home = () => {
                   key={company.id}
                   companyName={company.name}
                   imgUrl={company.logo_url}
-                  annualSales={company.take}
+                  annualSales={`연매출 ${company.take}억`}
                   hasRecruitment={company.has_recruitment}
                 />
               ))

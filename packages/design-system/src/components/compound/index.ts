@@ -23,3 +23,5 @@ export * from "./IconButton";
 export * from "./Table";
 export * from "./Dropdown";
 export * from "./ListSection";
+export * from "./DetailHeader";
+export * from "./DetailTable";

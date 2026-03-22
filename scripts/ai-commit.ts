@@ -6,7 +6,6 @@
 
 import process from "process";
 import prompts from "prompts";
-import { execa } from "execa";
 import {
   logger,
   GITMOJI_MAP,
@@ -19,16 +18,6 @@ if (!process.env.GEMINI_API_KEY) {
   logger.error("GEMINI_API_KEY 환경변수가 설정되지 않았습니다");
   process.exit(1);
 }
-
-const runLintChecks = async () => {
-  try {
-    await execa("yarn", ["lint:fix"], { stdio: "inherit" });
-    return true;
-  } catch {
-    logger.error("lint 오류를 해결해주세요.");
-    return false;
-  }
-};
 
 const detectScope = (files: string[]) => {
   const scopes = detectScopesFromFiles(files);
@@ -94,8 +83,6 @@ const runAICommit = async () => {
     logger.error("스테이징된 파일이 없습니다");
     return;
   }
-
-  if (!(await runLintChecks())) return;
 
   const scope = detectScope(stagedFiles);
   const scopeName = SCOPE_MAP[scope] || scope;
