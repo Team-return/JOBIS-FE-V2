@@ -8,6 +8,17 @@ export interface CompanyStudent {
   has_recruitment: boolean;
 }
 
+export interface CompanyStudentRecent {
+  company_id: number;
+  company_name: string;
+  is_recruiting: boolean;
+  company_logo_url: string;
+}
+
+export interface CompanyStudentRecentListResponse {
+  companies: CompanyStudentRecent[];
+}
+
 export interface CompanyStudentList {
   page?: number;
   name?: string;

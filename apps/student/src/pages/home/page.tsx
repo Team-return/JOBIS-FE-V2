@@ -1,4 +1,8 @@
-import { ListSortType, useCompanyStudentList } from "@jobis/api";
+import {
+  ListSortType,
+  useCompanyStudentList,
+  useCompanyStudentRecentList
+} from "@jobis/api";
 import {
   Box,
   Container,
@@ -38,6 +42,11 @@ export const Home = () => {
   });
   const companies = companyListData?.companies.slice(0, 3) || [];
 
+  const { data: companyStudentRecentListData } = useCompanyStudentRecentList();
+  const recentCompanies =
+    companyStudentRecentListData?.companies.slice(0, 3) || [];
+  console.log(companyStudentRecentListData);
+
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
 
@@ -64,7 +73,7 @@ export const Home = () => {
               Array.from({ length: 3 }, (_, index) => (
                 <CompanyCardSkeleton key={index} />
               ))}
-            {!isLoading && companies.length === 0 ? (
+            {!isLoading && recentCompanies.length === 0 ? (
               <>
                 <Spacer />
                 <Box $margin={[100, 400, 100, 0]}>
@@ -72,12 +81,12 @@ export const Home = () => {
                 </Box>
               </>
             ) : (
-              companies.map(company => (
+              recentCompanies.map(company => (
                 <CompanyCard
-                  key={company.id}
-                  companyName={company.name}
-                  imgUrl={company.logo_url}
-                  hasRecruitment={company.has_recruitment}
+                  key={company.company_id}
+                  companyName={company.company_name}
+                  imgUrl={company.company_logo_url}
+                  hasRecruitment={company.is_recruiting}
                 />
               ))
             )}
@@ -119,7 +128,7 @@ export const Home = () => {
       </Flex>
 
       <Box $margin={[120, 0]} $cursor="pointer">
-        <BandBanner />
+        <BandBanner onClick={() => {}} />
       </Box>
 
       <Flex $direction="column" $gap={16}>
