@@ -15,7 +15,7 @@ import {
   ListSection
 } from "@jobis/design-system";
 import { useQueryParams } from "../../utils";
-import { BandBanner } from "../../../../../packages/design-system/src/components/compound/BandBanner";
+import { EmploymentRateBanner } from "../../../../../packages/design-system/src/components/compound/EmploymentRateBanner";
 import { useBookmarks } from "../../../../../packages/api/src/bookmarks";
 
 const CompanyCardSkeleton = () => {
@@ -128,7 +128,7 @@ export const Home = () => {
       </Flex>
 
       <Box $margin={[120, 0]} $cursor="pointer">
-        <BandBanner onClick={() => {}} />
+        <EmploymentRateBanner onClick={() => {}} />
       </Box>
 
       <Flex $direction="column" $gap={16}>

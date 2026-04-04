@@ -1,16 +1,16 @@
 import { screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { renderWithTheme } from "@/utils/render";
-import { BandBanner } from "./BandBanner";
-import type { Props } from "./BandBanner.type";
+import { EmploymentRateBanner } from "./EmploymentRateBanner";
+import type { Props } from "./EmploymentRateBanner.type";
 
-describe("BandBanner", () => {
+describe("EmploymentRateBanner", () => {
   const props: Props = {
     onClick: vi.fn()
   };
 
   it("renders banner image with accessible alt text", () => {
-    renderWithTheme(<BandBanner {...props} />);
+    renderWithTheme(<EmploymentRateBanner {...props} />);
 
     expect(
       screen.getByRole("img", { name: "배너 배경 이미지" })

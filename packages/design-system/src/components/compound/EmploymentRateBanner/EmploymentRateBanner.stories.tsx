@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import { BandBanner } from "./BandBanner";
+import { EmploymentRateBanner } from "./EmploymentRateBanner";
 
-const meta: Meta<typeof BandBanner> = {
-  title: "components/compound/BandBanner",
-  component: BandBanner,
+const meta: Meta<typeof EmploymentRateBanner> = {
+  title: "components/compound/EmploymentRateBanner",
+  component: EmploymentRateBanner,
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen"
@@ -21,7 +21,7 @@ const meta: Meta<typeof BandBanner> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BandBanner>;
+type Story = StoryObj<typeof EmploymentRateBanner>;
 
 export const Default: Story = {
   play: async ({ args, canvasElement }) => {
