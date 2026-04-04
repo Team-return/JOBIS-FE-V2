@@ -45,7 +45,6 @@ export const Home = () => {
   const { data: companyStudentRecentListData } = useCompanyStudentRecentList();
   const recentCompanies =
     companyStudentRecentListData?.companies.slice(0, 3) || [];
-  console.log(companyStudentRecentListData);
 
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
