@@ -53,3 +53,4 @@ export { default as HeaderProfile } from "./HeaderProfile";
 export { default as Print } from "./Print";
 export { default as Speaker } from "./Speaker";
 export { default as ArrowLeft } from "./ArrowLeft";
+export { default as EmploymentRateBanner } from "./EmploymentRateBanner";

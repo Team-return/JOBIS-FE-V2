@@ -52,13 +52,15 @@ export const Home = () => {
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
       {/* 회색 배너 1개를 기본으로 두고 내용은 나중에 채우는 걸로 디자인과 이야기 됐습니다 */}
-      <Box
-        width={960}
-        height={280}
-        $bg="#E5E5E5"
-        $radius={16}
-        $margin={[0, 0, 80, 0]}
-      />
+      <div style={{ cursor: "pointer" }} onClick={() => {}}>
+        <Box
+          width={960}
+          height={280}
+          $bg="#E5E5E5"
+          $radius={16}
+          $margin={[0, 0, 80, 0]}
+        />
+      </div>
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
           <Flex $gap={12} $align="center">
@@ -126,7 +128,7 @@ export const Home = () => {
         </Flex>
       </Flex>
 
-      <Box $margin={[120, 0]} $cursor="pointer">
+      <Box $margin={[120, 0]}>
         <EmploymentRateBanner onClick={() => {}} />
       </Box>
 
