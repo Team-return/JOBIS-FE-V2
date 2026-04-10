@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type {
+﻿import type {
   ReviewDetailResponse,
   CreateReviewRequest,
   ReviewQuestionsResponse,
@@ -9,107 +8,55 @@ import type {
   ReviewCountQueryParams,
   MyReviewsResponse
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
-import { instance } from "@/instance";
+import { createDomainApi } from "@/create-hook";
 import { reviewsKeys } from "./keys";
 
 const DOMAIN = "/reviews";
+const { createQueryHook, createMutationHook, createIdMutationHook } =
+  createDomainApi(DOMAIN);
 
 export { reviewsKeys };
 
-export const useReviewDetail = (
-  reviewId: string,
-  options?: QueryOptions<ReviewDetailResponse>
-) => {
-  return useQuery({
-    queryKey: reviewsKeys.reviewDetail(reviewId),
-    queryFn: async () => {
-      const { data } = await instance.get<ReviewDetailResponse>(
-        `${DOMAIN}/${reviewId}`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useReviewDetail = createQueryHook<string, ReviewDetailResponse>({
+  path: reviewId => `/${reviewId}`,
+  queryKey: reviewsKeys.reviewDetail
+});
 
-export const useCreateReview = (
-  options?: MutationOptions<CreateReviewRequest>
-) => {
-  return useMutation({
-    mutationFn: async request => {
-      await instance.post(DOMAIN, request);
-    },
-    ...options
-  });
-};
+export const useCreateReview = createMutationHook<CreateReviewRequest, void>({
+  path: "/",
+  method: "post"
+});
 
-export const useReviewQuestions = (
-  options?: QueryOptions<ReviewQuestionsResponse>
-) => {
-  return useQuery({
-    queryKey: reviewsKeys.reviewQuestions(),
-    queryFn: async () => {
-      const { data } = await instance.get<ReviewQuestionsResponse>(
-        `${DOMAIN}/questions`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useReviewQuestions = createQueryHook<
+  void,
+  ReviewQuestionsResponse
+>({
+  path: "/questions",
+  queryKey: reviewsKeys.reviewQuestions
+});
 
-export const useDeleteReview = (
-  options?: MutationOptions<{ reviewId: string }>
-) => {
-  return useMutation({
-    mutationFn: async ({ reviewId }) => {
-      await instance.delete(`${DOMAIN}/${reviewId}`);
-    },
-    ...options
-  });
-};
+export const useDeleteReview = createIdMutationHook<void, void>({
+  path: "/",
+  method: "delete"
+});
 
-export const useReviewList = (
-  params?: ReviewListQueryParams,
-  options?: QueryOptions<ReviewListResponse>
-) => {
-  return useQuery({
-    queryKey: reviewsKeys.reviewList(params),
-    queryFn: async () => {
-      const { data } = await instance.get<ReviewListResponse>(DOMAIN, {
-        params
-      });
-      return data;
-    },
-    ...options
-  });
-};
+export const useReviewList = createQueryHook<
+  ReviewListQueryParams,
+  ReviewListResponse
+>({
+  path: "/",
+  queryKey: reviewsKeys.reviewList
+});
 
-export const useReviewCount = (
-  params?: ReviewCountQueryParams,
-  options?: QueryOptions<ReviewCountResponse>
-) => {
-  return useQuery({
-    queryKey: reviewsKeys.reviewCount(params),
-    queryFn: async () => {
-      const { data } = await instance.get<ReviewCountResponse>(
-        `${DOMAIN}/count`,
-        { params }
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useReviewCount = createQueryHook<
+  ReviewCountQueryParams,
+  ReviewCountResponse
+>({
+  path: "/count",
+  queryKey: reviewsKeys.reviewCount
+});
 
-export const useMyReviews = (options?: QueryOptions<MyReviewsResponse>) => {
-  return useQuery({
-    queryKey: reviewsKeys.myReviews(),
-    queryFn: async () => {
-      const { data } = await instance.get<MyReviewsResponse>(`${DOMAIN}/my`);
-      return data;
-    },
-    ...options
-  });
-};
+export const useMyReviews = createQueryHook<void, MyReviewsResponse>({
+  path: "/my",
+  queryKey: reviewsKeys.myReviews
+});

@@ -26,17 +26,6 @@ const getCurrentBranch = async () => {
   return stdout.trim();
 };
 
-const runLintChecks = async () => {
-  try {
-    await execa("yarn", ["lint", "--fix"], { stdio: "inherit" });
-    await execa("yarn", ["lint"], { stdio: "inherit" });
-    return true;
-  } catch {
-    logger.error("lint 오류를 해결해주세요.");
-    return false;
-  }
-};
-
 async function promptCommitInfo(): Promise<{
   type: string;
   comment: string;
@@ -98,8 +87,6 @@ const executeInteractiveCommit = async () => {
 
     const logBranch = currentBranch === "main" ? logger.warn : logger.info;
     logBranch(`현재 브랜치는 ${currentBranch} 입니다.`);
-
-    if (!(await runLintChecks())) return false;
 
     const stagedFiles = await git.getStagedFiles();
     if (stagedFiles.length === 0) {

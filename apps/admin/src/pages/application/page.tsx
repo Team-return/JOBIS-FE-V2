@@ -69,14 +69,23 @@ interface Attachment {
   type: AttachmentType;
 }
 
-const Attachments = ({ attachments }: { attachments: Attachment[] }) => {
+const Attachments = ({
+  id,
+  attachments,
+  isOpen,
+  setOpen
+}: {
+  id: number;
+  attachments: Attachment[];
+  isOpen: boolean;
+  setOpen: (id: number | null) => void;
+}) => {
   const { currentTheme: theme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = () => {
       if (isOpen) {
-        setIsOpen(false);
+        setOpen(null);
       }
     };
 
@@ -87,7 +96,7 @@ const Attachments = ({ attachments }: { attachments: Attachment[] }) => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, id, setOpen]);
 
   if (attachments.length === 0) return "-";
 
@@ -111,7 +120,6 @@ const Attachments = ({ attachments }: { attachments: Attachment[] }) => {
   };
 
   const firstAttachment = attachments[0];
-  const hasMultiple = attachments.length > 1;
 
   return (
     <Positioner $top={25} $position="absolute">
@@ -121,39 +129,38 @@ const Attachments = ({ attachments }: { attachments: Attachment[] }) => {
           $justify="center"
           $gap={8}
           style={{
-            cursor: hasMultiple ? "pointer" : "default",
+            cursor: "pointer",
             borderRadius: "4px",
             border: `1px solid ${theme.color.grayScale[20]}`,
             backgroundColor: theme.color.grayScale[10]
           }}
           onClick={e => {
             e.stopPropagation();
-            if (hasMultiple) setIsOpen(!isOpen);
+            setOpen(isOpen ? null : id);
           }}
         >
           <Text $size="body3" $color={theme.color.grayScale[60]}>
             {getFileName(firstAttachment.url)}
           </Text>
-          {hasMultiple && (
-            <>
-              <Text $size="body3" $color={theme.color.grayScale[60]}>
-                {`외 ${attachments.length - 1}개`}
-              </Text>
-              <Icon
-                icon={isOpen ? "ChevronUp" : "ChevronDown"}
-                size={14}
-                strokeColor={theme.color.grayScale[60]}
-              />
-            </>
+          {attachments.length > 1 && (
+            <Text $size="body3" $color={theme.color.grayScale[60]}>
+              {`외 ${attachments.length - 1}개`}
+            </Text>
           )}
+          <Icon
+            icon={isOpen ? "ChevronUp" : "ChevronDown"}
+            size={14}
+            strokeColor={theme.color.grayScale[60]}
+          />
         </Flex>
 
-        {isOpen && hasMultiple && (
+        {isOpen && (
           <Layer $level={1}>
             <Surface
               $padding={[12, 16]}
               $bg={theme.color.grayScale[10]}
               $shadow
+              $radius={4}
             >
               {attachments.map((attachment, index) => (
                 <Flex
@@ -214,20 +221,19 @@ export const Application = () => {
     initialParams.student_name || ""
   );
 
+  const [openedAttachment, setOpenedAttachment] = useState<number | null>(null);
+
   const currentPage = getParamAsNumber("page", 1);
   const applicationStatus = getParam("application-status");
   const yearFilter = getParam("year");
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
-  const { data, isLoading } = useTeacherApplications(
-    applicationStatus,
-    getParam("student-name"),
-    undefined,
-    undefined,
-    undefined,
-    yearFilter
-  );
+  const { data, isLoading } = useTeacherApplications({
+    application_status: applicationStatus,
+    student_name: getParam("student-name"),
+    year: yearFilter
+  });
 
   const { mutate: updateApplicationStatus } = useUpdateApplicationStatus();
 
@@ -304,7 +310,12 @@ export const Application = () => {
       app.company_name,
       app.created_at,
       app.attachments.length > 0 ? (
-        <Attachments attachments={app.attachments} />
+        <Attachments
+          id={app.application_id}
+          attachments={app.attachments}
+          isOpen={openedAttachment === app.application_id}
+          setOpen={setOpenedAttachment}
+        />
       ) : (
         "-"
       )
@@ -319,8 +330,8 @@ export const Application = () => {
     const currentSearchValue = getParam("student-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
       updateParams({
-        studentName: debouncedSearch || undefined,
-        page: undefined
+        "student-name": debouncedSearch || undefined,
+        "page": undefined
       });
     }
   }, [debouncedSearch, updateParams, getParam]);
@@ -356,7 +367,7 @@ export const Application = () => {
                 onToggle={isOpen => setOpenDropdown(isOpen ? "status" : null)}
                 value={applicationStatus}
                 onChange={val =>
-                  updateParams({ applicationStatus: val, page: undefined })
+                  updateParams({ "application-status": val, "page": undefined })
                 }
               />
               <Dropdown

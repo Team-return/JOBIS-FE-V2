@@ -1,11 +1,10 @@
 import { createElement, type ReactNode } from "react";
 import {
-  QueryClient,
   QueryClientProvider,
   type UseQueryOptions,
   type UseMutationOptions
 } from "@tanstack/react-query";
-import { config } from "./config";
+import { queryClient } from "./query-client";
 
 export type QueryOptions<T> = Omit<
   UseQueryOptions<T, number>,
@@ -17,33 +16,17 @@ export type MutationOptions<Request, Response = void> = Omit<
   "mutationFn"
 >;
 
-const client = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: config.staleTime,
-      gcTime: config.gcTime,
-      retry: 1
-    }
-  }
-});
-
 export const query = {
-  async prefetch(queryKey: unknown[]) {
-    const vaildQueryKey = queryKey.filter(key => key !== undefined);
-    await client.prefetchQuery({
-      queryKey: vaildQueryKey
-    });
-  },
   async invalidate(queryKey: unknown[]) {
-    const vaildQueryKey = queryKey.filter(key => key !== undefined);
-    await client.invalidateQueries({ queryKey: vaildQueryKey });
+    const validQueryKey = queryKey.filter(key => key !== undefined);
+    await queryClient.invalidateQueries({ queryKey: validQueryKey });
   },
   remove(queryKey: unknown[]) {
-    const vaildQueryKey = queryKey.filter(key => key !== undefined);
-    client.removeQueries({ queryKey: vaildQueryKey });
+    const validQueryKey = queryKey.filter(key => key !== undefined);
+    queryClient.removeQueries({ queryKey: validQueryKey });
   }
 } as const;
 
 export const QueryProvider = ({ children }: { children: ReactNode }) => {
-  return createElement(QueryClientProvider, { client }, children);
+  return createElement(QueryClientProvider, { client: queryClient }, children);
 };

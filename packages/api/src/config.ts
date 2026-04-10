@@ -1,12 +1,13 @@
 import type { AxiosError } from "axios";
 
 interface Config {
-  baseUrl: string;
-  timeout: number;
-  staleTime: number;
-  gcTime: number;
+  readonly baseUrl: string;
+  readonly timeout: number;
+  readonly staleTime: number;
+  readonly gcTime: number;
   onServerError?: (error: AxiosError) => void;
   onTimeout?: (error: AxiosError) => void;
+  onTokenExpired?: () => void;
 }
 
 export const config: Config = {

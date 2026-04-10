@@ -16,6 +16,7 @@ import { useDebounce, useQueryParams } from "../../utils";
 import {
   ListSortType,
   StudentRecruitmentStatus,
+  useCodeList,
   useRecruitmentList,
   useStudentRecruitmentCount
 } from "@jobis/api";
@@ -44,20 +45,39 @@ export const RecruitmentList = () => {
 
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);
+  
+  const { data: jobCodes } = useCodeList({ type: "JOB" });
+  const { data: techCodes } = useCodeList({ 
+    type: "TECH", 
+    parent_code: field ? parseInt(field, 10) : undefined 
+  });
+
+  const jobOptions = jobCodes?.codes.map((item) => ({
+    label: item.keyword,
+    value: item.code.toString(),
+  })) || [];
+
+  const techOptions = techCodes?.codes.map((item) => ({
+    label: item.keyword,
+    value: item.code.toString(),
+  })) || [];
 
   const { data: companyCountData } = useStudentRecruitmentCount({
     name: currentName,
     years: year ? parseInt(year, 10) : undefined,
-    status: state as StudentRecruitmentStatus
-    // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
+    status: state as StudentRecruitmentStatus,
+    job_code: field ? parseInt(field, 10) : undefined,
+    tech_code: techStack || undefined,
   });
+  
   const { data: RecruitmentListData, isLoading } = useRecruitmentList({
     page: currentPage,
     name: currentName,
     years: year ? parseInt(year, 10) : undefined,
     status: state as StudentRecruitmentStatus,
     sort_type: currentSort as ListSortType,
-    // 코드부분은 현재 서버쪽에서 어떤 문제가 있어서 지금은 이렇게 두겠습니다
+    job_code: field ? parseInt(field, 10) : undefined,
+    tech_code: techStack || undefined,
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
@@ -85,23 +105,11 @@ export const RecruitmentList = () => {
     { label: "모집중", value: "모집중" },
     { label: "모집 종료", value: "모집 종료" }
   ];
+  
   const recruitmentyear = [
     { label: "2026", value: "2026" },
     { label: "2025", value: "2025" },
     { label: "2024", value: "2024" }
-  ];
-
-  /* 더미 데이터 */
-  const jobTypeCode = [
-    { label: "프론트엔드", value: "frontend" },
-    { label: "백엔드", value: "backend" },
-    { label: "디자이너", value: "designer" }
-  ];
-  const keywordCode = [
-    { label: "SpringBoot", value: "SpringBoot" },
-    { label: "SpringSecurity", value: "SpringSecurity" },
-    { label: "SpringBatch", value: "SpringBatch" },
-    { label: "SpringDataJpa", value: "SpringDataJpa" }
   ];
 
   return (
@@ -117,7 +125,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="상태"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentState}
               $defaultValue={state || ""}
               onChange={value => updateParams({ state: value || undefined })}
@@ -125,7 +133,7 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="연도"
               $width={96}
-              types={undefined}
+              type={undefined}
               options={recruitmentyear}
               $defaultValue={year || ""}
               onChange={value => updateParams({ year: value || undefined })}
@@ -133,20 +141,18 @@ export const RecruitmentList = () => {
             <Dropdown
               $placeholder="분야"
               $width={96}
-              types={undefined}
-              options={jobTypeCode}
+              type={undefined}
+              options={jobOptions}
               $defaultValue={field || ""}
               onChange={value => updateParams({ field: value || undefined })}
             />
             <Dropdown
               $placeholder="기술스택"
               $width={120}
-              types="supportJob"
-              options={keywordCode}
-              $defaultValue={techStack || ""}
-              onChange={value =>
-                updateParams({ tech_stack: value || undefined })
-              }
+              options={techOptions}
+              type="supportJob"
+              $defaultValue={techStack}
+              onChange={value => updateParams({ techStack: value || undefined, page: 1 })}
             />
             <Search
               placeholder="검색어를 입력해 주세요."
@@ -159,7 +165,7 @@ export const RecruitmentList = () => {
         <Flex $justify="flex-end">
           <Dropdown
             $width={70}
-            types={undefined}
+            type={undefined}
             $isNoneBorder={true}
             $defaultValue={currentSort || ""}
             onChange={value =>

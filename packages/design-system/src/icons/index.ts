@@ -51,3 +51,5 @@ export { default as Refresh } from "./Refresh";
 export { default as LogoWithText } from "./LogoWithText";
 export { default as HeaderProfile } from "./HeaderProfile";
 export { default as Print } from "./Print";
+export { default as Speaker } from "./Speaker";
+export { default as ArrowLeft } from "./ArrowLeft";

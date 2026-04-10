@@ -1,49 +1,40 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+﻿import { useMutation } from "@tanstack/react-query";
 import type {
   NotificationListResponse,
   NotificationTopicResponse
 } from "./types";
-import type { QueryOptions, MutationOptions } from "@/QueryProvider";
+import type { MutationOptions } from "@/QueryProvider";
+import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
 import { notificationsKeys } from "./keys";
 
 const DOMAIN = "/notifications";
+const { createQueryHook, createMutationHook } = createDomainApi(DOMAIN);
 
 export { notificationsKeys };
 
-export const useNotificationList = (
-  isNew?: boolean,
-  options?: QueryOptions<NotificationListResponse>
-) => {
-  return useQuery({
-    queryKey: notificationsKeys.notificationList(isNew),
-    queryFn: async () => {
-      const { data } = await instance.get<NotificationListResponse>(DOMAIN, {
-        params: { is_new: isNew }
-      });
-      return data;
-    },
-    ...options
-  });
-};
+export const useNotificationList = createQueryHook<
+  { is_new?: boolean },
+  NotificationListResponse
+>({
+  path: "/",
+  queryKey: params => notificationsKeys.notificationList(params?.is_new)
+});
 
-export const useReadNotification = (
-  options?: MutationOptions<{ notificationId: number }>
-) => {
-  return useMutation({
-    mutationFn: async ({ notificationId }) => {
-      await instance.patch(`${DOMAIN}/${notificationId}`);
-    },
-    ...options
-  });
-};
+export const useReadNotification = createMutationHook<
+  { notificationId: number },
+  void
+>({
+  path: "/",
+  method: "patch"
+});
 
 export const useToggleNotificationTopic = (
   options?: MutationOptions<{ topic: string }>
 ) => {
   return useMutation({
     mutationFn: async ({ topic }) => {
-      await instance.patch(`${DOMAIN}/topic`, {
+      await instance.patch(`${DOMAIN}/topic`, undefined, {
         params: { topic }
       });
     },
@@ -51,28 +42,15 @@ export const useToggleNotificationTopic = (
   });
 };
 
-export const useToggleAllNotificationTopics = (
-  options?: MutationOptions<void>
-) => {
-  return useMutation({
-    mutationFn: async () => {
-      await instance.patch(`${DOMAIN}/topics`);
-    },
-    ...options
-  });
-};
+export const useToggleAllNotificationTopics = createMutationHook<void, void>({
+  path: "/topics",
+  method: "patch"
+});
 
-export const useNotificationTopicStatus = (
-  options?: QueryOptions<NotificationTopicResponse>
-) => {
-  return useQuery({
-    queryKey: notificationsKeys.notificationTopicStatus(),
-    queryFn: async () => {
-      const { data } = await instance.get<NotificationTopicResponse>(
-        `${DOMAIN}/topic`
-      );
-      return data;
-    },
-    ...options
-  });
-};
+export const useNotificationTopicStatus = createQueryHook<
+  void,
+  NotificationTopicResponse
+>({
+  path: "/topic",
+  queryKey: notificationsKeys.notificationTopicStatus
+});
