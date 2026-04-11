@@ -8,7 +8,7 @@ import {
   type QueryParamParser,
   parseOptionalBoolean
 } from "../../utils";
-import { recruitmentsKeys, query, type RecruitmentStatus, useRecruitmentList, ListSortType } from "@jobis/api";
+import { type RecruitmentStatus, useRecruitmentList, ListSortType } from "@jobis/api";
 
 export interface RecruitmentQuery {
   name?: string;

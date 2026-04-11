@@ -21,17 +21,6 @@ import {
   useStudentRecruitmentCount
 } from "@jobis/api";
 
-const CompanyCardSkeleton = () => {
-  return (
-    <Flex $direction="column" $gap={12} $align="flex-start">
-      <Skeleton width={222} height={144} $radius={12} />
-      <Skeleton width={222} height={24} $radius={12} />
-      <Skeleton width={130} height={24} $radius={12} />
-      <Skeleton width={150} height={24} $radius={12} />
-    </Flex>
-  );
-};
-
 export const RecruitmentList = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
 
@@ -180,14 +169,19 @@ export const RecruitmentList = () => {
       <Grid $columns="repeat(4, 1fr)" $gap={24}>
         {isLoading &&
           Array.from({ length: 12 }, (_, index) => (
-            <CompanyCardSkeleton key={index} />
+            <Flex key={index} $direction="column" $gap={12} $align="flex-start">
+              <Skeleton width={222} height={144} $radius={12} />
+              <Skeleton width={222} height={24} $radius={12} />
+              <Skeleton width={130} height={24} $radius={12} />
+              <Skeleton width={150} height={24} $radius={12} />
+            </Flex>
           ))}
         {!isLoading && recruitments.length === 0 ? (
           <>
             <Spacer />
             <Box $margin={[50, 76.8]}>
               <Text $size="body2">검색된 기업이 없습니다.</Text>
-            </Box>
+            </Box>``
           </>
         ) : (
           recruitments.map(recruitment => {
