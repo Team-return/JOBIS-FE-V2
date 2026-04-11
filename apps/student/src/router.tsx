@@ -92,10 +92,32 @@ export const router: ReturnType<typeof createBrowserRouter> =
     },
     {
       path: "/login",
-      element: <div>login</div>
+      element: <Login />
     },
     {
       path: "/signup",
-      element: <div>signup</div>
+      children: [
+        {
+          index: true,
+          element: <SignUp />
+        },
+        {
+          path: "step2",
+          element: <SignUpProfile />
+        }
+      ]
+    },
+    {
+      path: "/password",
+      children: [
+        {
+          path: "verify",
+          element: <PasswordVerify />
+        },
+        { 
+          path: "edit", 
+          element: <PasswordEdit /> 
+        }
+      ]
     }
   ]);

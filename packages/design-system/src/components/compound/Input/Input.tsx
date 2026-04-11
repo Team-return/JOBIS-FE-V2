@@ -100,7 +100,8 @@ export const Input = ({
   placeholder,
   disabled,
   type = "text",
-  autoComplete
+  autoComplete,
+  fillColor
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const id = useId();
@@ -129,7 +130,7 @@ export const Input = ({
         />
         {$iconName && (
           <IconWrapper onClick={onIconClick}>
-            <Icon icon={$iconName} size={24} role="img" />
+            <Icon icon={$iconName} fillColor={fillColor} size={24} role="img" />
           </IconWrapper>
         )}
       </InputWrapper>
