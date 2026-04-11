@@ -30,6 +30,8 @@ export type RecruitmentStatus =
   | "MANUAL_ADD"
   | "WIN_INTERN";
 
+export type StudentRecruitmentStatus = "READY" | "RECRUITING" | "DONE";
+
 export type ApplicationStatus =
   | "REQUESTED"
   | "APPROVED"
