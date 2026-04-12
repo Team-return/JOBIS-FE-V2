@@ -88,6 +88,7 @@ export const PasswordVerify = () => {
     onSuccess: () => {
       success("이메일 인증에 성공했습니다.");
       setEmailVerified(true);
+      navigation("edit")
     },
     onError: status => {
       switch (status) {
@@ -123,7 +124,6 @@ export const PasswordVerify = () => {
     }
     checkVerifyCode()
     setForgetPwInfo({ email });
-    navigation("edit")
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
