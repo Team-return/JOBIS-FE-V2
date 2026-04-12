@@ -97,8 +97,11 @@ export const Login = () => {
     }
   };
 
-  const handleClick = () => {
-    navigation("/forgotPw");
+  const handleForgotPwClick = () => {
+    navigation("/forget-pw");
+  };
+  const handleSignUpClick = () => {
+    navigation("/signup");
   };
 
   return (
@@ -156,14 +159,48 @@ export const Login = () => {
                 onKeyDown={handleKeyDown}
               />
             </Flex>
-            <Flex $justify="flex-start">
-              <Checkbox
-                label="자동 로그인"
-                $labelColor={theme.color.grayScale[60]}
-                $labelSize="body2"
-                $checked={checked}
-                onChange={setChecked}
-              />
+            <Flex $align="center" $justify="space-between">
+              <Flex>
+                <Checkbox
+                  label="자동 로그인"
+                  $labelColor={theme.color.grayScale[60]}
+                  $labelSize="body2"
+                  $checked={checked}
+                  onChange={setChecked}
+                />
+              </Flex>
+
+              <Flex 
+                $justify="center" 
+                $gap={4}
+                style={{ whiteSpace: "nowrap"}} 
+              >
+                <Text
+                  $size="caption"
+                  $weight="regular"
+                  $color={theme.color.grayScale[60]}
+                >
+                  비밀번호를 잊으셨나요?
+                </Text>
+                <button
+                  style={{
+                    border: 0,
+                    backgroundColor: theme.color.grayScale[10],
+                    padding: 0,
+                    cursor: "pointer"
+                  }}
+                  onClick={handleForgotPwClick}
+                >
+                  <Text
+                    $size="caption"
+                    $weight="regular"
+                    $underline
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    비밀번호 변경
+                  </Text>
+                </button>
+              </Flex>
             </Flex>
             <Button
               $variant="contained"
@@ -183,11 +220,11 @@ export const Login = () => {
               <button
                 style={{
                   border: 0,
-                  backgroundColor: "white",
+                  backgroundColor: theme.color.grayScale[10],
                   padding: 0,
                   cursor: "pointer"
                 }}
-                onClick={handleClick}
+                onClick={handleSignUpClick}
               >
                 <Text
                   $size="caption"
