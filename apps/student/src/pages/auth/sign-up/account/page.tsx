@@ -9,6 +9,7 @@ import {
   Input,
   Surface,
   Text,
+  useAuthStore,
   useTheme,
   useToast
 } from "@jobis/design-system";
@@ -20,42 +21,26 @@ import {
   VERIFYCODE_REGEX
 } from "../../../../utils";
 
-const STORAGE_KEYS = {
-  EMAIL: "signup_email",
-  VERIFY_CODE: "signup_verify_code",
-  PASSWORD: "signup_password",
-  PWCONFIRM: "signup_pw_confirm"
-} as const;
-
 export const SignUp = () => {
   const { currentTheme: theme } = useTheme();
+  const { success, error } = useToast();
+  const navigation = useNavigate();
+
+  const setSignupInfo = useAuthStore((state) => state.setAuthInfo);
+  const setEmailVerified = useAuthStore((state) => state.setVerified);
+
   const [eyeOpen, setEyeOpen] = useState(false);
   const [cfEyeOpen, setCfEyeOpen] = useState(false);
-  const [authCodeState, setAuthCodeState] = useState(theme.color.grayScale[60]);
-  const [email, setEmail] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.EMAIL) ?? ""
-  );
-  const [verifyCode, setVerifyCode] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.VERIFY_CODE) ?? ""
-  );
-  const [password, setPassword] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.PASSWORD) ?? ""
-  );
-  const [pwConfirm, setPwConfirm] = useState(
-    () => localStorage.getItem(STORAGE_KEYS.PWCONFIRM) ?? ""
-  );
+
+  const [email, setEmail] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [pwConfirm, setPwConfirm] = useState("");
+
   const [emailError, setEmailError] = useState("");
   const [verifyCodeError, setVerifyCodeError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [pwConfirmError, setPwConfirmError] = useState("");
-  const { success, error } = useToast();
-  const navigation = useNavigate();
-
-  const saveToLocalStorage = () => {
-    localStorage.setItem(STORAGE_KEYS.EMAIL, email);
-    localStorage.setItem(STORAGE_KEYS.VERIFY_CODE, verifyCode);
-    localStorage.setItem(STORAGE_KEYS.PASSWORD, password);
-  };
 
   const validateEmail = (email: string) => {
     if (!email || email.trim().length === 0) {
@@ -118,19 +103,14 @@ export const SignUp = () => {
   const { mutate: sendAuthCode } = useSendAuthCode({
     onSuccess: () => {
       success("인증코드가 성공적으로 전송 됐습니다.");
-      setAuthCodeState(theme.color.subColor.green[20]);
     },
     onError: status => {
-      setAuthCodeState(theme.color.subColor.red[20]);
       switch (status) {
         case 400:
           error("이메일 형식에 맞게만 입력 가능합니다.");
           break;
-        case 401:
-          error("비밀번호가 올바르지 않습니다.");
-          break;
-        case 404:
-          error("아이디가 올바르지 않습니다.");
+        case 409:
+          error("이미 가입된 이메일입니다.");
           break;
         default:
           error("알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -140,19 +120,15 @@ export const SignUp = () => {
   const { mutate: checkAuthCode } = useAuthCodeCheck({
     onSuccess: () => {
       success("이메일 인증에 성공했습니다.");
-      setAuthCodeState(theme.color.subColor.green[20]);
+      setEmailVerified(true);
     },
     onError: status => {
-      setAuthCodeState(theme.color.subColor.red[20]);
       switch (status) {
-        case 400:
-          error("이메일 형식에 맞게만 입력 가능합니다.");
-          break;
         case 401:
-          error("비밀번호가 올바르지 않습니다.");
+          error("인증번호가 다릅니다.");
           break;
         case 404:
-          error("아이디가 올바르지 않습니다.");
+          error("해당 메일로 발송된 인증코드가 존재하지 않습니다.");
           break;
         default:
           error("알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -161,7 +137,7 @@ export const SignUp = () => {
   });
 
   const requestVerifyCode = () => {
-    sendAuthCode({ email: email, codeType: "SIGN_UP" });
+    sendAuthCode({ email: email, auth_code_type: "SIGN_UP" });
   };
 
   const checkVerifyCode = () => {
@@ -182,7 +158,8 @@ export const SignUp = () => {
     ) {
       return;
     }
-    saveToLocalStorage();
+    setSignupInfo({ email, password });
+    navigation("step2")
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -252,6 +229,7 @@ export const SignUp = () => {
             >
               <Flex $gap={8}>
                 <Input
+                  $width="246px"
                   placeholder="이메일을 입력해주세요."
                   $label="이메일"
                   value={email}
@@ -267,20 +245,19 @@ export const SignUp = () => {
                   title="button"
                   style={{ padding: 21, marginTop: 24 }}
                 >
-                  인증
+                  발송
                 </Button>
               </Flex>
               <Flex $gap={8}>
                 <Input
+                  $width="246px"
                   placeholder="인증번호를 입력해주세요"
                   $label="인증번호"
                   value={verifyCode}
                   onChange={setVerifyCode}
-                  $iconName="CheckCircle"
                   $errorMessage={verifyCodeError}
                   autoComplete="off"
                   onKeyDown={handleKeyDown}
-                  fillColor={theme.color.grayScale[60]}
                 />
                 <Button
                   $size="md"

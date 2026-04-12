@@ -24,7 +24,7 @@ export const useAuthCodeCheck = (
 };
 
 export const useSendAuthCode = createMutationHook<
-  { email: string; codeType: string },
+  { email: string; auth_code_type: string },
   void
 >({
   path: "/code",

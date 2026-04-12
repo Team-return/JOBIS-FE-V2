@@ -7,6 +7,7 @@ import {
   Input,
   Surface,
   Text,
+  useAuthStore,
   useTheme,
   useToast
 } from "@jobis/design-system";
@@ -16,30 +17,21 @@ import {
   GRADE_REGEX,
 } from "../../../../utils";
 
-const STORAGE_KEYS = {
-  EMAIL: "signup_email",
-  VERIFY_CODE: "signup_verify_code",
-  PASSWORD: "signup_password",
-  PWCONFIRM: "signup_pw_confirm"
-} as const;
+export type NullableGender = Gender | null;
 
 export const SignUpProfile = () => {
   const { currentTheme: theme } = useTheme();
-  const [name, setName] = useState("");
-  const [grade, setGrade] = useState("");
-  const [gender, setGender] = useState<Gender>("MAN");
-  const [nameError, setNameError] = useState("");
-  const [gradeError, setGradeError] = useState("");
-  const [genderError, setGenderError] = useState("");
-
   const { success, error } = useToast();
   const navigation = useNavigate();
 
-  const clearLocalStorage = () => {
-    localStorage.removeItem(STORAGE_KEYS.EMAIL);
-    localStorage.removeItem(STORAGE_KEYS.VERIFY_CODE);
-    localStorage.removeItem(STORAGE_KEYS.PASSWORD);
-  };
+  const { email, password, isVerified, reset } = useAuthStore();
+
+  const [name, setName] = useState("");
+  const [grade, setGrade] = useState("");
+  const [gender, setGender] = useState<NullableGender>(null);
+  const [nameError, setNameError] = useState("");
+  const [gradeError, setGradeError] = useState("");
+  const [genderError, setGenderError] = useState("");
 
   const validateName = (name: string) => {
     if (!name || name.trim().length === 0) {
@@ -63,7 +55,7 @@ export const SignUpProfile = () => {
     return false;
   };
 
-  const validateGender = (gender: Gender) => {
+  const validateGender = (gender: NullableGender) => {
     if (!gender || gender.trim().length === 0) {
       setGenderError("성별을 선택해주세요.");
       return true;
@@ -90,18 +82,16 @@ export const SignUpProfile = () => {
   const { mutate: signup } = useStudentSignup({
     onSuccess: () => {
       success("회원가입에 성공했습니다.");
-      navigation("/");
+      reset();
+      navigation("/login");
     },
     onError: status => {
       switch (status) {
         case 400:
-          error("아이디가 공백일 수 없습니다.");
+          error("다시 입력해주세요.");
           break;
-        case 401:
-          error("비밀번호가 올바르지 않습니다.");
-          break;
-        case 404:
-          error("아이디가 올바르지 않습니다.");
+        case 409:
+          error("이미 계정이 존재합니다.");
           break;
         default:
           error("알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -109,34 +99,27 @@ export const SignUpProfile = () => {
     }
   });
 
-  const onSubmit = (name: string, grade: string, gender: Gender) => {
+  const onSubmit = (name: string, grade: string, gender: NullableGender) => {
     if (validateName(name) || validateGrade(grade) || validateGender(gender)) {
       return;
     }
 
-    console.log({
-      email: localStorage.getItem(STORAGE_KEYS.EMAIL),
-      password: localStorage.getItem(STORAGE_KEYS.PASSWORD),
-      grade: Number(parseGrade(grade)?.grade),
-      name: name,
-      gender: gender,
-      class_room: Number(parseGrade(grade)?.class),
-      number: Number(parseGrade(grade)?.number),
-      platform_type: "WEB"
-    });
+    if (!isVerified) {
+      error("이메일 인증이 필요합니다.");
+      navigation("/signup");
+      return;
+    }
 
     signup({
-      email: localStorage.getItem(STORAGE_KEYS.EMAIL)!,
-      password: localStorage.getItem(STORAGE_KEYS.PASSWORD)!,
+      email,
+      password,
+      name,
+      gender: gender!,
       grade: Number(parseGrade(grade)?.grade),
-      name: name,
-      gender: gender,
       class_room: Number(parseGrade(grade)?.class),
       number: Number(parseGrade(grade)?.number),
       platform_type: "WEB"
     });
-    clearLocalStorage();
-    navigation("/login");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
