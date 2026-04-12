@@ -5,10 +5,8 @@ import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { CompanyDetail } from "./pages/company-detail";
 import { companyDetailLoader } from "./pages/company-detail/loader";
-import { PasswordEdit } from "./pages/auth/password/edit";
-import { PasswordVerify } from "./pages/auth/password/verify";
-import { SignUpProfile } from "./pages/auth/sign-up/profile";
-import { SignUp } from "./pages/auth/sign-up/account";
+import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
+import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
 
 export const router: ReturnType<typeof createBrowserRouter> =
