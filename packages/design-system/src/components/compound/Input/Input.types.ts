@@ -24,4 +24,5 @@ export interface Props {
     | "current-password"
     | "new-password"
     | "off";
+  fillColor?: string;
 }

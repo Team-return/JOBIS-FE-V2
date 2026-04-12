@@ -5,6 +5,9 @@ import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { CompanyDetail } from "./pages/company-detail";
 import { companyDetailLoader } from "./pages/company-detail/loader";
+import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
+import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
+import { Login } from "./pages/auth/login";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -92,10 +95,32 @@ export const router: ReturnType<typeof createBrowserRouter> =
     },
     {
       path: "/login",
-      element: <div>login</div>
+      element: <Login />
     },
     {
       path: "/signup",
-      element: <div>signup</div>
+      children: [
+        {
+          index: true,
+          element: <SignUp />
+        },
+        {
+          path: "step2",
+          element: <SignUpProfile />
+        }
+      ]
+    },
+    {
+      path: "/forget-pw",
+      children: [
+        {
+          index: true,
+          element: <PasswordVerify />
+        },
+        { 
+          path: "edit", 
+          element: <PasswordEdit /> 
+        }
+      ]
     }
   ]);
