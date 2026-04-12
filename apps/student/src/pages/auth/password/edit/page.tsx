@@ -1,20 +1,15 @@
 import {
-  useLogin,
-  setToken,
-  setCookie,
-  removeCookie,
-  getCookie,
-  useCheckPw
+  useChangePwByEmail
 } from "@jobis/api";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   Icon,
   Input,
   Surface,
   Text,
+  useAuthStore,
   useTheme,
   useToast
 } from "@jobis/design-system";
@@ -24,11 +19,18 @@ import { PASSWORD_REGEX } from "../../../../utils";
 
 export const PasswordEdit = () => {
   const { currentTheme: theme } = useTheme();
-  const [eyeOpen, setEyeOpen] = useState(false);
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const { success, error } = useToast();
   const navigation = useNavigate();
+
+  const { email, isVerified, reset } = useAuthStore();
+
+  const [eyeOpen, setEyeOpen] = useState(false);
+  const [cfEyeOpen, setCfEyeOpen] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [pwConfirm, setPwConfirm] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [pwConfirmError, setPwConfirmError] = useState("");
 
   const validatePassword = (password: string) => {
     if (!password || password.trim().length === 0) {
@@ -44,10 +46,26 @@ export const PasswordEdit = () => {
     setPasswordError("");
     return false;
   };
+  
+  const validatePwConfirm = (pwConfirm: string) => {
+    if (!pwConfirm || pwConfirm.trim().length === 0) {
+      setPwConfirmError("비밀번호를 입력해주세요.");
+      return true;
+    }
+    if (!(pwConfirm == password)) {
+      setPwConfirmError("비밀번호가 일치 되어야 합니다.");
+      return true;
+    }
+    setPwConfirmError("");
+    return false;
+  };
 
-  const { mutate: CheckPw } = useCheckPw({
+
+  const { mutate: ChangePw } = useChangePwByEmail({
     onSuccess: () => {
-      navigation("/");
+      success("비밀번호가 변경되었습니다.")
+      reset()
+      navigation("/login");
     },
     onError: status => {
       switch (status) {
@@ -55,10 +73,10 @@ export const PasswordEdit = () => {
           error("아이디가 공백일 수 없습니다.");
           break;
         case 401:
-          error("비밀번호가 올바르지 않습니다.");
+          error("이메일 인증이 필요합니다.");
           break;
         case 404:
-          error("아이디가 올바르지 않습니다.");
+          error("계정을 찾을 수 없습니다.");
           break;
         default:
           error("알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -66,16 +84,21 @@ export const PasswordEdit = () => {
     }
   });
 
-  const onSubmit = (password: string) => {
-    if (validatePassword(password)) {
+  const onSubmit = (password: string, pwConfirm: string) => {
+    if (validatePassword(password) || validatePwConfirm(pwConfirm)) {
       return;
     }
-    CheckPw({ password });
+    if (!isVerified) {
+      error("이메일 인증이 필요합니다.");
+      navigation("/forget-pw");
+      return;
+    }
+    ChangePw({ email, password });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      onSubmit(password);
+      onSubmit(password, pwConfirm);
     }
   };
 
@@ -98,15 +121,36 @@ export const PasswordEdit = () => {
             $align="stretch"
             $gap="28px"
             $justify="center"
+            style={{ position: "relative" }}
           >
-            <Text
-              $size="h5"
-              $weight="bold"
-              $align="center"
-              $color={theme.color.primary[20]}
-            >
-              비밀번호 수정
-            </Text>
+            <Flex $justify="center">
+              <Text
+                $size="h5"
+                $weight="bold"
+                $align="center"
+                $color={theme.color.primary[20]}
+              >
+                회원가입
+              </Text>
+              <Flex
+                $gap={8}
+                $justify="flex-end"
+                style={{ position: "absolute" }}
+              >
+                <Box
+                  width={8}
+                  height={8}
+                  $radius={8}
+                  $bg={theme.color.grayScale[40]}
+                />
+                <Box
+                  width={8}
+                  height={8}
+                  $radius={8}
+                  $bg={theme.color.primary[20]}
+                />
+              </Flex>
+            </Flex>
             <Flex
               $direction="column"
               $gap="16px"
@@ -114,7 +158,7 @@ export const PasswordEdit = () => {
               $justify="center"
             >
               <Input
-                placeholder="비밀번호를 입력해주세요."
+                placeholder="새로운 비밀번호를 입력해주세요."
                 $label="비밀번호"
                 value={password}
                 onChange={setPassword}
@@ -125,14 +169,26 @@ export const PasswordEdit = () => {
                 autoComplete="current-password"
                 onKeyDown={handleKeyDown}
               />
+              <Input
+                placeholder="비밀번호를 한번 더 입력해주세요."
+                $label="비밀번호"
+                value={pwConfirm}
+                onChange={setPwConfirm}
+                $iconName={cfEyeOpen ? "EyeOpen" : "EyeClose"}
+                onIconClick={() => setCfEyeOpen(!cfEyeOpen)}
+                type={cfEyeOpen ? "text" : "password"}
+                $errorMessage={pwConfirmError}
+                autoComplete="current-password"
+                onKeyDown={handleKeyDown}
+              />
             </Flex>
             <Flex style={{ position: "relative", display: "inline-block" }}>
               <Button
                 $variant="contained"
                 $size="lg"
-                onClick={() => onSubmit(password)}
+                onClick={() => onSubmit(password, pwConfirm)}
               >
-                다음
+                확인
               </Button>
               <Icon
                 icon="ArrowRight"
