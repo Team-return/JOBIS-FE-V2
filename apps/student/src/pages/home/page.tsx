@@ -12,11 +12,11 @@ import {
   Spacer,
   Skeleton,
   RecrutementCard,
-  ListSection
+  ListSection,
+  EmploymentRateBanner
 } from "@jobis/design-system";
 import { useQueryParams } from "../../utils";
-import { EmploymentRateBanner } from "../../../../../packages/design-system/src/components/compound/EmploymentRateBanner";
-import { useBookmarks } from "../../../../../packages/api/src/bookmarks";
+import { useBookmarks } from "@jobis/api";
 
 const CompanyCardSkeleton = () => {
   return (

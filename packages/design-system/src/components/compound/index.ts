@@ -25,3 +25,4 @@ export * from "./Dropdown";
 export * from "./ListSection";
 export * from "./DetailHeader";
 export * from "./DetailTable";
+export * from "./EmploymentRateBanner";
