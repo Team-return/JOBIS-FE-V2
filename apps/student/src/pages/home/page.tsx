@@ -18,16 +18,6 @@ import {
 import { useQueryParams } from "../../utils";
 import { useBookmarks } from "@jobis/api";
 
-const CompanyCardSkeleton = () => {
-  return (
-    <Flex $direction="column" $gap={10} $align="flex-start">
-      <Skeleton width={304} height={168} $radius={12} />
-      <Skeleton width={304} height={28} $radius={12} />
-      <Skeleton width={100} height={20} $radius={12} />
-    </Flex>
-  );
-};
-
 export const Home = () => {
   const { getParam, getParamAsNumber } = useQueryParams();
 
@@ -72,7 +62,16 @@ export const Home = () => {
           <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
-                <CompanyCardSkeleton key={index} />
+                <Flex
+                  key={index}
+                  $direction="column"
+                  $gap={10}
+                  $align="flex-start"
+                >
+                  <Skeleton width={304} height={168} $radius={12} />
+                  <Skeleton width={304} height={28} $radius={12} />
+                  <Skeleton width={100} height={20} $radius={12} />
+                </Flex>
               ))}
             {!isLoading && recentCompanies.length === 0 ? (
               <>
@@ -104,7 +103,16 @@ export const Home = () => {
           <Flex $gap={24}>
             {isLoading &&
               Array.from({ length: 3 }, (_, index) => (
-                <CompanyCardSkeleton key={index} />
+                <Flex
+                  key={index}
+                  $direction="column"
+                  $gap={10}
+                  $align="flex-start"
+                >
+                  <Skeleton width={304} height={168} $radius={12} />
+                  <Skeleton width={304} height={28} $radius={12} />
+                  <Skeleton width={100} height={20} $radius={12} />
+                </Flex>
               ))}
             {!isLoading && companies.length === 0 ? (
               <>
