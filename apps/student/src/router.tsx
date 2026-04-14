@@ -3,8 +3,9 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
-import { Home } from "./pages/home/page";
+import { Home } from "./pages/home";
 import { CompanyDetail } from "./pages/company-detail";
+import { homeLoader } from "./pages/home";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -22,6 +23,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           index: true,
+          loader: homeLoader,
           element: <Home />
         },
         {

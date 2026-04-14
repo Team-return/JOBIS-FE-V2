@@ -15,15 +15,20 @@ import {
   ListSection,
   EmploymentRateBanner
 } from "@jobis/design-system";
-import { useQueryParams } from "../../utils";
+import { LoaderData, useQueryParams } from "../../utils";
 import { useBookmarks } from "@jobis/api";
+import { useLoaderData } from "react-router-dom";
+import type { HomeQuery } from "./loader";
 
 export const Home = () => {
+  const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
   const { getParam, getParamAsNumber } = useQueryParams();
 
-  const currentPage = getParamAsNumber("page", 1);
-  const currentName = getParam("name") || "";
-  const currentSort = getParam("sort-type") || "";
+  const currentPage = getParamAsNumber("page", initialParams.page);
+  const currentName = getParam("name") ?? initialParams.name ?? "";
+  const currentSort = (getParam("sort-type") ??
+    initialParams.sortType ??
+    "") as ListSortType | "";
 
   const { data: companyListData, isLoading } = useCompanyStudentList({
     page: currentPage,
