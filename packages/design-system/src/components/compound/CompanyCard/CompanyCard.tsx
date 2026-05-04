@@ -9,6 +9,7 @@ const Img = styled.img`
   border-radius: 12px;
   background-color: ${({ theme }) => theme.color.grayScale[40]};
   object-fit: fill;
+  cursor: pointer;
 `;
 
 export const CompanyCard = ({
