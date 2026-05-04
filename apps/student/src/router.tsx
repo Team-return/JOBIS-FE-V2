@@ -1,6 +1,8 @@
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
+import { recruitmentLoader } from "./pages/recruitment-list/loader";
+import { recruitmentDetailLoader } from "./pages/recruitment-detail/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { RecruitmentDetail } from "./pages/recruitment-detail";
@@ -48,10 +50,12 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
+              loader: recruitmentLoader,
               element: <RecruitmentList />
             },
             {
               path: "detail/:recruitmentId",
+              loader: recruitmentDetailLoader,
               element: <RecruitmentDetail />
             }
           ]
