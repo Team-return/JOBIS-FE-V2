@@ -63,7 +63,14 @@ export const DetailTable = ({ items }: DetailTableProps) => {
               {isExpanded && hasExpandableContent && (
                 <ExpandedRowContainer theme={theme}>
                   {item.expandableContent!.map((nestedItem, nestedIndex) => (
-                    <Flex key={nestedIndex} $align="center">
+                    <NestedRow
+                      key={nestedIndex}
+                      $align="center"
+                      theme={theme}
+                      $isLastItem={
+                        nestedIndex === item.expandableContent!.length - 1
+                      }
+                    >
                       <NestedLabelCell
                         theme={theme}
                         $align="center"
@@ -93,7 +100,7 @@ export const DetailTable = ({ items }: DetailTableProps) => {
                           </Text>
                         )}
                       </NestedValueCell>
-                    </Flex>
+                    </NestedRow>
                   ))}
                 </ExpandedRowContainer>
               )}
@@ -143,6 +150,7 @@ const ValueCell = styled(Flex)`
   min-height: 44px;
   padding: 12px 0;
   padding-left: 40px;
+  padding-right: 40px;
 `;
 
 const ExpandedRowContainer = styled.div`
@@ -169,6 +177,14 @@ const NestedValueCell = styled(Flex)`
   min-height: 40px;
   padding: 12px 0;
   padding-left: 40px;
+  padding-right: 40px;
+`;
+
+const NestedRow = styled(Flex)<{ $isLastItem: boolean }>`
+  width: 100%;
+  min-height: 40px;
+  border-bottom: ${({ $isLastItem, theme }) =>
+    $isLastItem ? "none" : `1px solid ${theme.color.grayScale[50]}`};
 `;
 
 const IconButton = styled.button<{ $isOpen: boolean }>`

@@ -8,8 +8,9 @@ export const DetailHeader = ({
   type,
   title,
   logoUrl,
-  businessNumber
-}: DetailHeaderProps) => {
+  businessNumber,
+  isParticipation
+}: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   if (type === "recruitment") {
@@ -30,7 +31,9 @@ export const DetailHeader = ({
               <Text $size="h4" $weight="bold" $color="#000000">
                 {title}
               </Text>
-              <ParticipationBadge>참여기업</ParticipationBadge>
+              {isParticipation && (
+                <ParticipationBadge>참여기업</ParticipationBadge>
+              )}
             </Flex>
             <Flex $direction="row" $align="center" $gap={8}>
               <Text $size="body2" $weight="medium" $color="#7f7f7f">
