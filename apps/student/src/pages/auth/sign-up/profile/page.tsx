@@ -13,9 +13,7 @@ import {
 } from "@jobis/design-system";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GRADE_REGEX,
-} from "../../../../utils";
+import { GRADE_REGEX } from "../../../../utils";
 
 export type NullableGender = Gender | null;
 
@@ -31,7 +29,7 @@ export const SignUpProfile = () => {
   const [gender, setGender] = useState<NullableGender>(null);
   const [nameError, setNameError] = useState("");
   const [gradeError, setGradeError] = useState("");
-  const [genderError, setGenderError] = useState("");
+  const [_genderError, setGenderError] = useState("");
 
   const validateName = (name: string) => {
     if (!name || name.trim().length === 0) {
