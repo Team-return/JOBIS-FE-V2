@@ -36,65 +36,81 @@ export const DetailHeader = ({
               )}
             </Flex>
             <Flex $direction="row" $align="center" $gap={8}>
-              <Text $size="body2" $weight="medium" $color="#7f7f7f">
-                상세보기
-              </Text>
+              <Pointer>
+                <Text $size="body2" $weight="medium" $color="#7f7f7f">
+                  상세보기
+                </Text>
+              </Pointer>
               <Line />
-              <Text $size="body2" $weight="medium" $color="#7f7f7f">
-                지원하기
-              </Text>
+              <Pointer>
+                <Text $size="body2" $weight="medium" $color="#7f7f7f">
+                  지원하기
+                </Text>
+              </Pointer>
             </Flex>
           </Flex>
         </Flex>
       </Flex>
     );
-  }
-  return (
-    <Flex $direction="row" $align="center">
-      <Flex $gap={28} $fit>
-        <ImgShadow>
-          <Image src={logoUrl} alt={title} width={72} height={72} $radius={8} />
-        </ImgShadow>
-        <Flex $direction="column" $gap={8} $fit>
-          <Text $size="h4" $weight="bold" $color="#000000">
-            {title}
-          </Text>
-          <Text $size="body2" $weight="medium" $color="#7f7f7f">
-            {`사업자 번호 : ${businessNumber}`}
-          </Text>
+  } else if (type == "company") {
+    return (
+      <Flex $direction="row" $align="center">
+        <Flex $gap={28} $fit>
+          <ImgShadow>
+            <Image
+              src={logoUrl}
+              alt={title}
+              width={72}
+              height={72}
+              $radius={8}
+            />
+          </ImgShadow>
+          <Flex $direction="column" $gap={8} $fit>
+            <Text $size="h4" $weight="bold" $color="#000000">
+              {title}
+            </Text>
+            <Text $size="body2" $weight="medium" $color="#7f7f7f">
+              {`사업자 번호 : ${businessNumber}`}
+            </Text>
+          </Flex>
         </Flex>
+        <Spacer $flex={1} />
+        <MenuWrapper>
+          <KebabButton
+            onClick={() => setShowMenu(prev => !prev)}
+            aria-label="more"
+          >
+            <Icon icon="KebapMenu" size={24} />
+          </KebabButton>
+          {showMenu && (
+            <Menu role="menu" $direction="column" $gap={20} $align="center">
+              <MenuItem>
+                <Text $size="body3" $weight="regular" $color="#7F7F7F">
+                  모집의뢰서 조회
+                </Text>
+              </MenuItem>
+              <MenuItem>
+                <Text $size="body3" $weight="regular" $color="#7F7F7F">
+                  면접 후기 조회
+                </Text>
+              </MenuItem>
+              <MenuItem>
+                <Text $size="body3" $weight="regular" $color="#7F7F7F">
+                  면접 후기 작성
+                </Text>
+              </MenuItem>
+            </Menu>
+          )}
+        </MenuWrapper>
       </Flex>
-      <Spacer $flex={1} />
-      <MenuWrapper>
-        <KebabButton
-          onClick={() => setShowMenu(prev => !prev)}
-          aria-label="more"
-        >
-          <Icon icon="KebapMenu" size={24} />
-        </KebabButton>
-        {showMenu && (
-          <Menu role="menu" $direction="column" $gap={20} $align="center">
-            <MenuItem>
-              <Text $size="body3" $weight="regular" $color="#7F7F7F">
-                모집의뢰서 조회
-              </Text>
-            </MenuItem>
-            <MenuItem>
-              <Text $size="body3" $weight="regular" $color="#7F7F7F">
-                면접 후기 조회
-              </Text>
-            </MenuItem>
-            <MenuItem>
-              <Text $size="body3" $weight="regular" $color="#7F7F7F">
-                면접 후기 작성
-              </Text>
-            </MenuItem>
-          </Menu>
-        )}
-      </MenuWrapper>
-    </Flex>
-  );
+    );
+  }
+  return null;
 };
+
+const Pointer = styled.div`
+  cursor: pointer;
+`;
 
 const ParticipationBadge = styled.div`
   width: 61px;

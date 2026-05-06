@@ -25,7 +25,12 @@ export const DetailTable = ({ items }: DetailTableProps) => {
             item.expandableContent && item.expandableContent.length > 0;
           return (
             <Fragment key={index}>
-              <Row theme={theme} $align="center">
+              <Row
+                theme={theme}
+                $align="center"
+                onClick={() => hasExpandableContent && toggleExpand(index)}
+                $isClickable={hasExpandableContent}
+              >
                 <LabelCell theme={theme} $align="center" $justify="center">
                   <Flex $gap={6} $justify="center">
                     <Text $size="body2" $color="#3182f6">
@@ -121,11 +126,14 @@ const TableContainer = styled(Box)`
   flex-direction: column;
 `;
 
-const Row = styled(Flex)`
+const Row = styled(Flex)<{ $isClickable?: boolean }>`
   width: 100%;
   min-height: 44px;
   height: auto;
   border-bottom: 1px solid ${({ theme }) => theme.color.grayScale[50]};
+  cursor: ${({ $isClickable }) => ($isClickable ? "pointer" : "default")};
+  transition: background-color 0.2s;
+
   &:last-of-type {
     border-bottom: none;
   }

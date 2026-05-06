@@ -61,19 +61,17 @@ export const RecruitmentDetail = () => {
             },
             {
               label: "우대사항",
-              value: data?.additional_qualifications || "없음",
+              value: data?.areas?.[0]?.preferential_treatment || "-",
               itemType: "text"
             },
             {
               label: "최소성적",
-              value: data?.areas?.[0]?.preferential_treatment || "없음",
+              value: data?.additional_qualifications || "-",
               itemType: "text"
             },
             {
               label: "근무시간",
-              value: data?.flexible_working
-                ? "유연근무제"
-                : data?.working_hours || "-",
+              value: data?.working_hours || "-",
               itemType: "text"
             },
             {
@@ -118,7 +116,7 @@ export const RecruitmentDetail = () => {
             },
             {
               label: "기타",
-              value: data?.etc || "없음",
+              value: data?.etc || "-",
               itemType: "text"
             }
           ]}
