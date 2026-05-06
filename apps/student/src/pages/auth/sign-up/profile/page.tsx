@@ -29,7 +29,6 @@ export const SignUpProfile = () => {
   const [gender, setGender] = useState<NullableGender>(null);
   const [nameError, setNameError] = useState("");
   const [gradeError, setGradeError] = useState("");
-  const [_genderError, setGenderError] = useState("");
 
   const validateName = (name: string) => {
     if (!name || name.trim().length === 0) {
@@ -55,14 +54,11 @@ export const SignUpProfile = () => {
 
   const validateGender = (gender: NullableGender) => {
     if (!gender || gender.trim().length === 0) {
-      setGenderError("성별을 선택해주세요.");
       return true;
     }
     if (!(gender == "MAN" || gender == "WOMAN")) {
-      setGenderError("비밀번호가 일치 되어야 합니다.");
       return true;
     }
-    setGenderError("");
     return false;
   };
 
