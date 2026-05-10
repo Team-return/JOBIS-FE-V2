@@ -42,7 +42,6 @@ const SORT_TYPES = [
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
   parse: (params: URLSearchParams) => {
     const status = parseEnum(params.get("status"), RECRUITMENT_STATUSES);
-    const military_support_status = parseEnum(params.get("military_support"), RECRUITMENT_STATUSES);
     const page = parseOptionalNumber(params.get("page")) || 1;
 
     return {
