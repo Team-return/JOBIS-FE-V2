@@ -96,6 +96,18 @@ export const NoticesList = () => {
                   </Text>
                 </Flex>
               </Box>
+            ) : !isPending && notices.length === 0 ? (
+              <Box $padding={[48, 24]}>
+                <Flex $justify="center" $align="center">
+                  <Text
+                    $size="h6"
+                    $weight="regular"
+                    $color={theme.color.grayScale[70]}
+                  >
+                    등록된 공지사항이 없습니다.
+                  </Text>
+                </Flex>
+              </Box>
             ) : (
               <Table
                 headers={["번호", "제목", "작성일"]}
