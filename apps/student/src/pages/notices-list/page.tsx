@@ -9,6 +9,7 @@ import {
   Text,
   useTheme
 } from "@jobis/design-system";
+import { useNavigate } from "react-router-dom";
 
 const formatNoticeDate = (createdAt: string) => {
   if (!createdAt) return "-";
@@ -16,6 +17,7 @@ const formatNoticeDate = (createdAt: string) => {
 };
 
 export const NoticesList = () => {
+  const navigate = useNavigate();
   const { currentTheme: theme } = useTheme();
   const { data, isPending, isError } = useNoticeList();
 
@@ -42,15 +44,25 @@ export const NoticesList = () => {
     >
       {String(row.id)}
     </Text>,
-    <Text
+    <div
       key={`title-${row.id}`}
-      $size="h6"
-      $weight="regular"
-      $align="center"
-      $color={theme.color.grayScale[90]}
+      onClick={() => navigate(`/notice/detail/${row.id}`)}
+      style={{
+        cursor: "pointer",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center"
+      }}
     >
-      {row.title}
-    </Text>,
+      <Text
+        $size="h6"
+        $weight="regular"
+        $align="center"
+        $color={theme.color.grayScale[90]}
+      >
+        {row.title}
+      </Text>
+    </div>,
     <Text
       key={`date-${row.id}`}
       $size="h6"
