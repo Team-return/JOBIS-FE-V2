@@ -9,6 +9,7 @@ import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
 import { NoticesList } from "./pages/notices-list/page";
+import { noticesListLoader } from "./pages/notices-list/loader";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -61,6 +62,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
+              loader: noticesListLoader,
               element: <NoticesList />
             },
             {

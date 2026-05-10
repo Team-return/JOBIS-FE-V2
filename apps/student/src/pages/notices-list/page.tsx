@@ -1,58 +1,66 @@
+import { useNoticeList } from "@jobis/api";
 import {
   Box,
   Container,
   Flex,
   Icon,
+  Skeleton,
   Table,
   Text,
   useTheme
 } from "@jobis/design-system";
 
+const formatNoticeDate = (createdAt: string) => {
+  if (!createdAt) return "-";
+  return createdAt.split("T")[0];
+};
+
 export const NoticesList = () => {
   const { currentTheme: theme } = useTheme();
+  const { data, isPending, isError } = useNoticeList();
 
-  const mockNotices = [
-    {
-      id: 12,
-      title: "[중요] 오리엔테이션날 일정 안내",
-      date: "2024-01-16"
-    },
-    {
-      id: 11,
-      title: "2024학년도 신입생 건강검진 안내",
-      date: "2024-01-07"
-    },
-    {
-      id: 10,
-      title: "[중요] 2024학년도 신입생 합격자 발표",
-      date: "2023-12-31"
-    },
-    {
-      id: 9,
-      title: "2차 전형 보호자 차량 대덕대학교 주차 안내",
-      date: "2023-12-20"
-    },
-    {
-      id: 8,
-      title: "2024학년도 수시모집 원서접수 안내",
-      date: "2023-12-15"
-    },
-    {
-      id: 7,
-      title: "[중요] 면접 일정 및 유의사항 안내",
-      date: "2023-12-10"
-    },
-    { id: 6, title: "겨울방학 기숙사 운영 안내", date: "2023-12-05" },
-    { id: 5, title: "2024년도 교과서 구입 안내", date: "2023-11-28" },
-    {
-      id: 4,
-      title: "[중요] 등록금 납부 기간 안내",
-      date: "2023-11-20"
-    },
-    { id: 3, title: "장학금 신청 안내", date: "2023-11-15" },
-    { id: 2, title: "추가 모집 일정 변경 안내", date: "2023-11-01" },
-    { id: 1, title: "입학 전 준비사항 안내", date: "2023-10-25" }
-  ];
+  const notices = data?.notices ?? [];
+
+  const skeletonRows = Array.from({ length: 10 }).map((_, rowIndex) => [
+    <Skeleton key={`sk-${rowIndex}-id`} width={30} height={28} $radius={8} />,
+    <Skeleton
+      key={`sk-${rowIndex}-title`}
+      width={420}
+      height={28}
+      $radius={8}
+    />,
+    <Skeleton key={`sk-${rowIndex}-date`} width={108} height={28} $radius={8} />
+  ]);
+
+  const tableRows = notices.map(row => [
+    <Text
+      key={`id-${row.id}`}
+      $size="h6"
+      $weight="regular"
+      $align="center"
+      $color={theme.color.primary[20]}
+    >
+      {String(row.id)}
+    </Text>,
+    <Text
+      key={`title-${row.id}`}
+      $size="h6"
+      $weight="regular"
+      $align="center"
+      $color={theme.color.grayScale[90]}
+    >
+      {row.title}
+    </Text>,
+    <Text
+      key={`date-${row.id}`}
+      $size="h6"
+      $weight="regular"
+      $align="center"
+      $color={theme.color.grayScale[90]}
+    >
+      {formatNoticeDate(row.created_at)}
+    </Text>
+  ]);
 
   return (
     <Container $maxWidth={960} $padding={[90, 0, 232, 0]}>
@@ -76,47 +84,33 @@ export const NoticesList = () => {
         <Flex $direction="column">
           <Box $bg={theme.color.grayScale[10]} width="100%">
             <Box height="2px" width="100%" $bg={theme.color.grayScale[60]} />
-            <Table
-              headers={["번호", "제목", "작성일"]}
-              columnWidths={[212, 537, 211]}
-              headerBg={theme.color.grayScale[30]}
-              headerHeight={70}
-              headerTextProps={{
-                $size: "h6",
-                $weight: "regular",
-                $color: theme.color.grayScale[90]
-              }}
-              rowHeight={70}
-              rows={mockNotices.map(row => [
-                <Text
-                  key={`id-${row.id}`}
-                  $size="h6"
-                  $weight="regular"
-                  $align="center"
-                  $color={theme.color.primary[20]}
-                >
-                  {String(row.id)}
-                </Text>,
-                <Text
-                  key={`title-${row.id}`}
-                  $size="h6"
-                  $weight="regular"
-                  $align="center"
-                  $color={theme.color.grayScale[90]}
-                >
-                  {row.title}
-                </Text>,
-                <Text
-                  key={`date-${row.id}`}
-                  $size="h6"
-                  $weight="regular"
-                  $align="center"
-                  $color={theme.color.grayScale[90]}
-                >
-                  {row.date}
-                </Text>
-              ])}
-            />
+            {isError && !isPending ? (
+              <Box $padding={[48, 24]}>
+                <Flex $justify="center" $align="center">
+                  <Text
+                    $size="h6"
+                    $weight="regular"
+                    $color={theme.color.grayScale[70]}
+                  >
+                    공지 목록을 불러오지 못했습니다.
+                  </Text>
+                </Flex>
+              </Box>
+            ) : (
+              <Table
+                headers={["번호", "제목", "작성일"]}
+                columnWidths={[212, 537, 211]}
+                headerBg={theme.color.grayScale[30]}
+                headerHeight={70}
+                headerTextProps={{
+                  $size: "h6",
+                  $weight: "regular",
+                  $color: theme.color.grayScale[90]
+                }}
+                rowHeight={70}
+                rows={isPending ? skeletonRows : tableRows}
+              />
+            )}
           </Box>
         </Flex>
       </Flex>
