@@ -8,7 +8,7 @@ import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
-import { NoticesList } from "./pages/notices-list/page";
+import { NoticesList } from "./pages/notices-list";
 import { noticesListLoader } from "./pages/notices-list/loader";
 
 export const router: ReturnType<typeof createBrowserRouter> =
