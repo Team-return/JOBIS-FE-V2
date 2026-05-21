@@ -61,6 +61,22 @@ const meta: Meta<typeof Table> = {
     checkbox: {
       control: "boolean",
       description: "첫 번째 컬럼에 체크박스 표시 여부"
+    },
+    headerBg: {
+      control: "text",
+      description: "테이블 헤더 배경색상"
+    },
+    headerHeight: {
+      control: "number",
+      description: "테이블 헤더 높이"
+    },
+    headerTextProps: {
+      control: "object",
+      description: "테이블 헤더 Text 스타일"
+    },
+    rowHeight: {
+      control: "number",
+      description: "테이블 행 높이"
     }
   }
 };

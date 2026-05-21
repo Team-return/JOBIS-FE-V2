@@ -21,6 +21,7 @@ export default defineConfig({
       include: ["src/", "assets/"],
       exclude: [
         "src/setupTests.ts",
+        "src/vitest.setup.ts",
         ".storybook/*",
         "**/*.stories.ts",
         "**/*.stories.tsx",
