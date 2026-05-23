@@ -7,6 +7,11 @@ import { Home } from "./pages/home";
 import { CompanyDetail } from "./pages/company-detail";
 import { homeLoader } from "./pages/home";
 import { companyDetailLoader } from "./pages/company-detail/loader";
+import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
+import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
+import { Login } from "./pages/auth/login";
+import { NoticesList } from "./pages/notices-list";
+import { noticesListLoader } from "./pages/notices-list/loader";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -60,7 +65,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>공지사항 목록</div>
+              loader: noticesListLoader,
+              element: <NoticesList />
             },
             {
               path: "detail/:noticeId",
@@ -95,10 +101,32 @@ export const router: ReturnType<typeof createBrowserRouter> =
     },
     {
       path: "/login",
-      element: <div>login</div>
+      element: <Login />
     },
     {
       path: "/signup",
-      element: <div>signup</div>
+      children: [
+        {
+          index: true,
+          element: <SignUp />
+        },
+        {
+          path: "step2",
+          element: <SignUpProfile />
+        }
+      ]
+    },
+    {
+      path: "/forget-pw",
+      children: [
+        {
+          index: true,
+          element: <PasswordVerify />
+        },
+        {
+          path: "edit",
+          element: <PasswordEdit />
+        }
+      ]
     }
   ]);
