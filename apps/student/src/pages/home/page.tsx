@@ -17,12 +17,14 @@ import {
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
 import { useBookmarks } from "@jobis/api";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
   const { getParam, getParamAsNumber } = useQueryParams();
+
+  const navigate = useNavigate();
 
   const currentPage = getParamAsNumber("page", initialParams.page);
   const currentName = getParam("name") ?? initialParams.name ?? "";
@@ -62,7 +64,11 @@ export const Home = () => {
             <Text $size="h5" $weight="bold">
               👀 최근 본 기업이에요
             </Text>
-            <ListSection onClickViewAll={() => {}} />
+            <ListSection
+              onClickViewAll={() => {
+                navigate("/company");
+              }}
+            />
           </Flex>
           <Flex $gap={24}>
             {isLoading &&
@@ -92,6 +98,9 @@ export const Home = () => {
                   companyName={company.company_name}
                   imgUrl={company.company_logo_url}
                   hasRecruitment={company.is_recruiting}
+                  onClick={() => {
+                    navigate(`/company/detail/${company.company_id}`);
+                  }}
                 />
               ))
             )}
@@ -103,7 +112,11 @@ export const Home = () => {
             <Text $size="h5" $weight="bold">
               🏢이런 기업은 어떠세요?
             </Text>
-            <ListSection onClickViewAll={() => {}} />
+            <ListSection
+              onClickViewAll={() => {
+                navigate("/company");
+              }}
+            />
           </Flex>
           <Flex $gap={24}>
             {isLoading &&
@@ -134,6 +147,9 @@ export const Home = () => {
                   imgUrl={company.logo_url}
                   annualSales={`연매출 ${company.take}억`}
                   hasRecruitment={company.has_recruitment}
+                  onClick={() => {
+                    navigate(`/company/detail/${company.id}`);
+                  }}
                 />
               ))
             )}
@@ -150,7 +166,11 @@ export const Home = () => {
           <Text $size="h5" $weight="bold">
             📌 내가 저장한 모집 의뢰서
           </Text>
-          <ListSection onClickViewAll={() => {}} />
+          <ListSection
+            onClickViewAll={() => {
+              navigate("/recruitment");
+            }}
+          />
         </Flex>
         <Flex $gap={24}>
           {bookmarks.map(bookmark => {
@@ -162,6 +182,9 @@ export const Home = () => {
                 hiringJobs={bookmark.hiring_job}
                 militarySupport={bookmark.military_support}
                 bookmarked={bookmark.bookmarked}
+                onClick={() => {
+                  navigate(`/recruitment/detail/${bookmark.recruitment_id}`);
+                }}
               />
             );
           })}
