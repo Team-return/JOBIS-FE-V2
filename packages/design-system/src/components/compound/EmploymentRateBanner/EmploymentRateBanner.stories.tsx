@@ -26,7 +26,7 @@ type Story = StoryObj<typeof EmploymentRateBanner>;
 export const Default: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const banner = canvas.getByRole("img", { name: "배너 배경 이미지" });
+    const banner = canvas.getByRole("img", { name: "EmploymentRateBanner" });
     expect(banner).toBeInTheDocument();
     await userEvent.click(banner);
     await expect(args.onClick).toHaveBeenCalledTimes(1);

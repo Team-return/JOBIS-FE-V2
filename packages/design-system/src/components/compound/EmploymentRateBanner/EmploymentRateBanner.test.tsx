@@ -13,7 +13,7 @@ describe("EmploymentRateBanner", () => {
     renderWithTheme(<EmploymentRateBanner {...props} />);
 
     expect(
-      screen.getByRole("img", { name: "배너 배경 이미지" })
+      screen.getByRole("img", { name: "EmploymentRateBanner" })
     ).toBeInTheDocument();
   });
 });
