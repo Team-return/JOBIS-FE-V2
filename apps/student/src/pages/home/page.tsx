@@ -26,16 +26,28 @@ export const Home = () => {
 
   const navigate = useNavigate();
 
-  const currentPage = getParamAsNumber("page", initialParams.page);
+  const parsedPage = getParamAsNumber("page", initialParams.page);
+  const currentPage =
+    Number.isFinite(parsedPage) && parsedPage >= 1
+      ? parsedPage
+      : initialParams.page;
   const currentName = getParam("name") ?? initialParams.name ?? "";
-  const currentSort = (getParam("sort-type") ??
-    initialParams.sortType ??
-    "") as ListSortType | "";
+  const allowedSortTypes: readonly ListSortType[] = [
+    "WORKERS_COUNT_ASC",
+    "WORKERS_COUNT_DESC",
+    "FOUNDED_AT_ASC",
+    "FOUNDED_AT_DESC",
+    "TAKE"
+  ];
+  const rawSort = getParam("sort-type") ?? initialParams.sortType;
+  const currentSort = allowedSortTypes.includes(rawSort as ListSortType)
+    ? (rawSort as ListSortType)
+    : undefined;
 
   const { data: companyListData, isLoading } = useCompanyStudentList({
     page: currentPage,
     name: currentName,
-    sort_type: currentSort as ListSortType
+    sort_type: currentSort
   });
   const companies = companyListData?.companies.slice(0, 3) || [];
 
