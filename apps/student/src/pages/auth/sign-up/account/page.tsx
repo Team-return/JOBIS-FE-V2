@@ -1,7 +1,4 @@
-import {
-  useSendAuthCode,
-  useAuthCodeCheck
-} from "@jobis/api";
+import { useSendAuthCode, useAuthCodeCheck } from "@jobis/api";
 import {
   Box,
   Button,
@@ -26,8 +23,8 @@ export const SignUp = () => {
   const { success, error } = useToast();
   const navigation = useNavigate();
 
-  const setSignupInfo = useAuthStore((state) => state.setAuthInfo);
-  const setEmailVerified = useAuthStore((state) => state.setVerified);
+  const setSignupInfo = useAuthStore(state => state.setAuthInfo);
+  const setEmailVerified = useAuthStore(state => state.setVerified);
 
   const [eyeOpen, setEyeOpen] = useState(false);
   const [cfEyeOpen, setCfEyeOpen] = useState(false);
@@ -159,7 +156,7 @@ export const SignUp = () => {
       return;
     }
     setSignupInfo({ email, password });
-    navigation("step2")
+    navigation("step2");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

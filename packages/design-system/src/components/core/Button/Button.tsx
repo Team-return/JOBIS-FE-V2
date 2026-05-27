@@ -35,6 +35,7 @@ const Component = styled.button<Props>`
   align-items: center;
   justify-content: center;
   gap: 12px;
+  white-space: nowrap;
   transition:
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out,

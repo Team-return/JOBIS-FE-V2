@@ -1,6 +1,4 @@
-import {
-  useChangePwByEmail
-} from "@jobis/api";
+import { useChangePwByEmail } from "@jobis/api";
 import {
   Box,
   Button,
@@ -46,7 +44,7 @@ export const PasswordEdit = () => {
     setPasswordError("");
     return false;
   };
-  
+
   const validatePwConfirm = (pwConfirm: string) => {
     if (!pwConfirm || pwConfirm.trim().length === 0) {
       setPwConfirmError("비밀번호를 입력해주세요.");
@@ -60,11 +58,10 @@ export const PasswordEdit = () => {
     return false;
   };
 
-
   const { mutate: ChangePw } = useChangePwByEmail({
     onSuccess: () => {
-      success("비밀번호가 변경되었습니다.")
-      reset()
+      success("비밀번호가 변경되었습니다.");
+      reset();
       navigation("/login");
     },
     onError: status => {

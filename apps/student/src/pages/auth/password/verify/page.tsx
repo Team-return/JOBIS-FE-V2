@@ -1,7 +1,4 @@
-import {
-  useSendAuthCode,
-  useAuthCodeCheck
-} from "@jobis/api";
+import { useSendAuthCode, useAuthCodeCheck } from "@jobis/api";
 import {
   Box,
   Button,
@@ -15,18 +12,15 @@ import {
 } from "@jobis/design-system";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  EMAIL_REGEX,
-  VERIFYCODE_REGEX
-} from "../../../../utils";
+import { EMAIL_REGEX, VERIFYCODE_REGEX } from "../../../../utils";
 
 export const PasswordVerify = () => {
   const { currentTheme: theme } = useTheme();
   const { success, error } = useToast();
   const navigation = useNavigate();
 
-  const setForgetPwInfo = useAuthStore((state) => state.setAuthInfo);
-  const setEmailVerified = useAuthStore((state) => state.setVerified);
+  const setForgetPwInfo = useAuthStore(state => state.setAuthInfo);
+  const setEmailVerified = useAuthStore(state => state.setVerified);
 
   const [email, setEmail] = useState("");
   const [verifyCode, setVerifyCode] = useState("");
@@ -88,7 +82,7 @@ export const PasswordVerify = () => {
     onSuccess: () => {
       success("이메일 인증에 성공했습니다.");
       setEmailVerified(true);
-      navigation("edit")
+      navigation("edit");
     },
     onError: status => {
       switch (status) {
@@ -112,17 +106,11 @@ export const PasswordVerify = () => {
     checkAuthCode({ email: email, code: verifyCode });
   };
 
-  const onSubmit = (
-    email: string,
-    verifyCode: string
-  ) => {
-    if (
-      validateEmail(email) ||
-      validateVerifyCode(verifyCode)
-    ) {
+  const onSubmit = (email: string, verifyCode: string) => {
+    if (validateEmail(email) || validateVerifyCode(verifyCode)) {
       return;
     }
-    checkVerifyCode()
+    checkVerifyCode();
     setForgetPwInfo({ email });
   };
 
@@ -221,7 +209,7 @@ export const PasswordVerify = () => {
             <Button
               $variant="contained"
               $size="lg"
-              onClick={()=> onSubmit(email, verifyCode)}
+              onClick={() => onSubmit(email, verifyCode)}
             >
               다음→
             </Button>
