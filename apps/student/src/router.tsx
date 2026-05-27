@@ -1,9 +1,11 @@
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
+import { recruitmentLoader } from "./pages/recruitment-list/loader";
+import { recruitmentDetailLoader } from "./pages/recruitment-detail/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
-import { Home } from "./pages/home";
+import { RecruitmentDetail } from "./pages/recruitment-detail";
 import { CompanyDetail } from "./pages/company-detail";
 import { homeLoader } from "./pages/home";
 import { companyDetailLoader } from "./pages/company-detail/loader";
@@ -52,11 +54,13 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
+              loader: recruitmentLoader,
               element: <RecruitmentList />
             },
             {
               path: "detail/:recruitmentId",
-              element: <div>모집의뢰서 상세</div>
+              loader: recruitmentDetailLoader,
+              element: <RecruitmentDetail />
             }
           ]
         },

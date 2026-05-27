@@ -3,6 +3,7 @@ export interface InfoItem {
   value: string;
   itemType?: "text" | "file";
   fileUrl?: string;
+  expandableContent?: InfoItem[];
 }
 
 export interface DetailTableProps {
