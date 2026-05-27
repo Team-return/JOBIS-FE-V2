@@ -13,6 +13,7 @@ import {
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import { useDebounce, useQueryParams } from "../../utils";
+import { useNavigate } from "react-router-dom";
 import {
   ListSortType,
   StudentRecruitmentStatus,
@@ -23,6 +24,7 @@ import {
 
 export const RecruitmentList = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const navigate = useNavigate();
 
   const currentPage = getParamAsNumber("page", 1);
   const currentName = getParam("name") || "";
@@ -196,8 +198,10 @@ export const RecruitmentList = () => {
                 companyProfileUrl={recruitment.company_profile_url}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                recruitmentStatus={recruitment.status}
                 bookmarked={recruitment.bookmarked}
+                onClick={() =>
+                  navigate(`/recruitment/detail/${recruitment.id}`)
+                }
               />
             );
           })

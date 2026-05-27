@@ -9,6 +9,7 @@ export const companiesKeys = {
     "company-student-count",
     params
   ],
+  companyStudentRecentList: () => ["company-student-recent-list"],
   companyReviewList: () => ["company-review-list"],
   companyDetail: (companyId: number) => ["company-detail", companyId],
   companyMy: () => ["company-my"],

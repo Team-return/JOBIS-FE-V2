@@ -1,4 +1,4 @@
-import { Flex, Text, Bookmark } from "@/components";
+import { Flex, Text } from "@/components";
 import type { Props } from "./CompanyCard.types";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
@@ -9,14 +9,26 @@ const Img = styled.img`
   border-radius: 12px;
   background-color: ${({ theme }) => theme.color.grayScale[40]};
   object-fit: fill;
+  cursor: pointer;
+`;
+
+const Clip = styled.div<{ $boolean: boolean }>`
+  padding: 4px 8px;
+  height: 18px;
+  border: 1px solid
+    ${({ theme, $boolean }) =>
+      $boolean ? theme.color.primary[20] : theme.color.grayScale[60]};
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const CompanyCard = ({
   imgUrl,
   companyName,
   annualSales,
-  bookmark,
-  onBookmarkClick,
+  hasRecruitment,
   onClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
@@ -25,18 +37,57 @@ export const CompanyCard = ({
       <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>
-          <Text $size="h6" $weight="regular">
-            {companyName}
-          </Text>
-          <Text
-            $size="body3"
-            $weight="regular"
-            $color={theme.color.grayScale[60]}
-          >
-            {annualSales}
-          </Text>
+          {annualSales ? (
+            <>
+              <Flex $direction="row" $justify="space-between">
+                <Text $size="h6" $weight="regular">
+                  {companyName}
+                </Text>
+                <Clip $boolean={hasRecruitment}>
+                  <Text
+                    $span
+                    $size="caption"
+                    $color={
+                      hasRecruitment
+                        ? theme.color.primary[20]
+                        : theme.color.grayScale[80]
+                    }
+                  >
+                    {hasRecruitment ? "모집중" : "모집 종료"}
+                  </Text>
+                </Clip>
+              </Flex>
+              <Text
+                $size="body3"
+                $weight="regular"
+                $color={theme.color.grayScale[60]}
+              >
+                {annualSales}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Flex $direction="row">
+                <Clip $boolean={hasRecruitment}>
+                  <Text
+                    $span
+                    $size="caption"
+                    $color={
+                      hasRecruitment
+                        ? theme.color.primary[20]
+                        : theme.color.grayScale[80]
+                    }
+                  >
+                    {hasRecruitment ? "모집중" : "모집 종료"}
+                  </Text>
+                </Clip>
+              </Flex>
+              <Text $span={true} $size="h6" $weight="regular">
+                {companyName}
+              </Text>
+            </>
+          )}
         </Flex>
-        <Bookmark $checked={bookmark} onClick={onBookmarkClick} />
       </Flex>
     </Flex>
   );

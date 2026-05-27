@@ -16,7 +16,8 @@
   UpdateCompanyTypeRequest,
   CompanyCountResponse,
   CreateTeacherCompanyRequest,
-  CompanyStudentList
+  CompanyStudentList,
+  CompanyStudentRecentListResponse
 } from "./types";
 import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
@@ -43,6 +44,14 @@ export const useCompanyStudentCount = createQueryHook<
 >({
   path: "/student/count",
   queryKey: companiesKeys.companyStudentCount
+});
+
+export const useCompanyStudentRecentList = createQueryHook<
+  void,
+  CompanyStudentRecentListResponse
+>({
+  path: "/student/recent",
+  queryKey: companiesKeys.companyStudentRecentList
 });
 
 export const useCompanyReviewList = createQueryHook<
