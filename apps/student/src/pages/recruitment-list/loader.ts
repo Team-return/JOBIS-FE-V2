@@ -8,7 +8,11 @@ import {
   type QueryParamParser,
   parseOptionalBoolean
 } from "../../utils";
-import { type RecruitmentStatus, useRecruitmentList, ListSortType } from "@jobis/api";
+import {
+  type RecruitmentStatus,
+  useRecruitmentList,
+  ListSortType
+} from "@jobis/api";
 
 export interface RecruitmentQuery {
   name?: string;
@@ -42,7 +46,10 @@ const SORT_TYPES = [
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
   parse: (params: URLSearchParams) => {
     const status = parseEnum(params.get("status"), RECRUITMENT_STATUSES);
-    const military_support_status = parseEnum(params.get("military_support"), RECRUITMENT_STATUSES);
+    const military_support_status = parseEnum(
+      params.get("military_support"),
+      RECRUITMENT_STATUSES
+    );
     const page = parseOptionalNumber(params.get("page")) || 1;
 
     return {
@@ -50,7 +57,8 @@ const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
       year: parseOptionalNumber(params.get("year")),
       status,
       page,
-      winter_intern: status === "WIN_INTERN" || params.get("winter_intern") === "true",
+      winter_intern:
+        status === "WIN_INTERN" || params.get("winter_intern") === "true",
       job_code: parseOptionalNumber(params.get("field") || ""),
       tech_code: parseOptionalString(params.get("techStack") || ""),
       military_support: parseOptionalBoolean(params.get("military_support")),
@@ -74,7 +82,7 @@ export async function recruitmentLoader({
     military_support: queryParams.military_support,
     years: queryParams.year,
     status: queryParams.status,
-    sort_type: queryParams.sort_type,
+    sort_type: queryParams.sort_type
   });
 
   return {

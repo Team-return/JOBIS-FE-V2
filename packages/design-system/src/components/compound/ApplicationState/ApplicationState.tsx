@@ -9,7 +9,7 @@ const STATUS_MAP: Record<StatusType, string> = {
   rejected: "반려",
   failed: "탈락",
   approved: "승인됨",
-  pending: "승인요청됨",
+  requested: "승인요청됨",
   passed: "합격",
   internship: "현장실습",
   contract: "근로계약",
@@ -36,7 +36,7 @@ const getStatusStyle = (theme: JOBISTheme, status: StatusType) => {
         color: theme.color.subColor.green[20]
       };
     case "approved":
-    case "pending":
+    case "requested":
       return {
         backgroundColor: theme.color.subColor.yellow[10],
         color: theme.color.subColor.yellow[20]
@@ -138,7 +138,7 @@ export const ApplicationState = ({
                 {statusText}
               </Text>
             </Status>
-            {types === "pending" && (
+            {types === "requested" && (
               <Icon
                 icon="KebapMenu"
                 size={24}

@@ -3,7 +3,7 @@ import {
   setToken,
   setCookie,
   removeCookie,
-  getCookie,
+  getCookie
 } from "@jobis/api";
 import {
   Box,
@@ -170,11 +170,7 @@ export const Login = () => {
                 />
               </Flex>
 
-              <Flex 
-                $justify="center" 
-                $gap={4}
-                style={{ whiteSpace: "nowrap"}} 
-              >
+              <Flex $justify="center" $gap={4} style={{ whiteSpace: "nowrap" }}>
                 <Text
                   $size="caption"
                   $weight="regular"

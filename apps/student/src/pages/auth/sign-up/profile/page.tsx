@@ -13,9 +13,7 @@ import {
 } from "@jobis/design-system";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GRADE_REGEX,
-} from "../../../../utils";
+import { GRADE_REGEX } from "../../../../utils";
 
 export type NullableGender = Gender | null;
 

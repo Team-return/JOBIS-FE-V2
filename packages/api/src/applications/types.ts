@@ -42,6 +42,7 @@ export interface StudentApplication {
   company_logo_url: string;
   attachments: CompanyApplicationAttachment[];
   application_status: ApplicationStatus;
+  created_at: string;
 }
 
 export interface StudentApplicationResponse {
