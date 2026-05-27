@@ -5,6 +5,7 @@ export type StatusType =
   | "failed"
   | "approved"
   | "requested"
+  | "pending"
   | "passed"
   | "internship"
   | "contract"

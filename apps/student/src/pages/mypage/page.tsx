@@ -24,7 +24,8 @@ export const MyPage = () => {
   const { data: applicationList } = useStudentApplications();
   const applications = applicationList?.applications || [];
   const { mutate: deleteApplication } = useDeleteApplication({
-    onSuccess: () => setCancelTargetId(null)
+    onSuccess: () => setCancelTargetId(null),
+    onError: () => error("지원 취소에 실패했습니다. 잠시 후 다시 시도해주세요.")
   });
   const cancelTarget = applications.find(
     a => a.application_id === cancelTargetId
@@ -65,9 +66,9 @@ export const MyPage = () => {
         />
         <Flex $gap={8} $direction="column">
           <Text $size="body1">내가 지원한 회사</Text>
-          <Flex $gap={12} $direction="column">
+          <Flex $gap={12} $direction="column" $align="center">
             {applications.length === 0 ? (
-              <></>
+              <Text $size="body2">지원한 회사가 없습니다.</Text>
             ) : (
               applications.map(application => (
                 <ApplicationState
