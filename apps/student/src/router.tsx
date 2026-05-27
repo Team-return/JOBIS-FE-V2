@@ -12,8 +12,7 @@ import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
-import { NoticesList } from "./pages/notices-list";
-import { noticesListLoader } from "./pages/notices-list/loader";
+import { MyPage } from "./pages/mypage";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -95,7 +94,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/mypage",
-          element: <div>마이페이지</div>
+          element: <MyPage />
         },
         {
           path: "/jobrate",

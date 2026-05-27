@@ -10,6 +10,9 @@
 } from "./types";
 import { createDomainApi } from "@/create-hook";
 import { applicationsKeys } from "./keys";
+import { query, type MutationOptions } from "@/QueryProvider";
+import { useMutation } from "@tanstack/react-query";
+import { instance } from "@/instance";
 
 const DOMAIN = "/applications";
 const { createQueryHook, createMutationHook, createIdMutationHook } =
@@ -72,10 +75,16 @@ export const useTeacherApplicationCount = createQueryHook<
   queryKey: applicationsKeys.teacherApplicationCount
 });
 
-export const useDeleteApplication = createIdMutationHook<void, void>({
-  path: "/",
-  method: "delete"
-});
+export const useDeleteApplication = (options?: MutationOptions<number, void>) =>
+  useMutation<void, number, number>({
+    mutationFn: id =>
+      instance.delete(`${DOMAIN}/${id}`).then(({ data }) => data),
+    ...options,
+    onSuccess: async (...args) => {
+      await query.invalidate(applicationsKeys.studentApplications());
+      options?.onSuccess?.(...args);
+    }
+  });
 
 export const useCreateApplication = createIdMutationHook<
   { url: string; type: string }[],
