@@ -1,15 +1,25 @@
 import styled from "@emotion/styled";
 import { Box, Checkbox, Flex, Text } from "@/components";
-import { Props } from "./Table.types";
+import type { Props } from "./Table.types";
 import { useTheme } from "@/hooks";
 
-const Header = styled(Flex)`
+const Header = styled(Flex)<{ $headerBg?: string; $headerHeight?: number }>`
   border-bottom: ${({ theme }) => `1px solid ${theme.color.grayScale[50]}`};
-  padding: 12px 0px;
+  box-sizing: border-box;
+  ${({ $headerHeight }) =>
+    $headerHeight != null
+      ? `
+    height: ${$headerHeight}px;
+    padding: 0;
+  `
+      : `
+    padding: 12px 0px;
+  `}
+  ${({ $headerBg }) => $headerBg && `background-color: ${$headerBg};`}
 `;
-const Body = styled(Flex)`
+const Body = styled(Flex)<{ $rowHeight: number }>`
   border-bottom: ${({ theme }) => `1px solid ${theme.color.grayScale[50]}`};
-  height: 88px;
+  height: ${({ $rowHeight }) => `${$rowHeight}px`};
 `;
 
 const Cell = styled.div<{
@@ -35,11 +45,33 @@ export const Table = ({
   headers,
   rows,
   columnWidths,
+  headerBg,
+  headerHeight,
+  headerTextProps,
+  rowHeight = 88,
   checkbox,
   selectedRows = [],
   onRowSelect
 }: Props) => {
   const { currentTheme: theme } = useTheme();
+
+  const size = headerTextProps?.$size ?? "body2";
+  let headerColor: string | undefined;
+  if (headerTextProps == null) {
+    headerColor = theme.color.grayScale[60];
+  } else if ("$color" in headerTextProps) {
+    headerColor = headerTextProps.$color;
+  } else if (size === "body2") {
+    headerColor = theme.color.grayScale[60];
+  }
+
+  const headerLabelTextProps = {
+    $size: size,
+    ...(headerColor !== undefined ? { $color: headerColor } : {}),
+    ...(headerTextProps && "$weight" in headerTextProps
+      ? { $weight: headerTextProps.$weight }
+      : {})
+  };
 
   const allSelected = rows.length > 0 && selectedRows.length === rows.length;
 
@@ -65,7 +97,12 @@ export const Table = ({
 
   return (
     <Box>
-      <Header $justify="space-evenly">
+      <Header
+        $justify="space-evenly"
+        $align={headerHeight != null ? "center" : "stretch"}
+        $headerBg={headerBg}
+        $headerHeight={headerHeight}
+      >
         {headers.map((header, index) => (
           <Cell
             key={index}
@@ -79,21 +116,17 @@ export const Table = ({
                   $checked={allSelected}
                   onChange={handleHeaderCheckboxChange}
                 />
-                <Text $size="body2" $color={theme.color.grayScale[60]}>
-                  {header}
-                </Text>
+                <Text {...headerLabelTextProps}>{header}</Text>
               </Flex>
             ) : (
-              <Text $size="body2" $color={theme.color.grayScale[60]}>
-                {header}
-              </Text>
+              <Text {...headerLabelTextProps}>{header}</Text>
             )}
           </Cell>
         ))}
       </Header>
 
       {rows.map((row, rowIndex) => (
-        <Body key={rowIndex} $justify="space-evenly">
+        <Body key={rowIndex} $justify="space-evenly" $rowHeight={rowHeight}>
           {row.map((cell, cellIndex) => (
             <Cell
               key={cellIndex}

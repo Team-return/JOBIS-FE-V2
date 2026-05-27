@@ -7,10 +7,13 @@ import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { RecruitmentDetail } from "./pages/recruitment-detail";
 import { CompanyDetail } from "./pages/company-detail";
+import { homeLoader } from "./pages/home";
 import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
+import { NoticesList } from "./pages/notices-list";
+import { noticesListLoader } from "./pages/notices-list/loader";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -28,7 +31,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           index: true,
-          element: <div>메인페이지</div>
+          loader: homeLoader,
+          element: <Home />
         },
         {
           path: "/company",
@@ -65,7 +69,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>공지사항 목록</div>
+              loader: noticesListLoader,
+              element: <NoticesList />
             },
             {
               path: "detail/:noticeId",

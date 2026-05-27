@@ -188,7 +188,6 @@ export const RecruitmentList = () => {
             <Box $margin={[50, 76.8]}>
               <Text $size="body2">검색된 기업이 없습니다.</Text>
             </Box>
-            ``
           </>
         ) : (
           recruitments.map(recruitment => {
@@ -199,7 +198,6 @@ export const RecruitmentList = () => {
                 companyProfileUrl={recruitment.company_profile_url}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                recruitmentStatus={recruitment.status}
                 bookmarked={recruitment.bookmarked}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
