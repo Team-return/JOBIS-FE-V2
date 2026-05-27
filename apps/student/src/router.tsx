@@ -3,7 +3,9 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
+import { Home } from "./pages/home";
 import { CompanyDetail } from "./pages/company-detail";
+import { homeLoader } from "./pages/home";
 import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
@@ -27,7 +29,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           index: true,
-          element: <div>메인페이지</div>
+          loader: homeLoader,
+          element: <Home />
         },
         {
           path: "/company",

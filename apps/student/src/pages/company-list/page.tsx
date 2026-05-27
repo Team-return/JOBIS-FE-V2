@@ -121,8 +121,8 @@ export const CompanyList = () => {
                 key={company.id}
                 companyName={company.name}
                 imgUrl={company.logo_url}
+                hasRecruitment={company.has_recruitment}
                 annualSales={`연매출 ${company.take}억`}
-                bookmark={company.has_recruitment}
                 onClick={() => navigate(`/company/detail/${company.id}`)}
               />
             ))

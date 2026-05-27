@@ -34,31 +34,33 @@ export const RecruitmentList = () => {
 
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);
-  
+
   const { data: jobCodes } = useCodeList({ type: "JOB" });
-  const { data: techCodes } = useCodeList({ 
-    type: "TECH", 
-    parent_code: field ? parseInt(field, 10) : undefined 
+  const { data: techCodes } = useCodeList({
+    type: "TECH",
+    parent_code: field ? parseInt(field, 10) : undefined
   });
 
-  const jobOptions = jobCodes?.codes.map((item) => ({
-    label: item.keyword,
-    value: item.code.toString(),
-  })) || [];
+  const jobOptions =
+    jobCodes?.codes.map(item => ({
+      label: item.keyword,
+      value: item.code.toString()
+    })) || [];
 
-  const techOptions = techCodes?.codes.map((item) => ({
-    label: item.keyword,
-    value: item.code.toString(),
-  })) || [];
+  const techOptions =
+    techCodes?.codes.map(item => ({
+      label: item.keyword,
+      value: item.code.toString()
+    })) || [];
 
   const { data: companyCountData } = useStudentRecruitmentCount({
     name: currentName,
     years: year ? parseInt(year, 10) : undefined,
     status: state as StudentRecruitmentStatus,
     job_code: field ? parseInt(field, 10) : undefined,
-    tech_code: techStack || undefined,
+    tech_code: techStack || undefined
   });
-  
+
   const { data: RecruitmentListData, isLoading } = useRecruitmentList({
     page: currentPage,
     name: currentName,
@@ -66,7 +68,7 @@ export const RecruitmentList = () => {
     status: state as StudentRecruitmentStatus,
     sort_type: currentSort as ListSortType,
     job_code: field ? parseInt(field, 10) : undefined,
-    tech_code: techStack || undefined,
+    tech_code: techStack || undefined
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
@@ -94,7 +96,7 @@ export const RecruitmentList = () => {
     { label: "모집중", value: "모집중" },
     { label: "모집 종료", value: "모집 종료" }
   ];
-  
+
   const recruitmentyear = [
     { label: "2026", value: "2026" },
     { label: "2025", value: "2025" },
@@ -141,7 +143,9 @@ export const RecruitmentList = () => {
               options={techOptions}
               type="supportJob"
               $defaultValue={techStack}
-              onChange={value => updateParams({ techStack: value || undefined, page: 1 })}
+              onChange={value =>
+                updateParams({ techStack: value || undefined, page: 1 })
+              }
             />
             <Search
               placeholder="검색어를 입력해 주세요."
@@ -181,7 +185,7 @@ export const RecruitmentList = () => {
             <Spacer />
             <Box $margin={[50, 76.8]}>
               <Text $size="body2">검색된 기업이 없습니다.</Text>
-            </Box>``
+            </Box>
           </>
         ) : (
           recruitments.map(recruitment => {
@@ -192,7 +196,6 @@ export const RecruitmentList = () => {
                 companyProfileUrl={recruitment.company_profile_url}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                recruitmentStatus={recruitment.status}
                 bookmarked={recruitment.bookmarked}
               />
             );
