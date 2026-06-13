@@ -13,6 +13,9 @@ import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
 import { MyPage } from "./pages/mypage";
+import { Home } from "./pages/home/page";
+import { noticesListLoader } from "./pages/notice-list/loader";
+import { NoticesList } from "./pages/notice-list/page";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
