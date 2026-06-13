@@ -9,7 +9,8 @@ export const DetailHeader = ({
   title,
   logoUrl,
   businessNumber,
-  isParticipation
+  isParticipation,
+  onViewReview
 }: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -89,7 +90,7 @@ export const DetailHeader = ({
                   모집의뢰서 조회
                 </Text>
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={onViewReview}>
                 <Text $size="body3" $weight="regular" $color="#7F7F7F">
                   면접 후기 조회
                 </Text>

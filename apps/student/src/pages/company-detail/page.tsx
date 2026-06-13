@@ -6,7 +6,7 @@ import {
   DetailTable,
   Box
 } from "@jobis/design-system";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { LoaderData } from "apps/student/src/utils";
 
 const formatBusinessNumber = (businessNumber?: string) => {
@@ -38,8 +38,12 @@ const getAttachmentName = (fileUrl?: string) => {
 
 export const CompanyDetail = () => {
   const { params: companyId } = useLoaderData() as LoaderData<number>;
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useCompanyDetail(companyId);
+  const handleViewReview = () => {
+    navigate(`/company/detail/${companyId}/review`);
+  };
 
   const firstAttachment = data?.attachments?.[0];
 
@@ -59,6 +63,7 @@ export const CompanyDetail = () => {
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
             logoUrl={data?.company_profile_url || "/logo.svg"}
             businessNumber={formatBusinessNumber(data?.business_number)}
+            onViewReview={handleViewReview}
           />
         </Flex>
         <DetailTable
