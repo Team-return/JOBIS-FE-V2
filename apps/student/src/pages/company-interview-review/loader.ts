@@ -4,7 +4,8 @@ import { useReviewList } from "@jobis/api";
 import type { LoaderData } from "../../utils";
 
 export async function companyInterviewReviewLoader({
-  params
+  params,
+  request
 }: LoaderFunctionArgs): Promise<LoaderData<number>> {
   const id = Number(params.companyId);
 
@@ -12,7 +13,9 @@ export async function companyInterviewReviewLoader({
     throw redirect("/company");
   }
 
-  await useReviewList.prefetch({ company_id: id });
+  const page = Number(new URL(request.url).searchParams.get("page")) || 1;
+
+  await useReviewList.prefetch({ page, company_id: id });
 
   return { params: id };
 }

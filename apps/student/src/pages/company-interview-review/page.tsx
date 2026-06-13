@@ -1,7 +1,8 @@
-import { useReviewDetail, useReviewList } from "@jobis/api";
+import { useReviewCount, useReviewDetail, useReviewList } from "@jobis/api";
 import {
   Container,
   Flex,
+  Pagination,
   ReviewAccordion,
   Skeleton,
   Text,
@@ -9,6 +10,7 @@ import {
 } from "@jobis/design-system";
 import { useLoaderData } from "react-router-dom";
 import type { LoaderData } from "apps/student/src/utils";
+import { useQueryParams } from "../../utils";
 
 const ReviewItem = ({
   reviewId,
@@ -24,7 +26,7 @@ const ReviewItem = ({
   const { data, isPending } = useReviewDetail(String(reviewId));
 
   if (isPending || !data) {
-    return <Skeleton width="100%" height={52} $radius={8} />;
+    return <Skeleton width={534} height={52} $radius={8} />;
   }
 
   return (
@@ -41,10 +43,15 @@ const ReviewItem = ({
 export const CompanyInterviewReview = () => {
   const { params: companyId } = useLoaderData() as LoaderData<number>;
   const { currentTheme: theme } = useTheme();
+  const { getParamAsNumber, updateParams } = useQueryParams();
+
+  const currentPage = getParamAsNumber("page", 1);
 
   const { data: reviewListData, isPending } = useReviewList({
+    page: currentPage,
     company_id: companyId
   });
+  const { data: reviewCountData } = useReviewCount({ company_id: companyId });
 
   const reviews = reviewListData?.reviews ?? [];
   const isEmpty = !isPending && reviews.length === 0;
@@ -89,6 +96,15 @@ export const CompanyInterviewReview = () => {
             ))}
           </Flex>
         )}
+
+        <Flex $justify="center">
+          <Pagination
+            start={1}
+            end={reviewCountData?.total_page_count || 1}
+            current={currentPage}
+            onChange={page => updateParams({ page: page })}
+          />
+        </Flex>
       </Flex>
     </Container>
   );
