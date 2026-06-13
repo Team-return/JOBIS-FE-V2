@@ -16,6 +16,7 @@ import { Home } from "./pages/home";
 import { NoticesList } from "./pages/notices-list";
 import { noticesListLoader } from "./pages/notices-list/loader";
 import { MyPage } from "./pages/mypage";
+import { ConnectReviewPage } from "./pages/connect-review";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -94,6 +95,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             { path: "expectations", element: <div>예상 면접 질문 작성</div> }
           ]
+        },
+        {
+          path: "/connect-review",
+          element: <ConnectReviewPage />
         },
         {
           path: "/mypage",
