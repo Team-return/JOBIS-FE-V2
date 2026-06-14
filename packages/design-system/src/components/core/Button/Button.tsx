@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { type Props } from "./Button.types";
 import { Text } from "@/components";
-import { TextProps } from "@/utils";
+import { parseList, TextProps } from "@/utils";
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -67,6 +67,7 @@ const Component = styled.button<Props>`
         `;
     }
   }}
+  ${({ $padding }) => $padding && `padding: ${parseList($padding)};`}
 
   ${({ $progressing }) =>
     $progressing &&
