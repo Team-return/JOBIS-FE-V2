@@ -16,6 +16,11 @@ import { Home } from "./pages/home";
 import { NoticesList } from "./pages/notices-list";
 import { noticesListLoader } from "./pages/notices-list/loader";
 import { MyPage } from "./pages/mypage";
+import { Home } from "./pages/home/page";
+import { noticesListLoader } from "./pages/notice-list/loader";
+import { NoticesList } from "./pages/notice-list/page";
+import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
+import { CompanyInterviewReview } from "./pages/company-interview-review/page";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -48,6 +53,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
               path: "detail/:companyId",
               loader: companyDetailLoader,
               element: <CompanyDetail />
+            },
+            {
+              path: "detail/:companyId/review",
+              loader: companyInterviewReviewLoader,
+              element: <CompanyInterviewReview />
             }
           ]
         },
