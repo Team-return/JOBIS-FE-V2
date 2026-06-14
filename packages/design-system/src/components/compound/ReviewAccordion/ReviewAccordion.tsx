@@ -2,7 +2,7 @@ import { Flex, Icon, Text } from "@/components";
 import type { Props } from "./ReviewAccordion.types";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
-import { useState } from "react";
+import { type KeyboardEvent, useState } from "react";
 
 const Component = styled.div<{ $isOpen: boolean }>`
   display: flex;
@@ -13,6 +13,11 @@ const Component = styled.div<{ $isOpen: boolean }>`
   border-radius: 8px;
   padding: ${({ $isOpen }) => ($isOpen ? "16px 24px 20px" : "14px 24px")};
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.color.primary[20]};
+    outline-offset: 2px;
+  }
 `;
 
 const Chevron = styled.div<{ $isOpen: boolean }>`
@@ -47,8 +52,24 @@ export const ReviewAccordion = ({
   const { currentTheme: theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleToggle = () => setIsOpen(prev => !prev);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleToggle();
+    }
+  };
+
   return (
-    <Component $isOpen={isOpen} onClick={() => setIsOpen(prev => !prev)}>
+    <Component
+      $isOpen={isOpen}
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isOpen}
+    >
       <Flex $justify="space-between" $align="center">
         <Flex $align="center" $gap={12} $fit>
           <Text
