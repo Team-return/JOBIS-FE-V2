@@ -19,7 +19,7 @@ export const ConnectReviewPage = () => {
           </Flex>
         </Flex>
         <Box width={960}>
-          <Button $variant="outline" $size="lg" $padding={[20, 779, 20, 32]}>
+          <Button $variant="outline" $size="lg" $padding={[32, 779, 34, 32]}>
             면접 후기 작성하기
           </Button>
         </Box>
