@@ -13,7 +13,8 @@ import {
   Skeleton,
   RecrutementCard,
   ListSection,
-  EmploymentRateBanner
+  EmploymentRateBanner,
+  Button
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
 import { useBookmarks } from "@jobis/api";
@@ -70,17 +71,30 @@ export const Home = () => {
           $margin={[0, 0, 80, 0]}
         />
       </div>
-      <Box
-        $bg="#2F53FF"
-        height={50}
-        $radius={8}
-        $margin={[50, 0, 50, 0]}
-        width={960}
+      <Flex
+        $align="center"
+        $justify="space-between"
+        style={{
+          height: "50px",
+          borderRadius: "8px",
+          padding: "0 24px",
+          margin: "0 0 80px 0",
+          background: "#2F53FF"
+        }}
       >
-        <Text $color="white" $size="body1" $weight="medium" $align="left">
+        <Text $color="white" $size="body1" $weight="medium">
           수고하셨습니다! 면접의 후기를 작성해 주세요!
         </Text>
-      </Box>
+        <Button
+          $size="sm"
+          $hoverDisabled
+          onClick={() => {
+            navigate("/connect-review");
+          }}
+        >
+          작성하기 →
+        </Button>
+      </Flex>
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
           <Flex $gap={12} $align="center">
