@@ -70,6 +70,17 @@ export const Home = () => {
           $margin={[0, 0, 80, 0]}
         />
       </div>
+      <Box
+        $bg="#2F53FF"
+        height={50}
+        $radius={8}
+        $margin={[50, 0, 50, 0]}
+        width={960}
+      >
+        <Text $color="white" $size="body1" $weight="medium" $align="left">
+          수고하셨습니다! 면접의 후기를 작성해 주세요!
+        </Text>
+      </Box>
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
           <Flex $gap={12} $align="center">
