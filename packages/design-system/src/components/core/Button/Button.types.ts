@@ -13,4 +13,5 @@ export interface Props
   $size?: ButtonSize;
   $padding?: SpacingValue;
   $progressing?: boolean;
+  $hoverDisabled?: boolean;
 }

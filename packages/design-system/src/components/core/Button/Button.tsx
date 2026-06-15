@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { type Props } from "./Button.types";
-import { Text } from "@/components";
+import { Text } from "../Text";
 import { parseList, TextProps } from "@/utils";
 
 const spin = keyframes`
@@ -76,7 +76,7 @@ const Component = styled.button<Props>`
       cursor: wait;
   `}
 
-  ${({ $variant = "contained", theme }) => {
+  ${({ $variant = "contained", $hoverDisabled, theme }) => {
     const primaryColor = theme.color.primary[20];
     const primaryHoverColor = theme.color.primary[30];
     const primaryFocusColor = theme.color.primary[40];
@@ -90,7 +90,7 @@ const Component = styled.button<Props>`
           color: ${textColor};
   
           &:hover {
-            background-color: ${primaryHoverColor};
+            ${!$hoverDisabled && `background-color: ${primaryHoverColor};`}
           }
   
           &:focus-visible {
@@ -111,7 +111,7 @@ const Component = styled.button<Props>`
           border-color: ${primaryColor};
   
           &:hover {
-            background-color: ${outlineHoverBgColor}; 
+            ${!$hoverDisabled && `background-color: ${outlineHoverBgColor};`}
           }
   
           &:focus-visible {
