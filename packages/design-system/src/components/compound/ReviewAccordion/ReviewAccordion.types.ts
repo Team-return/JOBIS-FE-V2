@@ -1,7 +1,7 @@
 export interface Props {
   question: string;
   answer: string;
-  year: number;
+  time: string;
   major: string;
   writer: string;
 }

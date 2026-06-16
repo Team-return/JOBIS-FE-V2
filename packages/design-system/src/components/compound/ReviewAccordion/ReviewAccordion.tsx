@@ -45,7 +45,7 @@ const Dot = styled.div`
 export const ReviewAccordion = ({
   question,
   answer,
-  year,
+  time,
   major,
   writer
 }: Props) => {
@@ -113,7 +113,7 @@ export const ReviewAccordion = ({
                 $weight="regular"
                 $color={theme.color.primary[20]}
               >
-                {year.toString()}
+                {time.split("-").join(".")}
               </Text>
               <Flex $align="center" $gap={8} $fit>
                 <Text
