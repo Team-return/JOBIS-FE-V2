@@ -16,7 +16,10 @@ import { Home } from "./pages/home";
 import { NoticesList } from "./pages/notices-list";
 import { noticesListLoader } from "./pages/notices-list/loader";
 import { MyPage } from "./pages/mypage";
-import { ConnectReviewPage } from "./pages/connect-review";
+import {
+  ConnectReviewPage,
+  connectReviewLoader
+} from "./pages/connect-review";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -98,6 +101,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/connect-review",
+          loader: connectReviewLoader,
           element: <ConnectReviewPage />
         },
         {
