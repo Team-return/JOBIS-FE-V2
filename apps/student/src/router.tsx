@@ -15,6 +15,8 @@ import { Login } from "./pages/auth/login";
 import { Home } from "./pages/home";
 import { NoticesList } from "./pages/notices-list";
 import { noticesListLoader } from "./pages/notices-list/loader";
+import { NoticeDetail } from "./pages/notice-detail";
+import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -76,7 +78,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/:noticeId",
-              element: <div>공지사항 상세</div>
+              loader: noticeDetailLoader,
+              element: <NoticeDetail />
             }
           ]
         },
