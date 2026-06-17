@@ -14,12 +14,12 @@ import { useQueryParams } from "../../utils";
 
 const ReviewItem = ({
   reviewId,
-  year,
+  time,
   major,
   writer
 }: {
   reviewId: number;
-  year: number;
+  time: string;
   major: string;
   writer: string;
 }) => {
@@ -33,7 +33,7 @@ const ReviewItem = ({
     <ReviewAccordion
       question={data.question}
       answer={data.answer}
-      year={year}
+      time={time}
       major={major}
       writer={writer}
     />
@@ -89,7 +89,7 @@ export const CompanyInterviewReview = () => {
               <ReviewItem
                 key={review.review_id}
                 reviewId={review.review_id}
-                year={review.year}
+                time={review.time}
                 major={review.major}
                 writer={review.writer}
               />

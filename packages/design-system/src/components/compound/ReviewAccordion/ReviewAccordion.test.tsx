@@ -8,7 +8,7 @@ describe("ReviewAccordion", () => {
   const defaultProps = {
     question: "면접 분위기는 어땠나요?",
     answer: "편안하고 기술적인 질문 위주였습니다.",
-    year: 2024,
+    time: "2026-06-16",
     major: "Front-end",
     writer: "김하온온"
   };
@@ -30,7 +30,9 @@ describe("ReviewAccordion", () => {
     await userEvent.click(screen.getByText(defaultProps.question));
 
     expect(screen.getByText(defaultProps.answer)).toBeInTheDocument();
-    expect(screen.getByText(defaultProps.year.toString())).toBeInTheDocument();
+    expect(
+      screen.getByText(defaultProps.time.split("-").join("."))
+    ).toBeInTheDocument();
     expect(screen.getByText(defaultProps.major)).toBeInTheDocument();
     expect(screen.getByText(defaultProps.writer)).toBeInTheDocument();
   });
