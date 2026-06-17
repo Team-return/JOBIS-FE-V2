@@ -17,10 +17,11 @@ const formatDate = (createdAt: string) => {
 
 const getFileName = (url: string) => {
   try {
-    const decoded = decodeURIComponent(url);
-    return decoded.split("/").pop() ?? url;
+    const pathname = new URL(url).pathname;
+    const decodedPath = decodeURIComponent(pathname);
+    return decodedPath.split("/").pop() ?? url;
   } catch {
-    return url.split("/").pop() ?? url;
+    return url.split("?")[0].split("/").pop() ?? url;
   }
 };
 
