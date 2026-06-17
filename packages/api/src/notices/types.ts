@@ -19,7 +19,7 @@ export interface UpdateNoticeRequest {
 export interface NoticeDetailResponse {
   title: string;
   content: string;
-  createdAt: string;
+  created_at: string;
   attachments: NoticeAttachment[];
 }
 
