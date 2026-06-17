@@ -20,6 +20,9 @@ import { useBookmarks } from "@jobis/api";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
+const takeItems = <T,>(items: T[] | undefined, count: number) =>
+  Array.isArray(items) ? items.slice(0, count) : [];
+
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
   const { getParam, getParamAsNumber } = useQueryParams();
@@ -49,14 +52,13 @@ export const Home = () => {
     name: currentName,
     sort_type: currentSort
   });
-  const companies = companyListData?.companies.slice(0, 3) || [];
+  const companies = takeItems(companyListData?.companies, 3);
 
   const { data: companyStudentRecentListData } = useCompanyStudentRecentList();
-  const recentCompanies =
-    companyStudentRecentListData?.companies.slice(0, 3) || [];
+  const recentCompanies = takeItems(companyStudentRecentListData?.companies, 3);
 
   const { data: bookmarksData } = useBookmarks();
-  const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
+  const bookmarks = takeItems(bookmarksData?.bookmarks, 4);
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>

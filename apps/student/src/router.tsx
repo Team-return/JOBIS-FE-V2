@@ -7,7 +7,7 @@ import { CompanyList } from "./pages/company-list/page";
 import { RecruitmentList } from "./pages/recruitment-list";
 import { RecruitmentDetail } from "./pages/recruitment-detail";
 import { CompanyDetail } from "./pages/company-detail";
-import { homeLoader } from "./pages/home";
+import { Home, homeLoader } from "./pages/home";
 import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
@@ -18,6 +18,10 @@ import { noticesListLoader } from "./pages/notices-list/loader";
 import { NoticeDetail } from "./pages/notice-detail";
 import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
+import { noticesListLoader } from "./pages/notice-list/loader";
+import { NoticesList } from "./pages/notice-list/page";
+import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
+import { CompanyInterviewReview } from "./pages/company-interview-review/page";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -50,6 +54,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
               path: "detail/:companyId",
               loader: companyDetailLoader,
               element: <CompanyDetail />
+            },
+            {
+              path: "detail/:companyId/review",
+              loader: companyInterviewReviewLoader,
+              element: <CompanyInterviewReview />
             }
           ]
         },
