@@ -6,11 +6,11 @@ import { LoaderData } from "../../utils";
 export async function noticeDetailLoader({
   params
 }: LoaderFunctionArgs): Promise<LoaderData<number>> {
-  const id = Number(params.noticeId);
-
-  if (!params.noticeId || !Number.isInteger(id) || id <= 0) {
+  const rawId = params.noticeId;
+  if (!rawId || !/^[1-9]\d*$/.test(rawId)) {
     throw redirect("/notice");
   }
+  const id = Number(rawId);
 
   await useNoticeDetail.prefetch(id);
 
