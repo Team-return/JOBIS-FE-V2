@@ -18,6 +18,7 @@ export * from "./bookmarks";
 export * from "./codes";
 export * from "./companies";
 export * from "./files";
+export * from "./interviews";
 export * from "./notices";
 export * from "./recruitments";
 export * from "./reviews";
