@@ -2,7 +2,8 @@ import type { LoaderFunctionArgs } from "react-router-dom";
 
 export interface ConnectReviewLoaderData {
   companyName: string;
-  recruitmentId?: string;
+  interviewId?: string;
+  documentNumberId?: string;
 }
 
 export async function connectReviewLoader({
@@ -10,10 +11,13 @@ export async function connectReviewLoader({
 }: LoaderFunctionArgs): Promise<ConnectReviewLoaderData> {
   const url = new URL(request.url);
   const companyName = url.searchParams.get("companyName") || "회사";
-  const recruitmentId = url.searchParams.get("recruitmentId") || undefined;
+  const interviewId = url.searchParams.get("interviewId") || undefined;
+  const documentNumberId =
+    url.searchParams.get("documentNumberId") || undefined;
 
   return {
     companyName,
-    recruitmentId
+    interviewId,
+    documentNumberId
   };
 }
