@@ -1,7 +1,9 @@
 import {
   ListSortType,
+  useBookmarks,
   useCompanyStudentList,
-  useCompanyStudentRecentList
+  useCompanyStudentRecentList,
+  useStudentInterviews
 } from "@jobis/api";
 import {
   Box,
@@ -17,9 +19,11 @@ import {
   Button
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
-import { useBookmarks } from "@jobis/api";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
+
+const getInterviewTime = (endDate: string, interviewTime: string) =>
+  new Date(`${endDate}T${interviewTime}`).getTime();
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
@@ -58,6 +62,19 @@ export const Home = () => {
 
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
+  const { data: interviewData } = useStudentInterviews();
+  const reviewableInterview = interviewData?.interviews
+    .filter(
+      interview =>
+        !interview.review_written &&
+        getInterviewTime(interview.end_date, interview.interview_time) <=
+          Date.now()
+    )
+    .sort(
+      (a, b) =>
+        getInterviewTime(b.end_date, b.interview_time) -
+        getInterviewTime(a.end_date, a.interview_time)
+    )[0];
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
@@ -71,30 +88,44 @@ export const Home = () => {
           $margin={[0, 0, 80, 0]}
         />
       </div>
-      <Flex
-        $align="center"
-        $justify="space-between"
-        style={{
-          height: "50px",
-          borderRadius: "8px",
-          padding: "0 24px",
-          margin: "0 0 80px 0",
-          background: "#2F53FF"
-        }}
-      >
-        <Text $color="white" $size="body1" $weight="medium">
-          수고하셨습니다! 면접의 후기를 작성해 주세요!
-        </Text>
-        <Button
-          $size="sm"
-          $hoverDisabled
-          onClick={() => {
-            navigate("/connect-review");
+      {reviewableInterview && (
+        <Flex
+          $align="center"
+          $justify="space-between"
+          style={{
+            height: "50px",
+            borderRadius: "8px",
+            padding: "0 24px",
+            margin: "0 0 80px 0",
+            background: "#2F53FF"
           }}
         >
-          작성하기 →
-        </Button>
-      </Flex>
+          <Text $color="white" $size="body1" $weight="medium">
+            수고하셨습니다! 면접의 후기를 작성해 주세요!
+          </Text>
+          <Button
+            $size="sm"
+            $hoverDisabled
+            onClick={() => {
+              const searchParams = new URLSearchParams({
+                companyName: reviewableInterview.company_name,
+                interviewId: String(reviewableInterview.id)
+              });
+
+              if (reviewableInterview.document_number_id) {
+                searchParams.set(
+                  "documentNumberId",
+                  String(reviewableInterview.document_number_id)
+                );
+              }
+
+              navigate(`/connect-review?${searchParams.toString()}`);
+            }}
+          >
+            작성하기 →
+          </Button>
+        </Flex>
+      )}
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
           <Flex $gap={12} $align="center">
