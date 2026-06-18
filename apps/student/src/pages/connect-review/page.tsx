@@ -1,6 +1,10 @@
 import { Box, Container, Text, Flex, Button } from "@jobis/design-system";
+import { useLoaderData } from "react-router-dom";
+import type { ConnectReviewLoaderData } from "./loader";
 
 export const ConnectReviewPage = () => {
+  const { companyName } = useLoaderData() as ConnectReviewLoaderData;
+
   return (
     <Container $maxWidth={960}>
       <Box height={123} />
@@ -11,7 +15,7 @@ export const ConnectReviewPage = () => {
           </Text>
           <Flex $direction="column" $align="center" $gap={8}>
             <Text $size="h6" $weight="medium" $color="#7F7F7F">
-              토스(회사이름)에서 본 면접 후기를 작성해주세요!
+              {`${companyName}에서 본 면접 후기를 작성해주세요!`}
             </Text>
             <Text $size="h6" $weight="medium" $color="#7F7F7F">
               더 많은 학생들이 참고해서 성장 할 수 있습니다!
