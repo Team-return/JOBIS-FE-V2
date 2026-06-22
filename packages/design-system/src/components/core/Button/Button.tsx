@@ -67,7 +67,8 @@ const Component = styled.button<Props>`
         `;
     }
   }}
-  ${({ $padding }) => $padding && `padding: ${parseList($padding)};`}
+  ${({ $padding }) =>
+    $padding !== undefined && `padding: ${parseList($padding)};`}
 
   ${({ $progressing }) =>
     $progressing &&
