@@ -18,7 +18,7 @@ export const ConnectReviewPage = () => {
               {`${companyName}에서 본 면접 후기를 작성해주세요!`}
             </Text>
             <Text $size="h6" $weight="medium" $color="#7F7F7F">
-              더 많은 학생들이 참고해서 성장 할 수 있습니다!
+              더 많은 학생들이 참고해서 성장할 수 있습니다!
             </Text>
           </Flex>
         </Flex>
