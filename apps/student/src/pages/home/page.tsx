@@ -76,7 +76,6 @@ export const Home = () => {
         getInterviewTime(b.end_date, b.interview_time) -
         getInterviewTime(a.end_date, a.interview_time)
     )[0];
-  const bookmarks = takeItems(bookmarksData?.bookmarks, 4);
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>

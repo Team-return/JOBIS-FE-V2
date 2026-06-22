@@ -12,15 +12,12 @@ import { companyDetailLoader } from "./pages/company-detail/loader";
 import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
 import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
 import { Login } from "./pages/auth/login";
-import { NoticesList } from "./pages/notices-list";
-import { noticesListLoader } from "./pages/notices-list/loader";
+import { NoticesList } from "./pages/notice-list";
+import { noticesListLoader } from "./pages/notice-list/loader";
 import { NoticeDetail } from "./pages/notice-detail";
 import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
-import {
-  ConnectReviewPage,
-  connectReviewLoader
-} from "./pages/connect-review";
+import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
 
