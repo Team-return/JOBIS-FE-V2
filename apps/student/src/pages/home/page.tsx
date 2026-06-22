@@ -24,6 +24,8 @@ import type { HomeQuery } from "./loader";
 
 const getInterviewTime = (endDate: string, interviewTime: string) =>
   new Date(`${endDate}T${interviewTime}`).getTime();
+const takeItems = <T,>(items: T[] | undefined, count: number) =>
+  Array.isArray(items) ? items.slice(0, count) : [];
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
@@ -54,11 +56,10 @@ export const Home = () => {
     name: currentName,
     sort_type: currentSort
   });
-  const companies = companyListData?.companies.slice(0, 3) || [];
+  const companies = takeItems(companyListData?.companies, 3);
 
   const { data: companyStudentRecentListData } = useCompanyStudentRecentList();
-  const recentCompanies =
-    companyStudentRecentListData?.companies.slice(0, 3) || [];
+  const recentCompanies = takeItems(companyStudentRecentListData?.companies, 3);
 
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
@@ -75,6 +76,7 @@ export const Home = () => {
         getInterviewTime(b.end_date, b.interview_time) -
         getInterviewTime(a.end_date, a.interview_time)
     )[0];
+  const bookmarks = takeItems(bookmarksData?.bookmarks, 4);
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>

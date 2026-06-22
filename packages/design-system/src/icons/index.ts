@@ -55,3 +55,4 @@ export { default as Speaker } from "./Speaker";
 export { default as ArrowLeft } from "./ArrowLeft";
 export { default as EmploymentRateBanner } from "./EmploymentRateBanner";
 export { default as LogoWordmark } from "./LogoWordmark";
+export { default as Question } from "./Question";

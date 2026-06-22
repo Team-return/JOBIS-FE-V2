@@ -27,3 +27,4 @@ export * from "./DetailHeader";
 export * from "./DetailTable";
 export * from "./ProfileBar";
 export * from "./EmploymentRateBanner";
+export * from "./ReviewAccordion";
