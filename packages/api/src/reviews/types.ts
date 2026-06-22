@@ -45,7 +45,7 @@ export interface ReviewListItem {
   review_id: number;
   company_name: string;
   company_logo_url: string;
-  year: number;
+  time: string;
   writer: string;
   major: string;
 }

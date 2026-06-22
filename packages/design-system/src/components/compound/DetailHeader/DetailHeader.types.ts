@@ -4,4 +4,5 @@ export interface DetailHeaderProps {
   logoUrl: string;
   businessNumber?: string;
   onMoreClick?: () => void;
+  onViewReview?: () => void;
 }
