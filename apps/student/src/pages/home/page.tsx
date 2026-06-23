@@ -16,7 +16,8 @@ import {
   RecrutementCard,
   ListSection,
   EmploymentRateBanner,
-  Button
+  Button,
+  useTheme
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
 import { useLoaderData, useNavigate } from "react-router-dom";
@@ -30,6 +31,7 @@ const takeItems = <T,>(items: T[] | undefined, count: number) =>
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
   const { getParam, getParamAsNumber } = useQueryParams();
+  const { currentTheme: theme } = useTheme();
 
   const navigate = useNavigate();
 
@@ -98,7 +100,7 @@ export const Home = () => {
             borderRadius: "8px",
             padding: "0 24px",
             margin: "0 0 80px 0",
-            background: "#2F53FF"
+            background: theme.color.primary[20]
           }}
         >
           <Text $color="white" $size="body1" $weight="medium">
