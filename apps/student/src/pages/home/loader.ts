@@ -11,6 +11,7 @@ import {
   useBookmarks,
   useCompanyStudentList,
   useCompanyStudentRecentList,
+  useStudentInterviews,
   type ListSortType
 } from "@jobis/api";
 
@@ -53,7 +54,8 @@ export async function homeLoader({
       sort_type: queryParams.sortType
     }),
     useCompanyStudentRecentList.prefetch(),
-    useBookmarks.prefetch()
+    useBookmarks.prefetch(),
+    useStudentInterviews.prefetch()
   ]);
 
   return {

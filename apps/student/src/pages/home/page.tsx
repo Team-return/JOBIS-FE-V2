@@ -1,7 +1,9 @@
 import {
   ListSortType,
+  useBookmarks,
   useCompanyStudentList,
-  useCompanyStudentRecentList
+  useCompanyStudentRecentList,
+  useStudentInterviews
 } from "@jobis/api";
 import {
   Box,
@@ -13,19 +15,23 @@ import {
   Skeleton,
   RecrutementCard,
   ListSection,
-  EmploymentRateBanner
+  EmploymentRateBanner,
+  Button,
+  useTheme
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
-import { useBookmarks } from "@jobis/api";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
+const getInterviewTime = (endDate: string, interviewTime: string) =>
+  new Date(`${endDate}T${interviewTime}`).getTime();
 const takeItems = <T,>(items: T[] | undefined, count: number) =>
   Array.isArray(items) ? items.slice(0, count) : [];
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
   const { getParam, getParamAsNumber } = useQueryParams();
+  const { currentTheme: theme } = useTheme();
 
   const navigate = useNavigate();
 
@@ -58,7 +64,20 @@ export const Home = () => {
   const recentCompanies = takeItems(companyStudentRecentListData?.companies, 3);
 
   const { data: bookmarksData } = useBookmarks();
-  const bookmarks = takeItems(bookmarksData?.bookmarks, 4);
+  const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
+  const { data: interviewData } = useStudentInterviews();
+  const reviewableInterview = interviewData?.interviews
+    .filter(
+      interview =>
+        !interview.review_written &&
+        getInterviewTime(interview.end_date, interview.interview_time) <=
+          Date.now()
+    )
+    .sort(
+      (a, b) =>
+        getInterviewTime(b.end_date, b.interview_time) -
+        getInterviewTime(a.end_date, a.interview_time)
+    )[0];
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
@@ -72,6 +91,44 @@ export const Home = () => {
           $margin={[0, 0, 80, 0]}
         />
       </div>
+      {reviewableInterview && (
+        <Flex
+          $align="center"
+          $justify="space-between"
+          style={{
+            height: "50px",
+            borderRadius: "8px",
+            padding: "0 24px",
+            margin: "0 0 80px 0",
+            background: theme.color.primary[20]
+          }}
+        >
+          <Text $color="white" $size="body1" $weight="medium">
+            수고하셨습니다! 면접의 후기를 작성해 주세요!
+          </Text>
+          <Button
+            $size="sm"
+            $hoverDisabled
+            onClick={() => {
+              const searchParams = new URLSearchParams({
+                companyName: reviewableInterview.company_name,
+                interviewId: String(reviewableInterview.id)
+              });
+
+              if (reviewableInterview.document_number_id) {
+                searchParams.set(
+                  "documentNumberId",
+                  String(reviewableInterview.document_number_id)
+                );
+              }
+
+              navigate(`/connect-review?${searchParams.toString()}`);
+            }}
+          >
+            작성하기 →
+          </Button>
+        </Flex>
+      )}
       <Flex $direction="column" $gap={80}>
         <Flex $direction="column" $gap={16}>
           <Flex $gap={12} $align="center">
