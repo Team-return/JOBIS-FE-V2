@@ -172,15 +172,15 @@ const CompanyHeader = ({ recruitmentId }: { recruitmentId: number }) => {
   const companyName = data?.company_name ?? "-";
 
   return (
-    <Flex $direction="row" $align="center" $gap={16}>
+    <Flex $direction="row" $align="center" $gap={21}>
       {isPending ? (
-        <Skeleton width={48} height={48} $radius={8} />
+        <Skeleton width={44} height={44} $radius={8} />
       ) : (
         <Image
           src={data?.company_profile_url || "/logo.svg"}
           alt={companyName}
-          width={48}
-          height={48}
+          width={44}
+          height={44}
           $fit="contain"
         />
       )}
@@ -267,10 +267,10 @@ export const RecruitmentApply = () => {
       <Flex $direction="column" $gap={4}>
         <Surface
           $bg={theme.color.grayScale[10]}
-          $radius={8}
+          $radius={[8, 8, 0, 0]}
           $padding={[48, 60, 60, 60]}
         >
-          <Flex $direction="column" $gap={72}>
+          <Flex $direction="column" $gap={80}>
             <CompanyHeader recruitmentId={recruitmentId} />
             <Section title="제출서류">
               <FileField
@@ -289,7 +289,7 @@ export const RecruitmentApply = () => {
 
         <Surface
           $bg={theme.color.grayScale[10]}
-          $radius={8}
+          $radius={[0, 0, 8, 8]}
           $padding={[48, 60, 32, 60]}
         >
           <Flex $direction="column" $gap={132}>
