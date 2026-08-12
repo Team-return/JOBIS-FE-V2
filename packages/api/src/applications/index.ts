@@ -6,7 +6,8 @@
   TeacherApplicationResponse,
   TeacherApplicationCountResponse,
   RejectionResponse,
-  EmploymentResponse
+  EmploymentResponse,
+  CreateApplicationRequest
 } from "./types";
 import { createDomainApi } from "@/create-hook";
 import { applicationsKeys } from "./keys";
@@ -86,13 +87,21 @@ export const useDeleteApplication = (options?: MutationOptions<number, void>) =>
     }
   });
 
-export const useCreateApplication = createIdMutationHook<
-  { url: string; type: string }[],
-  void
->({
-  path: "/",
-  method: "post"
-});
+export const useCreateApplication = (
+  recruitmentId: number | string,
+  options?: MutationOptions<CreateApplicationRequest, void>
+) =>
+  useMutation<void, number, CreateApplicationRequest>({
+    mutationFn: request =>
+      instance
+        .post(`${DOMAIN}/${recruitmentId}`, request)
+        .then(({ data }) => data),
+    ...options,
+    onSuccess: async (...args) => {
+      await query.invalidate(applicationsKeys.studentApplications());
+      options?.onSuccess?.(...args);
+    }
+  });
 
 export const useUpdateApplicationStatus = createMutationHook<
   { applicationIds: number[]; status: string },
@@ -126,11 +135,8 @@ export const useRejection = createQueryHook<number, RejectionResponse>({
   queryKey: applicationsKeys.rejection
 });
 
-export const useReapply = createIdMutationHook<
-  { url: string; type: string }[],
-  void
->({
-  path: "/",
+export const useReapply = createIdMutationHook<CreateApplicationRequest, void>({
+  path: "",
   method: "put"
 });
 
