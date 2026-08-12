@@ -290,9 +290,9 @@ export const RecruitmentApply = () => {
         <Surface
           $bg={theme.color.grayScale[10]}
           $radius={8}
-          $padding={[48, 60, 60, 60]}
+          $padding={[48, 60, 40, 60]}
         >
-          <Flex $direction="column" $gap={60}>
+          <Flex $direction="column" $gap={120}>
             <Section title="입력요소">
               <FileField
                 label="첨부파일"
@@ -312,17 +312,16 @@ export const RecruitmentApply = () => {
                 />
               </FieldRow>
             </Section>
-            <Flex $justify="flex-end">
-              <Button
-                $variant="contained"
-                $size="md"
-                onClick={handleSubmit}
-                disabled={isApplying}
-                $progressing={isApplying}
-              >
-                지원하기
-              </Button>
-            </Flex>
+            <Button
+              $variant="contained"
+              $size="md"
+              onClick={handleSubmit}
+              disabled={isApplying}
+              $progressing={isApplying}
+              style={{ width: "100%" }}
+            >
+              지원하기
+            </Button>
           </Flex>
         </Surface>
       </Flex>
