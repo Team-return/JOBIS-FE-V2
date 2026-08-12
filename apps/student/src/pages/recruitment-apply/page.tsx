@@ -290,9 +290,9 @@ export const RecruitmentApply = () => {
         <Surface
           $bg={theme.color.grayScale[10]}
           $radius={8}
-          $padding={[48, 60, 40, 60]}
+          $padding={[48, 60, 32, 60]}
         >
-          <Flex $direction="column" $gap={120}>
+          <Flex $direction="column" $gap={132}>
             <Section title="입력요소">
               <FileField
                 label="첨부파일"
