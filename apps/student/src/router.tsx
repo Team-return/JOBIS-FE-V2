@@ -20,6 +20,10 @@ import { MyPage } from "./pages/mypage";
 import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
+import {
+  RecruitmentApply,
+  recruitmentApplyLoader
+} from "./pages/recruitment-apply";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -72,6 +76,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
               path: "detail/:recruitmentId",
               loader: recruitmentDetailLoader,
               element: <RecruitmentDetail />
+            },
+            {
+              path: "detail/:recruitmentId/apply",
+              loader: recruitmentApplyLoader,
+              element: <RecruitmentApply />
             }
           ]
         },
