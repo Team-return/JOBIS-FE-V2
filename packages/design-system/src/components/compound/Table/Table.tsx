@@ -1,10 +1,19 @@
 import styled from "@emotion/styled";
 import { Box, Checkbox, Flex, Text } from "@/components";
+import type { ReactNode } from "react";
 import type { Props } from "./Table.types";
 import { useTheme } from "@/hooks";
 
-const Header = styled(Flex)<{ $headerBg?: string; $headerHeight?: number }>`
-  border-bottom: ${({ theme }) => `1px solid ${theme.color.grayScale[50]}`};
+const Header = styled(Flex)<{
+  $headerBg?: string;
+  $headerHeight?: number;
+  $headerBorder?: boolean;
+  $borderColor?: string;
+}>`
+  border-bottom: ${({ $headerBorder, $borderColor, theme }) =>
+    $headerBorder
+      ? `1px solid ${$borderColor ?? theme.color.grayScale[50]}`
+      : "none"};
   box-sizing: border-box;
   ${({ $headerHeight }) =>
     $headerHeight != null
@@ -17,8 +26,9 @@ const Header = styled(Flex)<{ $headerBg?: string; $headerHeight?: number }>`
   `}
   ${({ $headerBg }) => $headerBg && `background-color: ${$headerBg};`}
 `;
-const Body = styled(Flex)<{ $rowHeight: number }>`
-  border-bottom: ${({ theme }) => `1px solid ${theme.color.grayScale[50]}`};
+const Body = styled(Flex)<{ $rowHeight: number; $borderColor?: string }>`
+  border-bottom: ${({ $borderColor, theme }) =>
+    `1px solid ${$borderColor ?? theme.color.grayScale[50]}`};
   height: ${({ $rowHeight }) => `${$rowHeight}px`};
 `;
 
@@ -48,6 +58,8 @@ export const Table = ({
   headerBg,
   headerHeight,
   headerTextProps,
+  headerBorder = true,
+  borderColor,
   rowHeight = 88,
   checkbox,
   selectedRows = [],
@@ -72,6 +84,13 @@ export const Table = ({
       ? { $weight: headerTextProps.$weight }
       : {})
   };
+
+  const renderHeaderLabel = (header: ReactNode) =>
+    typeof header === "string" ? (
+      <Text {...headerLabelTextProps}>{header}</Text>
+    ) : (
+      header
+    );
 
   const allSelected = rows.length > 0 && selectedRows.length === rows.length;
 
@@ -102,6 +121,8 @@ export const Table = ({
         $align={headerHeight != null ? "center" : "stretch"}
         $headerBg={headerBg}
         $headerHeight={headerHeight}
+        $headerBorder={headerBorder}
+        $borderColor={borderColor}
       >
         {headers.map((header, index) => (
           <Cell
@@ -116,17 +137,22 @@ export const Table = ({
                   $checked={allSelected}
                   onChange={handleHeaderCheckboxChange}
                 />
-                <Text {...headerLabelTextProps}>{header}</Text>
+                {renderHeaderLabel(header)}
               </Flex>
             ) : (
-              <Text {...headerLabelTextProps}>{header}</Text>
+              renderHeaderLabel(header)
             )}
           </Cell>
         ))}
       </Header>
 
       {rows.map((row, rowIndex) => (
-        <Body key={rowIndex} $justify="space-evenly" $rowHeight={rowHeight}>
+        <Body
+          key={rowIndex}
+          $justify="space-evenly"
+          $rowHeight={rowHeight}
+          $borderColor={borderColor}
+        >
           {row.map((cell, cellIndex) => (
             <Cell
               key={cellIndex}
