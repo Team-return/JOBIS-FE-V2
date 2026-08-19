@@ -28,9 +28,28 @@ const NOTICE_TABLE_WIDTH = NOTICE_COLUMN_WIDTHS.reduce(
   (total, width) => total + width,
   0
 );
+const NOTICE_TITLE_PADDING = 28;
+const NOTICE_TITLE_WIDTH = 556;
 const NOTICE_ROW_HEIGHT = 48;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const SKELETON_ROW_COUNT = 5;
+
+const NoticeTitle = ({ title, color }: { title: string; color?: string }) => (
+  <div style={{ width: "100%", paddingLeft: NOTICE_TITLE_PADDING }}>
+    <div
+      style={{
+        width: NOTICE_TITLE_WIDTH,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }}
+    >
+      <Text $span $size="body2" $color={color}>
+        {title}
+      </Text>
+    </div>
+  </div>
+);
 
 const formatNoticeDate = (createdAt: string) => {
   if (!createdAt) return "-";
@@ -60,9 +79,7 @@ export const Notice = () => {
     <Text $size="body2" $color={theme.color.grayScale[70]}>
       {String(notice.id)}
     </Text>,
-    <Text $size="body2" $color={theme.color.grayScale[90]}>
-      {notice.title}
-    </Text>,
+    <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />,
     <Text $size="body2" $color={theme.color.grayScale[90]}>
       {formatNoticeDate(notice.created_at)}
     </Text>
@@ -130,10 +147,19 @@ export const Notice = () => {
               />
             ) : (
               <Table
-                headers={["번호", "제목", "작성일"]}
+                headers={[
+                  "번호",
+                  <NoticeTitle
+                    title="제목"
+                    color={theme.color.grayScale[60]}
+                  />,
+                  "작성일"
+                ]}
                 rows={paginatedRows}
                 columnWidths={NOTICE_COLUMN_WIDTHS}
                 rowHeight={NOTICE_ROW_HEIGHT}
+                headerBorder={false}
+                borderColor={theme.color.grayScale[40]}
               />
             )}
 
