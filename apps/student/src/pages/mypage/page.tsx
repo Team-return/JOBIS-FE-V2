@@ -15,9 +15,11 @@ import {
 } from "@jobis/design-system";
 import { SERVER_STATUS_MAP } from "@jobis/design-system";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const MyPage = () => {
   const { error } = useToast();
+  const navigate = useNavigate();
   const [cancelTargetId, setCancelTargetId] = useState<number | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data: profile } = useStudentMy();
@@ -49,7 +51,7 @@ export const MyPage = () => {
             {
               label: "비밀번호 변경",
               onClick: () => {
-                error("준비중인 기능입니다");
+                navigate("/mypage/password");
               }
             },
             {
