@@ -8,7 +8,7 @@ export async function recruitmentDetailLoader({
 }: LoaderFunctionArgs): Promise<LoaderData<number>> {
   const id = Number(params.recruitmentId);
 
-  if (!params.recruitmentId || Number.isNaN(id)) {
+  if (!Number.isInteger(id) || id <= 0) {
     throw redirect("/recruitment");
   }
 
