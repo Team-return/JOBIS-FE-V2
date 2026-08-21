@@ -31,8 +31,8 @@ export const ChangePwVerify = () => {
   };
 
   const { mutate: checkPw } = useCheckPw({
-    onSuccess: () => {
-      navigation("edit", { state: { currentPassword: password } });
+    onSuccess: (_data, variables) => {
+      navigation("edit", { state: { currentPassword: variables.password } });
     },
     onError: status => {
       switch (status) {
