@@ -20,6 +20,7 @@ import { MyPage } from "./pages/mypage";
 import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
+import { ChangePwVerify, ChangePwEdit } from "./pages/change-password";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -112,7 +113,25 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/mypage",
-          element: <MyPage />
+          children: [
+            {
+              index: true,
+              element: <MyPage />
+            },
+            {
+              path: "password",
+              children: [
+                {
+                  index: true,
+                  element: <ChangePwVerify />
+                },
+                {
+                  path: "edit",
+                  element: <ChangePwEdit />
+                }
+              ]
+            }
+          ]
         },
         {
           path: "/jobrate",
