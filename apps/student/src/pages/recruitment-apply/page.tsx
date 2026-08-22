@@ -24,7 +24,7 @@ import {
   useRef,
   useState
 } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import type { LoaderData } from "../../utils";
 
 interface UploadedFile {
@@ -207,6 +207,7 @@ export const RecruitmentApply = () => {
   const { currentTheme: theme } = useTheme();
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
   const toast = useToast();
+  const navigate = useNavigate();
 
   const [files, setFiles] = useState<Record<FileFieldName, UploadedFile[]>>({
     포트폴리오: [],
@@ -232,7 +233,10 @@ export const RecruitmentApply = () => {
   const { mutate: apply, isPending: isApplying } = useCreateApplication(
     recruitmentId,
     {
-      onSuccess: () => toast.success("지원이 완료되었습니다."),
+      onSuccess: () => {
+        toast.success("지원이 완료되었습니다.");
+        navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
+      },
       onError: status =>
         toast.error(
           APPLY_ERROR_MESSAGE[status] ?? "지원하는 중에 오류가 발생했습니다."
