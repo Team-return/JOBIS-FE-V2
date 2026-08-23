@@ -21,6 +21,7 @@ import {
   type ChangeEvent,
   type ReactNode,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from "react";
@@ -91,11 +92,13 @@ const FieldRow = ({
 const FileField = ({
   label,
   files,
-  onUploaded
+  onUploaded,
+  onUploadingChange
 }: {
   label: FileFieldName;
   files: UploadedFile[];
   onUploaded: (uploaded: UploadedFile[]) => void;
+  onUploadingChange: (isUploading: boolean) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const lastIdRef = useRef(0);
@@ -122,6 +125,11 @@ const FileField = ({
           : `${label} 업로드에 실패했습니다.`
       )
   });
+
+  // 업로드 진행 상태를 부모로 올려 업로드 중에는 지원서를 제출하지 못하게 한다
+  useEffect(() => {
+    onUploadingChange(isPending);
+  }, [isPending, onUploadingChange]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? []);
@@ -214,6 +222,11 @@ export const RecruitmentApply = () => {
     자소서: [],
     첨부파일: []
   });
+  const [uploading, setUploading] = useState<Record<FileFieldName, boolean>>({
+    포트폴리오: false,
+    자소서: false,
+    첨부파일: false
+  });
   const [link, setLink] = useState("");
   const [extraLink, setExtraLink] = useState("");
 
@@ -247,7 +260,29 @@ export const RecruitmentApply = () => {
   const addFiles = (field: FileFieldName) => (uploaded: UploadedFile[]) =>
     setFiles(prev => ({ ...prev, [field]: [...prev[field], ...uploaded] }));
 
+  // FileField의 useEffect 의존성이므로 렌더마다 새 함수가 되지 않게 고정한다
+  const setFieldUploading = useMemo(() => {
+    const make = (field: FileFieldName) => (isUploading: boolean) =>
+      setUploading(prev =>
+        prev[field] === isUploading ? prev : { ...prev, [field]: isUploading }
+      );
+
+    return {
+      포트폴리오: make("포트폴리오"),
+      자소서: make("자소서"),
+      첨부파일: make("첨부파일")
+    };
+  }, []);
+
+  const isUploading = Object.values(uploading).some(Boolean);
+
   const handleSubmit = () => {
+    // 업로드가 끝나기 전에 제출하면 진행 중인 파일이 지원서에서 빠진다
+    if (isUploading) {
+      toast.error("파일 업로드가 끝난 뒤 지원해주세요.");
+      return;
+    }
+
     const attachments = [
       ...Object.values(files)
         .flat()
@@ -281,11 +316,13 @@ export const RecruitmentApply = () => {
                 label="포트폴리오"
                 files={files.포트폴리오}
                 onUploaded={addFiles("포트폴리오")}
+                onUploadingChange={setFieldUploading.포트폴리오}
               />
               <FileField
                 label="자소서"
                 files={files.자소서}
                 onUploaded={addFiles("자소서")}
+                onUploadingChange={setFieldUploading.자소서}
               />
             </Section>
           </Flex>
@@ -302,6 +339,7 @@ export const RecruitmentApply = () => {
                 label="첨부파일"
                 files={files.첨부파일}
                 onUploaded={addFiles("첨부파일")}
+                onUploadingChange={setFieldUploading.첨부파일}
               />
               <FieldRow label="링크" $gap={8}>
                 <Input
@@ -320,7 +358,7 @@ export const RecruitmentApply = () => {
               $variant="contained"
               $size="md"
               onClick={handleSubmit}
-              disabled={isApplying}
+              disabled={isUploading || isApplying}
               $progressing={isApplying}
               style={{ width: "100%" }}
             >
