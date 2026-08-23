@@ -31,8 +31,8 @@ export const useUploadFiles = (
       // presigned URL에는 서명이 들어있어 Authorization 헤더를 붙이면 안 되므로
       // 인터셉터가 걸린 instance 대신 순수 axios로 올린다.
       await Promise.all(
-        data.urls.map(({ pre_signed_url }, index) =>
-          axios.put(pre_signed_url, files[index], {
+        data.urls.map(({ pre_signed_url: preSignedUrl }, index) =>
+          axios.put(preSignedUrl, files[index], {
             headers: {
               "Content-Type": files[index].type || "application/octet-stream"
             },
@@ -42,7 +42,7 @@ export const useUploadFiles = (
         )
       );
 
-      return data.urls.map(({ file_path }) => file_path);
+      return data.urls.map(({ file_path: filePath }) => filePath);
     }
   });
 
