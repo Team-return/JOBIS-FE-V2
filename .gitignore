@@ -37,3 +37,6 @@ vitest.config.*.timestamp*
 
 # yarn local state
 .yarn/install-state.gz
+
+# AI agent local state
+**/.omc

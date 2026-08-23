@@ -3,7 +3,7 @@ import { redirect } from "react-router-dom";
 import { useRecruitmentDetail } from "@jobis/api";
 import { LoaderData } from "../../utils";
 
-export async function recruitmentDetailLoader({
+export async function recruitmentApplyLoader({
   params
 }: LoaderFunctionArgs): Promise<LoaderData<number>> {
   const id = Number(params.recruitmentId);

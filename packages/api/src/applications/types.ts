@@ -1,5 +1,14 @@
 import type { AttachmentType, ApplicationStatus } from "@/enum";
 
+export interface ApplicationAttachment {
+  url: string;
+  type: AttachmentType;
+}
+
+export interface CreateApplicationRequest {
+  attachments: ApplicationAttachment[];
+}
+
 export interface EmploymentCountResponse {
   total_student_count: number;
   pass_count: number;
