@@ -11,7 +11,7 @@ import {
   Text,
   useTheme
 } from "@jobis/design-system";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNoticeList } from "@jobis/api";
@@ -89,15 +89,35 @@ export const Notice = () => {
     1,
     Math.ceil(tableRows.length / NOTICE_PAGE_SIZE)
   );
-  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
+  const safePage = Math.min(
+    Math.max(1, Math.floor(currentPage) || 1),
+    totalPages
+  );
+  const startIndex = (safePage - 1) * NOTICE_PAGE_SIZE;
   const endIndex = startIndex + NOTICE_PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
+  // 브라우저 뒤로/앞으로 가기처럼 URL이 바깥에서 바뀌면 입력값을 URL에 맞춘다
+  const syncedKeyword = useRef(searchKeyword);
+
   useEffect(() => {
-    if (debouncedSearch !== searchKeyword) {
-      updateParams({ title: debouncedSearch || undefined, page: undefined });
-    }
-  }, [debouncedSearch, searchKeyword, updateParams]);
+    if (syncedKeyword.current === searchKeyword) return;
+    syncedKeyword.current = searchKeyword;
+    setLocalSearch(searchKeyword);
+  }, [searchKeyword]);
+
+  // 사용자가 직접 입력한 검색어만 URL에 반영한다
+  useEffect(() => {
+    if (syncedKeyword.current === debouncedSearch) return;
+    syncedKeyword.current = debouncedSearch;
+    updateParams({ title: debouncedSearch || undefined, page: undefined });
+  }, [debouncedSearch, updateParams]);
+
+  // 범위를 벗어난 page는 목록을 받은 뒤 보정한다
+  useEffect(() => {
+    if (isLoading || safePage === currentPage) return;
+    updateParams({ page: safePage === 1 ? undefined : safePage });
+  }, [isLoading, safePage, currentPage, updateParams]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={NOTICE_TABLE_WIDTH}>
@@ -166,7 +186,7 @@ export const Notice = () => {
             <Pagination
               start={1}
               end={totalPages}
-              current={currentPage}
+              current={safePage}
               onChange={page => updateParams({ page })}
             />
           </Flex>
