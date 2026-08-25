@@ -93,7 +93,6 @@ export const Notice = () => {
   const endIndex = startIndex + NOTICE_PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
-  // 브라우저 뒤로/앞으로 가기처럼 URL이 바깥에서 바뀌면 입력값을 URL에 맞춘다
   const syncedKeyword = useRef(searchKeyword);
 
   useEffect(() => {
@@ -102,7 +101,6 @@ export const Notice = () => {
     setLocalSearch(searchKeyword);
   }, [searchKeyword]);
 
-  // 사용자가 직접 입력한 검색어만 URL에 반영한다
   useEffect(() => {
     if (syncedKeyword.current === debouncedSearch) return;
     syncedKeyword.current = debouncedSearch;
