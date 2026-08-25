@@ -89,11 +89,7 @@ export const Notice = () => {
     1,
     Math.ceil(tableRows.length / NOTICE_PAGE_SIZE)
   );
-  const safePage = Math.min(
-    Math.max(1, Math.floor(currentPage) || 1),
-    totalPages
-  );
-  const startIndex = (safePage - 1) * NOTICE_PAGE_SIZE;
+  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
   const endIndex = startIndex + NOTICE_PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
@@ -112,12 +108,6 @@ export const Notice = () => {
     syncedKeyword.current = debouncedSearch;
     updateParams({ title: debouncedSearch || undefined, page: undefined });
   }, [debouncedSearch, updateParams]);
-
-  // 범위를 벗어난 page는 목록을 받은 뒤 보정한다
-  useEffect(() => {
-    if (isLoading || safePage === currentPage) return;
-    updateParams({ page: safePage === 1 ? undefined : safePage });
-  }, [isLoading, safePage, currentPage, updateParams]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={NOTICE_TABLE_WIDTH}>
@@ -186,7 +176,7 @@ export const Notice = () => {
             <Pagination
               start={1}
               end={totalPages}
-              current={safePage}
+              current={currentPage}
               onChange={page => updateParams({ page })}
             />
           </Flex>
