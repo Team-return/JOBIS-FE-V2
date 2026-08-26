@@ -10,6 +10,8 @@ import {
   companyEditLoader,
   companyLoader,
   Login,
+  Notice,
+  noticeLoader,
   Recruitment,
   recruitmentLoader
 } from "./pages";
@@ -80,7 +82,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>공지사항 목록</div>
+              loader: noticeLoader,
+              element: <Notice />
             },
             { path: "write", element: <div>공지사항 등록</div> },
             {
