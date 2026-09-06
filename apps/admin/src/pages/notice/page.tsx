@@ -140,7 +140,10 @@ export const Notice = () => {
     syncedKeyword.current = debouncedSearch;
     updateParams({ title: debouncedSearch || undefined, page: undefined });
   }, [debouncedSearch, updateParams]);
-
+  useEffect(() => {
+    if (isLoading || currentPage <= totalPages) return;
+    updateParams({ page: undefined });
+  }, [isLoading, currentPage, totalPages, updateParams]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={NOTICE_TABLE_WIDTH}>
