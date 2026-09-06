@@ -78,4 +78,5 @@ export const NUMBER_REGEX = /^\d+$/;
 
 export const PAGE_SIZE = 5;
 export const RECRUITMENT_PAGE_SIZE = 5;
+export const NOTICE_PAGE_SIZE = 12;
 export const ADMIN_ID_KEY = "admin_id";

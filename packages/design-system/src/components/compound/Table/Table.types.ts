@@ -6,12 +6,14 @@ export type TableHeaderTextProps = Partial<
 >;
 
 export interface Props {
-  headers: string[];
+  headers: ReactNode[];
   rows: ReactNode[][];
   columnWidths?: number[];
   headerBg?: string;
   headerHeight?: number;
   headerTextProps?: TableHeaderTextProps;
+  headerBorder?: boolean;
+  borderColor?: string;
   rowHeight?: number;
   checkbox?: boolean;
   selectedRows?: number[];
