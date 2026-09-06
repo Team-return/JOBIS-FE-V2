@@ -11,6 +11,8 @@ import {
   companyLoader,
   Login,
   Notice,
+  NoticeDetail,
+  noticeDetailLoader,
   noticeLoader,
   Recruitment,
   recruitmentLoader
@@ -88,7 +90,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
             { path: "write", element: <div>공지사항 등록</div> },
             {
               path: "detail/:noticeId",
-              element: <div>공지사항 상세</div>
+              loader: noticeDetailLoader,
+              element: <NoticeDetail />
             },
             {
               path: "detail/edit/:noticeId",
