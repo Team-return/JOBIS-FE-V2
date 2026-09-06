@@ -9,8 +9,8 @@ import {
   Button,
   Container,
   FileDownload,
+  FileUpload,
   Flex,
-  Icon,
   Input,
   Text,
   TextArea,
@@ -217,37 +217,12 @@ export const NoticeWrite = () => {
                       aria-label="첨부 파일 추가"
                       onChange={handleFileChange}
                     />
-                    <button
-                      type="button"
-                      onClick={() => !isUploading && inputRef.current?.click()}
-                      style={{
-                        width: FIELD_WIDTH,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 8,
-                        padding: "12px 16px 12px 12px",
-                        borderRadius: 8,
-                        border: `1px solid ${theme.color.primary[20]}`,
-                        backgroundColor: theme.color.grayScale[10],
-                        cursor: isUploading ? "wait" : "pointer",
-                        fontFamily: "inherit"
-                      }}
-                    >
-                      <Text
-                        $span
-                        $size="body2"
-                        $weight="regular"
-                        $color={theme.color.primary[20]}
-                      >
-                        {isUploading ? "업로드 중..." : "파일 추가하기"}
-                      </Text>
-                      <Icon
-                        icon="Plus"
-                        size={24}
-                        color={theme.color.primary[20]}
-                      />
-                    </button>
+                    <FileUpload
+                      label={isUploading ? "업로드 중..." : "파일 추가하기"}
+                      $width={FIELD_WIDTH}
+                      disabled={isUploading}
+                      onClick={() => inputRef.current?.click()}
+                    />
 
                     {files.length > 0 && (
                       <Flex $direction="row" $gap={8} $wrap>
