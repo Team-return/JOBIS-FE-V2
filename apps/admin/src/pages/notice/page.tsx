@@ -13,7 +13,7 @@ import {
 } from "@jobis/design-system";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useNoticeList } from "@jobis/api";
 import {
   useDebounce,
@@ -33,6 +33,21 @@ const NOTICE_TITLE_WIDTH = 556;
 const NOTICE_ROW_HEIGHT = 48;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const SKELETON_ROW_COUNT = 5;
+
+const NoticeCell = ({
+  children,
+  onClick
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+}) => (
+  <div
+    style={{ width: "100%", cursor: onClick ? "pointer" : "default" }}
+    onClick={onClick}
+  >
+    {children}
+  </div>
+);
 
 const NoticeTitle = ({ title, color }: { title: string; color?: string }) => (
   <div style={{ width: "100%", paddingLeft: NOTICE_TITLE_PADDING }}>
@@ -61,6 +76,7 @@ export const Notice = () => {
   const { currentTheme: theme } = useTheme();
 
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const navigate = useNavigate();
 
   const [localSearch, setLocalSearch] = useState(initialParams.title || "");
 
@@ -75,14 +91,32 @@ export const Notice = () => {
     notice.title.includes(searchKeyword)
   );
 
+  const goToNoticeDetail = (noticeId: number) =>
+    navigate(`/notice/detail/${noticeId}`);
+
   const tableRows: ReactNode[][] = notices.map(notice => [
-    <Text $size="body2" $color={theme.color.grayScale[70]}>
-      {String(notice.id)}
-    </Text>,
-    <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />,
-    <Text $size="body2" $color={theme.color.grayScale[90]}>
-      {formatNoticeDate(notice.created_at)}
-    </Text>
+    <NoticeCell
+      key={`id-${notice.id}`}
+      onClick={() => goToNoticeDetail(notice.id)}
+    >
+      <Text $size="body2" $color={theme.color.grayScale[70]}>
+        {String(notice.id)}
+      </Text>
+    </NoticeCell>,
+    <NoticeCell
+      key={`title-${notice.id}`}
+      onClick={() => goToNoticeDetail(notice.id)}
+    >
+      <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />
+    </NoticeCell>,
+    <NoticeCell
+      key={`date-${notice.id}`}
+      onClick={() => goToNoticeDetail(notice.id)}
+    >
+      <Text $size="body2" $color={theme.color.grayScale[90]}>
+        {formatNoticeDate(notice.created_at)}
+      </Text>
+    </NoticeCell>
   ]);
 
   const totalPages = Math.max(
@@ -107,6 +141,7 @@ export const Notice = () => {
     updateParams({ title: debouncedSearch || undefined, page: undefined });
   }, [debouncedSearch, updateParams]);
 
+
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={NOTICE_TABLE_WIDTH}>
       <Flex $gap={46} $direction="column" $justify="center" $align="center">
@@ -126,7 +161,11 @@ export const Notice = () => {
             </Flex>
             <Spacer />
             <Flex $align="center" $fit>
-              <Button $variant="outline" $size="sm">
+              <Button
+                $variant="outline"
+                $size="sm"
+                onClick={() => navigate("/notice/write")}
+              >
                 공지 추가 +
               </Button>
             </Flex>
