@@ -109,7 +109,8 @@ export const createDomainApi = (domain: string) => {
     ) => {
       return useMutation({
         mutationFn: async (request: TRequest) => {
-          const url = `${domain}${path}/${id}`;
+          // path가 "/"면 `/notices//1`처럼 슬래시가 겹치므로 비운다
+          const url = `${domain}${path === "/" ? "" : path}/${id}`;
           const { data } = await instance<TResponse>({
             method,
             url,
