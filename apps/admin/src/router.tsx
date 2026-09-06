@@ -13,6 +13,8 @@ import {
   Notice,
   NoticeDetail,
   noticeDetailLoader,
+  NoticeEdit,
+  noticeEditLoader,
   noticeLoader,
   Recruitment,
   recruitmentLoader
@@ -95,7 +97,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
             {
               path: "detail/edit/:noticeId",
-              element: <div>공지사항 수정</div>
+              loader: noticeEditLoader,
+              element: <NoticeEdit />
             }
           ]
         },
