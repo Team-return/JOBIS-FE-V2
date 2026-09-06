@@ -18,7 +18,9 @@ import {
   noticeLoader,
   NoticeWrite,
   Recruitment,
-  recruitmentLoader
+  recruitmentLoader,
+  Student,
+  studentLoader
 } from "./pages";
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -62,7 +64,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/student",
-          element: <div>학생</div>
+          loader: studentLoader,
+          element: <Student />
         },
         {
           path: "/review",
