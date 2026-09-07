@@ -8,7 +8,7 @@ export const GRADE_REGEX = /^[1-3][1-4](0[1-9]|1[0-9])$/;
 export const ADMIN_ID_KEY = "admin_id";
 
 export const RECRUITMENT_STATE_OPTIONS = [
-  { label: "모집전", value: "READY" },
+  { label: "모집전", value: "REQUESTED" },
   { label: "모집중", value: "RECRUITING" },
   { label: "모집 종료", value: "DONE" }
 ];
