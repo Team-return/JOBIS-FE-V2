@@ -1,6 +1,5 @@
 import {
   ListSortType,
-  useBannerList,
   useBookmarks,
   useCompanyStudentList,
   useCompanyStudentRecentList,
@@ -14,7 +13,6 @@ import {
   CompanyCard,
   Spacer,
   Skeleton,
-  Image,
   RecrutementCard,
   ListSection,
   EmploymentRateBanner,
@@ -24,27 +22,6 @@ import {
 import { LoaderData, useQueryParams } from "../../utils";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
-
-type Banner = NonNullable<
-  ReturnType<typeof useBannerList>["data"]
->["banners"][number];
-
-const BANNER_WIDTH = 960;
-const BANNER_HEIGHT = 280;
-const BANNER_RADIUS = 16;
-
-const getBannerImageUrl = (bannerUrl: string) =>
-  /^https?:\/\//.test(bannerUrl)
-    ? bannerUrl
-    : `${import.meta.env.FILE_URL}/${bannerUrl}`;
-
-// detail_id는 배너 타입과 무관하게 모집의뢰서 id로 내려온다
-const getBannerPath = (banner: Banner) => {
-  if (banner.banner_type === "EMPLOYMENT") return "/jobrate";
-  if (banner.banner_type === "NONE" || !banner.detail_id) return undefined;
-
-  return `/recruitment/detail/${banner.detail_id}`;
-};
 
 const getInterviewTime = (endDate: string, interviewTime: string) =>
   new Date(`${endDate}T${interviewTime}`).getTime();
@@ -89,10 +66,6 @@ export const Home = () => {
   const { data: bookmarksData } = useBookmarks();
   const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
   const { data: interviewData } = useStudentInterviews();
-
-  const { data: bannerData, isLoading: isBannerLoading } = useBannerList();
-  const banner = bannerData?.banners?.[0];
-  const bannerPath = banner && getBannerPath(banner);
   const reviewableInterview = interviewData?.interviews
     .filter(
       interview =>
@@ -108,37 +81,16 @@ export const Home = () => {
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
-      <Box $margin={[0, 0, 80, 0]}>
-        {isBannerLoading && (
-          <Skeleton
-            width={BANNER_WIDTH}
-            height={BANNER_HEIGHT}
-            $radius={BANNER_RADIUS}
-          />
-        )}
-        {!isBannerLoading && !banner && (
-          <Box
-            width={BANNER_WIDTH}
-            height={BANNER_HEIGHT}
-            $bg="#E5E5E5"
-            $radius={BANNER_RADIUS}
-          />
-        )}
-        {!isBannerLoading && banner && (
-          <div
-            style={{ cursor: bannerPath ? "pointer" : "default" }}
-            onClick={() => bannerPath && navigate(bannerPath)}
-          >
-            <Image
-              src={getBannerImageUrl(banner.banner_url)}
-              alt="배너"
-              width={BANNER_WIDTH}
-              height={BANNER_HEIGHT}
-              $radius={BANNER_RADIUS}
-            />
-          </div>
-        )}
-      </Box>
+      {/* 회색 배너 1개를 기본으로 두고 내용은 나중에 채우는 걸로 디자인과 이야기 됐습니다 */}
+      <div style={{ cursor: "pointer" }} onClick={() => {}}>
+        <Box
+          width={960}
+          height={280}
+          $bg="#E5E5E5"
+          $radius={16}
+          $margin={[0, 0, 80, 0]}
+        />
+      </div>
       {reviewableInterview && (
         <Flex
           $align="center"
