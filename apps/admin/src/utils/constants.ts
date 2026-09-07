@@ -23,7 +23,6 @@ export const RECRUITMENT_STATUS_LABEL: Record<RecruitmentStatus, string> = {
 
 export const RECRUITMENT_STATE_OPTIONS = [
   { label: "모집중", value: "RECRUITING" },
-  { label: "모집전", value: "READY" },
   { label: "모집종료", value: "DONE" },
   { label: "접수완료", value: "REQUESTED" },
   { label: "겨울인턴", value: "WIN_INTERN" }
