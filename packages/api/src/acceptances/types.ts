@@ -34,6 +34,6 @@ export interface CreateEmploymentRequest {
   application_ids: number[];
 }
 
-export interface DeleteAcceptanceRequest {
+export interface CancelAcceptanceRequest {
   application_ids: number[];
 }
