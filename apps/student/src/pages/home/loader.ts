@@ -8,7 +8,6 @@ import {
   type QueryParamParser
 } from "../../utils";
 import {
-  useBannerList,
   useBookmarks,
   useCompanyStudentList,
   useCompanyStudentRecentList,
@@ -55,7 +54,6 @@ export async function homeLoader({
       sort_type: queryParams.sortType
     }),
     useCompanyStudentRecentList.prefetch(),
-    useBannerList.prefetch(),
     useBookmarks.prefetch(),
     useStudentInterviews.prefetch()
   ]);
