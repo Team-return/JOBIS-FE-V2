@@ -38,18 +38,12 @@ const getBannerImageUrl = (bannerUrl: string) =>
     ? bannerUrl
     : `${import.meta.env.FILE_URL}/${bannerUrl}`;
 
+// detail_id는 배너 타입과 무관하게 모집의뢰서 id로 내려온다
 const getBannerPath = (banner: Banner) => {
-  switch (banner.banner_type) {
-    case "RECRUITMENT":
-    case "BOOKMARK":
-      return `/recruitment/detail/${banner.detail_id}`;
-    case "COMPANY":
-      return `/company/detail/${banner.detail_id}`;
-    case "EMPLOYMENT":
-      return "/jobrate";
-    default:
-      return undefined;
-  }
+  if (banner.banner_type === "EMPLOYMENT") return "/jobrate";
+  if (banner.banner_type === "NONE" || !banner.detail_id) return undefined;
+
+  return `/recruitment/detail/${banner.detail_id}`;
 };
 
 const getInterviewTime = (endDate: string, interviewTime: string) =>
