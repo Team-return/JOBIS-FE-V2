@@ -81,16 +81,45 @@ export const Home = () => {
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
-      {/* 회색 배너 1개를 기본으로 두고 내용은 나중에 채우는 걸로 디자인과 이야기 됐습니다 */}
-      <div style={{ cursor: "pointer" }} onClick={() => {}}>
-        <Box
-          width={960}
-          height={280}
-          $bg="#E5E5E5"
-          $radius={16}
-          $margin={[0, 0, 80, 0]}
-        />
-      </div>
+      {/* 배너 API 연동 전까지 디자인 시안 내용을 그대로 하드코딩해 둡니다 */}
+      <Flex
+        $align="center"
+        $justify="space-between"
+        style={{
+          height: "280px",
+          padding: "8px 80px 0",
+          margin: "0 0 80px 0",
+          borderRadius: "16px",
+          background: "linear-gradient(90deg, #147FFF 0%, #1263FF 100%)",
+          cursor: "pointer"
+        }}
+        onClick={() => navigate("/company")}
+      >
+        <Flex $direction="column" $gap={8} $align="flex-start" $fit>
+          <Flex $direction="column" $fit>
+            <Text $size="h3" $weight="bold" $color="white">
+              가장 인기있는
+            </Text>
+            <Text $size="h3" $weight="bold" $color="white">
+              기업에 대해 알아보세요!
+            </Text>
+          </Flex>
+          <Text $size="body1" $color="white">
+            (주)비바리퍼블리카
+          </Text>
+          <Box
+            $margin={[16, 0, 0, 0]}
+            $padding={[8, 16]}
+            $bg="rgba(255, 255, 255, 0.2)"
+            $radius={17}
+          >
+            <Text $size="caption" $weight="medium" $color="white">
+              기업 보러 가기
+            </Text>
+          </Box>
+        </Flex>
+        <Box width={160} height={160} $bg="white" $radius={16} />
+      </Flex>
       {reviewableInterview && (
         <Flex
           $align="center"
