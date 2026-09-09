@@ -22,10 +22,10 @@ const { createQueryHook, createMutationHook, createIdMutationHook } =
 export { applicationsKeys };
 
 export const useEmploymentCount = createQueryHook<
-  void,
+  number,
   EmploymentCountResponse
 >({
-  path: "/employment/count",
+  path: year => `/employment/count/${year}`,
   queryKey: applicationsKeys.employmentCount
 });
 
@@ -159,8 +159,8 @@ export const useDeleteApplications = createMutationHook<string, void>({
   method: "delete"
 });
 
-export const useEmployment = createQueryHook<void, EmploymentResponse>({
-  path: "/employment",
+export const useEmployment = createQueryHook<number, EmploymentResponse>({
+  path: year => `/employment/${year}`,
   queryKey: applicationsKeys.employment
 });
 
