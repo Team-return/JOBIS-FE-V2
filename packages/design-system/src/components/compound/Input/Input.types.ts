@@ -25,4 +25,5 @@ export interface Props {
     | "new-password"
     | "off";
   fillColor?: string;
+  $variant?: "filled" | "underline";
 }
