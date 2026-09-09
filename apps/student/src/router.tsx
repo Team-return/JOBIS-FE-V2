@@ -34,7 +34,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       element: (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Header type="student" userName="홍길동" />
-          <main style={{ flex: 1 }}>
+          <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
           <Footer />
