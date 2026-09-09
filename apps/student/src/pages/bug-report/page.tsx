@@ -19,7 +19,7 @@ import { BUG_REPORT_AREA_OPTIONS } from "../../utils/constants";
 
 const CARD_WIDTH = 780;
 const FIELD_WIDTH = 562;
-const LABEL_WIDTH = 96;
+const LABEL_WIDTH = 77;
 
 interface UploadedFile {
   id: number;
@@ -143,95 +143,108 @@ export const BugReport = () => {
   };
 
   return (
-    <Flex $justify="center" style={{ padding: "68px 0 120px" }}>
+    <Flex
+      $justify="center"
+      style={{
+        padding: "56px 0 126px",
+        backgroundColor: theme.color.grayScale[20]
+      }}
+    >
       <Box
         width={CARD_WIDTH}
         $bg={theme.color.grayScale[10]}
         $radius={8}
-        $padding={[60, 60]}
+        $padding={[36, 59]}
       >
-        <Flex $direction="column" $gap={52} $align="center">
-          <Flex $direction="column" $gap={16} $align="center">
-            <Text
-              $size="h4"
-              $weight="bold"
-              $align="center"
-              $color={theme.color.grayScale[90]}
-            >
-              버그 제보하기
-            </Text>
-            <Text $size="h6" $color={theme.color.grayScale[80]}>
-              자비스를 이용하며 생긴 버그를 제보해주세요
-            </Text>
-          </Flex>
-
+        <Flex $direction="column" $gap={118} $align="center">
           <Flex $direction="column" $gap={52} style={{ width: "100%" }}>
-            <FieldRow label="발생 위치">
-              <Dropdown
-                $placeholder="분야"
-                $width={96}
-                type={undefined}
-                options={BUG_REPORT_AREA_OPTIONS}
-                $defaultValue={area}
-                onChange={setArea}
-              />
-            </FieldRow>
+            <Flex $direction="column" $gap={16} $align="center">
+              <Text
+                $size="h4"
+                $weight="bold"
+                $align="center"
+                $color={theme.color.grayScale[90]}
+              >
+                버그 제보하기
+              </Text>
+              <Text $size="h6" $color={theme.color.grayScale[80]}>
+                자비스를 이용하며 생긴 버그를 제보해주세요
+              </Text>
+            </Flex>
 
-            <FieldRow label="제목">
-              <Input
-                $width={FIELD_WIDTH}
-                placeholder="제목 입력"
-                value={title}
-                onChange={setTitle}
-              />
-            </FieldRow>
-
-            <FieldRow label="제보내용">
-              <TextArea
-                $width={FIELD_WIDTH}
-                placeholder="제보할 버그에 대해 알려주세요!"
-                value={content}
-                onChange={setContent}
-              />
-            </FieldRow>
-
-            <Flex $gap={24} $align="flex-start" style={{ width: "100%" }}>
-              <Box width={LABEL_WIDTH}>
-                <Text
-                  $size="body3"
-                  $weight="regular"
-                  $color={theme.color.grayScale[90]}
-                >
-                  첨부파일
-                </Text>
-              </Box>
-              <Flex $direction="column" $gap={16} style={{ width: "100%" }}>
-                <input
-                  ref={inputRef}
-                  type="file"
-                  multiple
-                  hidden
-                  aria-label="첨부파일 추가"
-                  onChange={handleFileChange}
+            <Flex $direction="column" $gap={52} style={{ width: "100%" }}>
+              <FieldRow label="발생 위치">
+                <Dropdown
+                  $placeholder="분야"
+                  $width={96}
+                  type={undefined}
+                  options={BUG_REPORT_AREA_OPTIONS}
+                  $defaultValue={area}
+                  onChange={setArea}
                 />
-                <FileUpload
-                  label={isUploading ? "업로드 중..." : "파일 첨부하기"}
-                  $width={149}
-                  disabled={isUploading}
-                  onClick={() => inputRef.current?.click()}
-                />
+              </FieldRow>
 
-                {files.length > 0 && (
-                  <Flex $direction="row" $gap={8} $wrap>
-                    {files.map(file => (
-                      <FileDownload
-                        key={file.id}
-                        label={file.name}
-                        fileUrl={`${import.meta.env.FILE_URL}/${file.url}`}
-                      />
-                    ))}
-                  </Flex>
-                )}
+              <FieldRow label="제목">
+                <Input
+                  $variant="underline"
+                  $width={FIELD_WIDTH}
+                  placeholder="제목 입력"
+                  value={title}
+                  onChange={setTitle}
+                />
+              </FieldRow>
+
+              <FieldRow label="제보내용">
+                <TextArea
+                  $variant="underline"
+                  $width={FIELD_WIDTH}
+                  $height={52}
+                  rows={1}
+                  placeholder="제보할 버그에 대해 알려주세요!"
+                  value={content}
+                  onChange={setContent}
+                />
+              </FieldRow>
+
+              <Flex $gap={24} $align="flex-start" style={{ width: "100%" }}>
+                <Box width={LABEL_WIDTH}>
+                  <Text
+                    $size="body3"
+                    $weight="regular"
+                    $color={theme.color.grayScale[90]}
+                  >
+                    첨부파일
+                  </Text>
+                </Box>
+                <Flex $direction="column" $gap={16} style={{ width: "100%" }}>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    multiple
+                    hidden
+                    aria-label="첨부파일 추가"
+                    onChange={handleFileChange}
+                  />
+                  <FileUpload
+                    $iconName="Upload"
+                    label={isUploading ? "업로드 중..." : "파일 첨부하기"}
+                    $width={149}
+                    disabled={isUploading}
+                    onClick={() => inputRef.current?.click()}
+                  />
+
+                  {files.length > 0 && (
+                    <Flex $direction="row" $gap={8} $wrap>
+                      {files.map(file => (
+                        <FileDownload
+                          key={file.id}
+                          label={file.name}
+                          fileUrl={`${import.meta.env.FILE_URL}/${file.url}`}
+                        />
+                      ))}
+                    </Flex>
+                  )}
+                </Flex>
               </Flex>
             </Flex>
           </Flex>
