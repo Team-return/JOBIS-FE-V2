@@ -1,5 +1,5 @@
 export const applicationsKeys = {
-  employmentCount: () => ["employment-count"],
+  employmentCount: (year: number) => ["employment-count", year],
   pass: (companyId: number) => ["pass", companyId],
   companyApplications: () => ["company-applications"],
   studentApplications: () => ["student-applications"],
@@ -23,5 +23,5 @@ export const applicationsKeys = {
     winter_intern?: boolean;
     year?: string;
   }) => ["application-count", params],
-  employment: () => ["employment"]
+  employment: (year: number) => ["employment", year]
 } as const;
