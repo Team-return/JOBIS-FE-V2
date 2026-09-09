@@ -7,7 +7,6 @@ import {
   LoaderData,
   type QueryParamParser
 } from "../../utils";
-import { useEmploymentCompanyList } from "@jobis/api";
 
 export const STUDENT_TABS = ["company", "field-train", "contract"] as const;
 
@@ -42,13 +41,6 @@ export async function studentLoader({
   request
 }: LoaderFunctionArgs): Promise<LoaderData<StudentQuery>> {
   const queryParams = parseQueryParams(request, studentQueryParser);
-
-  await useEmploymentCompanyList.prefetch({
-    page: queryParams.page,
-    company_name: queryParams.companyName,
-    company_type: queryParams.companyType,
-    year: queryParams.year
-  });
 
   return {
     params: queryParams
