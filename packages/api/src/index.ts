@@ -15,6 +15,7 @@ export * from "./applications";
 export * from "./auth";
 export * from "./banners";
 export * from "./bookmarks";
+export * from "./bug-reports";
 export * from "./codes";
 export * from "./companies";
 export * from "./files";
