@@ -65,17 +65,16 @@ export const Student = () => {
 
   const isCompanyTab = tab === "company";
   const hasSelectedCompany = selectedCompanyId > 0;
-  const needsDefaultCompany = !isCompanyTab && !hasSelectedCompany;
 
   const { data: companyData, isLoading: isCompanyLoading } =
     useEmploymentCompanyList(
       {
-        page: isCompanyTab ? currentPage : 1,
+        page: currentPage,
         company_name: companyName || undefined,
         company_type: companyType,
         year: year ? parseInt(year, 10) : undefined
       },
-      { enabled: isCompanyTab || needsDefaultCompany }
+      { enabled: isCompanyTab }
     );
 
   const { data: companyCountData } = useEmploymentCompanyCount(
@@ -109,19 +108,6 @@ export const Student = () => {
     setOpenDropdown(null);
     updateParams({ tab: nextTab, page: undefined });
   };
-
-  useEffect(() => {
-    if (!needsDefaultCompany) return;
-
-    const firstCompany = companyData?.companies[0];
-    if (!firstCompany) return;
-
-    updateParams({
-      "company-id": firstCompany.company_id,
-      "selected-company": firstCompany.company_name,
-      "page": undefined
-    });
-  }, [needsDefaultCompany, companyData, updateParams]);
 
   useEffect(() => {
     if (!isCompanyTab) return;
@@ -176,11 +162,7 @@ export const Student = () => {
           acceptance.contract_date || "-"
         ]);
 
-  const isLoading = isCompanyTab
-    ? isCompanyLoading
-    : needsDefaultCompany
-      ? isCompanyLoading
-      : isAcceptanceLoading;
+  const isLoading = isCompanyTab ? isCompanyLoading : isAcceptanceLoading;
 
   const totalPages = isCompanyTab
     ? companyCountData?.total_page_count || 1
@@ -192,9 +174,11 @@ export const Student = () => {
     : rows.slice(startIndex, startIndex + PAGE_SIZE);
 
   const emptyMessage =
-    isCompanyTab || needsDefaultCompany
-      ? "등록된 기업이 없습니다."
-      : "등록된 학생이 없습니다.";
+    !isCompanyTab && !hasSelectedCompany
+      ? "기업 탭에서 기업을 먼저 선택해주세요."
+      : isCompanyTab
+        ? "등록된 기업이 없습니다."
+        : "등록된 학생이 없습니다.";
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={TABLE_WIDTH}>
