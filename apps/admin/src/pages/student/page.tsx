@@ -32,6 +32,11 @@ const COMPANY_COLUMN_WIDTHS = [612, 306, 306];
 const FIELD_TRAIN_COLUMN_WIDTHS = [312, 228, 228, 228, 228];
 const CONTRACT_COLUMN_WIDTHS = [324, 300, 300, 300];
 
+const FIELD_TRAIN_ACTION_OPTIONS = [
+  { label: "삭제", value: "delete" },
+  { label: "근로계약 변경", value: "employment" }
+];
+
 const TABS: { value: StudentTab; label: string }[] = [
   { value: "company", label: "기업" },
   { value: "field-train", label: "현장실습" },
@@ -44,6 +49,7 @@ export const Student = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [selected, setSelected] = useState<number[]>([]);
   const [localSearch, setLocalSearch] = useState(
     initialParams.companyName || ""
   );
@@ -92,6 +98,7 @@ export const Student = () => {
 
   const changeTab = (nextTab: StudentTab) => {
     setOpenDropdown(null);
+    setSelected([]);
     updateParams({ tab: nextTab, page: undefined });
   };
 
@@ -216,6 +223,14 @@ export const Student = () => {
               />
             </Flex>
             <Spacer />
+            <Dropdown
+              options={tab === "field-train" ? FIELD_TRAIN_ACTION_OPTIONS : []}
+              $width={110}
+              $placeholder="상태변경"
+              value=""
+              isOpen={openDropdown === "action"}
+              onToggle={isOpen => setOpenDropdown(isOpen ? "action" : null)}
+            />
           </Flex>
 
           {rows.length === 0 && !isLoading ? (
@@ -233,6 +248,7 @@ export const Student = () => {
             <Flex $direction="column" $align="center" $gap={40}>
               {isLoading ? (
                 <TableSkeleton
+                  checkbox
                   columnWidths={columnWidths}
                   rows={SKELETON_ROW_COUNT}
                 />
@@ -241,6 +257,9 @@ export const Student = () => {
                   headers={headers}
                   rows={paginatedRows}
                   columnWidths={columnWidths}
+                  checkbox
+                  selectedRows={selected}
+                  onRowSelect={setSelected}
                 />
               )}
 
@@ -248,7 +267,10 @@ export const Student = () => {
                 start={1}
                 end={totalPages}
                 current={currentPage}
-                onChange={page => updateParams({ page })}
+                onChange={page => {
+                  setSelected([]);
+                  updateParams({ page });
+                }}
               />
             </Flex>
           )}
