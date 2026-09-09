@@ -1,9 +1,4 @@
 import {
-  useAcceptanceDetail,
-  useEmploymentCompanyCount,
-  useEmploymentCompanyList
-} from "@jobis/api";
-import {
   Box,
   Container,
   Dropdown,
@@ -66,34 +61,25 @@ export const Student = () => {
   const isCompanyTab = tab === "company";
   const hasSelectedCompany = selectedCompanyId > 0;
 
-  const { data: companyData, isLoading: isCompanyLoading } =
-    useEmploymentCompanyList(
-      {
-        page: currentPage,
-        company_name: companyName || undefined,
-        company_type: companyType,
-        year: year ? parseInt(year, 10) : undefined
-      },
-      { enabled: isCompanyTab }
-    );
-
-  const { data: companyCountData } = useEmploymentCompanyCount(
-    {
-      company_name: companyName || undefined,
-      company_type: companyType,
-      year: year ? parseInt(year, 10) : undefined
-    },
-    { enabled: isCompanyTab }
-  );
-
-  const { data: acceptanceData, isLoading: isAcceptanceLoading } =
-    useAcceptanceDetail(selectedCompanyId, {
-      enabled: !isCompanyTab && hasSelectedCompany
-    });
-
-  const companies = companyData?.companies ?? [];
-  const fieldTrainees = acceptanceData?.field_trainees_response ?? [];
-  const acceptances = acceptanceData?.acceptances_response ?? [];
+  // 퍼블리싱 단계라 데이터는 비워둡니다. API 연동은 별도 브랜치에서 진행합니다.
+  const isLoading = false;
+  const companies: {
+    company_id: number;
+    company_name: string;
+    field_trainee_count: number;
+    contract_count: number;
+  }[] = [];
+  const fieldTrainees: {
+    student_gcn: string;
+    student_name: string;
+    start_date: string;
+    end_date: string;
+  }[] = [];
+  const acceptances: {
+    student_gcn: string;
+    student_name: string;
+    contract_date: string;
+  }[] = [];
 
   const selectCompany = (companyId: number, name: string) => {
     updateParams({
@@ -162,11 +148,7 @@ export const Student = () => {
           acceptance.contract_date || "-"
         ]);
 
-  const isLoading = isCompanyTab ? isCompanyLoading : isAcceptanceLoading;
-
-  const totalPages = isCompanyTab
-    ? companyCountData?.total_page_count || 1
-    : Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
 
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const paginatedRows = isCompanyTab
