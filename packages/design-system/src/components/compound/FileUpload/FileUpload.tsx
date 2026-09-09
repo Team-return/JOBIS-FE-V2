@@ -10,7 +10,8 @@ const Component = styled.button<Pick<Props, "$width">>`
   justify-content: space-between;
   gap: 8px;
   width: ${({ $width }) => parseValue($width || "100%")};
-  padding: 12px 16px 12px 12px;
+  padding: 9px 23px;
+  white-space: nowrap;
   border: 1px solid ${({ theme }) => theme.color.primary[20]};
   border-radius: 8px;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
@@ -49,10 +50,10 @@ export const FileUpload = ({
       $width={$width}
       disabled={disabled}
     >
-      <Text $span $size="body2" $weight="regular" $color={color}>
+      <Text $span $size="body3" $weight="regular" $color={color}>
         {label}
       </Text>
-      <Icon icon={$iconName} size={24} color={color} />
+      <Icon icon={$iconName} size={16} color={color} />
     </Component>
   );
 };
