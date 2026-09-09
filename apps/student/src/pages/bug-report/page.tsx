@@ -161,7 +161,7 @@ export const BugReport = () => {
               버그 제보하기
             </Text>
             <Text $size="h6" $color={theme.color.grayScale[80]}>
-              서비스를 이용하며 생긴 버그를 제보해주세요
+              자비스를 이용하며 생긴 버그를 제보해주세요
             </Text>
           </Flex>
 
