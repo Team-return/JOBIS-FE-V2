@@ -17,6 +17,7 @@ import { noticesListLoader } from "./pages/notice-list/loader";
 import { NoticeDetail } from "./pages/notice-detail";
 import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
+import { BugReport } from "./pages/bug-report";
 import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
@@ -121,7 +122,16 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/mypage",
-          element: <MyPage />
+          children: [
+            {
+              index: true,
+              element: <MyPage />
+            },
+            {
+              path: "bug-report",
+              element: <BugReport />
+            }
+          ]
         },
         {
           path: "/jobrate",

@@ -21,6 +21,13 @@ export const YEAR_OPTIONS = Array.from(
   (_, index) => String(currentYear - index)
 ).map(year => ({ label: year, value: year }));
 
+export const BUG_REPORT_AREA_OPTIONS = [
+  { label: "Server", value: "SERVER" },
+  { label: "WEB", value: "WEB" },
+  { label: "iOS", value: "IOS" },
+  { label: "Android", value: "ANDROID" }
+];
+
 export const RECRUITMENT_SORT_OPTIONS = [
   { label: "기본순", value: "" },
   { label: "매출", value: "TAKE" },
