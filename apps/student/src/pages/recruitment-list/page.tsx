@@ -139,7 +139,7 @@ export const RecruitmentList = () => {
               $width={120}
               options={techOptions}
               type="supportJob"
-              $defaultValue={techStack}
+              value={techStack}
               onChange={value =>
                 updateParams({ "tech-stack": value || undefined, "page": 1 })
               }
