@@ -31,7 +31,7 @@ export const NoticeEdit = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { data, isLoading } = useNoticeDetail(noticeId);
+  const { data, isLoading, isError } = useNoticeDetail(noticeId);
   const { mutate: updateNotice, isPending } = useUpdateNotice(noticeId);
 
   const [title, setTitle] = useState("");
@@ -56,7 +56,7 @@ export const NoticeEdit = () => {
   };
 
   const handleSubmit = () => {
-    if (isPending || !validate()) return;
+    if (isPending || !data || !validate()) return;
 
     updateNotice(
       { title: title.trim(), content: content.trim() },
@@ -75,6 +75,40 @@ export const NoticeEdit = () => {
       }
     );
   };
+
+  if (isError) {
+    return (
+      <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
+        <Flex $justify="center">
+          <Box
+            width={CARD_WIDTH}
+            $bg={theme.color.grayScale[10]}
+            $radius={8}
+            $padding={[80, 100]}
+          >
+            <Flex $direction="column" $gap={40} $align="center">
+              <Text
+                $size="h5"
+                $weight="medium"
+                $align="center"
+                $color={theme.color.grayScale[60]}
+              >
+                공지사항을 불러오지 못했습니다.
+              </Text>
+              <Button
+                $variant="outline"
+                $size="md"
+                $padding={[12, 40]}
+                onClick={() => navigate(`/notice/detail/${noticeId}`)}
+              >
+                돌아가기
+              </Button>
+            </Flex>
+          </Box>
+        </Flex>
+      </Container>
+    );
+  }
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
@@ -168,6 +202,7 @@ export const NoticeEdit = () => {
                 <Button
                   $size="md"
                   $padding={[12, 40]}
+                  disabled={isLoading || !data}
                   $progressing={isPending}
                   onClick={handleSubmit}
                 >
