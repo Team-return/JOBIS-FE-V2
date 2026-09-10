@@ -51,7 +51,7 @@ export const MyPage = () => {
             {
               label: "비밀번호 변경",
               onClick: () => {
-                error("준비중인 기능입니다");
+                navigate("/mypage/password");
               }
             },
             {
