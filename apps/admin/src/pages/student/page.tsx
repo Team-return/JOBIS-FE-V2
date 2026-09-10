@@ -21,7 +21,7 @@ import {
   useDebounce,
   useQueryParams
 } from "../../utils";
-import type { StudentQuery, StudentTab } from "./loader";
+import { STUDENT_TABS, type StudentQuery, type StudentTab } from "./loader";
 
 const TABLE_WIDTH = 1224;
 const PAGE_SIZE = 12;
@@ -36,6 +36,13 @@ const FIELD_TRAIN_ACTION_OPTIONS = [
   { label: "삭제", value: "delete" },
   { label: "근로계약 변경", value: "employment" }
 ];
+
+const PLAIN_BUTTON_STYLE = {
+  border: 0,
+  background: "none",
+  padding: 0,
+  cursor: "pointer"
+} as const;
 
 const TABS: { value: StudentTab; label: string }[] = [
   { value: "company", label: "기업" },
@@ -54,8 +61,12 @@ export const Student = () => {
     initialParams.companyName || ""
   );
 
-  const tab = (getParam("tab") as StudentTab) || initialParams.tab;
-  const currentPage = getParamAsNumber("page", 1);
+  const rawTab = getParam("tab");
+  const tab: StudentTab = STUDENT_TABS.includes(rawTab as StudentTab)
+    ? (rawTab as StudentTab)
+    : initialParams.tab;
+  const parsedPage = getParamAsNumber("page", initialParams.page);
+  const currentPage = parsedPage >= 1 ? parsedPage : initialParams.page;
   const companyName = getParam("company-name") ?? "";
   const companyType = getParam("type");
   const year = getParam("year");
@@ -126,9 +137,10 @@ export const Student = () => {
 
   const rows: ReactNode[][] = isCompanyTab
     ? companies.map(company => [
-        <div
+        <button
           key={`company-${company.company_id}`}
-          style={{ cursor: "pointer" }}
+          type="button"
+          style={PLAIN_BUTTON_STYLE}
           onClick={() =>
             selectCompany(company.company_id, company.company_name)
           }
@@ -136,7 +148,7 @@ export const Student = () => {
           <Text $size="body2" $color={theme.color.grayScale[70]}>
             {company.company_name}
           </Text>
-        </div>,
+        </button>,
         String(company.field_trainee_count),
         String(company.contract_count)
       ])
@@ -175,9 +187,11 @@ export const Student = () => {
         <Flex $direction="column" $gap={16}>
           <Flex $gap={16} $align="flex-end">
             {TABS.map(({ value, label }) => (
-              <div
+              <button
                 key={value}
-                style={{ cursor: "pointer" }}
+                type="button"
+                aria-pressed={tab === value}
+                style={PLAIN_BUTTON_STYLE}
                 onClick={() => changeTab(value)}
               >
                 <Text
@@ -191,7 +205,7 @@ export const Student = () => {
                 >
                   {label}
                 </Text>
-              </div>
+              </button>
             ))}
           </Flex>
 
