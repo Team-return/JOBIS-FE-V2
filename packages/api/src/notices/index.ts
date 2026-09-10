@@ -2,6 +2,7 @@
   CreateNoticeRequest,
   UpdateNoticeRequest,
   NoticeDetailResponse,
+  NoticeListQueryParams,
   NoticeListResponse
 } from "./types";
 import { createDomainApi } from "@/create-hook";
@@ -33,7 +34,10 @@ export const useNoticeDetail = createQueryHook<number, NoticeDetailResponse>({
   queryKey: noticesKeys.noticeDetail
 });
 
-export const useNoticeList = createQueryHook<void, NoticeListResponse>({
+export const useNoticeList = createQueryHook<
+  NoticeListQueryParams | undefined,
+  NoticeListResponse
+>({
   path: "/",
   queryKey: noticesKeys.noticeList
 });
