@@ -23,6 +23,13 @@ import { LoaderData } from "apps/admin/src/utils";
 
 const NOTICE_CARD_WIDTH = 1200;
 const NOTICE_CARD_PADDING = 48;
+const ICON_BUTTON_STYLE = {
+  display: "flex",
+  border: 0,
+  background: "none",
+  padding: 0,
+  cursor: "pointer"
+} as const;
 
 const formatNoticeDate = (createdAt?: string) => {
   if (!createdAt) return "-";
@@ -137,8 +144,10 @@ export const NoticeDetail = () => {
                   </Text>
                 )}
                 <Flex $gap={12} $align="center" $fit>
-                  <div
-                    style={{ cursor: "pointer", display: "flex" }}
+                  <button
+                    type="button"
+                    aria-label="편집"
+                    style={ICON_BUTTON_STYLE}
                     onClick={() => navigate(`/notice/detail/edit/${noticeId}`)}
                   >
                     <Icon
@@ -146,9 +155,11 @@ export const NoticeDetail = () => {
                       size={28}
                       color={theme.color.grayScale[60]}
                     />
-                  </div>
-                  <div
-                    style={{ cursor: "pointer", display: "flex" }}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="삭제"
+                    style={ICON_BUTTON_STYLE}
                     onClick={() => setShowDeleteModal(true)}
                   >
                     <Icon
@@ -156,7 +167,7 @@ export const NoticeDetail = () => {
                       size={28}
                       color={theme.color.grayScale[60]}
                     />
-                  </div>
+                  </button>
                 </Flex>
               </Flex>
 
