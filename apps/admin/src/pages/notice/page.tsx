@@ -13,7 +13,7 @@ import {
 } from "@jobis/design-system";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useNoticeList } from "@jobis/api";
 import {
   useDebounce,
@@ -34,20 +34,22 @@ const NOTICE_ROW_HEIGHT = 48;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const SKELETON_ROW_COUNT = 5;
 
-const NoticeCell = ({
-  children,
-  onClick
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-}) => (
-  <div
-    style={{ width: "100%", cursor: onClick ? "pointer" : "default" }}
-    onClick={onClick}
-  >
-    {children}
-  </div>
-);
+const NoticeCell = ({ children, to }: { children: ReactNode; to?: string }) =>
+  to ? (
+    <Link
+      to={to}
+      style={{
+        width: "100%",
+        display: "block",
+        color: "inherit",
+        textDecoration: "none"
+      }}
+    >
+      {children}
+    </Link>
+  ) : (
+    <div style={{ width: "100%" }}>{children}</div>
+  );
 
 const NoticeTitle = ({ title, color }: { title: string; color?: string }) => (
   <div style={{ width: "100%", paddingLeft: NOTICE_TITLE_PADDING }}>
@@ -91,28 +93,16 @@ export const Notice = () => {
     notice.title.includes(searchKeyword)
   );
 
-  const goToNoticeDetail = (noticeId: number) =>
-    navigate(`/notice/detail/${noticeId}`);
-
   const tableRows: ReactNode[][] = notices.map(notice => [
-    <NoticeCell
-      key={`id-${notice.id}`}
-      onClick={() => goToNoticeDetail(notice.id)}
-    >
+    <NoticeCell key={`id-${notice.id}`} to={`/notice/detail/${notice.id}`}>
       <Text $size="body2" $color={theme.color.grayScale[70]}>
         {String(notice.id)}
       </Text>
     </NoticeCell>,
-    <NoticeCell
-      key={`title-${notice.id}`}
-      onClick={() => goToNoticeDetail(notice.id)}
-    >
+    <NoticeCell key={`title-${notice.id}`} to={`/notice/detail/${notice.id}`}>
       <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />
     </NoticeCell>,
-    <NoticeCell
-      key={`date-${notice.id}`}
-      onClick={() => goToNoticeDetail(notice.id)}
-    >
+    <NoticeCell key={`date-${notice.id}`} to={`/notice/detail/${notice.id}`}>
       <Text $size="body2" $color={theme.color.grayScale[90]}>
         {formatNoticeDate(notice.created_at)}
       </Text>
