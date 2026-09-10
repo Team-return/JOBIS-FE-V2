@@ -1,4 +1,9 @@
+import type { NoticeListQueryParams } from "./types";
+
 export const noticesKeys = {
   noticeDetail: (noticeId: number) => ["notice-detail", noticeId],
-  noticeList: () => ["notice-list"]
+  noticeList: (params?: NoticeListQueryParams) => [
+    "notice-list",
+    params?.page ?? null
+  ]
 } as const;
