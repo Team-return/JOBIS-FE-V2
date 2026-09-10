@@ -39,6 +39,12 @@ const resolvePath = <T>(
   return typeof path === "function" ? path(args as T) : path;
 };
 
+// path가 함수면 params 없이는 `/employment/undefined` 같은 경로가 만들어진다
+const canResolvePath = <T>(
+  path: string | ((args: T) => string),
+  args?: T
+): boolean => typeof path !== "function" || args !== undefined;
+
 export const createDomainApi = (domain: string) => {
   const createQueryHook = <TParams, TResponse>({
     path,
@@ -60,7 +66,8 @@ export const createDomainApi = (domain: string) => {
         );
         return data;
       },
-      ...options
+      ...options,
+      ...(canResolvePath(path, params) ? {} : { enabled: false })
     });
 
     const hook = ((params?: TParams, options?: QueryOptions<TResponse>) => {
@@ -73,6 +80,7 @@ export const createDomainApi = (domain: string) => {
       params?: TParams,
       options?: QueryOptions<TResponse>
     ) => {
+      if (!canResolvePath(path, params)) return;
       await queryClient.prefetchQuery(buildQueryOptions(params, options));
     };
 
