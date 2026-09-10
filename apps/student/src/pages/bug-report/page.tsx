@@ -94,6 +94,9 @@ export const BugReport = () => {
   const { mutate: createBugReport, isPending: isReporting } =
     useCreateBugReport();
 
+  const removeFile = (id: number) =>
+    setFiles(prev => prev.filter(file => file.id !== id));
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? []);
 
@@ -240,6 +243,7 @@ export const BugReport = () => {
                           key={file.id}
                           label={file.name}
                           fileUrl={`${import.meta.env.FILE_URL}/${file.url}`}
+                          onRemove={() => removeFile(file.id)}
                         />
                       ))}
                     </Flex>
