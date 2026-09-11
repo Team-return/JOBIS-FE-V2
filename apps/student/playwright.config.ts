@@ -21,7 +21,8 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`
   },
   webServer: {
-    command: `yarn dev --port ${PORT} --strictPort`,
+    // student 워크스페이스에는 vite가 없어 `yarn dev`가 전역 vite를 잡을 수 있으므로 루트 vite를 쓴다
+    command: `yarn run -T vite --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     // 같은 포트의 다른 앱을 재사용하지 않도록 항상 새로 띄운다
     reuseExistingServer: false
