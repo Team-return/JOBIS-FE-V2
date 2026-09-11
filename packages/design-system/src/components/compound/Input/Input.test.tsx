@@ -82,4 +82,12 @@ describe("Input", () => {
       expect(handleClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("maxLength", () => {
+    it("should enforce maxLength", () => {
+      renderWithTheme(<Input maxLength={10} placeholder="test" />);
+      const input = screen.getByPlaceholderText("test");
+      expect(input).toHaveAttribute("maxLength", "10");
+    });
+  });
 });
