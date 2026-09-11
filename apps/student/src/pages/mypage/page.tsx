@@ -16,6 +16,7 @@ import {
 import { SERVER_STATUS_MAP } from "@jobis/design-system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { DEPARTMENT_LABEL_MAP } from "../../utils";
 
 export const MyPage = () => {
   const { error } = useToast();
@@ -39,7 +40,7 @@ export const MyPage = () => {
         <ProfileBar
           name={profile?.student_name || ""}
           studentNumber={profile?.student_gcn || ""}
-          department={profile?.department || ""}
+          department={profile ? DEPARTMENT_LABEL_MAP[profile.department] : ""}
           profileImageUrl={profile?.profile_image_url || ""}
           menuItems={[
             {
