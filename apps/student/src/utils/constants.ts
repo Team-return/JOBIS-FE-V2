@@ -1,4 +1,4 @@
-import type { InterviewType } from "@jobis/api";
+import type { Department, InterviewType } from "@jobis/api";
 
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
@@ -19,6 +19,14 @@ export const INTERVIEW_TYPE_LABEL_MAP: Record<InterviewType, string> = {
   TECH_INTERVIEW: "기술 면접",
   CULTURE_INTERVIEW: "컬처 면접",
   FINAL_INTERVIEW: "최종 면접"
+};
+
+export const DEPARTMENT_LABEL_MAP: Record<Department, string> = {
+  SOFTWARE_DEVELOP: "소프트웨어 개발과",
+  EMBEDDED_SOFTWARE: "임베디드 소프트웨어과",
+  INFORMATION_SECURITY: "정보보안과",
+  AI_SOFTWARE: "인공지능 소프트웨어과",
+  COMMON: "공통과정"
 };
 
 export const RECRUITMENT_STATE_OPTIONS = [
