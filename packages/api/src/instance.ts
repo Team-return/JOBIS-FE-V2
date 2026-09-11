@@ -100,7 +100,9 @@ instance.interceptors.response.use(
       throw statusCode;
     }
 
-    if ((statusCode === 401 || statusCode === 403) && !originalRequest._retry) {
+    // 403은 권한 부족이라 토큰을 새로 받아도 통과하지 못한다.
+    // 재시도하면 POST 같은 생성 요청이 중복으로 나간다
+    if (statusCode === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
