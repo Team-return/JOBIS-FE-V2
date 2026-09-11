@@ -8,7 +8,6 @@ describe("RecrutementCard", () => {
     hiringJobs: "프론트엔드 개발자",
     companyName: "자비스",
     companyProfileUrl: "https://placehold.co/222x144",
-    trainPay: 200,
     militarySupport: true,
     bookmarked: false
   };
@@ -18,9 +17,6 @@ describe("RecrutementCard", () => {
 
     expect(screen.getByText(defaultProps.companyName)).toBeInTheDocument();
     expect(screen.getByText(defaultProps.hiringJobs)).toBeInTheDocument();
-    expect(
-      screen.getByText(`실습수당 ${defaultProps.trainPay}만원`)
-    ).toBeInTheDocument();
     expect(screen.getByText("병역특례 O")).toBeInTheDocument();
   });
 

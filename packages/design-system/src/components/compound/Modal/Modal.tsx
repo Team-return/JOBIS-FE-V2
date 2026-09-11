@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import styled from "@emotion/styled";
 import { Props } from "./Modal.types";
-import { Text, Button, Flex } from "@/components";
+// 배럴을 거치면 themes -> hooks -> Toast -> 배럴 순환에 걸려
+// 모듈 최상위의 styled(Text)가 undefined를 받는다. 모듈을 직접 가리킨다
+import { Text } from "@/components/core/Text";
+import { Button } from "@/components/core/Button";
+import { Flex } from "@/components/primitive/Flex";
 import { useTheme } from "@/hooks";
 
 const Backdrop = styled.div`

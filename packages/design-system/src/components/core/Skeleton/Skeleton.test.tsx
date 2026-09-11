@@ -38,7 +38,8 @@ describe("Skeleton", () => {
   it("applies background color from theme", () => {
     const { container } = renderWithTheme(<Skeleton />);
     const skeletonElement = container.firstChild as HTMLElement;
-    expect(skeletonElement).toHaveStyle("background-color: rgb(229, 229, 229)");
+    // renderWithTheme은 darkTheme으로 렌더한다 (grayScale[40] = #333333)
+    expect(skeletonElement).toHaveStyle("background-color: rgb(51, 51, 51)");
   });
 
   it("applies all props correctly", () => {

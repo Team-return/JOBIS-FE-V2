@@ -21,25 +21,47 @@ const Label = styled.label`
 `;
 
 const TextAreaWrapper = styled.div<
-  Pick<Props, "$width" | "$height" | "$errorMessage" | "disabled">
+  Pick<Props, "$width" | "$height" | "$errorMessage" | "disabled" | "$variant">
 >`
   display: flex;
   align-items: flex-start;
   gap: 8px;
   width: ${({ $width }) => parseValue($width || "100%")};
   ${({ $height }) => ($height ? `height: ${parseValue($height)};` : "")}
-  padding: 12px 16px;
-  border: 1px solid
-    ${({ theme, $errorMessage }) =>
-      $errorMessage ? theme.color.subColor.red[20] : "transparent"};
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.color.grayScale[20]};
 
-  &:focus-within {
-    outline: none;
-    border-color: ${({ theme, $errorMessage }) =>
-      $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]};
-  }
+  ${({ theme, $errorMessage, $variant }) =>
+    $variant === "underline"
+      ? `
+    padding: 14px 16px;
+    border: none;
+    border-bottom: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : theme.color.grayScale[50]
+    };
+    border-radius: 0;
+    background-color: transparent;
+
+    &:focus-within {
+      outline: none;
+      border-bottom-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `
+      : `
+    padding: 12px 16px;
+    border: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : "transparent"
+    };
+    border-radius: 8px;
+    background-color: ${theme.color.grayScale[20]};
+
+    &:focus-within {
+      outline: none;
+      border-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `}
 
   ${({ theme, disabled }) =>
     disabled &&
@@ -84,7 +106,8 @@ export const TextArea = ({
   placeholder,
   disabled,
   rows = 4,
-  maxLength
+  maxLength,
+  $variant = "filled"
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const id = useId();
@@ -100,6 +123,7 @@ export const TextArea = ({
         $height={$height}
         $errorMessage={$errorMessage}
         disabled={disabled}
+        $variant={$variant}
       >
         <StyledTextArea
           id={id}

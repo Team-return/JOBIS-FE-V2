@@ -4,6 +4,7 @@ import type { Props } from "./Container.types";
 
 const Component = styled.div<Props>`
   width: 100%;
+  margin-inline: auto;
   ${({ $maxWidth }) => $maxWidth && `max-width: ${parseValue($maxWidth)};`}
   ${({ $padding }) => $padding && `padding: ${parseList($padding)};`}
   ${({ $bg }) => $bg && `background: ${$bg};`}
