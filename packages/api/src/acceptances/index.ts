@@ -3,7 +3,7 @@
   UpdateFieldTrainRequest,
   UpdateContractDateRequest,
   CreateEmploymentRequest,
-  DeleteAcceptanceRequest
+  CancelAcceptanceRequest
 } from "./types";
 import { createDomainApi } from "@/create-hook";
 import { acceptancesKeys } from "./keys";
@@ -45,8 +45,9 @@ export const useCreateEmployment = createMutationHook<
   method: "post"
 });
 
-export const useDeleteAcceptance = createMutationHook<
-  DeleteAcceptanceRequest,
+// DELETE지만 취업 데이터를 지우는 게 아니라 취업을 취소하는 API다
+export const useCancelAcceptance = createMutationHook<
+  CancelAcceptanceRequest,
   void
 >({
   path: "/",
