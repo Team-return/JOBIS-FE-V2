@@ -43,3 +43,7 @@ vitest.config.*.timestamp*
 
 # vitest browser mode 실패 시 생성되는 스크린샷
 __screenshots__/
+
+# playwright e2e 테스트 결과물
+test-results/
+playwright-report/
