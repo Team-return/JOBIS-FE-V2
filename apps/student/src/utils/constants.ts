@@ -1,3 +1,5 @@
+import type { Department } from "@jobis/api";
+
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
@@ -6,6 +8,14 @@ export const VERIFYCODE_REGEX = /^[[0-9]{6}$/;
 export const GRADE_REGEX = /^[1-3][1-4](0[1-9]|1[0-9])$/;
 
 export const ADMIN_ID_KEY = "admin_id";
+
+export const DEPARTMENT_LABEL_MAP: Record<Department, string> = {
+  SOFTWARE_DEVELOP: "소프트웨어 개발과",
+  EMBEDDED_SOFTWARE: "임베디드 소프트웨어과",
+  INFORMATION_SECURITY: "정보보안과",
+  AI_SOFTWARE: "인공지능 소프트웨어과",
+  COMMON: "공통과정"
+};
 
 export const RECRUITMENT_STATE_OPTIONS = [
   { label: "모집전", value: "REQUESTED" },
