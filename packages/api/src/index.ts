@@ -21,6 +21,7 @@ export * from "./companies";
 export * from "./files";
 export * from "./interviews";
 export * from "./notices";
+export * from "./notifications";
 export * from "./recruitments";
 export * from "./reviews";
 export * from "./students";
