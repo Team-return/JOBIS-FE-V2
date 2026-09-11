@@ -20,6 +20,9 @@ import { BUG_REPORT_AREA_OPTIONS } from "../../utils/constants";
 const CARD_WIDTH = 780;
 const FIELD_WIDTH = 562;
 const LABEL_WIDTH = 77;
+// 서버(CreateBugReportWebRequest) 제한과 동일
+const TITLE_MAX_LENGTH = 20;
+const CONTENT_MAX_LENGTH = 400;
 
 interface UploadedFile {
   id: number;
@@ -194,6 +197,7 @@ export const BugReport = () => {
                   placeholder="제목 입력"
                   value={title}
                   onChange={setTitle}
+                  maxLength={TITLE_MAX_LENGTH}
                 />
               </FieldRow>
 
@@ -206,6 +210,7 @@ export const BugReport = () => {
                   placeholder="제보할 버그에 대해 알려주세요!"
                   value={content}
                   onChange={setContent}
+                  maxLength={CONTENT_MAX_LENGTH}
                 />
               </FieldRow>
 
