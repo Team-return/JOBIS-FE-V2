@@ -12,7 +12,13 @@ import {
   Text
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
-import { useDebounce, useQueryParams } from "../../utils";
+import {
+  RECRUITMENT_SORT_OPTIONS,
+  RECRUITMENT_STATE_OPTIONS,
+  YEAR_OPTIONS,
+  useDebounce,
+  useQueryParams
+} from "../../utils";
 import { useNavigate } from "react-router-dom";
 import {
   ListSortType,
@@ -32,7 +38,7 @@ export const RecruitmentList = () => {
   const state = getParam("status") || "";
   const year = getParam("year") || "";
   const field = getParam("field") || "";
-  const techStack = getParam("techStack") || "";
+  const techStack = getParam("tech-stack") || "";
 
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);
@@ -56,33 +62,24 @@ export const RecruitmentList = () => {
     })) || [];
 
   const { data: companyCountData } = useStudentRecruitmentCount({
-    name: currentName,
+    name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
-    status: state as StudentRecruitmentStatus,
+    status: (state as StudentRecruitmentStatus) || undefined,
     job_code: field ? parseInt(field, 10) : undefined,
     tech_code: techStack || undefined
   });
 
   const { data: RecruitmentListData, isLoading } = useRecruitmentList({
     page: currentPage,
-    name: currentName,
+    name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
-    status: state as StudentRecruitmentStatus,
-    sort_type: currentSort as ListSortType,
+    status: (state as StudentRecruitmentStatus) || undefined,
+    sort_type: (currentSort as ListSortType) || undefined,
     job_code: field ? parseInt(field, 10) : undefined,
     tech_code: techStack || undefined
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
-
-  const sortType = [
-    { label: "기본순", value: "" },
-    { label: "매출", value: "TAKE" },
-    { label: "직원 ↓", value: "WORKERS_COUNT_DESC" },
-    { label: "직원 ↑", value: "WORKERS_COUNT_ASC" },
-    { label: "설립일 ↓", value: "FOUNDED_AT_DESC" },
-    { label: "설립일 ↑", value: "FOUNDED_AT_ASC" }
-  ];
 
   useEffect(() => {
     if (debouncedKeyword === currentName) return;
@@ -92,18 +89,6 @@ export const RecruitmentList = () => {
       page: 1
     });
   }, [debouncedKeyword, currentName, updateParams]);
-
-  const recruitmentState = [
-    { label: "모집전", value: "모집전" },
-    { label: "모집중", value: "모집중" },
-    { label: "모집 종료", value: "모집 종료" }
-  ];
-
-  const recruitmentyear = [
-    { label: "2026", value: "2026" },
-    { label: "2025", value: "2025" },
-    { label: "2024", value: "2024" }
-  ];
 
   return (
     <Container $maxWidth={960} $padding={[68, 0, 180, 0]}>
@@ -119,34 +104,44 @@ export const RecruitmentList = () => {
               $placeholder="상태"
               $width={96}
               type={undefined}
-              options={recruitmentState}
-              $defaultValue={state || ""}
-              onChange={value => updateParams({ state: value || undefined })}
+              options={RECRUITMENT_STATE_OPTIONS}
+              $defaultValue={state}
+              onChange={value =>
+                updateParams({ status: value || undefined, page: 1 })
+              }
             />
             <Dropdown
               $placeholder="연도"
               $width={96}
               type={undefined}
-              options={recruitmentyear}
-              $defaultValue={year || ""}
-              onChange={value => updateParams({ year: value || undefined })}
+              options={YEAR_OPTIONS}
+              $defaultValue={year}
+              onChange={value =>
+                updateParams({ year: value || undefined, page: 1 })
+              }
             />
             <Dropdown
               $placeholder="분야"
               $width={96}
               type={undefined}
               options={jobOptions}
-              $defaultValue={field || ""}
-              onChange={value => updateParams({ field: value || undefined })}
+              $defaultValue={field}
+              onChange={value =>
+                updateParams({
+                  "field": value || undefined,
+                  "tech-stack": undefined,
+                  "page": 1
+                })
+              }
             />
             <Dropdown
               $placeholder="기술스택"
               $width={120}
               options={techOptions}
               type="supportJob"
-              $defaultValue={techStack}
+              value={techStack}
               onChange={value =>
-                updateParams({ techStack: value || undefined, page: 1 })
+                updateParams({ "tech-stack": value || undefined, "page": 1 })
               }
             />
             <Search
@@ -162,11 +157,11 @@ export const RecruitmentList = () => {
             $width={70}
             type={undefined}
             $isNoneBorder={true}
-            $defaultValue={currentSort || ""}
+            $defaultValue={currentSort}
             onChange={value =>
-              updateParams({ "sort-type": value || undefined })
+              updateParams({ "sort-type": value || undefined, "page": 1 })
             }
-            options={sortType}
+            options={RECRUITMENT_SORT_OPTIONS}
           />
         </Flex>
       </Flex>
