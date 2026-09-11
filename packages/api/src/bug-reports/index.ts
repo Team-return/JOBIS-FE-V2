@@ -1,7 +1,7 @@
 import type { CreateBugReportRequest } from "./types";
 import { createDomainApi } from "@/create-hook";
 
-const DOMAIN = "/bug-reports";
+const DOMAIN = "/bugs";
 const { createMutationHook } = createDomainApi(DOMAIN);
 
 export const useCreateBugReport = createMutationHook<
