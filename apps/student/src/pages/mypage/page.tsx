@@ -56,9 +56,7 @@ export const MyPage = () => {
             },
             {
               label: "버그 제보하기",
-              onClick: () => {
-                error("준비중인 기능입니다");
-              }
+              onClick: () => navigate("/mypage/bug-report")
             },
             {
               label: "로그아웃",

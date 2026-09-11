@@ -125,6 +125,7 @@ export const Input = ({
   type = "text",
   autoComplete,
   fillColor,
+  maxLength,
   $variant = "filled"
 }: Props) => {
   const { currentTheme: theme } = useTheme();
@@ -152,6 +153,7 @@ export const Input = ({
           disabled={disabled}
           type={type}
           autoComplete={autoComplete}
+          maxLength={maxLength}
         />
         {$iconName && (
           <IconWrapper onClick={onIconClick}>

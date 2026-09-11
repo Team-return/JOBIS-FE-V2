@@ -17,6 +17,7 @@ import { noticesListLoader } from "./pages/notice-list/loader";
 import { NoticeDetail } from "./pages/notice-detail";
 import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
+import { BugReport } from "./pages/bug-report";
 import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
@@ -33,7 +34,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       element: (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Header type="student" userName="홍길동" />
-          <main style={{ flex: 1 }}>
+          <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
           <Footer />
@@ -126,6 +127,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
             {
               index: true,
               element: <MyPage />
+            },
+            {
+              path: "bug-report",
+              element: <BugReport />
             },
             {
               path: "password",
