@@ -23,6 +23,9 @@ const LABEL_WIDTH = 77;
 // 서버(CreateBugReportWebRequest) 제한과 동일
 const TITLE_MAX_LENGTH = 20;
 const CONTENT_MAX_LENGTH = 400;
+// underline 입력칸 위아래 padding(14) + body2 줄 높이(24) x 5줄
+const CONTENT_ROWS = 5;
+const CONTENT_HEIGHT = 14 * 2 + 24 * CONTENT_ROWS;
 
 interface UploadedFile {
   id: number;
@@ -32,16 +35,23 @@ interface UploadedFile {
 
 const FieldRow = ({
   label,
-  children
+  children,
+  alignTop = false
 }: {
   label: string;
   children: ReactNode;
+  alignTop?: boolean;
 }) => {
   const { currentTheme: theme } = useTheme();
 
   return (
-    <Flex $gap={24} $align="center" style={{ width: "100%" }}>
-      <Box width={LABEL_WIDTH}>
+    <Flex
+      $gap={24}
+      $align={alignTop ? "flex-start" : "center"}
+      style={{ width: "100%" }}
+    >
+      {/* 입력칸 위쪽 padding만큼 내려 라벨을 첫 줄에 맞춘다 */}
+      <Box width={LABEL_WIDTH} $padding={alignTop ? [14, 0, 0, 0] : undefined}>
         <Text
           $size="body3"
           $weight="regular"
@@ -201,12 +211,12 @@ export const BugReport = () => {
                 />
               </FieldRow>
 
-              <FieldRow label="제보내용">
+              <FieldRow label="제보내용" alignTop>
                 <TextArea
                   $variant="underline"
                   $width={FIELD_WIDTH}
-                  $height={52}
-                  rows={1}
+                  $height={CONTENT_HEIGHT}
+                  rows={CONTENT_ROWS}
                   placeholder="제보할 버그에 대해 알려주세요!"
                   value={content}
                   onChange={setContent}
