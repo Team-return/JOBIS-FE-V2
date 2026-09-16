@@ -35,6 +35,14 @@ export const GlobalStyles = () => {
           background-color: ${theme.color.grayScale[10]};
         }
 
+        /* 폼 요소는 브라우저 기본 글꼴을 타므로 Pretendard를 물려받게 한다 */
+        button,
+        input,
+        textarea,
+        select {
+          font-family: inherit;
+        }
+
         main {
           margin: 0 auto;
         }
