@@ -129,6 +129,7 @@ export const NoticeWrite = () => {
   };
 
   const removeFile = (fileId: number) => {
+    if (isCreating) return;
     setFiles(prev => prev.filter(file => file.id !== fileId));
   };
 
