@@ -34,10 +34,20 @@ const NOTICE_ROW_HEIGHT = 48;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const SKELETON_ROW_COUNT = 5;
 
-const NoticeCell = ({ children, to }: { children: ReactNode; to?: string }) =>
+const NoticeCell = ({
+  children,
+  to,
+  focusable = true
+}: {
+  children: ReactNode;
+  to?: string;
+  focusable?: boolean;
+}) =>
   to ? (
     <Link
       to={to}
+      // 한 행에 링크가 셋이면 Tab이 행마다 세 번 멈추므로 제목만 초점을 받는다
+      tabIndex={focusable ? undefined : -1}
       style={{
         width: "100%",
         display: "block",
@@ -94,7 +104,11 @@ export const Notice = () => {
   );
 
   const tableRows: ReactNode[][] = notices.map(notice => [
-    <NoticeCell key={`id-${notice.id}`} to={`/notice/detail/${notice.id}`}>
+    <NoticeCell
+      key={`id-${notice.id}`}
+      to={`/notice/detail/${notice.id}`}
+      focusable={false}
+    >
       <Text $size="body2" $color={theme.color.grayScale[70]}>
         {String(notice.id)}
       </Text>
@@ -102,7 +116,11 @@ export const Notice = () => {
     <NoticeCell key={`title-${notice.id}`} to={`/notice/detail/${notice.id}`}>
       <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />
     </NoticeCell>,
-    <NoticeCell key={`date-${notice.id}`} to={`/notice/detail/${notice.id}`}>
+    <NoticeCell
+      key={`date-${notice.id}`}
+      to={`/notice/detail/${notice.id}`}
+      focusable={false}
+    >
       <Text $size="body2" $color={theme.color.grayScale[90]}>
         {formatNoticeDate(notice.created_at)}
       </Text>
