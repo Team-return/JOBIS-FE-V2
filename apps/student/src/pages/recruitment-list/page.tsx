@@ -105,7 +105,7 @@ export const RecruitmentList = () => {
               $width={96}
               type={undefined}
               options={RECRUITMENT_STATE_OPTIONS}
-              $defaultValue={state}
+              value={state}
               onChange={value =>
                 updateParams({ status: value || undefined, page: 1 })
               }
@@ -115,7 +115,7 @@ export const RecruitmentList = () => {
               $width={96}
               type={undefined}
               options={YEAR_OPTIONS}
-              $defaultValue={year}
+              value={year}
               onChange={value =>
                 updateParams({ year: value || undefined, page: 1 })
               }
@@ -125,7 +125,7 @@ export const RecruitmentList = () => {
               $width={96}
               type={undefined}
               options={jobOptions}
-              $defaultValue={field}
+              value={field}
               onChange={value =>
                 updateParams({
                   "field": value || undefined,
@@ -157,7 +157,7 @@ export const RecruitmentList = () => {
             $width={70}
             type={undefined}
             $isNoneBorder={true}
-            $defaultValue={currentSort}
+            value={currentSort}
             onChange={value =>
               updateParams({ "sort-type": value || undefined, "page": 1 })
             }
