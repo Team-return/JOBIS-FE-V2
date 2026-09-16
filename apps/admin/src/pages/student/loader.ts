@@ -26,7 +26,7 @@ const studentQueryParser: QueryParamParser<StudentQuery> = {
   parse: (params: URLSearchParams) => {
     return {
       tab: parseEnum(params.get("tab"), STUDENT_TABS) ?? "company",
-      page: parseOptionalNumber(params.get("page")) || 1,
+      page: parseOptionalNumber(params.get("page")) ?? 1,
       companyName: parseOptionalString(params.get("company-name")),
       companyType: parseOptionalString(params.get("type")),
       year: parseOptionalNumber(params.get("year")),
@@ -34,7 +34,7 @@ const studentQueryParser: QueryParamParser<StudentQuery> = {
       selectedCompanyName: parseOptionalString(params.get("selected-company"))
     };
   },
-  validate: data => data.page >= 1
+  validate: data => Number.isInteger(data.page) && data.page >= 1
 };
 
 export async function studentLoader({
