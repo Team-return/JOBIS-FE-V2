@@ -8,22 +8,11 @@ import {
   useTheme
 } from "@jobis/design-system";
 import { useLoaderData } from "react-router-dom";
-import { LoaderData } from "../../utils";
+import { LoaderData, getUploadedFileName, toFileUrl } from "../../utils";
 
 const formatDate = (createdAt: string) => {
   if (!createdAt) return "-";
   return createdAt.split("T")[0];
-};
-
-const getFileName = (url: string) => {
-  try {
-    const pathname = new URL(url).pathname;
-    const decodedPath = decodeURIComponent(pathname);
-    // 경로가 없는 URL이면 빈 문자열이 나오므로 || 로 원본을 남깁니다
-    return decodedPath.split("/").pop() || url;
-  } catch {
-    return url.split("?")[0].split("/").pop() || url;
-  }
 };
 
 export const NoticeDetail = () => {
@@ -119,7 +108,7 @@ export const NoticeDetail = () => {
                         {data?.attachments.map((attachment, index) => (
                           <a
                             key={index}
-                            href={attachment.url}
+                            href={toFileUrl(attachment.url)}
                             download
                             style={{
                               textDecoration: "none",
@@ -134,7 +123,7 @@ export const NoticeDetail = () => {
                               $weight="regular"
                               $color={theme.color.primary[20]}
                             >
-                              {getFileName(attachment.url)}
+                              {getUploadedFileName(attachment.url)}
                             </Text>
                             <Icon
                               icon="Download"
