@@ -29,10 +29,6 @@ interface NoticeListItem {
   created_at: string;
 }
 
-export interface NoticeListQueryParams {
-  page?: number;
-}
-
 export interface NoticeListResponse {
   notices: NoticeListItem[];
 }
