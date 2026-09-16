@@ -1,4 +1,9 @@
-import { expect, test, type Page } from "playwright/test";
+import {
+  expect,
+  test,
+  type APIRequestContext,
+  type Page
+} from "playwright/test";
 import process from "process";
 
 const API_URL = process.env.BASE_URL ?? "";
@@ -34,7 +39,36 @@ const ROUTES: RouteCase[] = [
   { path: "/notice/detail/:id", idFrom: NOTICE_LIST }
 ];
 
-let accessToken = "";
+interface Session {
+  accessToken: string;
+  refreshToken: string;
+}
+
+let session: Promise<Session> | undefined;
+
+// 테스트마다 로그인하면 요청이 테스트 수만큼 나가므로 한 번만 받아 재사용한다
+const getSession = (request: APIRequestContext) => {
+  session ??= request
+    .post(`${API_URL}/users/login`, {
+      data: {
+        account_id: STUDENT_ID,
+        password: STUDENT_PASSWORD,
+        platform_type: "WEB"
+      }
+    })
+    .then(async response => {
+      expect(response.ok(), `로그인 실패: ${response.status()}`).toBe(true);
+
+      const auth = await response.json();
+
+      return {
+        accessToken: auth.access_token,
+        refreshToken: auth.refresh_token
+      };
+    });
+
+  return session;
+};
 
 const collectApiErrors = (page: Page) => {
   const errors = new Set<string>();
@@ -68,20 +102,11 @@ test.beforeEach(async ({ context, request, baseURL }) => {
   // 테스트 중 발생한 에러가 팀 Sentry로 전송되지 않게 차단
   await context.route(/sentry\.io/, route => route.abort());
 
-  const response = await request.post(`${API_URL}/users/login`, {
-    data: {
-      account_id: STUDENT_ID,
-      password: STUDENT_PASSWORD,
-      platform_type: "WEB"
-    }
-  });
-  expect(response.ok(), `로그인 실패: ${response.status()}`).toBe(true);
+  const { accessToken, refreshToken } = await getSession(request);
 
-  const auth = await response.json();
-  accessToken = auth.access_token;
   await context.addCookies([
-    { name: "access_token", value: auth.access_token, url: baseURL! },
-    { name: "refresh_token", value: auth.refresh_token, url: baseURL! }
+    { name: "access_token", value: accessToken, url: baseURL! },
+    { name: "refresh_token", value: refreshToken, url: baseURL! }
   ]);
 });
 
@@ -90,6 +115,7 @@ for (const { path, idFrom } of ROUTES) {
     let target = path;
 
     if (idFrom) {
+      const { accessToken } = await getSession(request);
       const response = await request.get(`${API_URL}${idFrom.url}`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
