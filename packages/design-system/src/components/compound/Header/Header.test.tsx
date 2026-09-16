@@ -149,6 +149,36 @@ describe("Header", () => {
       expect(screen.getByLabelText("alarm-indicator")).toBeInTheDocument();
     });
 
+    it("shows alarm dot when notifications arrive after mount", () => {
+      const { rerender } = renderWithRouter(
+        <Header type="student" userName="홍길동" />
+      );
+      expect(
+        screen.queryByLabelText("alarm-indicator")
+      ).not.toBeInTheDocument();
+
+      rerender(
+        <ThemeProvider theme={darkTheme}>
+          <Header
+            type="student"
+            userName="홍길동"
+            notifications={[
+              {
+                notification_id: 1,
+                title: "새로운 공지",
+                content: "새 공지가 있습니다",
+                topic: "notice",
+                detail_id: 1,
+                created_at: "2025-12-24T10:00:00Z",
+                new: true
+              }
+            ]}
+          />
+        </ThemeProvider>
+      );
+      expect(screen.getByLabelText("alarm-indicator")).toBeInTheDocument();
+    });
+
     it("does not show alarm dot when no notifications have new property", () => {
       const notifications = [
         {

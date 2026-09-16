@@ -1,4 +1,4 @@
-import { useStudentMy } from "@jobis/api";
+import { useNotificationList, useStudentMy } from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
@@ -30,7 +30,14 @@ import {
 
 const StudentHeader = () => {
   const { data: profile } = useStudentMy();
-  return <Header type="student" userName={profile?.student_name || ""} />;
+  const { data: notificationData } = useNotificationList();
+  return (
+    <Header
+      type="student"
+      userName={profile?.student_name || ""}
+      notifications={notificationData?.notifications}
+    />
+  );
 };
 
 export const router: ReturnType<typeof createBrowserRouter> =
