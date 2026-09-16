@@ -21,25 +21,48 @@ const Label = styled.label`
 `;
 
 const InputWrapper = styled.div<
-  Pick<Props, "$width" | "$errorMessage" | "disabled">
+  Pick<Props, "$width" | "$errorMessage" | "disabled" | "$variant">
 >`
   display: flex;
   align-items: center;
   gap: 8px;
   width: ${({ $width }) => parseValue($width || "100%")};
-  height: 48px;
-  padding: 0 16px;
-  border: 1px solid
-    ${({ theme, $errorMessage }) =>
-      $errorMessage ? theme.color.subColor.red[20] : "transparent"};
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.color.grayScale[20]};
 
-  &:focus-within {
-    outline: none;
-    border-color: ${({ theme, $errorMessage }) =>
-      $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]};
-  }
+  ${({ theme, $errorMessage, $variant }) =>
+    $variant === "underline"
+      ? `
+    height: 52px;
+    padding: 0 16px;
+    border: none;
+    border-bottom: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : theme.color.grayScale[50]
+    };
+    border-radius: 0;
+    background-color: transparent;
+
+    &:focus-within {
+      outline: none;
+      border-bottom-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `
+      : `
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : "transparent"
+    };
+    border-radius: 8px;
+    background-color: ${theme.color.grayScale[20]};
+
+    &:focus-within {
+      outline: none;
+      border-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `}
 
   ${({ theme, disabled }) =>
     disabled &&
@@ -101,7 +124,8 @@ export const Input = ({
   disabled,
   type = "text",
   autoComplete,
-  fillColor
+  fillColor,
+  $variant = "filled"
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const id = useId();
@@ -116,6 +140,7 @@ export const Input = ({
         $width={$width}
         $errorMessage={$errorMessage}
         disabled={disabled}
+        $variant={$variant}
       >
         <StyledInput
           id={id}

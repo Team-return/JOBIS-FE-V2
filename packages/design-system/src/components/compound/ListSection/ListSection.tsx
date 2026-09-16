@@ -28,7 +28,13 @@ export const ListSection = ({ onClickViewAll }: Props) => {
           <Text $size="body3" $weight="regular" $color={viewAllColor}>
             전체보기
           </Text>
-          <Icon icon="ChevronRight" size={12} fillColor={viewAllColor} />
+          {/* 장식용 아이콘이라 버튼 접근성 이름에 섞이지 않게 숨긴다 */}
+          <Icon
+            icon="ChevronRight"
+            size={12}
+            fillColor={viewAllColor}
+            aria-hidden
+          />
         </Flex>
       </ViewAllButton>
     </Component>

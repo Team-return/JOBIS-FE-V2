@@ -23,6 +23,38 @@ describe("FileDownload", () => {
     createElementSpy.mockRestore();
   });
 
+  it("does not render a remove button without onRemove", () => {
+    renderWithTheme(<FileDownload label="MyFile.pdf" fileUrl="/mock.pdf" />);
+    expect(screen.queryByLabelText("MyFile.pdf 삭제")).not.toBeInTheDocument();
+  });
+
+  it("calls onRemove when the remove button is clicked", () => {
+    const onRemove = vi.fn();
+    renderWithTheme(
+      <FileDownload
+        label="MyFile.pdf"
+        fileUrl="/mock.pdf"
+        onRemove={onRemove}
+      />
+    );
+
+    fireEvent.click(screen.getByLabelText("MyFile.pdf 삭제"));
+
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not trigger a download when the remove button is clicked", () => {
+    const createElementSpy = vi.spyOn(document, "createElement");
+    renderWithTheme(
+      <FileDownload label="MyFile.pdf" fileUrl="/mock.pdf" onRemove={vi.fn()} />
+    );
+
+    fireEvent.click(screen.getByLabelText("MyFile.pdf 삭제"));
+
+    expect(createElementSpy).not.toHaveBeenCalledWith("a");
+    createElementSpy.mockRestore();
+  });
+
   it("renders with underline style when done", () => {
     renderWithTheme(
       <FileDownload label="MyFile.pdf" fileUrl="/mock.pdf" $done />

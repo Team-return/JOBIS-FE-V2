@@ -40,3 +40,6 @@ vitest.config.*.timestamp*
 
 # AI agent local state
 **/.omc
+
+# vitest browser mode 실패 시 생성되는 스크린샷
+__screenshots__/

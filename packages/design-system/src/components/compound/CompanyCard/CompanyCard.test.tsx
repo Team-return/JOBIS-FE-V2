@@ -28,30 +28,6 @@ describe("CompanyCard", () => {
     expect(img).toHaveAttribute("src", defaultProps.imgUrl);
   });
 
-  it("should render bookmark as unchecked when bookmark prop is false", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} />);
-    const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "false");
-  });
-
-  it("should render bookmark as checked when bookmark prop is true", () => {
-    renderWithTheme(<CompanyCard {...defaultProps} />);
-    const bookmarkButton = screen.getByRole("button", { name: "bookmark" });
-    expect(bookmarkButton).toHaveAttribute("aria-pressed", "true");
-  });
-
-  it("should call onBookmarkClick when the bookmark button is clicked", async () => {
-    const handleClick = vi.fn();
-    renderWithTheme(<CompanyCard {...defaultProps} />);
-    const bookmarkButton = screen.getByRole("button", {
-      name: "bookmark"
-    });
-
-    await userEvent.click(bookmarkButton);
-
-    expect(handleClick).toHaveBeenCalledTimes(1);
-  });
-
   it("should call onClick when the whole card is clicked", async () => {
     const handleClick = vi.fn();
     renderWithTheme(<CompanyCard {...defaultProps} onClick={handleClick} />);

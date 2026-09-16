@@ -13,4 +13,5 @@ export interface Props {
   $errorMessage?: string;
   rows?: number;
   maxLength?: number;
+  $variant?: "filled" | "underline";
 }

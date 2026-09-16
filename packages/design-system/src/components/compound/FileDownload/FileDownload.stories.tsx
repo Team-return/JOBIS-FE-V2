@@ -19,6 +19,9 @@ const meta: Meta<typeof FileDownload> = {
     fileUrl: {
       control: "text",
       description: "다운로드할 파일 주소"
+    },
+    onRemove: {
+      description: "넘기면 칩 안에 삭제용 X 버튼이 표시됩니다"
     }
   }
 };
@@ -48,5 +51,14 @@ export const Done: Story = {
     label: "File Download",
     $done: true,
     fileUrl: "/mock.pdf"
+  }
+};
+
+export const Removable: Story = {
+  args: {
+    label: "File Download",
+    $done: false,
+    fileUrl: "/mock.pdf",
+    onRemove: () => {}
   }
 };
