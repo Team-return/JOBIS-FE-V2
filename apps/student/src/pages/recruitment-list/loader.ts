@@ -69,16 +69,16 @@ export async function recruitmentLoader({
 }: LoaderFunctionArgs): Promise<LoaderData<RecruitmentQuery>> {
   const queryParams = parseQueryParams(request, recruitmentQueryParser);
 
+  // 페이지 쿼리와 키가 어긋나면 프리페치가 버려지고 목록을 두 번 부른다.
+  // 화면이 보내는 파라미터와 똑같이 맞춘다
   await useRecruitmentList.prefetch({
     page: queryParams.page,
     name: queryParams.name,
-    job_code: queryParams.job_code,
-    tech_code: queryParams.tech_code,
-    winter_intern: queryParams.winter_intern,
-    military_support: queryParams.military_support,
     years: queryParams.year,
     status: queryParams.status,
-    sort_type: queryParams.sort_type
+    sort_type: queryParams.sort_type,
+    job_code: queryParams.job_code,
+    tech_code: queryParams.tech_code
   });
 
   return {
