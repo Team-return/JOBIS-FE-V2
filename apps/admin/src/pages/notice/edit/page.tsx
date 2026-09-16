@@ -24,8 +24,8 @@ const FIELD_WIDTH = 716;
 const CONTENT_HEIGHT = 280;
 const CARD_WIDTH = FORM_WIDTH + 200;
 const LABEL_WIDTH = 70;
-// 라벨 + 간격 + 입력칸이 구분선(FORM_WIDTH)과 정확히 맞도록 간격을 역산한다
-const LABEL_GAP = FORM_WIDTH - LABEL_WIDTH - FIELD_WIDTH;
+// 등록 폼과 동일하게 시안 기준 입력칸 시작 위치(77)에서 간격을 역산한다
+const LABEL_GAP = 77 - LABEL_WIDTH;
 
 export const NoticeEdit = () => {
   const { params: noticeId } = useLoaderData() as LoaderData<number>;
