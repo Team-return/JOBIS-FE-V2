@@ -41,7 +41,9 @@ const PLAIN_BUTTON_STYLE = {
   border: 0,
   background: "none",
   padding: 0,
-  cursor: "pointer"
+  cursor: "pointer",
+  // button은 브라우저 기본 글꼴을 타므로 Pretendard를 물려받도록 지정한다
+  fontFamily: "inherit"
 } as const;
 
 const TABS: { value: StudentTab; label: string }[] = [
