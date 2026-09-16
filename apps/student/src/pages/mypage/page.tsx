@@ -40,7 +40,12 @@ export const MyPage = () => {
         <ProfileBar
           name={profile?.student_name || ""}
           studentNumber={profile?.student_gcn || ""}
-          department={profile ? DEPARTMENT_LABEL_MAP[profile.department] : ""}
+          department={
+            // 매핑에 없는 학과가 오면 원본 값이라도 보여준다
+            profile
+              ? (DEPARTMENT_LABEL_MAP[profile.department] ?? profile.department)
+              : ""
+          }
           profileImageUrl={profile?.profile_image_url || ""}
           menuItems={[
             {
