@@ -20,6 +20,7 @@ import {
 import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { toFileUrl } from "apps/admin/src/utils";
 
 const FORM_WIDTH = 821;
 const FIELD_WIDTH = 716;
@@ -230,7 +231,7 @@ export const NoticeWrite = () => {
                           <FileDownload
                             key={file.id}
                             label={file.name}
-                            fileUrl={`${import.meta.env.FILE_URL}/${file.url}`}
+                            fileUrl={toFileUrl(file.url)}
                           />
                         ))}
                       </Flex>

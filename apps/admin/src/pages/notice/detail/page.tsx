@@ -19,7 +19,11 @@ import {
 } from "@jobis/design-system";
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { LoaderData } from "apps/admin/src/utils";
+import {
+  LoaderData,
+  getUploadedFileName,
+  toFileUrl
+} from "apps/admin/src/utils";
 
 const NOTICE_CARD_WIDTH = 1200;
 const NOTICE_CARD_PADDING = 48;
@@ -34,15 +38,6 @@ const ICON_BUTTON_STYLE = {
 const formatNoticeDate = (createdAt?: string) => {
   if (!createdAt) return "-";
   return createdAt.split("T")[0];
-};
-
-const getFileName = (url: string) => {
-  try {
-    const pathname = new URL(url).pathname;
-    return decodeURIComponent(pathname).split("/").pop() || url;
-  } catch {
-    return url.split("?")[0].split("/").pop() || url;
-  }
 };
 
 export const NoticeDetail = () => {
@@ -225,7 +220,7 @@ export const NoticeDetail = () => {
                         {attachments.map((attachment, index) => (
                           <a
                             key={`${attachment.url}-${index}`}
-                            href={attachment.url}
+                            href={toFileUrl(attachment.url)}
                             download
                             style={{
                               textDecoration: "none",
@@ -240,7 +235,7 @@ export const NoticeDetail = () => {
                               $weight="regular"
                               $color={theme.color.grayScale[80]}
                             >
-                              {getFileName(attachment.url)}
+                              {getUploadedFileName(attachment.url)}
                             </Text>
                             <Icon
                               icon="Download"
