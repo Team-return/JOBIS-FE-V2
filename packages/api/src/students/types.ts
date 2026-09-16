@@ -1,9 +1,9 @@
-import type { Gender, PlatformType } from "@/enum";
+import type { Department, Gender, PlatformType } from "@/enum";
 
 export interface StudentMyResponse {
   student_name: string;
   student_gcn: string;
-  department: string;
+  department: Department;
   profile_image_url: string;
 }
 
