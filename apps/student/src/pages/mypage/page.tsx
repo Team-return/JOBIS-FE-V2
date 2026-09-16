@@ -16,6 +16,7 @@ import {
 import { SERVER_STATUS_MAP } from "@jobis/design-system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { DEPARTMENT_LABEL_MAP } from "../../utils";
 
 export const MyPage = () => {
   const { error } = useToast();
@@ -39,7 +40,12 @@ export const MyPage = () => {
         <ProfileBar
           name={profile?.student_name || ""}
           studentNumber={profile?.student_gcn || ""}
-          department={profile?.department || ""}
+          department={
+            // 매핑에 없는 학과가 오면 원본 값이라도 보여준다
+            profile
+              ? (DEPARTMENT_LABEL_MAP[profile.department] ?? profile.department)
+              : ""
+          }
           profileImageUrl={profile?.profile_image_url || ""}
           menuItems={[
             {
@@ -56,9 +62,7 @@ export const MyPage = () => {
             },
             {
               label: "버그 제보하기",
-              onClick: () => {
-                error("준비중인 기능입니다");
-              }
+              onClick: () => navigate("/mypage/bug-report")
             },
             {
               label: "로그아웃",

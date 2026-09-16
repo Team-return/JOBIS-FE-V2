@@ -1,13 +1,3 @@
-export const formatDate = (date?: Date | string): string | undefined => {
-  if (!date) return undefined;
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  return dateObj.toISOString().split("T")[0];
-};
-
-export const booleanToYN = (value: boolean): string => {
-  return value ? "Y" : "N";
-};
-
 const ABSOLUTE_URL = /^https?:\/\//i;
 const UPLOAD_UUID_PREFIX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/i;

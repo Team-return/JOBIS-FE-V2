@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Icon, Text, NotificationItem } from "@/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Props as HeaderProps } from "./Header.types";
 import { useNavigate } from "react-router-dom";
 import { css } from "@emotion/react";
@@ -116,6 +116,11 @@ export const StudentHeader = ({ userName, notifications }: Props) => {
   const [isAlarm, setIsAlarm] = useState(false);
   const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);
   const navigate = useNavigate();
+
+  // 알림을 비동기로 받아도 새 알림 여부가 반영되도록 동기화한다
+  useEffect(() => {
+    setIsNew(notifications?.some(n => n.new) ?? false);
+  }, [notifications]);
 
   const studentMenu = [
     { label: "기업체", path: "/company" },

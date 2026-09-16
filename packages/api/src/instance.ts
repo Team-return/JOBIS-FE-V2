@@ -100,7 +100,15 @@ instance.interceptors.response.use(
       throw statusCode;
     }
 
-    if ((statusCode === 401 || statusCode === 403) && !originalRequest._retry) {
+    // 403은 권한 부족이라 토큰을 새로 받아도 통과하지 못한다.
+    // 재시도하면 POST 같은 생성 요청이 중복으로 나간다.
+    // 다만 access_token 쿠키가 만료돼 사라지면 Authorization 헤더 없이 요청이 나가
+    // 서버가 403을 주므로, 이때는 만료로 보고 재발급·로그인 이동을 태운다
+    const isExpiredSession =
+      statusCode === 401 ||
+      (statusCode === 403 && !cookie.get(ACCESS_TOKEN_KEY));
+
+    if (isExpiredSession && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {

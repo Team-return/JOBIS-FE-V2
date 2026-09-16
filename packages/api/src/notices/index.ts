@@ -33,6 +33,7 @@ export const useNoticeDetail = createQueryHook<number, NoticeDetailResponse>({
   queryKey: noticesKeys.noticeDetail
 });
 
+// GET /notices는 파라미터를 받지 않는다
 export const useNoticeList = createQueryHook<void, NoticeListResponse>({
   path: "/",
   queryKey: noticesKeys.noticeList

@@ -20,8 +20,16 @@ import {
   useTheme
 } from "@jobis/design-system";
 import { LoaderData, useQueryParams } from "../../utils";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
+
+const BANNER_HEIGHT = 280;
+const BANNER_BUILDING_IMAGE = "/office-building.png";
+// 시안 기준 960x280 배너에서 오른쪽 끝을 기준으로 배치한 좌표입니다
+const BANNER_BUILDINGS = [
+  { right: 200, top: 140, size: 181 },
+  { right: -31, top: 20, size: 301 }
+];
 
 const getInterviewTime = (endDate: string, interviewTime: string) =>
   new Date(`${endDate}T${interviewTime}`).getTime();
@@ -81,16 +89,54 @@ export const Home = () => {
 
   return (
     <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
-      {/* 회색 배너 1개를 기본으로 두고 내용은 나중에 채우는 걸로 디자인과 이야기 됐습니다 */}
-      <div style={{ cursor: "pointer" }} onClick={() => {}}>
-        <Box
-          width={960}
-          height={280}
-          $bg="#E5E5E5"
-          $radius={16}
-          $margin={[0, 0, 80, 0]}
-        />
-      </div>
+      {/* 배너 API 연동 전까지 디자인 시안 내용을 그대로 하드코딩해 둡니다 */}
+      <Link
+        to="/company"
+        style={{
+          display: "block",
+          position: "relative",
+          height: `${BANNER_HEIGHT}px`,
+          margin: "0 0 80px 0",
+          borderRadius: "16px",
+          overflow: "hidden",
+          background: "linear-gradient(90deg, #1480FF 0%, #1264FF 75%)",
+          textDecoration: "none",
+          cursor: "pointer"
+        }}
+      >
+        <Flex
+          $direction="column"
+          $fit
+          style={{
+            position: "absolute",
+            left: "80px",
+            top: "50%",
+            transform: "translateY(-50%)"
+          }}
+        >
+          <Text $size="h3" $weight="bold" $color={theme.color.grayScale[10]}>
+            자비스를 통해
+          </Text>
+          <Text $size="h3" $weight="bold" $color={theme.color.grayScale[10]}>
+            다양한 기업을 알아보세요!
+          </Text>
+        </Flex>
+        {BANNER_BUILDINGS.map(({ right, top, size }) => (
+          <img
+            key={`banner-building-${right}-${top}`}
+            src={BANNER_BUILDING_IMAGE}
+            alt=""
+            style={{
+              position: "absolute",
+              right: `${right}px`,
+              top: `${top}px`,
+              width: `${size}px`,
+              height: `${size}px`,
+              pointerEvents: "none"
+            }}
+          />
+        ))}
+      </Link>
       {reviewableInterview && (
         <Flex
           $align="center"

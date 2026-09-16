@@ -11,9 +11,16 @@ import {
   companyLoader,
   Login,
   Notice,
+  NoticeDetail,
+  noticeDetailLoader,
+  NoticeEdit,
+  noticeEditLoader,
   noticeLoader,
+  NoticeWrite,
   Recruitment,
-  recruitmentLoader
+  recruitmentLoader,
+  Student,
+  studentLoader
 } from "./pages";
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -57,7 +64,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/student",
-          element: <div>학생</div>
+          loader: studentLoader,
+          element: <Student />
         },
         {
           path: "/review",
@@ -85,14 +93,16 @@ export const router: ReturnType<typeof createBrowserRouter> =
               loader: noticeLoader,
               element: <Notice />
             },
-            { path: "write", element: <div>공지사항 등록</div> },
+            { path: "write", element: <NoticeWrite /> },
             {
               path: "detail/:noticeId",
-              element: <div>공지사항 상세</div>
+              loader: noticeDetailLoader,
+              element: <NoticeDetail />
             },
             {
               path: "detail/edit/:noticeId",
-              element: <div>공지사항 수정</div>
+              loader: noticeEditLoader,
+              element: <NoticeEdit />
             }
           ]
         },

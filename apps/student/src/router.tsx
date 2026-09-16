@@ -1,3 +1,4 @@
+import { useNotificationList, useStudentMy } from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
@@ -17,6 +18,7 @@ import { noticesListLoader } from "./pages/notice-list/loader";
 import { NoticeDetail } from "./pages/notice-detail";
 import { noticeDetailLoader } from "./pages/notice-detail/loader";
 import { MyPage } from "./pages/mypage";
+import { BugReport } from "./pages/bug-report";
 import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
 import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
 import { CompanyInterviewReview } from "./pages/company-interview-review/page";
@@ -26,14 +28,26 @@ import {
   recruitmentApplyLoader
 } from "./pages/recruitment-apply";
 
+const StudentHeader = () => {
+  const { data: profile } = useStudentMy();
+  const { data: notificationData } = useNotificationList();
+  return (
+    <Header
+      type="student"
+      userName={profile?.student_name || ""}
+      notifications={notificationData?.notifications}
+    />
+  );
+};
+
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
       element: (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Header type="student" userName="홍길동" />
-          <main style={{ flex: 1 }}>
+          <StudentHeader />
+          <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
           <Footer />
@@ -126,6 +140,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
             {
               index: true,
               element: <MyPage />
+            },
+            {
+              path: "bug-report",
+              element: <BugReport />
             },
             {
               path: "password",
