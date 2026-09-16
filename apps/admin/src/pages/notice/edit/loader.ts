@@ -12,7 +12,8 @@ export async function noticeEditLoader({
     throw redirect("/notice");
   }
 
-  await useNoticeDetail.prefetch(id);
+  // await 하면 응답이 올 때까지 이전 화면에 머물러 스켈레톤이 보이지 않는다
+  void useNoticeDetail.prefetch(id);
 
   return { params: id };
 }
