@@ -27,6 +27,8 @@ const FIELD_WIDTH = 716;
 const CONTENT_HEIGHT = 280;
 const CARD_WIDTH = FORM_WIDTH + 200;
 const LABEL_WIDTH = 70;
+// 라벨 + 간격 + 입력칸이 구분선(FORM_WIDTH)과 정확히 맞도록 간격을 역산한다
+const LABEL_GAP = FORM_WIDTH - LABEL_WIDTH - FIELD_WIDTH;
 
 interface UploadedFile {
   id: number;
@@ -57,7 +59,14 @@ const FieldLabel = ({
   const { currentTheme: theme } = useTheme();
 
   return (
-    <div style={{ minWidth: LABEL_WIDTH, paddingTop: alignTop ? 12 : 0 }}>
+    <div
+      style={{
+        width: LABEL_WIDTH,
+        flexShrink: 0,
+        whiteSpace: "nowrap",
+        paddingTop: alignTop ? 12 : 0
+      }}
+    >
       <Text $size="body2" $weight="regular" $color={theme.color.grayScale[90]}>
         {label}
       </Text>
@@ -183,7 +192,7 @@ export const NoticeWrite = () => {
                 <SectionTitle title="공지 사항 내용" />
 
                 <Flex $direction="column" $gap={40}>
-                  <Flex $gap={49} $align="center">
+                  <Flex $gap={LABEL_GAP} $align="center">
                     <FieldLabel label="제목" />
                     <Input
                       $width={FIELD_WIDTH}
@@ -194,7 +203,7 @@ export const NoticeWrite = () => {
                     />
                   </Flex>
 
-                  <Flex $gap={48} $align="flex-start">
+                  <Flex $gap={LABEL_GAP} $align="flex-start">
                     <FieldLabel label="내용" alignTop />
                     <TextArea
                       $width={FIELD_WIDTH}
@@ -211,7 +220,7 @@ export const NoticeWrite = () => {
               <Flex $direction="column" $gap={24}>
                 <SectionTitle title="첨부 파일" />
 
-                <Flex $gap={42} $align="flex-start">
+                <Flex $gap={LABEL_GAP} $align="flex-start">
                   <FieldLabel label="첨부 파일" alignTop />
                   <Flex $direction="column" $gap={12}>
                     <input

@@ -23,7 +23,9 @@ const FORM_WIDTH = 821;
 const FIELD_WIDTH = 716;
 const CONTENT_HEIGHT = 280;
 const CARD_WIDTH = FORM_WIDTH + 200;
-const LABEL_WIDTH = 56;
+const LABEL_WIDTH = 70;
+// 라벨 + 간격 + 입력칸이 구분선(FORM_WIDTH)과 정확히 맞도록 간격을 역산한다
+const LABEL_GAP = FORM_WIDTH - LABEL_WIDTH - FIELD_WIDTH;
 
 export const NoticeEdit = () => {
   const { params: noticeId } = useLoaderData() as LoaderData<number>;
@@ -146,8 +148,14 @@ export const NoticeEdit = () => {
               </Flex>
 
               <Flex $direction="column" $gap={40}>
-                <Flex $gap={49} $align="center">
-                  <div style={{ minWidth: LABEL_WIDTH }}>
+                <Flex $gap={LABEL_GAP} $align="center">
+                  <div
+                    style={{
+                      width: LABEL_WIDTH,
+                      flexShrink: 0,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
                     <Text
                       $size="body2"
                       $weight="regular"
@@ -166,8 +174,15 @@ export const NoticeEdit = () => {
                   />
                 </Flex>
 
-                <Flex $gap={48} $align="flex-start">
-                  <div style={{ minWidth: LABEL_WIDTH, paddingTop: 12 }}>
+                <Flex $gap={LABEL_GAP} $align="flex-start">
+                  <div
+                    style={{
+                      width: LABEL_WIDTH,
+                      flexShrink: 0,
+                      whiteSpace: "nowrap",
+                      paddingTop: 12
+                    }}
+                  >
                     <Text
                       $size="body2"
                       $weight="regular"
