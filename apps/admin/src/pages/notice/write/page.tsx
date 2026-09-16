@@ -118,6 +118,10 @@ export const NoticeWrite = () => {
     event.target.value = "";
   };
 
+  const removeFile = (fileId: number) => {
+    setFiles(prev => prev.filter(file => file.id !== fileId));
+  };
+
   const validate = () => {
     const nextTitleError = title.trim() ? "" : "제목을 입력해주세요.";
     const nextContentError = content.trim() ? "" : "내용을 입력해주세요.";
@@ -232,6 +236,7 @@ export const NoticeWrite = () => {
                             key={file.id}
                             label={file.name}
                             fileUrl={toFileUrl(file.url)}
+                            onRemove={() => removeFile(file.id)}
                           />
                         ))}
                       </Flex>
