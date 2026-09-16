@@ -1,3 +1,4 @@
+import { useStudentMy } from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
@@ -27,13 +28,18 @@ import {
   recruitmentApplyLoader
 } from "./pages/recruitment-apply";
 
+const StudentHeader = () => {
+  const { data: profile } = useStudentMy();
+  return <Header type="student" userName={profile?.student_name || ""} />;
+};
+
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
     {
       path: "/",
       element: (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Header type="student" userName="홍길동" />
+          <StudentHeader />
           <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
