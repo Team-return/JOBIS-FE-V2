@@ -107,8 +107,10 @@ export const BugReport = () => {
   const { mutate: createBugReport, isPending: isReporting } =
     useCreateBugReport();
 
-  const removeFile = (id: number) =>
+  const removeFile = (id: number) => {
+    if (isReporting) return;
     setFiles(prev => prev.filter(file => file.id !== id));
+  };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? []);
