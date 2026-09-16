@@ -38,7 +38,7 @@ export const RecruitmentList = () => {
   const state = getParam("status") || "";
   const year = getParam("year") || "";
   const field = getParam("field") || "";
-  const techStack = getParam("tech-stack") || "";
+  const techStack = getParam("tech-stack") || getParam("techStack") || "";
 
   const [keyword, setKeyword] = useState<string>(currentName);
   const debouncedKeyword = useDebounce(keyword, 300);

@@ -56,7 +56,9 @@ const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
       winter_intern:
         status === "WIN_INTERN" || params.get("winter_intern") === "true",
       job_code: parseOptionalNumber(params.get("field") || ""),
-      tech_code: parseOptionalString(params.get("tech-stack") || ""),
+      tech_code: parseOptionalString(
+        params.get("tech-stack") || params.get("techStack") || ""
+      ),
       military_support: parseOptionalBoolean(params.get("military_support")),
       sort_type: parseEnum(params.get("sort-type"), SORT_TYPES)
     };
