@@ -94,8 +94,8 @@ const collectApiErrors = (page: Page) => {
 };
 
 test.skip(
-  !STUDENT_ID || !STUDENT_PASSWORD,
-  ".env에 E2E_STUDENT_ID, E2E_STUDENT_PASSWORD를 설정해야 합니다"
+  !API_URL || !STUDENT_ID || !STUDENT_PASSWORD,
+  ".env에 BASE_URL, E2E_STUDENT_ID, E2E_STUDENT_PASSWORD를 설정해야 합니다"
 );
 
 test.beforeEach(async ({ context, request, baseURL }) => {
