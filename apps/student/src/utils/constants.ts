@@ -1,3 +1,5 @@
+import type { InterviewType } from "@jobis/api";
+
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
@@ -6,6 +8,18 @@ export const VERIFYCODE_REGEX = /^[[0-9]{6}$/;
 export const GRADE_REGEX = /^[1-3][1-4](0[1-9]|1[0-9])$/;
 
 export const ADMIN_ID_KEY = "admin_id";
+
+export const INTERVIEW_TYPE_LABEL_MAP: Record<InterviewType, string> = {
+  DOCUMENT: "서류 전형",
+  CODING_TEST: "코딩 테스트",
+  LIVE_CODING: "라이브 코딩",
+  TASK: "과제 전형",
+  AI: "AI 면접",
+  PERSONALITY: "인성 면접",
+  TECH_INTERVIEW: "기술 면접",
+  CULTURE_INTERVIEW: "컬처 면접",
+  FINAL_INTERVIEW: "최종 면접"
+};
 
 export const RECRUITMENT_STATE_OPTIONS = [
   { label: "모집전", value: "REQUESTED" },

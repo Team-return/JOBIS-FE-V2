@@ -7,7 +7,7 @@ import {
   Box
 } from "@jobis/design-system";
 import { useLoaderData } from "react-router-dom";
-import { LoaderData } from "apps/student/src/utils";
+import { INTERVIEW_TYPE_LABEL_MAP, LoaderData } from "apps/student/src/utils";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
@@ -102,7 +102,10 @@ export const RecruitmentDetail = () => {
             },
             {
               label: "면접과정",
-              value: data?.hiring_progress?.join(" → ") || "-",
+              value:
+                data?.hiring_progress
+                  ?.map(step => INTERVIEW_TYPE_LABEL_MAP[step] ?? step)
+                  .join(" → ") || "-",
               itemType: "text"
             },
             {
