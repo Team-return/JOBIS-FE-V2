@@ -18,6 +18,8 @@ export const SCOPE_MAP: Record<string, string> = {
   CO: "Company",
   ST: "Student",
   DS: "Design System",
+  AP: "API",
+  SY: "Sentry",
   RT: "Root"
 };
 
@@ -25,7 +27,9 @@ export const COMMIT_SCOPES = [
   { code: "AD", path: "apps/admin/" },
   { code: "CO", path: "apps/company/" },
   { code: "ST", path: "apps/student/" },
-  { code: "DS", path: "packages/design-system/" }
+  { code: "AP", path: "packages/api/" },
+  { code: "DS", path: "packages/design-system/" },
+  { code: "SY", path: "packages/sentry/" }
 ];
 
 export const COMMIT_REGEX = /^(\p{Emoji}\uFE0F?)\s\(([A-Z]{2})\)\s::\s(.*)$/u;
@@ -47,7 +51,13 @@ export const git = {
 
   async getDiff(): Promise<string> {
     try {
-      const { stdout } = await execa("git", ["diff", "--cached"]);
+      const { stdout } = await execa("git", [
+        "diff",
+        "--cached",
+        "--",
+        ".",
+        `:!yarn.lock`
+      ]);
       return stdout;
     } catch (error) {
       logger.error("Git diff 조회 실패", error);

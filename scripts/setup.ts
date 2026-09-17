@@ -31,6 +31,17 @@ const setupHusky = async () => {
   }
 };
 
+const setupPlayWright = async () => {
+  try {
+    await execa("yarn", ["playwright", "install"]);
+    logger.success("Playwright 브라우저 설치 완료");
+    return true;
+  } catch (error) {
+    logger.error("Playwright 브라우저 설치 실패", error);
+    return false;
+  }
+};
+
 const installDependencies = async () => {
   try {
     await execa("yarn", ["install"]);
@@ -47,6 +58,7 @@ const runSetup = async () => {
     if (!(await switchNodeVersion())) return false;
     if (!(await installDependencies())) return false;
     if (!(await setupHusky())) return false;
+    if (!(await setupPlayWright())) return false;
 
     logger.success("모든 설정이 완료되었습니다");
     return true;

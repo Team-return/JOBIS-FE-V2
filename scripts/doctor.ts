@@ -114,7 +114,8 @@ const checks: Check[] = [
   {
     name: ".env file",
     async run() {
-      const exists = await checkExists(".env");
+      const exists =
+        (await checkExists(".env")) || (await checkExists(".env.development"));
       return (
         exists ||
         "`.env` 파일이 없습니다. 개발 환경에 필요한 환경변수를 설정해주세요."
@@ -187,6 +188,11 @@ const runManual = async () => {
       message: "설정 파일(e.g., .eslintrc, package.json)을 수정하지 않았나요?",
       instructions:
         "상의되지 않은 설정 변경은 협업 및 안정성에 문제를 일으킬 수 있습니다."
+    },
+    {
+      name: "current-directory",
+      message: "현재 프로젝트 루트 경로(JOBIS-FE-V2)에 위치하고 계신가요?",
+      instructions: "git hook과 스크립트들은 전부 프로젝트 루트에서 적용됩니다."
     }
   ];
 

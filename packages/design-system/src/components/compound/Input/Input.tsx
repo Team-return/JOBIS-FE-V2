@@ -1,0 +1,176 @@
+import styled from "@emotion/styled";
+import { useTheme } from "@/hooks";
+import { type ChangeEvent, useId } from "react";
+import { Text, Icon } from "@/components";
+import { parseValue } from "@/utils";
+import type { Props } from "./Input.types";
+
+const Wrapper = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const Label = styled.label`
+  ${({ theme }) => `
+    color: ${theme.color.grayScale[90]};
+    font-weight: ${theme.fontWeight.regular};
+    font-size: ${theme.font.body3.fontSize};
+    line-height: ${theme.font.body3.lineHeight};
+  `}
+`;
+
+const InputWrapper = styled.div<
+  Pick<Props, "$width" | "$errorMessage" | "disabled" | "$variant">
+>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: ${({ $width }) => parseValue($width || "100%")};
+
+  ${({ theme, $errorMessage, $variant }) =>
+    $variant === "underline"
+      ? `
+    height: 52px;
+    padding: 0 16px;
+    border: none;
+    border-bottom: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : theme.color.grayScale[50]
+    };
+    border-radius: 0;
+    background-color: transparent;
+
+    &:focus-within {
+      outline: none;
+      border-bottom-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `
+      : `
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid ${
+      $errorMessage ? theme.color.subColor.red[20] : "transparent"
+    };
+    border-radius: 8px;
+    background-color: ${theme.color.grayScale[20]};
+
+    &:focus-within {
+      outline: none;
+      border-color: ${
+        $errorMessage ? theme.color.subColor.red[20] : theme.color.primary[20]
+      };
+    }
+  `}
+
+  ${({ theme, disabled }) =>
+    disabled &&
+    `
+    border: 1px solid ${theme.color.grayScale[50]};
+    background-color: ${theme.color.grayScale[30]};
+    cursor: not-allowed;
+
+    & > * {
+      color: ${theme.color.grayScale[60]};
+      cursor: not-allowed;
+    }
+  `}
+`;
+
+const StyledInput = styled.input`
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: ${({ theme }) => theme.color.grayScale[80]};
+  font-size: ${({ theme }) => theme.font.body2.fontSize};
+  line-height: ${({ theme }) => theme.font.body2.lineHeight};
+  font-weight: ${({ theme }) => theme.fontWeight.regular};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.color.grayScale[50]};
+  }
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px ${({ theme }) => theme.color.grayScale[20]}
+      inset !important;
+    -webkit-text-fill-color: ${({ theme }) =>
+      theme.color.grayScale[80]} !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+`;
+
+const IconWrapper = styled.div<{ onClick?: () => void }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
+`;
+
+export const Input = ({
+  $label,
+  value,
+  onChange,
+  $errorMessage,
+  $width,
+  $iconName,
+  onIconClick,
+  onKeyDown,
+  placeholder,
+  disabled,
+  type = "text",
+  autoComplete,
+  fillColor,
+  maxLength,
+  $variant = "filled"
+}: Props) => {
+  const { currentTheme: theme } = useTheme();
+  const id = useId();
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
+  };
+
+  return (
+    <Wrapper>
+      {$label && <Label htmlFor={id}>{$label}</Label>}
+      <InputWrapper
+        $width={$width}
+        $errorMessage={$errorMessage}
+        disabled={disabled}
+        $variant={$variant}
+      >
+        <StyledInput
+          id={id}
+          value={value}
+          onChange={handleChange}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          aria-invalid={!!$errorMessage}
+          disabled={disabled}
+          type={type}
+          autoComplete={autoComplete}
+          maxLength={maxLength}
+        />
+        {$iconName && (
+          <IconWrapper onClick={onIconClick}>
+            <Icon icon={$iconName} fillColor={fillColor} size={24} role="img" />
+          </IconWrapper>
+        )}
+      </InputWrapper>
+      {$errorMessage && (
+        <Text
+          $span
+          $size="body3"
+          $weight="regular"
+          $color={theme.color.subColor.red[20]}
+        >
+          {$errorMessage}
+        </Text>
+      )}
+    </Wrapper>
+  );
+};
