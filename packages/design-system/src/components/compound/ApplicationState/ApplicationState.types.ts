@@ -41,5 +41,5 @@ export interface Props {
   companyName: string;
   date: string;
   onRetry?: () => void;
-  onCancle?: () => void;
+  onCancel?: () => void;
 }

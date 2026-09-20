@@ -86,7 +86,7 @@ export const MyPage = () => {
                   onRetry={() => {
                     error("준비중인 기능입니다");
                   }}
-                  onCancle={() => setCancelTargetId(application.application_id)}
+                  onCancel={() => setCancelTargetId(application.application_id)}
                 />
               ))
             )}

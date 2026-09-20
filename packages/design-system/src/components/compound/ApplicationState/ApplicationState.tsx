@@ -104,7 +104,7 @@ export const ApplicationState = ({
   companyName,
   date,
   onRetry,
-  onCancle
+  onCancel
 }: Props) => {
   const statusText = STATUS_MAP[types] || "";
   const { currentTheme: theme } = useTheme();
@@ -165,7 +165,7 @@ export const ApplicationState = ({
           <ClickAria
             onClick={() => {
               setShowMenu(false);
-              onCancle?.();
+              onCancel?.();
             }}
           >
             <Text $size="caption" $color={theme.color.grayScale[80]}>
