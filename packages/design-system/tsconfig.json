@@ -20,10 +20,5 @@
     "src/emotion.d.ts",
     "vitest.config.ts"
   ],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    {
-      "path": "../api"
-    }
-  ]
+  "exclude": ["node_modules", "dist"]
 }
