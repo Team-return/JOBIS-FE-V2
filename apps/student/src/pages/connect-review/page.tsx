@@ -1,9 +1,20 @@
 import { Box, Container, Text, Flex, Button } from "@jobis/design-system";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import type { ConnectReviewLoaderData } from "./loader";
 
 export const ConnectReviewPage = () => {
-  const { companyName } = useLoaderData() as ConnectReviewLoaderData;
+  const { companyName, interviewId, documentNumberId } =
+    useLoaderData() as ConnectReviewLoaderData;
+  const navigate = useNavigate();
+
+  const handleWriteReview = () => {
+    const params = new URLSearchParams();
+    if (interviewId) params.set("interviewId", interviewId);
+    if (documentNumberId) params.set("documentNumberId", documentNumberId);
+
+    const query = params.toString();
+    navigate(query ? `/review/write?${query}` : "/review/write");
+  };
 
   return (
     <Container $maxWidth={960}>
@@ -23,7 +34,12 @@ export const ConnectReviewPage = () => {
           </Flex>
         </Flex>
         <Box width={960}>
-          <Button $variant="outline" $size="lg" $padding={[32, 779, 34, 32]}>
+          <Button
+            $variant="outline"
+            $size="lg"
+            $padding={[32, 779, 34, 32]}
+            onClick={handleWriteReview}
+          >
             면접 후기 작성하기
           </Button>
         </Box>

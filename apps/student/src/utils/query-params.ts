@@ -37,7 +37,7 @@ export function parseOptionalString(value: string | null): string | undefined {
 export function parseOptionalNumber(value: string | null): number | undefined {
   if (!value) return undefined;
   const num = Number(value);
-  return isNaN(num) ? undefined : num;
+  return Number.isFinite(num) ? num : undefined;
 }
 
 export function parseOptionalBoolean(

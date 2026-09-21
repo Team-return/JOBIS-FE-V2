@@ -1,5 +1,6 @@
 import { screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 import { ApplicationState } from "./ApplicationState";
 import { renderWithTheme } from "@/utils/render";
 import { lightTheme } from "@/themes";
@@ -69,5 +70,29 @@ describe("ApplicationState", () => {
     expect(menu).toBeInTheDocument();
     expect(screen.getByText("재지원")).toBeInTheDocument();
     expect(screen.getByText("지원 취소")).toBeInTheDocument();
+  });
+
+  it("should open the menu and cancel with the keyboard only", async () => {
+    const onCancel = vi.fn();
+    renderWithTheme(
+      <ApplicationState {...defaultProps} types="pending" onCancel={onCancel} />
+    );
+
+    await userEvent.tab();
+    const trigger = screen.getByRole("button", { name: "지원 메뉴 열기" });
+    expect(trigger).toHaveFocus();
+
+    await userEvent.keyboard("{Enter}");
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveAttribute("aria-controls", menu.id);
+
+    await userEvent.tab();
+    await userEvent.tab();
+    expect(screen.getByRole("menuitem", { name: "지원 취소" })).toHaveFocus();
+
+    await userEvent.keyboard("{Enter}");
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 });

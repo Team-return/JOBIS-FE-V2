@@ -17,7 +17,9 @@ export const useAuthCodeCheck = (
 ) => {
   return useMutation({
     mutationFn: async ({ email, code }) => {
-      await instance.patch(`${DOMAIN}/code?email=${email}&auth_code=${code}`);
+      await instance.patch(`${DOMAIN}/code`, null, {
+        params: { email, auth_code: code }
+      });
     },
     ...options
   });

@@ -8,7 +8,7 @@ export async function companyDetailLoader({
 }: LoaderFunctionArgs): Promise<LoaderData<number>> {
   const id = Number(params.companyId);
 
-  if (!params.companyId || Number.isNaN(id)) {
+  if (!Number.isInteger(id) || id <= 0) {
     throw redirect("/company");
   }
 

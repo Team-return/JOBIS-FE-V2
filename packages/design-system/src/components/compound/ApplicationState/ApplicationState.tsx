@@ -3,7 +3,7 @@ import { Flex, Icon, Text } from "@/components";
 import type { Props, StatusType } from "./ApplicationState.types";
 import { useTheme } from "@/hooks";
 import type { JOBISTheme } from "@/themes";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 const STATUS_MAP: Record<StatusType, string> = {
   rejected: "반려",
@@ -94,7 +94,18 @@ const Menu = styled.div`
   align-items: center;
 `;
 
-const ClickAria = styled.span`
+const MenuButton = styled.button`
+  display: flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`;
+
+const ClickAria = styled.button`
+  padding: 0;
+  border: none;
+  background: transparent;
   cursor: pointer;
 `;
 
@@ -104,11 +115,12 @@ export const ApplicationState = ({
   companyName,
   date,
   onRetry,
-  onCancle
+  onCancel
 }: Props) => {
   const statusText = STATUS_MAP[types] || "";
   const { currentTheme: theme } = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const menuId = useId();
   const currentStatusStyle = getStatusStyle(theme, types);
 
   return (
@@ -141,18 +153,25 @@ export const ApplicationState = ({
               </Text>
             </Status>
             {(types === "requested" || types === "pending") && (
-              <Icon
-                icon="KebapMenu"
-                size={24}
+              <MenuButton
+                type="button"
+                aria-label="지원 메뉴 열기"
+                aria-haspopup="menu"
+                aria-expanded={showMenu}
+                aria-controls={showMenu ? menuId : undefined}
                 onClick={() => setShowMenu(!showMenu)}
-              />
+              >
+                <Icon icon="KebapMenu" size={24} />
+              </MenuButton>
             )}
           </Flex>
         </Flex>
       </Container>
       {showMenu && (
-        <Menu role="menu">
+        <Menu id={menuId} role="menu">
           <ClickAria
+            type="button"
+            role="menuitem"
             onClick={() => {
               setShowMenu(false);
               onRetry?.();
@@ -163,9 +182,11 @@ export const ApplicationState = ({
             </Text>
           </ClickAria>
           <ClickAria
+            type="button"
+            role="menuitem"
             onClick={() => {
               setShowMenu(false);
-              onCancle?.();
+              onCancel?.();
             }}
           >
             <Text $size="caption" $color={theme.color.grayScale[80]}>

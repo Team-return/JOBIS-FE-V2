@@ -4,10 +4,12 @@ import { Icon, Text } from "@/components/core";
 import { Flex } from "@/components/primitive";
 import { useTheme } from "@/hooks";
 
-const Component = styled.div<Pick<Props, "$width" | "$color">>`
+const Component = styled.button<Pick<Props, "$width" | "$color">>`
   cursor: pointer;
   padding: 8px 9px;
   border-radius: 8px;
+  background: transparent;
+  font: inherit;
   width: ${({ $width }) => ($width ? $width : "130px")};
   border: 1px solid ${({ $color, theme }) => $color || theme.color.primary[20]};
 `;
@@ -23,7 +25,7 @@ export const IconButton = ({
   const defaultColor = $color || theme.color.primary[20];
 
   return (
-    <Component $width={$width} $color={$color} onClick={onClick}>
+    <Component type="button" $width={$width} $color={$color} onClick={onClick}>
       <Flex $gap="8px" $align="center" $justify="center">
         <Icon
           strokeColor={defaultColor}

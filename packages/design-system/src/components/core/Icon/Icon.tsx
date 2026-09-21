@@ -28,9 +28,10 @@ export const Icon = ({
     height = size;
   }
 
+  // fill을 비우면 브라우저 기본값인 검정으로 칠해지므로 color를 따라가게 한다
   const defaultFillColor = WHITE_FILL_ICONS.includes(icon)
     ? theme.color.grayScale[10]
-    : fillColor;
+    : (fillColor ?? "currentColor");
 
   const defaultStrokeColor =
     icon === "Refresh" ? strokeColor || theme.color.grayScale[90] : "";
