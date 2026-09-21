@@ -94,7 +94,18 @@ const Menu = styled.div`
   align-items: center;
 `;
 
-const ClickAria = styled.span`
+const MenuButton = styled.button`
+  display: flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`;
+
+const ClickAria = styled.button`
+  padding: 0;
+  border: none;
+  background: transparent;
   cursor: pointer;
 `;
 
@@ -141,11 +152,15 @@ export const ApplicationState = ({
               </Text>
             </Status>
             {(types === "requested" || types === "pending") && (
-              <Icon
-                icon="KebapMenu"
-                size={24}
+              <MenuButton
+                type="button"
+                aria-label="지원 메뉴 열기"
+                aria-haspopup="menu"
+                aria-expanded={showMenu}
                 onClick={() => setShowMenu(!showMenu)}
-              />
+              >
+                <Icon icon="KebapMenu" size={24} />
+              </MenuButton>
             )}
           </Flex>
         </Flex>
@@ -153,6 +168,8 @@ export const ApplicationState = ({
       {showMenu && (
         <Menu role="menu">
           <ClickAria
+            type="button"
+            role="menuitem"
             onClick={() => {
               setShowMenu(false);
               onRetry?.();
@@ -163,6 +180,8 @@ export const ApplicationState = ({
             </Text>
           </ClickAria>
           <ClickAria
+            type="button"
+            role="menuitem"
             onClick={() => {
               setShowMenu(false);
               onCancel?.();
