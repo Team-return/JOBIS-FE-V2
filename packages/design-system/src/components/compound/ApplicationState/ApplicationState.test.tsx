@@ -83,8 +83,10 @@ describe("ApplicationState", () => {
     expect(trigger).toHaveFocus();
 
     await userEvent.keyboard("{Enter}");
-    expect(screen.getByRole("menu")).toBeInTheDocument();
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
     expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveAttribute("aria-controls", menu.id);
 
     await userEvent.tab();
     await userEvent.tab();

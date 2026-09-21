@@ -3,7 +3,7 @@ import { Flex, Icon, Text } from "@/components";
 import type { Props, StatusType } from "./ApplicationState.types";
 import { useTheme } from "@/hooks";
 import type { JOBISTheme } from "@/themes";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 const STATUS_MAP: Record<StatusType, string> = {
   rejected: "반려",
@@ -120,6 +120,7 @@ export const ApplicationState = ({
   const statusText = STATUS_MAP[types] || "";
   const { currentTheme: theme } = useTheme();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const menuId = useId();
   const currentStatusStyle = getStatusStyle(theme, types);
 
   return (
@@ -157,6 +158,7 @@ export const ApplicationState = ({
                 aria-label="지원 메뉴 열기"
                 aria-haspopup="menu"
                 aria-expanded={showMenu}
+                aria-controls={showMenu ? menuId : undefined}
                 onClick={() => setShowMenu(!showMenu)}
               >
                 <Icon icon="KebapMenu" size={24} />
@@ -166,7 +168,7 @@ export const ApplicationState = ({
         </Flex>
       </Container>
       {showMenu && (
-        <Menu role="menu">
+        <Menu id={menuId} role="menu">
           <ClickAria
             type="button"
             role="menuitem"
