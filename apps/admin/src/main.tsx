@@ -1,16 +1,33 @@
 import { StrictMode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import * as ReactDOM from "react-dom/client";
 import App from "./App";
+import { JOBISDesignSystem } from "@jobis/design-system";
+import { QueryProvider, config } from "@jobis/api";
+import { init } from "@jobis/sentry";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
+const SENTRY_DSN = import.meta.env.SENTRY_DSN;
+if (SENTRY_DSN) {
+  init({
+    dsn: SENTRY_DSN,
+    release: `jobis-admin@${import.meta.env.VERSION}`,
+    environment: import.meta.env.MODE
+  });
+}
+
+config.onTokenExpired = () => {
+  window.location.href = "/login";
+};
+
 root.render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <QueryProvider>
+      <JOBISDesignSystem>
+        <App />
+      </JOBISDesignSystem>
+    </QueryProvider>
   </StrictMode>
 );

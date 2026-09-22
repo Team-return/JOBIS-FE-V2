@@ -1,7 +1,13 @@
 {
   "extends": "../../tsconfig.app.json",
   "compilerOptions": {
-    "rootDir": "src"
+    "baseUrl": "../../",
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [
+    { "path": "../../packages/api" },
+    { "path": "../../packages/design-system" },
+    { "path": "../../packages/sentry" }
+  ]
 }

@@ -1,4 +1,4 @@
 export * from "./primitive";
-export * from "./MyComponent";
-export * from "./Text";
-export * from "./Icon";
+export * from "./core";
+export * from "./compound";
+export * from "./JOBISDesignSystem";

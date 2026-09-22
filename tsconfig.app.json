@@ -7,6 +7,16 @@
     "types": [
       "node",
       "vite/client"
-    ]
-  }
+    ],
+    "paths": {
+      "@jobis/api": ["./packages/api/src/index.ts"],
+      "@jobis/design-system": ["./packages/design-system/src/index.ts"],
+      "@jobis/sentry": ["./packages/sentry/src/index.ts"]
+    }
+  },
+  "references": [
+    { "path": "./packages/api" },
+    { "path": "./packages/design-system" },
+    { "path": "./packages/sentry" }
+  ]
 }

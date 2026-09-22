@@ -4,14 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn vite",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },
+  "dependencies": {
+    "@jobis/api": "workspace:*",
+    "@jobis/design-system": "workspace:*",
+    "@jobis/sentry": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^24.2.1",
-    "typescript": "5.8.3",
-    "vite": "5.3.1"
+    "typescript": "5.8.3"
   }
 }

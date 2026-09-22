@@ -1,0 +1,199 @@
+import { useNotificationList, useStudentMy } from "@jobis/api";
+import { Header, Footer } from "@jobis/design-system";
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import { companyLoader } from "./pages/company-list/loader";
+import { recruitmentLoader } from "./pages/recruitment-list/loader";
+import { recruitmentDetailLoader } from "./pages/recruitment-detail/loader";
+import { CompanyList } from "./pages/company-list/page";
+import { RecruitmentList } from "./pages/recruitment-list";
+import { RecruitmentDetail } from "./pages/recruitment-detail";
+import { CompanyDetail } from "./pages/company-detail";
+import { Home, homeLoader } from "./pages/home";
+import { companyDetailLoader } from "./pages/company-detail/loader";
+import { PasswordVerify, PasswordEdit } from "./pages/auth/password";
+import { SignUp, SignUpProfile } from "./pages/auth/sign-up";
+import { Login } from "./pages/auth/login";
+import { NoticesList } from "./pages/notice-list";
+import { noticesListLoader } from "./pages/notice-list/loader";
+import { NoticeDetail } from "./pages/notice-detail";
+import { noticeDetailLoader } from "./pages/notice-detail/loader";
+import { MyPage } from "./pages/mypage";
+import { BugReport } from "./pages/bug-report";
+import { ConnectReviewPage, connectReviewLoader } from "./pages/connect-review";
+import { companyInterviewReviewLoader } from "./pages/company-interview-review/loader";
+import { CompanyInterviewReview } from "./pages/company-interview-review/page";
+import { ChangePwVerify, ChangePwEdit } from "./pages/change-password";
+import {
+  RecruitmentApply,
+  recruitmentApplyLoader
+} from "./pages/recruitment-apply";
+
+const StudentHeader = () => {
+  const { data: profile } = useStudentMy();
+  const { data: notificationData } = useNotificationList();
+  return (
+    <Header
+      type="student"
+      userName={profile?.student_name || ""}
+      notifications={notificationData?.notifications}
+    />
+  );
+};
+
+export const router: ReturnType<typeof createBrowserRouter> =
+  createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <StudentHeader />
+          <main style={{ flex: 1, width: "100%" }}>
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      ),
+      children: [
+        {
+          index: true,
+          loader: homeLoader,
+          element: <Home />
+        },
+        {
+          path: "/company",
+          children: [
+            {
+              index: true,
+              loader: companyLoader,
+              element: <CompanyList />
+            },
+            {
+              path: "detail/:companyId",
+              loader: companyDetailLoader,
+              element: <CompanyDetail />
+            },
+            {
+              path: "detail/:companyId/review",
+              loader: companyInterviewReviewLoader,
+              element: <CompanyInterviewReview />
+            }
+          ]
+        },
+        {
+          path: "/recruitment",
+          children: [
+            {
+              index: true,
+              loader: recruitmentLoader,
+              element: <RecruitmentList />
+            },
+            {
+              path: "detail/:recruitmentId",
+              loader: recruitmentDetailLoader,
+              element: <RecruitmentDetail />
+            },
+            {
+              path: "detail/:recruitmentId/apply",
+              loader: recruitmentApplyLoader,
+              element: <RecruitmentApply />
+            }
+          ]
+        },
+        {
+          path: "/notice",
+          children: [
+            {
+              index: true,
+              loader: noticesListLoader,
+              element: <NoticesList />
+            },
+            {
+              path: "detail/:noticeId",
+              loader: noticeDetailLoader,
+              element: <NoticeDetail />
+            }
+          ]
+        },
+        {
+          path: "/review",
+          children: [
+            {
+              index: true,
+              element: <div>후기 목록</div>
+            },
+            { path: "write", element: <div>후기 작성</div> },
+            {
+              path: "detail/:reviewId",
+              element: <div>후기 상세</div>
+            },
+            { path: "expectations", element: <div>예상 면접 질문 작성</div> }
+          ]
+        },
+        {
+          path: "/connect-review",
+          loader: connectReviewLoader,
+          element: <ConnectReviewPage />
+        },
+        {
+          path: "/mypage",
+          children: [
+            {
+              index: true,
+              element: <MyPage />
+            },
+            {
+              path: "bug-report",
+              element: <BugReport />
+            },
+            {
+              path: "password",
+              children: [
+                {
+                  index: true,
+                  element: <ChangePwVerify />
+                },
+                {
+                  path: "edit",
+                  element: <ChangePwEdit />
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: "/jobrate",
+          element: <div>취업률 페이지</div>
+        }
+      ]
+    },
+    {
+      path: "/login",
+      element: <Login />
+    },
+    {
+      path: "/signup",
+      children: [
+        {
+          index: true,
+          element: <SignUp />
+        },
+        {
+          path: "step2",
+          element: <SignUpProfile />
+        }
+      ]
+    },
+    {
+      path: "/forget-pw",
+      children: [
+        {
+          index: true,
+          element: <PasswordVerify />
+        },
+        {
+          path: "edit",
+          element: <PasswordEdit />
+        }
+      ]
+    }
+  ]);

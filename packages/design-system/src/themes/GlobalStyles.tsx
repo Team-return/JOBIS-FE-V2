@@ -3,7 +3,7 @@ import { useTheme } from "@/hooks";
 import font from "../../assets/fonts/pretendard-variable.woff2";
 
 export const GlobalStyles = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   return (
     <Global
       styles={css`
@@ -15,11 +15,14 @@ export const GlobalStyles = () => {
             url(${font}) format("woff2");
         }
 
+        * {
+          box-sizing: border-box;
+        }
+
         html,
         body {
           margin: 0;
           padding: 0;
-          box-sizing: border-box;
           font-family:
             "Pretendard Variable",
             -apple-system,
@@ -29,7 +32,19 @@ export const GlobalStyles = () => {
             sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          background-color: ${currentTheme.color.grayScale[10]};
+          background-color: ${theme.color.grayScale[10]};
+        }
+
+        /* 폼 요소는 브라우저 기본 글꼴을 타므로 Pretendard를 물려받게 한다 */
+        button,
+        input,
+        textarea,
+        select {
+          font-family: inherit;
+        }
+
+        main {
+          margin: 0 auto;
         }
       `}
     />

@@ -43,10 +43,14 @@ describe("Surface", () => {
   });
 
   it("applies border correctly", () => {
-    const borderValue = "1px solid #eee";
+    const borderValue = "1px solid rgb(238, 238, 238)";
     render(<Surface $border={borderValue}>Content</Surface>);
     const surfaceElement = screen.getByText("Content");
-    expect(surfaceElement).toHaveStyle(`border: ${borderValue}`);
+    expect(surfaceElement).toHaveStyle({
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "rgb(238, 238, 238)"
+    });
   });
 
   it("applies padding correctly", () => {

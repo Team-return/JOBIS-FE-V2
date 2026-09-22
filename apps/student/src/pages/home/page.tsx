@@ -1,0 +1,314 @@
+import {
+  ListSortType,
+  useBookmarks,
+  useCompanyStudentList,
+  useCompanyStudentRecentList,
+  useStudentInterviews
+} from "@jobis/api";
+import {
+  Box,
+  Container,
+  Text,
+  Flex,
+  CompanyCard,
+  Spacer,
+  Skeleton,
+  RecrutementCard,
+  ListSection,
+  EmploymentRateBanner,
+  Button,
+  useTheme
+} from "@jobis/design-system";
+import { LoaderData, useQueryParams } from "../../utils";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import type { HomeQuery } from "./loader";
+
+const BANNER_HEIGHT = 280;
+const BANNER_BUILDING_IMAGE = "/office-building.png";
+// 시안 기준 960x280 배너에서 오른쪽 끝을 기준으로 배치한 좌표입니다
+const BANNER_BUILDINGS = [
+  { right: 200, top: 140, size: 181 },
+  { right: -31, top: 20, size: 301 }
+];
+
+const getInterviewTime = (endDate: string, interviewTime: string) =>
+  new Date(`${endDate}T${interviewTime}`).getTime();
+const takeItems = <T,>(items: T[] | undefined, count: number) =>
+  Array.isArray(items) ? items.slice(0, count) : [];
+
+export const Home = () => {
+  const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
+  const { getParam, getParamAsNumber } = useQueryParams();
+  const { currentTheme: theme } = useTheme();
+
+  const navigate = useNavigate();
+
+  const parsedPage = getParamAsNumber("page", initialParams.page);
+  const currentPage =
+    Number.isFinite(parsedPage) && parsedPage >= 1
+      ? parsedPage
+      : initialParams.page;
+  const currentName = getParam("name") ?? initialParams.name ?? "";
+  const allowedSortTypes: readonly ListSortType[] = [
+    "WORKERS_COUNT_ASC",
+    "WORKERS_COUNT_DESC",
+    "FOUNDED_AT_ASC",
+    "FOUNDED_AT_DESC",
+    "TAKE"
+  ];
+  const rawSort = getParam("sort-type") ?? initialParams.sortType;
+  const currentSort = allowedSortTypes.includes(rawSort as ListSortType)
+    ? (rawSort as ListSortType)
+    : undefined;
+
+  const { data: companyListData, isLoading } = useCompanyStudentList({
+    page: currentPage,
+    name: currentName,
+    sort_type: currentSort
+  });
+  const companies = takeItems(companyListData?.companies, 3);
+
+  const { data: companyStudentRecentListData } = useCompanyStudentRecentList();
+  const recentCompanies = takeItems(companyStudentRecentListData?.companies, 3);
+
+  const { data: bookmarksData } = useBookmarks();
+  const bookmarks = bookmarksData?.bookmarks.slice(0, 4) || [];
+  const { data: interviewData } = useStudentInterviews();
+  const reviewableInterview = interviewData?.interviews
+    .filter(
+      interview =>
+        !interview.review_written &&
+        getInterviewTime(interview.end_date, interview.interview_time) <=
+          Date.now()
+    )
+    .sort(
+      (a, b) =>
+        getInterviewTime(b.end_date, b.interview_time) -
+        getInterviewTime(a.end_date, a.interview_time)
+    )[0];
+
+  return (
+    <Container $maxWidth={960} $padding={[40, 0, 252, 0]}>
+      {/* 배너 API 연동 전까지 디자인 시안 내용을 그대로 하드코딩해 둡니다 */}
+      <Link
+        to="/company"
+        style={{
+          display: "block",
+          position: "relative",
+          height: `${BANNER_HEIGHT}px`,
+          margin: "0 0 80px 0",
+          borderRadius: "16px",
+          overflow: "hidden",
+          background: "linear-gradient(90deg, #1480FF 0%, #1264FF 75%)",
+          textDecoration: "none",
+          cursor: "pointer"
+        }}
+      >
+        <Flex
+          $direction="column"
+          $fit
+          style={{
+            position: "absolute",
+            left: "80px",
+            top: "50%",
+            transform: "translateY(-50%)"
+          }}
+        >
+          <Text $size="h3" $weight="bold" $color={theme.color.grayScale[10]}>
+            자비스를 통해
+          </Text>
+          <Text $size="h3" $weight="bold" $color={theme.color.grayScale[10]}>
+            다양한 기업을 알아보세요!
+          </Text>
+        </Flex>
+        {BANNER_BUILDINGS.map(({ right, top, size }) => (
+          <img
+            key={`banner-building-${right}-${top}`}
+            src={BANNER_BUILDING_IMAGE}
+            alt=""
+            style={{
+              position: "absolute",
+              right: `${right}px`,
+              top: `${top}px`,
+              width: `${size}px`,
+              height: `${size}px`,
+              pointerEvents: "none"
+            }}
+          />
+        ))}
+      </Link>
+      {reviewableInterview && (
+        <Flex
+          $align="center"
+          $justify="space-between"
+          style={{
+            height: "50px",
+            borderRadius: "8px",
+            padding: "0 24px",
+            margin: "0 0 80px 0",
+            background: theme.color.primary[20]
+          }}
+        >
+          <Text $color="white" $size="body1" $weight="medium">
+            수고하셨습니다! 면접의 후기를 작성해 주세요!
+          </Text>
+          <Button
+            $size="sm"
+            $hoverDisabled
+            onClick={() => {
+              const searchParams = new URLSearchParams({
+                companyName: reviewableInterview.company_name,
+                interviewId: String(reviewableInterview.id)
+              });
+
+              if (reviewableInterview.document_number_id) {
+                searchParams.set(
+                  "documentNumberId",
+                  String(reviewableInterview.document_number_id)
+                );
+              }
+
+              navigate(`/connect-review?${searchParams.toString()}`);
+            }}
+          >
+            작성하기 →
+          </Button>
+        </Flex>
+      )}
+      <Flex $direction="column" $gap={80}>
+        <Flex $direction="column" $gap={16}>
+          <Flex $gap={12} $align="center">
+            <Text $size="h5" $weight="bold">
+              👀 최근 본 기업이에요
+            </Text>
+            <ListSection
+              onClickViewAll={() => {
+                navigate("/company");
+              }}
+            />
+          </Flex>
+          <Flex $gap={24}>
+            {isLoading &&
+              Array.from({ length: 3 }, (_, index) => (
+                <Flex
+                  key={index}
+                  $direction="column"
+                  $gap={10}
+                  $align="flex-start"
+                >
+                  <Skeleton width={304} height={168} $radius={12} />
+                  <Skeleton width={304} height={28} $radius={12} />
+                  <Skeleton width={100} height={20} $radius={12} />
+                </Flex>
+              ))}
+            {!isLoading && recentCompanies.length === 0 ? (
+              <>
+                <Spacer />
+                <Box $margin={[100, 400, 100, 0]}>
+                  <Text $size="body2">최근 본 기업이 없습니다.</Text>
+                </Box>
+              </>
+            ) : (
+              recentCompanies.map(company => (
+                <CompanyCard
+                  key={company.company_id}
+                  companyName={company.company_name}
+                  imgUrl={company.company_logo_url}
+                  hasRecruitment={company.is_recruiting}
+                  onClick={() => {
+                    navigate(`/company/detail/${company.company_id}`);
+                  }}
+                />
+              ))
+            )}
+          </Flex>
+        </Flex>
+
+        <Flex $direction="column" $gap={16}>
+          <Flex $gap={12} $align="center">
+            <Text $size="h5" $weight="bold">
+              🏢이런 기업은 어떠세요?
+            </Text>
+            <ListSection
+              onClickViewAll={() => {
+                navigate("/company");
+              }}
+            />
+          </Flex>
+          <Flex $gap={24}>
+            {isLoading &&
+              Array.from({ length: 3 }, (_, index) => (
+                <Flex
+                  key={index}
+                  $direction="column"
+                  $gap={10}
+                  $align="flex-start"
+                >
+                  <Skeleton width={304} height={168} $radius={12} />
+                  <Skeleton width={304} height={28} $radius={12} />
+                  <Skeleton width={100} height={20} $radius={12} />
+                </Flex>
+              ))}
+            {!isLoading && companies.length === 0 ? (
+              <>
+                <Spacer />
+                <Box $margin={[100, 400, 100, 0]}>
+                  <Text $size="body2">검색된 기업이 없습니다.</Text>
+                </Box>
+              </>
+            ) : (
+              companies.map(company => (
+                <CompanyCard
+                  key={company.id}
+                  companyName={company.name}
+                  imgUrl={company.logo_url}
+                  annualSales={`연매출 ${company.take}억`}
+                  hasRecruitment={company.has_recruitment}
+                  onClick={() => {
+                    navigate(`/company/detail/${company.id}`);
+                  }}
+                />
+              ))
+            )}
+          </Flex>
+        </Flex>
+      </Flex>
+
+      <Box $margin={[120, 0]}>
+        <EmploymentRateBanner onClick={() => {}} />
+      </Box>
+
+      <Flex $direction="column" $gap={16}>
+        <Flex $gap={12} $align="center">
+          <Text $size="h5" $weight="bold">
+            📌 내가 저장한 모집 의뢰서
+          </Text>
+          <ListSection
+            onClickViewAll={() => {
+              navigate("/recruitment");
+            }}
+          />
+        </Flex>
+        <Flex $gap={24}>
+          {bookmarks.map(bookmark => {
+            return (
+              <RecrutementCard
+                key={bookmark.recruitment_id}
+                companyName={bookmark.company_name}
+                companyProfileUrl={bookmark.company_logo_url}
+                hiringJobs={bookmark.hiring_job}
+                militarySupport={bookmark.military_support}
+                bookmarked={bookmark.bookmarked}
+                onClick={() => {
+                  navigate(`/recruitment/detail/${bookmark.recruitment_id}`);
+                }}
+              />
+            );
+          })}
+        </Flex>
+      </Flex>
+    </Container>
+  );
+};
+
+export default Home;

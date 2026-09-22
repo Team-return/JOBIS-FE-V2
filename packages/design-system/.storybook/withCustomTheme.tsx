@@ -5,6 +5,7 @@ import { StoryContext, StoryFn } from "@storybook/react-vite";
 import { useTheme } from "../src/hooks/useTheme";
 import { addons } from "storybook/preview-api";
 import { FORCE_RE_RENDER } from "storybook/internal/core-events";
+import { MemoryRouter } from "react-router-dom";
 
 interface Props {
   Story: StoryFn;
@@ -74,5 +75,14 @@ const ThemeToggleButton = styled.button`
 `;
 
 export const withCustomTheme = (Story: StoryFn, context: StoryContext) => {
-  return <ThemeDecorator Story={Story} context={context} />;
+  return (
+    <MemoryRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
+      <ThemeDecorator Story={Story} context={context} />
+    </MemoryRouter>
+  );
 };

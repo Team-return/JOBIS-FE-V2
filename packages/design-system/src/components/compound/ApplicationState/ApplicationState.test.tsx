@@ -1,0 +1,98 @@
+import { screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { ApplicationState } from "./ApplicationState";
+import { renderWithTheme } from "@/utils/render";
+import { lightTheme } from "@/themes";
+
+describe("ApplicationState", () => {
+  const defaultProps = {
+    types: "passed" as const,
+    imgUrl:
+      "https://jobis-store.s3.ap-northeast-2.amazonaws.com/company_logo/vivar.png",
+    companyName: "비바리퍼블리카",
+    date: "2025.09.28"
+  };
+
+  it("should render all text content correctly", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} />);
+
+    expect(screen.getByText(defaultProps.companyName)).toBeInTheDocument();
+    expect(screen.getByText(defaultProps.date)).toBeInTheDocument();
+    expect(screen.getByText("합격")).toBeInTheDocument();
+  });
+
+  it("should render the company logo correctly", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} />);
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveAttribute("src", defaultProps.imgUrl);
+  });
+
+  it("should apply correct styles for 'passed' status", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} types="passed" />);
+
+    const statusTextElement = screen.getByText("합격");
+    const statusContainerElement = statusTextElement.parentElement;
+
+    const expectedTextColor = lightTheme.color.subColor.green[20];
+    expect(statusTextElement).toHaveStyle(`color: ${expectedTextColor}`);
+
+    const expectedBgColor = lightTheme.color.subColor.green[10];
+    expect(statusContainerElement).toHaveStyle(
+      `background-color: ${expectedBgColor}`
+    );
+  });
+
+  it("should apply correct styles for 'failed' status", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} types="failed" />);
+
+    const statusTextElement = screen.getByText("탈락");
+    const statusContainerElement = statusTextElement.parentElement;
+
+    const expectedTextColor = lightTheme.color.subColor.red[20];
+    expect(statusTextElement).toHaveStyle(`color: ${expectedTextColor}`);
+
+    const expectedBgColor = lightTheme.color.subColor.red[10];
+    expect(statusContainerElement).toHaveStyle(
+      `background-color: ${expectedBgColor}`
+    );
+  });
+
+  it("should render menu when status is pending", () => {
+    renderWithTheme(<ApplicationState {...defaultProps} types="pending" />);
+
+    const kebapMenuIcon = screen.getByLabelText("KebapMenu");
+    expect(kebapMenuIcon).toBeInTheDocument();
+
+    fireEvent.click(kebapMenuIcon);
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    expect(screen.getByText("재지원")).toBeInTheDocument();
+    expect(screen.getByText("지원 취소")).toBeInTheDocument();
+  });
+
+  it("should open the menu and cancel with the keyboard only", async () => {
+    const onCancel = vi.fn();
+    renderWithTheme(
+      <ApplicationState {...defaultProps} types="pending" onCancel={onCancel} />
+    );
+
+    await userEvent.tab();
+    const trigger = screen.getByRole("button", { name: "지원 메뉴 열기" });
+    expect(trigger).toHaveFocus();
+
+    await userEvent.keyboard("{Enter}");
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveAttribute("aria-controls", menu.id);
+
+    await userEvent.tab();
+    await userEvent.tab();
+    expect(screen.getByRole("menuitem", { name: "지원 취소" })).toHaveFocus();
+
+    await userEvent.keyboard("{Enter}");
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+});
