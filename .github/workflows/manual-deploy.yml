@@ -1,4 +1,4 @@
-name: Manual Deploy to Cloudflare Pages
+name: Manual Deploy to Cloudflare Workers
 
 on:
   workflow_dispatch:
@@ -77,14 +77,14 @@ jobs:
         run: yarn install --immutable
 
       - name: Build app ${{ matrix.app }}
-        run: yarn nx build ${{ matrix.app }}
+        run: yarn build:app @jobis/${{ matrix.app }}
 
-      - name: Deploy ${{ matrix.app }} to Cloudflare Pages
+      - name: Deploy ${{ matrix.app }} to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy apps/${{ matrix.app }}/dist --project-name=${{ matrix.app }} --commit-dirty=true
+          command: deploy --config apps/${{ matrix.app }}/wrangler.jsonc
           workingDirectory: .
           packageManager: yarn
 

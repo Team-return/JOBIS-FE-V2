@@ -1,4 +1,4 @@
-name: Deploy affected apps to Cloudflare Pages
+name: Deploy affected apps to Cloudflare Workers
 
 on:
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
           AFFECTED_APPS=$(yarn nx show projects --affected --base=HEAD~1 --type=app --plain)
           
           if [ -n "$AFFECTED_APPS" ]; then
-            CLEANED_APPS=$(echo "$AFFECTED_APPS" | sed 's/@jobis-deploy\///g')
+            CLEANED_APPS=$(echo "$AFFECTED_APPS" | sed 's/@jobis\///g')
             APPS_JSON=$(echo "$CLEANED_APPS" | jq -R -s -c 'split("\n")[:-1]')
             echo "apps=$APPS_JSON" >> $GITHUB_OUTPUT
             echo "has-changes=true" >> $GITHUB_OUTPUT
@@ -71,14 +71,14 @@ jobs:
         run: yarn install --immutable
 
       - name: Build app ${{ matrix.app }}
-        run: yarn nx build ${{ matrix.app }}
+        run: yarn build:app @jobis/${{ matrix.app }}
 
-      - name: Deploy ${{ matrix.app }} to Cloudflare Pages
+      - name: Deploy ${{ matrix.app }} to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy apps/${{ matrix.app }}/dist --project-name=${{ matrix.app }} --commit-dirty=true
+          command: deploy --config apps/${{ matrix.app }}/wrangler.jsonc
           workingDirectory: .
           packageManager: yarn
 
