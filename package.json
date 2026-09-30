@@ -13,8 +13,8 @@
   "private": true,
   "scripts": {
     "dev": "nx dev",
-    "build": "nx build",
-    "build:many": "nx run-many -t build --parallel=3",
+    "build": "nx run-many -t build --parallel=3",
+    "build:app": "nx build",
     "build:affected": "nx affected -t build",
     "graph": "nx run-many --target=build --graph",
     "prepare": "husky",
