@@ -26,6 +26,18 @@ describe("Footer", () => {
     expect(svgElements).toHaveLength(2);
   });
 
+  it("links the GitHub icon to the Team-return organization in a new tab", () => {
+    renderWithTheme(<Footer />);
+
+    const githubLink = screen.getByRole("link", { name: "Team-return GitHub" });
+    expect(githubLink).toHaveAttribute(
+      "href",
+      "https://github.com/Team-return"
+    );
+    expect(githubLink).toHaveAttribute("target", "_blank");
+    expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("renders copyright text with current year", () => {
     renderWithTheme(<Footer />);
 
