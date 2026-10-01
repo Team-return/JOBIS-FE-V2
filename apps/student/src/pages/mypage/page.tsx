@@ -16,7 +16,7 @@ import {
 import { SERVER_STATUS_MAP } from "@jobis/design-system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DEPARTMENT_LABEL_MAP } from "../../utils";
+import { DEPARTMENT_LABEL_MAP, toFileUrl } from "../../utils";
 
 export const MyPage = () => {
   const { error } = useToast();
@@ -46,7 +46,7 @@ export const MyPage = () => {
               ? (DEPARTMENT_LABEL_MAP[profile.department] ?? profile.department)
               : ""
           }
-          profileImageUrl={profile?.profile_image_url || ""}
+          profileImageUrl={toFileUrl(profile?.profile_image_url || "")}
           menuItems={[
             {
               label: "프로필 수정",
@@ -80,7 +80,7 @@ export const MyPage = () => {
                 <ApplicationState
                   key={application.application_id}
                   types={SERVER_STATUS_MAP[application.application_status]}
-                  imgUrl={application.company_logo_url}
+                  imgUrl={toFileUrl(application.company_logo_url)}
                   companyName={application.company}
                   date={application.created_at}
                   onRetry={() => {

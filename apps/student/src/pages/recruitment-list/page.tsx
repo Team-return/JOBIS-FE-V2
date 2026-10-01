@@ -15,6 +15,7 @@ import {
   RECRUITMENT_SORT_OPTIONS,
   RECRUITMENT_STATE_OPTIONS,
   YEAR_OPTIONS,
+  toFileUrl,
   useDebounce,
   useQueryParams
 } from "../../utils";
@@ -193,7 +194,7 @@ export const RecruitmentList = () => {
               <RecrutementCard
                 key={recruitment.id}
                 companyName={recruitment.company_name}
-                companyProfileUrl={recruitment.company_profile_url}
+                companyProfileUrl={toFileUrl(recruitment.company_profile_url)}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
                 bookmarked={recruitment.bookmarked}

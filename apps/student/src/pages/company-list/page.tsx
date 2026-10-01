@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useQueryParams, useDebounce } from "../../utils";
+import { useQueryParams, useDebounce, toFileUrl } from "../../utils";
 import {
   useCompanyStudentList,
   useCompanyStudentCount,
@@ -118,7 +118,7 @@ export const CompanyList = () => {
               <CompanyCard
                 key={company.id}
                 companyName={company.name}
-                imgUrl={company.logo_url}
+                imgUrl={toFileUrl(company.logo_url)}
                 hasRecruitment={company.has_recruitment}
                 annualSales={`연매출 ${company.take}억`}
                 onClick={() => navigate(`/company/detail/${company.id}`)}
