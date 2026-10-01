@@ -34,7 +34,8 @@ export const NoticesList = () => {
     <Skeleton key={`sk-${rowIndex}-date`} width={108} height={28} $radius={8} />
   ]);
 
-  const tableRows = notices.map(row => [
+  // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다 (삭제된 글 때문에 id가 중간부터 시작함)
+  const tableRows = notices.map((row, index) => [
     <Text
       key={`id-${row.id}`}
       $size="h6"
@@ -42,7 +43,7 @@ export const NoticesList = () => {
       $align="center"
       $color={theme.color.primary[20]}
     >
-      {String(row.id)}
+      {String(notices.length - index)}
     </Text>,
     <div
       key={`title-${row.id}`}
