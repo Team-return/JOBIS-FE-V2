@@ -206,14 +206,16 @@ export const RecruitmentList = () => {
           })}
         </Grid>
       )}
-      <Flex $justify="center">
-        <Pagination
-          start={1}
-          end={companyCountData?.total_page_count || 1}
-          current={currentPage}
-          onChange={page => updateParams({ page: page })}
-        />
-      </Flex>
+      <Box $margin={[40, 0, 0, 0]}>
+        <Flex $justify="center">
+          <Pagination
+            start={1}
+            end={companyCountData?.total_page_count || 1}
+            current={currentPage}
+            onChange={page => updateParams({ page: page })}
+          />
+        </Flex>
+      </Box>
     </Container>
   );
 };
