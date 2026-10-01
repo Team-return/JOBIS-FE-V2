@@ -20,6 +20,19 @@ const Component = styled.div`
   }
 `;
 
+// 카드 높이가 고정이라 직무가 길면 아래 기업명·병역특례가 잘린다. 두 줄까지만 보여 준다
+const HiringJobs = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.color.grayScale[90]};
+  font-weight: ${({ theme }) => theme.fontWeight.regular};
+  font-size: ${({ theme }) => theme.font.body2.fontSize};
+  line-height: ${({ theme }) => theme.font.body2.lineHeight};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+`;
+
 const Clip = styled.div<{ $boolean: boolean }>`
   padding: 4px 8px;
   height: 18px;
@@ -55,7 +68,7 @@ export const RecrutementCard = ({
           <Flex $direction="column" $justify="space-between">
             <Flex $direction="row" $justify="space-between">
               <Stack $gap={0}>
-                <Text $size="body2">{hiringJobs}</Text>
+                <HiringJobs title={hiringJobs}>{hiringJobs}</HiringJobs>
                 <Text $size="body3" $color={theme.color.grayScale[80]}>
                   {companyName}
                 </Text>

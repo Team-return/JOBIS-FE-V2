@@ -7,7 +7,11 @@ import {
   Box
 } from "@jobis/design-system";
 import { useLoaderData } from "react-router-dom";
-import { INTERVIEW_TYPE_LABEL_MAP, LoaderData } from "apps/student/src/utils";
+import {
+  INTERVIEW_TYPE_LABEL_MAP,
+  LoaderData,
+  toFileUrl
+} from "apps/student/src/utils";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
@@ -83,7 +87,11 @@ export const RecruitmentDetail = () => {
           <DetailHeader
             type="recruitment"
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
-            logoUrl={data?.company_profile_url || "/logo.svg"}
+            logoUrl={
+              data?.company_profile_url
+                ? toFileUrl(data.company_profile_url)
+                : "/logo.svg"
+            }
             isParticipation={data?.integration_plan || false}
           />
         </Flex>

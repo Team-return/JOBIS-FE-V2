@@ -19,7 +19,7 @@ import {
   Button,
   useTheme
 } from "@jobis/design-system";
-import { LoaderData, useQueryParams } from "../../utils";
+import { LoaderData, useQueryParams, toFileUrl } from "../../utils";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
@@ -213,7 +213,7 @@ export const Home = () => {
                 <CompanyCard
                   key={company.company_id}
                   companyName={company.company_name}
-                  imgUrl={company.company_logo_url}
+                  imgUrl={toFileUrl(company.company_logo_url)}
                   hasRecruitment={company.is_recruiting}
                   onClick={() => {
                     navigate(`/company/detail/${company.company_id}`);
@@ -261,7 +261,7 @@ export const Home = () => {
                 <CompanyCard
                   key={company.id}
                   companyName={company.name}
-                  imgUrl={company.logo_url}
+                  imgUrl={toFileUrl(company.logo_url)}
                   annualSales={`연매출 ${company.take}억`}
                   hasRecruitment={company.has_recruitment}
                   onClick={() => {
@@ -295,7 +295,7 @@ export const Home = () => {
               <RecrutementCard
                 key={bookmark.recruitment_id}
                 companyName={bookmark.company_name}
-                companyProfileUrl={bookmark.company_logo_url}
+                companyProfileUrl={toFileUrl(bookmark.company_logo_url)}
                 hiringJobs={bookmark.hiring_job}
                 militarySupport={bookmark.military_support}
                 bookmarked={bookmark.bookmarked}

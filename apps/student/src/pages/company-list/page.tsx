@@ -7,14 +7,13 @@ import {
   CompanyCard,
   Dropdown,
   Pagination,
-  Spacer,
   Box,
   Skeleton
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useQueryParams, useDebounce } from "../../utils";
+import { useQueryParams, useDebounce, toFileUrl } from "../../utils";
 import {
   useCompanyStudentList,
   useCompanyStudentCount,
@@ -103,31 +102,30 @@ export const CompanyList = () => {
             />
           </Flex>
         </Flex>
-        <Grid $columns="repeat(3, 1fr)" $gap={[32, 24]}>
-          {isLoading &&
-            Array.from({ length: 12 }, (_, index) => (
-              <CompanyCardSkeleton key={index} />
-            ))}
-          {!isLoading && companies.length === 0 ? (
-            <>
-              <Spacer />
-              <Box $margin={[50, 76.8]}>
-                <Text $size="body2">검색된 기업이 없습니다.</Text>
-              </Box>
-            </>
-          ) : (
-            companies.map(company => (
+        {!isLoading && companies.length === 0 ? (
+          <Flex $justify="center">
+            <Box $margin={[50, 0]}>
+              <Text $size="body2">검색된 기업이 없습니다.</Text>
+            </Box>
+          </Flex>
+        ) : (
+          <Grid $columns="repeat(3, 1fr)" $gap={[32, 24]}>
+            {isLoading &&
+              Array.from({ length: 12 }, (_, index) => (
+                <CompanyCardSkeleton key={index} />
+              ))}
+            {companies.map(company => (
               <CompanyCard
                 key={company.id}
                 companyName={company.name}
-                imgUrl={company.logo_url}
+                imgUrl={toFileUrl(company.logo_url)}
                 hasRecruitment={company.has_recruitment}
                 annualSales={`연매출 ${company.take}억`}
                 onClick={() => navigate(`/company/detail/${company.id}`)}
               />
-            ))
-          )}
-        </Grid>
+            ))}
+          </Grid>
+        )}
         <Box $margin={[4, 0]}></Box>
         <Pagination
           start={1}

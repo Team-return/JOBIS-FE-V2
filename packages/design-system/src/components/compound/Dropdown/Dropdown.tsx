@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
-import { Flex, Icon, Text } from "@/components";
+import { Icon, Text } from "@/components";
 import type { Props } from "./Dropdown.types";
 import { Search } from "../Search";
 
@@ -50,7 +50,10 @@ const DefaultOptions = styled.ul`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 100%;
+  min-width: 100%;
+  width: max-content;
+  max-height: 320px;
+  overflow-y: auto;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
@@ -87,9 +90,20 @@ const SupportJobOptions = styled.div`
   background-color: ${({ theme }) => theme.color.grayScale[10]};
   display: flex;
   flex-direction: column;
+  gap: 16px;
   width: 399px;
   padding: 20px;
   height: 392px;
+`;
+
+const SupportJobTagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 const SupportJobTag = styled.button<{ $selected: boolean }>`
@@ -196,48 +210,48 @@ export const Dropdown = ({
 
           {type === "supportJob" && (
             <SupportJobOptions>
-              <Flex $direction="column" $gap={16}>
-                <Search
-                  $width={359}
-                  placeholder="검색어를 입력해주세요"
-                  onChange={value => setSearchTerm(value)}
-                  value={searchTerm}
-                  IconFillColor={theme.color.grayScale[60]}
-                />
-                <div
-                  style={{
-                    height: "1px",
-                    backgroundColor: theme.color.grayScale[40]
-                  }}
-                />
-                <Flex $wrap $gap={10}>
-                  {filteredOptions.length > 0 ? (
-                    filteredOptions?.map(opt => (
-                      <SupportJobTag
-                        key={opt.value}
-                        $selected={opt.value === selected}
-                        onClick={() => handleSelect(opt.value)}
-                      >
-                        <Text
-                          $size="caption"
-                          $weight="regular"
-                          $color={theme.color.subColor.blue[30]}
-                        >
-                          {opt.label}
-                        </Text>
-                      </SupportJobTag>
-                    ))
-                  ) : (
-                    <Text
-                      $size="body3"
-                      $weight="regular"
-                      $color={theme.color.grayScale[60]}
+              <Search
+                $width={359}
+                placeholder="검색어를 입력해주세요"
+                onChange={value => setSearchTerm(value)}
+                value={searchTerm}
+                IconFillColor={theme.color.grayScale[60]}
+              />
+              <div
+                style={{
+                  height: "1px",
+                  flexShrink: 0,
+                  backgroundColor: theme.color.grayScale[40]
+                }}
+              />
+              {/* 태그가 많으면 패널 밖으로 넘치지 않고 이 영역만 스크롤된다 */}
+              <SupportJobTagList>
+                {filteredOptions.length > 0 ? (
+                  filteredOptions?.map(opt => (
+                    <SupportJobTag
+                      key={opt.value}
+                      $selected={opt.value === selected}
+                      onClick={() => handleSelect(opt.value)}
                     >
-                      검색 결과가 없습니다.
-                    </Text>
-                  )}
-                </Flex>
-              </Flex>
+                      <Text
+                        $size="caption"
+                        $weight="regular"
+                        $color={theme.color.subColor.blue[30]}
+                      >
+                        {opt.label}
+                      </Text>
+                    </SupportJobTag>
+                  ))
+                ) : (
+                  <Text
+                    $size="body3"
+                    $weight="regular"
+                    $color={theme.color.grayScale[60]}
+                  >
+                    검색 결과가 없습니다.
+                  </Text>
+                )}
+              </SupportJobTagList>
             </SupportJobOptions>
           )}
         </OptionsWrapper>

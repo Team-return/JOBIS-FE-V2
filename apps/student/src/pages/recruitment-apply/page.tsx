@@ -26,7 +26,7 @@ import {
   useState
 } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import type { LoaderData } from "../../utils";
+import { toFileUrl, type LoaderData } from "../../utils";
 
 interface UploadedFile {
   id: number;
@@ -185,7 +185,11 @@ const CompanyHeader = ({ recruitmentId }: { recruitmentId: number }) => {
         <Skeleton width={44} height={44} $radius={8} />
       ) : (
         <Image
-          src={data?.company_profile_url || "/logo.svg"}
+          src={
+            data?.company_profile_url
+              ? toFileUrl(data.company_profile_url)
+              : "/logo.svg"
+          }
           alt={companyName}
           width={44}
           height={44}
