@@ -17,7 +17,10 @@ const TriggerButton = styled.button<
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 7px;
+  height: 40px;
+  padding: 0 16px;
+  font-size: ${({ theme }) => theme.font.body3.fontSize};
+  line-height: ${({ theme }) => theme.font.body3.lineHeight};
   border: 1px solid
     ${({ theme, $color }) => $color || theme.color.grayScale[50]};
   ${({ $isNoneBorder }) =>
@@ -58,10 +61,12 @@ const DefaultOptions = styled.ul`
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
   list-style: none;
-  padding: 4px 0;
+  padding: 8px 0;
   margin: 0;
   z-index: 10;
-  color: ${({ theme }) => theme.color.grayScale[50]};
+  color: ${({ theme }) => theme.color.grayScale[60]};
+  font-size: ${({ theme }) => theme.font.caption.fontSize};
+  line-height: ${({ theme }) => theme.font.caption.lineHeight};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,7 +74,7 @@ const DefaultOptions = styled.ul`
 
 const DefaultOption = styled.li<{ $selected: boolean }>`
   white-space: nowrap;
-  padding: 8px 16px;
+  padding: 8px 22px;
   cursor: pointer;
 
   &:hover {
@@ -79,7 +84,7 @@ const DefaultOption = styled.li<{ $selected: boolean }>`
   ${({ $selected, theme }) =>
     $selected &&
     `
-      color: ${theme.color.primary[30]};
+      color: ${theme.color.primary[20]};
     `}
 `;
 
@@ -185,7 +190,7 @@ export const Dropdown = ({
         {getDisplayText()}
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
-          size={20}
+          size={16}
           fillColor={$color || theme.color.grayScale[60]}
         />
       </TriggerButton>
