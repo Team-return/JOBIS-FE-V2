@@ -29,11 +29,22 @@ export const DEPARTMENT_LABEL_MAP: Record<Department, string> = {
   COMMON: "공통과정"
 };
 
-export const RECRUITMENT_STATE_OPTIONS = [
-  { label: "모집전", value: "REQUESTED" },
-  { label: "모집중", value: "RECRUITING" },
-  { label: "모집 종료", value: "DONE" }
-];
+/** 학생에게 보여 주는 모집 상태 라벨 (필터와 목록 카드가 같이 쓴다) */
+export const RECRUITMENT_STATUS_LABEL = {
+  REQUESTED: "모집전",
+  RECRUITING: "모집중",
+  DONE: "모집 종료"
+} as const;
+
+export const RECRUITMENT_STATE_OPTIONS = Object.entries(
+  RECRUITMENT_STATUS_LABEL
+).map(([value, label]) => ({ label, value }));
+
+/** 위 라벨에 없는 상태(READY 등)는 카드에 상태 칩을 그리지 않도록 undefined를 돌려준다 */
+export const getRecruitmentStatusLabel = (status: string) =>
+  status in RECRUITMENT_STATUS_LABEL
+    ? RECRUITMENT_STATUS_LABEL[status as keyof typeof RECRUITMENT_STATUS_LABEL]
+    : undefined;
 
 const RECRUITMENT_START_YEAR = 2024;
 const currentYear = new Date().getFullYear();
