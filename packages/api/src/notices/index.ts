@@ -51,10 +51,13 @@ const fetchAllNotices = async (): Promise<NoticeListResponse> => {
       params: { page }
     });
     notices.push(...data.notices);
-    if (data.notices.length < NOTICE_LIST_PAGE_SIZE) break;
+    if (data.notices.length < NOTICE_LIST_PAGE_SIZE) return { notices };
   }
 
-  return { notices };
+  // 끝 페이지를 찾지 못한 채 상한에 닿았다. 일부만 받은 목록을 전체처럼 보여 주지 않도록 실패로 처리한다
+  throw new Error(
+    `공지 목록이 ${MAX_NOTICE_PAGES}페이지를 넘어 끝까지 불러오지 못했습니다.`
+  );
 };
 
 const noticeListQueryOptions = (
