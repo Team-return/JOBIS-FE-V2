@@ -28,6 +28,7 @@ const NOTICE_TABLE_WIDTH = NOTICE_COLUMN_WIDTHS.reduce(
   (total, width) => total + width,
   0
 );
+const NOTICE_NUMBER_PADDING = 22;
 const NOTICE_TITLE_PADDING = 28;
 const NOTICE_TITLE_WIDTH = 556;
 const NOTICE_ROW_HEIGHT = 48;
@@ -60,6 +61,20 @@ const NoticeCell = ({
   ) : (
     <div style={{ width: "100%" }}>{children}</div>
   );
+
+const NoticeNumber = ({
+  number,
+  color
+}: {
+  number: string;
+  color?: string;
+}) => (
+  <div style={{ width: "100%", paddingLeft: NOTICE_NUMBER_PADDING }}>
+    <Text $size="body2" $align="center" $color={color}>
+      {number}
+    </Text>
+  </div>
+);
 
 const NoticeTitle = ({ title, color }: { title: string; color?: string }) => (
   <div style={{ width: "100%", paddingLeft: NOTICE_TITLE_PADDING }}>
@@ -109,9 +124,10 @@ export const Notice = () => {
       to={`/notice/detail/${notice.id}`}
       focusable={false}
     >
-      <Text $size="body2" $color={theme.color.grayScale[70]}>
-        {String(notice.id)}
-      </Text>
+      <NoticeNumber
+        number={String(notice.id)}
+        color={theme.color.grayScale[70]}
+      />
     </NoticeCell>,
     <NoticeCell key={`title-${notice.id}`} to={`/notice/detail/${notice.id}`}>
       <NoticeTitle title={notice.title} color={theme.color.grayScale[90]} />
@@ -121,7 +137,7 @@ export const Notice = () => {
       to={`/notice/detail/${notice.id}`}
       focusable={false}
     >
-      <Text $size="body2" $color={theme.color.grayScale[90]}>
+      <Text $size="body2" $align="center" $color={theme.color.grayScale[90]}>
         {formatNoticeDate(notice.created_at)}
       </Text>
     </NoticeCell>
@@ -206,7 +222,10 @@ export const Notice = () => {
             ) : (
               <Table
                 headers={[
-                  "번호",
+                  <NoticeNumber
+                    number="번호"
+                    color={theme.color.grayScale[60]}
+                  />,
                   <NoticeTitle
                     title="제목"
                     color={theme.color.grayScale[60]}

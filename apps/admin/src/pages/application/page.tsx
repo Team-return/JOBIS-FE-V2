@@ -301,12 +301,43 @@ export const Application = () => {
     );
   };
 
+  const getStatusColor = (status: ApplicationStatus) => {
+    switch (status) {
+      case "REQUESTED":
+        return theme.color.subColor.yellow[20];
+      case "APPROVED":
+      case "SEND":
+      case "PROCESSING":
+        return theme.color.subColor.blue[30];
+      case "PASS":
+      case "FIELD_TRAIN":
+      case "ACCEPTANCE":
+        return theme.color.subColor.green[20];
+      case "FAILED":
+      case "DOC_FAILED":
+      case "REJECTED":
+        return theme.color.subColor.red[20];
+    }
+  };
+
+  const renderCellText = (text: string, color?: string) => (
+    <Text $size="body2" $color={color}>
+      {text}
+    </Text>
+  );
+
   const tableRows: ReactNode[][] =
     data?.applications.map(app => [
-      app.attachments.some(att => att.type === "FILE") ? "파일" : "URL",
-      APPLICATION_STATUS_LABEL[app.application_status],
-      app.student_gcn,
-      app.student_name,
+      renderCellText(
+        app.attachments.some(att => att.type === "FILE") ? "파일" : "URL",
+        theme.color.grayScale[80]
+      ),
+      renderCellText(
+        APPLICATION_STATUS_LABEL[app.application_status],
+        getStatusColor(app.application_status)
+      ),
+      renderCellText(app.student_gcn, theme.color.grayScale[80]),
+      renderCellText(app.student_name, theme.color.grayScale[80]),
       app.company_name,
       app.created_at,
       app.attachments.length > 0 ? (
