@@ -2,6 +2,7 @@ import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { RecrutementCard } from "./RecrutementCard";
 import { renderWithTheme } from "@/utils/render";
+import { lightTheme } from "@/themes";
 
 describe("RecrutementCard", () => {
   const defaultProps = {
@@ -41,6 +42,29 @@ describe("RecrutementCard", () => {
     const image = screen.getByRole("img");
     expect(image).toHaveAttribute("src", defaultProps.companyProfileUrl);
     expect(image).toHaveAttribute("alt", defaultProps.companyName);
+  });
+
+  it("does not render a status chip when status is not given", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} />);
+
+    expect(screen.queryByText("모집중")).not.toBeInTheDocument();
+    expect(screen.queryByText("모집 종료")).not.toBeInTheDocument();
+  });
+
+  it("renders the status chip in blue while recruiting", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} status="모집중" />);
+
+    expect(screen.getByText("모집중")).toHaveStyle(
+      `color: ${lightTheme.color.primary[20]}`
+    );
+  });
+
+  it("renders the status chip in red after recruiting ends", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} status="모집 종료" />);
+
+    expect(screen.getByText("모집 종료")).toHaveStyle(
+      `color: ${lightTheme.color.subColor.red[20]}`
+    );
   });
 
   it("calls onClick when card is clicked", () => {

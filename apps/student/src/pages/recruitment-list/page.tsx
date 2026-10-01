@@ -12,8 +12,8 @@ import {
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import {
-  RECRUITMENT_SORT_OPTIONS,
   RECRUITMENT_STATE_OPTIONS,
+  getRecruitmentStatusLabel,
   YEAR_OPTIONS,
   toFileUrl,
   useDebounce,
@@ -92,80 +92,64 @@ export const RecruitmentList = () => {
 
   return (
     <Container $maxWidth={960} $padding={[68, 0, 180, 0]}>
-      <Flex $direction="column" $gap={20}>
-        <Flex $justify="space-between">
-          <Flex>
-            <Text $size="h4" $weight="bold" $align="justify">
-              📄 모집의뢰서
-            </Text>
-          </Flex>
-          <Flex $justify="flex-end" $gap={8}>
-            <Dropdown
-              $placeholder="상태"
-              $width={96}
-              type={undefined}
-              options={RECRUITMENT_STATE_OPTIONS}
-              value={state}
-              onChange={value =>
-                updateParams({ status: value || undefined, page: 1 })
-              }
-            />
-            <Dropdown
-              $placeholder="연도"
-              $width={96}
-              type={undefined}
-              options={YEAR_OPTIONS}
-              value={year}
-              onChange={value =>
-                updateParams({ year: value || undefined, page: 1 })
-              }
-            />
-            <Dropdown
-              $placeholder="분야"
-              $width={96}
-              type={undefined}
-              options={jobOptions}
-              value={field}
-              onChange={value =>
-                updateParams({
-                  "field": value || undefined,
-                  "tech-stack": undefined,
-                  "page": 1
-                })
-              }
-            />
-            <Dropdown
-              $placeholder="기술스택"
-              $width={120}
-              options={techOptions}
-              type="supportJob"
-              value={techStack}
-              onChange={value =>
-                updateParams({ "tech-stack": value || undefined, "page": 1 })
-              }
-            />
-            <Search
-              placeholder="검색어를 입력해 주세요."
-              $width={291}
-              value={keyword}
-              onChange={setKeyword}
-            />
-          </Flex>
-        </Flex>
-        <Flex $justify="flex-end">
+      <Flex $direction="column" $gap={12}>
+        <Text $size="h4" $weight="bold">
+          📄 모집의뢰서
+        </Text>
+        <Flex $justify="flex-end" $gap={8}>
           <Dropdown
-            $width={70}
+            $placeholder="상태"
+            $width={96}
             type={undefined}
-            $isNoneBorder={true}
-            value={currentSort}
+            options={RECRUITMENT_STATE_OPTIONS}
+            value={state}
             onChange={value =>
-              updateParams({ "sort-type": value || undefined, "page": 1 })
+              updateParams({ status: value || undefined, page: 1 })
             }
-            options={RECRUITMENT_SORT_OPTIONS}
+          />
+          <Dropdown
+            $placeholder="연도"
+            $width={96}
+            type={undefined}
+            options={YEAR_OPTIONS}
+            value={year}
+            onChange={value =>
+              updateParams({ year: value || undefined, page: 1 })
+            }
+          />
+          <Dropdown
+            $placeholder="분야"
+            $width={96}
+            type={undefined}
+            options={jobOptions}
+            value={field}
+            onChange={value =>
+              updateParams({
+                "field": value || undefined,
+                "tech-stack": undefined,
+                "page": 1
+              })
+            }
+          />
+          <Dropdown
+            $placeholder="기술스택"
+            $width={120}
+            options={techOptions}
+            type="supportJob"
+            value={techStack}
+            onChange={value =>
+              updateParams({ "tech-stack": value || undefined, "page": 1 })
+            }
+          />
+          <Search
+            placeholder="검색어를 입력해주세요"
+            $width={359}
+            value={keyword}
+            onChange={setKeyword}
           />
         </Flex>
       </Flex>
-      <Box $margin={[4, 0]}></Box>
+      <Box $margin={[32, 0, 0, 0]}></Box>
 
       {!isLoading && recruitments.length === 0 ? (
         <Flex $justify="center">
@@ -174,7 +158,7 @@ export const RecruitmentList = () => {
           </Box>
         </Flex>
       ) : (
-        <Grid $columns="repeat(4, 1fr)" $gap={24}>
+        <Grid $columns="repeat(4, 1fr)" $gap={[32, 24]}>
           {isLoading &&
             Array.from({ length: 12 }, (_, index) => (
               <Flex
@@ -198,6 +182,7 @@ export const RecruitmentList = () => {
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
                 bookmarked={recruitment.bookmarked}
+                status={getRecruitmentStatusLabel(recruitment.status)}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
                 }
