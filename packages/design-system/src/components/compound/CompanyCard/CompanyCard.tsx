@@ -33,7 +33,7 @@ export const CompanyCard = ({
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   return (
-    <Flex $direction="column" $gap={16} onClick={onClick}>
+    <Flex $direction="column" $gap={16} $fit onClick={onClick}>
       <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>
