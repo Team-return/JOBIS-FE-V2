@@ -36,7 +36,15 @@ const getStatusColor = (status: RecruitmentCardStatus, theme: JOBISTheme) => {
   return theme.color.grayScale[60];
 };
 
-// 카드 높이가 고정이라 직무가 길면 아래 기업명·병역특례가 잘린다. 두 줄까지만 보여 준다
+// 직무·기업명이 줄어들 수 있도록 북마크 옆 영역의 최소 너비를 0으로 둔다
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+`;
+
+// 카드 높이가 고정이라 직무가 길면 아래 기업명·칩이 잘린다. 두 줄까지만 보여 준다
 const HiringJobs = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.color.grayScale[90]};
@@ -49,11 +57,24 @@ const HiringJobs = styled.p`
   overflow: hidden;
 `;
 
+// 기업명은 피그마처럼 한 줄로 두고 넘치면 말줄임
+const CompanyName = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.color.grayScale[80]};
+  font-weight: ${({ theme }) => theme.fontWeight.regular};
+  font-size: ${({ theme }) => theme.font.body3.fontSize};
+  line-height: ${({ theme }) => theme.font.body3.lineHeight};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+// 피그마 칩은 테두리 포함 높이 26px, 좌우 여백 8px (전역 box-sizing: border-box 기준)
 const Clip = styled.div<{ $color?: string }>`
-  padding: 4px 8px;
-  height: 18px;
+  padding: 0 7px;
+  height: 26px;
   border: 1px solid ${({ theme, $color }) => $color ?? theme.color.primary[20]};
-  border-radius: 18px;
+  border-radius: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,12 +103,10 @@ export const RecrutementCard = ({
       <Box $padding={[12, 12, 12, 11]} $bg={theme.color.grayScale[20]}>
         <Flex $direction="column" $justify="space-between">
           <Flex $direction="row" $justify="space-between">
-            <Stack $gap={0}>
+            <Info>
               <HiringJobs title={hiringJobs}>{hiringJobs}</HiringJobs>
-              <Text $size="body3" $color={theme.color.grayScale[80]}>
-                {companyName}
-              </Text>
-            </Stack>
+              <CompanyName title={companyName}>{companyName}</CompanyName>
+            </Info>
             <Bookmark $checked={bookmarked} />
           </Flex>
           <Stack $direction="row" $gap={12}>
