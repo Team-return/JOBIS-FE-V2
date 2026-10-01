@@ -46,7 +46,13 @@ export const router: ReturnType<typeof createBrowserRouter> =
     {
       path: "/",
       element: (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          }}
+        >
           <StudentHeader />
           <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
