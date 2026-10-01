@@ -8,7 +8,6 @@ import {
   RecrutementCard,
   Search,
   Skeleton,
-  Spacer,
   Text
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
@@ -167,25 +166,29 @@ export const RecruitmentList = () => {
       </Flex>
       <Box $margin={[4, 0]}></Box>
 
-      <Grid $columns="repeat(4, 1fr)" $gap={24}>
-        {isLoading &&
-          Array.from({ length: 12 }, (_, index) => (
-            <Flex key={index} $direction="column" $gap={12} $align="flex-start">
-              <Skeleton width={222} height={144} $radius={12} />
-              <Skeleton width={222} height={24} $radius={12} />
-              <Skeleton width={130} height={24} $radius={12} />
-              <Skeleton width={150} height={24} $radius={12} />
-            </Flex>
-          ))}
-        {!isLoading && recruitments.length === 0 ? (
-          <>
-            <Spacer />
-            <Box $margin={[50, 76.8]}>
-              <Text $size="body2">검색된 기업이 없습니다.</Text>
-            </Box>
-          </>
-        ) : (
-          recruitments.map(recruitment => {
+      {!isLoading && recruitments.length === 0 ? (
+        <Flex $justify="center">
+          <Box $margin={[50, 0]}>
+            <Text $size="body2">검색된 기업이 없습니다.</Text>
+          </Box>
+        </Flex>
+      ) : (
+        <Grid $columns="repeat(4, 1fr)" $gap={24}>
+          {isLoading &&
+            Array.from({ length: 12 }, (_, index) => (
+              <Flex
+                key={index}
+                $direction="column"
+                $gap={12}
+                $align="flex-start"
+              >
+                <Skeleton width={222} height={144} $radius={12} />
+                <Skeleton width={222} height={24} $radius={12} />
+                <Skeleton width={130} height={24} $radius={12} />
+                <Skeleton width={150} height={24} $radius={12} />
+              </Flex>
+            ))}
+          {recruitments.map(recruitment => {
             return (
               <RecrutementCard
                 key={recruitment.id}
@@ -199,9 +202,9 @@ export const RecruitmentList = () => {
                 }
               />
             );
-          })
-        )}
-      </Grid>
+          })}
+        </Grid>
+      )}
       <Flex $justify="center">
         <Pagination
           start={1}
