@@ -27,6 +27,7 @@ import {
   RecruitmentApply,
   recruitmentApplyLoader
 } from "./pages/recruitment-apply";
+import { PreparingPage } from "./pages/preparing";
 
 const StudentHeader = () => {
   const { data: profile } = useStudentMy();
@@ -119,14 +120,14 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>후기 목록</div>
+              element: <PreparingPage />
             },
-            { path: "write", element: <div>후기 작성</div> },
+            { path: "write", element: <PreparingPage /> },
             {
               path: "detail/:reviewId",
-              element: <div>후기 상세</div>
+              element: <PreparingPage />
             },
-            { path: "expectations", element: <div>예상 면접 질문 작성</div> }
+            { path: "expectations", element: <PreparingPage /> }
           ]
         },
         {
