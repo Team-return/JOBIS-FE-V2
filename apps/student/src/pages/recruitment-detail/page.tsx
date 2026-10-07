@@ -6,7 +6,7 @@ import {
   DetailTable,
   Box
 } from "@jobis/design-system";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import {
   INTERVIEW_TYPE_LABEL_MAP,
   LoaderData,
@@ -61,6 +61,7 @@ const createAreaItem = (
 
 export const RecruitmentDetail = () => {
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
@@ -93,6 +94,14 @@ export const RecruitmentDetail = () => {
                 : "/logo.svg"
             }
             isParticipation={data?.integration_plan || false}
+            onViewDetail={
+              data
+                ? () => navigate(`/company/detail/${data.company_id}`)
+                : undefined
+            }
+            onApply={() =>
+              navigate(`/recruitment/detail/${recruitmentId}/apply`)
+            }
           />
         </Flex>
         <DetailTable
