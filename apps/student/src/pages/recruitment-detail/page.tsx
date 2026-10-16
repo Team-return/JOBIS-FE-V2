@@ -108,7 +108,7 @@ export const RecruitmentDetail = () => {
           items={[
             ...areaItems,
             {
-              label: "최소성적",
+              label: "기타 자격 요건",
               value: data?.additional_qualifications || "-",
               itemType: "text"
             },
