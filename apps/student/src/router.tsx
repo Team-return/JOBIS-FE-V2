@@ -32,6 +32,7 @@ import {
   recruitmentApplyLoader
 } from "./pages/recruitment-apply";
 import { PreparingPage } from "./pages/preparing";
+import { JobRate } from "./pages/job-rate";
 
 const StudentHeader = () => {
   const { data: profile } = useStudentMy();
@@ -182,7 +183,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/jobrate",
-          element: <div>취업률 페이지</div>
+          element: <JobRate />
         }
       ]
     },
