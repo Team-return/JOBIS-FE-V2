@@ -80,8 +80,22 @@ export const JobRate = () => {
   const { currentTheme: theme } = useTheme();
   const year = new Date().getFullYear();
 
-  const { data: countData } = useEmploymentCount(year);
-  const { data: employmentData } = useEmployment(year);
+  const { data: countData, isError: isCountError } = useEmploymentCount(year);
+  const { data: employmentData, isError: isEmploymentError } =
+    useEmployment(year);
+
+  // 조회에 실패하면 "-"와 빈 반 목록 대신 실패했다고 알린다
+  if ((isCountError && !countData) || (isEmploymentError && !employmentData)) {
+    return (
+      <Container $maxWidth={960} $padding={[160, 0, 232, 0]}>
+        <Flex $justify="center">
+          <Text $size="h6" $color={theme.color.grayScale[70]}>
+            취업률 정보를 불러오지 못했습니다.
+          </Text>
+        </Flex>
+      </Container>
+    );
+  }
 
   const passed = countData?.passed_count ?? 0;
   const total = countData?.total_student_count ?? 0;
