@@ -16,6 +16,7 @@ import {
   getRecruitmentStatusLabel,
   YEAR_OPTIONS,
   toFileUrl,
+  useBookmarkToggle,
   useDebounce,
   useQueryParams
 } from "../../utils";
@@ -31,6 +32,7 @@ import {
 export const RecruitmentList = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
   const navigate = useNavigate();
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
   const currentPage = getParamAsNumber("page", 1);
   const currentName = getParam("name") || "";
@@ -181,10 +183,19 @@ export const RecruitmentList = () => {
                 companyProfileUrl={toFileUrl(recruitment.company_profile_url)}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                bookmarked={recruitment.bookmarked}
+                bookmarked={isBookmarked(
+                  recruitment.id,
+                  recruitment.bookmarked
+                )}
                 status={getRecruitmentStatusLabel(recruitment.status)}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
+                }
+                onBookmarkClick={() =>
+                  toggleBookmark(
+                    recruitment.id,
+                    isBookmarked(recruitment.id, recruitment.bookmarked)
+                  )
                 }
               />
             );
