@@ -71,7 +71,12 @@ export const RecruitmentList = () => {
     tech_code: techStack || undefined
   });
 
-  const { data: RecruitmentListData, isLoading } = useRecruitmentList({
+  const {
+    data: RecruitmentListData,
+    isLoading,
+    isSuccess,
+    isError
+  } = useRecruitmentList({
     page: currentPage,
     name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
@@ -82,7 +87,9 @@ export const RecruitmentList = () => {
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
-  const isEmpty = !isLoading && recruitments.length === 0;
+  // 요청 실패가 "검색 결과 없음"으로 보이지 않도록 빈 목록은 성공 응답에서만 판정한다
+  const isListError = isError && !RecruitmentListData;
+  const isEmpty = isSuccess && recruitments.length === 0;
 
   useEffect(() => {
     if (debouncedKeyword === currentName) return;
@@ -154,10 +161,14 @@ export const RecruitmentList = () => {
       </Flex>
       <Box $margin={[32, 0, 0, 0]}></Box>
 
-      {isEmpty ? (
+      {isListError || isEmpty ? (
         <Flex $justify="center">
           <Box $margin={[50, 0]}>
-            <Text $size="body2">검색된 기업이 없습니다.</Text>
+            <Text $size="body2">
+              {isListError
+                ? "모집의뢰서 목록을 불러오지 못했습니다."
+                : "검색된 기업이 없습니다."}
+            </Text>
           </Box>
         </Flex>
       ) : (
@@ -204,7 +215,7 @@ export const RecruitmentList = () => {
         </Grid>
       )}
       {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
-      {!isEmpty && (
+      {!isEmpty && !isListError && (
         <Box $margin={[40, 0, 0, 0]}>
           <Flex $justify="center">
             <Pagination

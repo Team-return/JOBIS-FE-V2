@@ -50,14 +50,21 @@ export const CompanyList = () => {
   const { data: companyCountData } = useCompanyStudentCount({
     name: currentName
   });
-  const { data: companyListData, isLoading } = useCompanyStudentList({
+  const {
+    data: companyListData,
+    isLoading,
+    isSuccess,
+    isError
+  } = useCompanyStudentList({
     page: currentPage,
     name: currentName,
     sort_type: currentSort as ListSortType
   });
 
   const companies = companyListData?.companies || [];
-  const isEmpty = !isLoading && companies.length === 0;
+  // 요청 실패가 "검색 결과 없음"으로 보이지 않도록 빈 목록은 성공 응답에서만 판정한다
+  const isListError = isError && !companyListData;
+  const isEmpty = isSuccess && companies.length === 0;
 
   const sortType = [
     { label: "기본순", value: "" },
@@ -103,10 +110,14 @@ export const CompanyList = () => {
             />
           </Flex>
         </Flex>
-        {isEmpty ? (
+        {isListError || isEmpty ? (
           <Flex $justify="center">
             <Box $margin={[50, 0]}>
-              <Text $size="body2">검색된 기업이 없습니다.</Text>
+              <Text $size="body2">
+                {isListError
+                  ? "기업 목록을 불러오지 못했습니다."
+                  : "검색된 기업이 없습니다."}
+              </Text>
             </Box>
           </Flex>
         ) : (
@@ -129,7 +140,7 @@ export const CompanyList = () => {
         )}
         <Box $margin={[4, 0]}></Box>
         {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
-        {!isEmpty && (
+        {!isEmpty && !isListError && (
           <Pagination
             start={1}
             end={companyCountData?.total_page_count || 1}
