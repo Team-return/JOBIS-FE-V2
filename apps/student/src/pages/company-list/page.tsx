@@ -94,7 +94,7 @@ export const CompanyList = () => {
               $width={70}
               type={undefined}
               $isNoneBorder={true}
-              $defaultValue={currentSort || ""}
+              value={currentSort}
               onChange={value =>
                 updateParams({ "sort-type": value || undefined, "page": 1 })
               }
