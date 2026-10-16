@@ -22,9 +22,11 @@ const Component = styled.div`
   }
 `;
 
+// 로고는 대부분 정사각형이라 칸에 맞춰 늘리면 찌그러진다. 비율을 지키고 남는 곳은 흰색으로 채운다
 const ProfileImage = styled.img`
   flex-shrink: 0;
-  background-color: ${({ theme }) => theme.color.grayScale[40]};
+  object-fit: contain;
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
   border: 1px solid ${({ theme }) => theme.color.grayScale[40]};
   border-radius: 12px 12px 0 0;
 `;
