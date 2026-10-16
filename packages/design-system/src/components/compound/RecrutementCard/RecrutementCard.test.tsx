@@ -77,6 +77,32 @@ describe("RecrutementCard", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  it("calls only onBookmarkClick when the bookmark is clicked", () => {
+    const onClick = vi.fn();
+    const onBookmarkClick = vi.fn();
+    renderWithTheme(
+      <RecrutementCard
+        {...defaultProps}
+        onClick={onClick}
+        onBookmarkClick={onBookmarkClick}
+      />
+    );
+
+    fireEvent.click(screen.getByLabelText("bookmark"));
+
+    expect(onBookmarkClick).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("falls back to onClick when onBookmarkClick is not provided", () => {
+    const onClick = vi.fn();
+    renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);
+
+    fireEvent.click(screen.getByLabelText("bookmark"));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
   it("does not call onClick when not provided", () => {
     renderWithTheme(<RecrutementCard {...defaultProps} />);
 

@@ -87,7 +87,8 @@ export const RecrutementCard = ({
   militarySupport,
   bookmarked,
   status,
-  onClick
+  onClick,
+  onBookmarkClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const statusColor = status && getStatusColor(status, theme);
@@ -107,7 +108,17 @@ export const RecrutementCard = ({
               <HiringJobs title={hiringJobs}>{hiringJobs}</HiringJobs>
               <CompanyName title={companyName}>{companyName}</CompanyName>
             </Info>
-            <Bookmark $checked={bookmarked} />
+            <Bookmark
+              $checked={bookmarked}
+              onClick={
+                onBookmarkClick &&
+                (event => {
+                  // 카드 전체가 상세 이동이라 북마크 클릭이 카드로 올라가지 않게 막는다
+                  event.stopPropagation();
+                  onBookmarkClick();
+                })
+              }
+            />
           </Flex>
           <Stack $direction="row" $gap={12}>
             {status && statusColor && (
