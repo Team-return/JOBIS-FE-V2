@@ -281,7 +281,7 @@ export const Home = () => {
       </Flex>
 
       <Box $margin={[120, 0]}>
-        <EmploymentRateBanner onClick={() => {}} />
+        <EmploymentRateBanner onClick={() => navigate("/jobrate")} />
       </Box>
 
       <Flex $direction="column" $gap={16}>
