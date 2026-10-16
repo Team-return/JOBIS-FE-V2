@@ -82,6 +82,7 @@ export const RecruitmentList = () => {
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
+  const isEmpty = !isLoading && recruitments.length === 0;
 
   useEffect(() => {
     if (debouncedKeyword === currentName) return;
@@ -153,7 +154,7 @@ export const RecruitmentList = () => {
       </Flex>
       <Box $margin={[32, 0, 0, 0]}></Box>
 
-      {!isLoading && recruitments.length === 0 ? (
+      {isEmpty ? (
         <Flex $justify="center">
           <Box $margin={[50, 0]}>
             <Text $size="body2">검색된 기업이 없습니다.</Text>
@@ -202,16 +203,19 @@ export const RecruitmentList = () => {
           })}
         </Grid>
       )}
-      <Box $margin={[40, 0, 0, 0]}>
-        <Flex $justify="center">
-          <Pagination
-            start={1}
-            end={companyCountData?.total_page_count || 1}
-            current={currentPage}
-            onChange={page => updateParams({ page: page })}
-          />
-        </Flex>
-      </Box>
+      {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
+      {!isEmpty && (
+        <Box $margin={[40, 0, 0, 0]}>
+          <Flex $justify="center">
+            <Pagination
+              start={1}
+              end={companyCountData?.total_page_count || 1}
+              current={currentPage}
+              onChange={page => updateParams({ page: page })}
+            />
+          </Flex>
+        </Box>
+      )}
     </Container>
   );
 };

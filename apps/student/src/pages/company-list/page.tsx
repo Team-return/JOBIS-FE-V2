@@ -57,6 +57,7 @@ export const CompanyList = () => {
   });
 
   const companies = companyListData?.companies || [];
+  const isEmpty = !isLoading && companies.length === 0;
 
   const sortType = [
     { label: "기본순", value: "" },
@@ -102,7 +103,7 @@ export const CompanyList = () => {
             />
           </Flex>
         </Flex>
-        {!isLoading && companies.length === 0 ? (
+        {isEmpty ? (
           <Flex $justify="center">
             <Box $margin={[50, 0]}>
               <Text $size="body2">검색된 기업이 없습니다.</Text>
@@ -127,12 +128,15 @@ export const CompanyList = () => {
           </Grid>
         )}
         <Box $margin={[4, 0]}></Box>
-        <Pagination
-          start={1}
-          end={companyCountData?.total_page_count || 1}
-          current={currentPage}
-          onChange={page => updateParams({ page: page })}
-        />
+        {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
+        {!isEmpty && (
+          <Pagination
+            start={1}
+            end={companyCountData?.total_page_count || 1}
+            current={currentPage}
+            onChange={page => updateParams({ page: page })}
+          />
+        )}
       </Flex>
     </Container>
   );
