@@ -19,7 +19,12 @@ import {
   Button,
   useTheme
 } from "@jobis/design-system";
-import { LoaderData, useQueryParams, toFileUrl } from "../../utils";
+import {
+  LoaderData,
+  useBookmarkToggle,
+  useQueryParams,
+  toFileUrl
+} from "../../utils";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
@@ -42,6 +47,7 @@ export const Home = () => {
   const { currentTheme: theme } = useTheme();
 
   const navigate = useNavigate();
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
   const parsedPage = getParamAsNumber("page", initialParams.page);
   const currentPage =
@@ -275,7 +281,7 @@ export const Home = () => {
       </Flex>
 
       <Box $margin={[120, 0]}>
-        <EmploymentRateBanner onClick={() => {}} />
+        <EmploymentRateBanner onClick={() => navigate("/jobrate")} />
       </Box>
 
       <Flex $direction="column" $gap={16}>
@@ -298,10 +304,19 @@ export const Home = () => {
                 companyProfileUrl={toFileUrl(bookmark.company_logo_url)}
                 hiringJobs={bookmark.hiring_job}
                 militarySupport={bookmark.military_support}
-                bookmarked={bookmark.bookmarked}
+                bookmarked={isBookmarked(
+                  bookmark.recruitment_id,
+                  bookmark.bookmarked
+                )}
                 onClick={() => {
                   navigate(`/recruitment/detail/${bookmark.recruitment_id}`);
                 }}
+                onBookmarkClick={() =>
+                  toggleBookmark(
+                    bookmark.recruitment_id,
+                    isBookmarked(bookmark.recruitment_id, bookmark.bookmarked)
+                  )
+                }
               />
             );
           })}

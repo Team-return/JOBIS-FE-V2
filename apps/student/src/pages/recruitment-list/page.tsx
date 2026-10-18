@@ -16,6 +16,7 @@ import {
   getRecruitmentStatusLabel,
   YEAR_OPTIONS,
   toFileUrl,
+  useBookmarkToggle,
   useDebounce,
   useQueryParams
 } from "../../utils";
@@ -31,6 +32,7 @@ import {
 export const RecruitmentList = () => {
   const { updateParams, getParam, getParamAsNumber } = useQueryParams();
   const navigate = useNavigate();
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
   const currentPage = getParamAsNumber("page", 1);
   const currentName = getParam("name") || "";
@@ -69,7 +71,12 @@ export const RecruitmentList = () => {
     tech_code: techStack || undefined
   });
 
-  const { data: RecruitmentListData, isLoading } = useRecruitmentList({
+  const {
+    data: RecruitmentListData,
+    isLoading,
+    isSuccess,
+    isError
+  } = useRecruitmentList({
     page: currentPage,
     name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
@@ -80,6 +87,9 @@ export const RecruitmentList = () => {
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
+  // 요청 실패가 "검색 결과 없음"으로 보이지 않도록 빈 목록은 성공 응답에서만 판정한다
+  const isListError = isError && !RecruitmentListData;
+  const isEmpty = isSuccess && recruitments.length === 0;
 
   useEffect(() => {
     if (debouncedKeyword === currentName) return;
@@ -151,10 +161,14 @@ export const RecruitmentList = () => {
       </Flex>
       <Box $margin={[32, 0, 0, 0]}></Box>
 
-      {!isLoading && recruitments.length === 0 ? (
+      {isListError || isEmpty ? (
         <Flex $justify="center">
           <Box $margin={[50, 0]}>
-            <Text $size="body2">검색된 기업이 없습니다.</Text>
+            <Text $size="body2">
+              {isListError
+                ? "모집의뢰서 목록을 불러오지 못했습니다."
+                : "검색된 기업이 없습니다."}
+            </Text>
           </Box>
         </Flex>
       ) : (
@@ -181,26 +195,38 @@ export const RecruitmentList = () => {
                 companyProfileUrl={toFileUrl(recruitment.company_profile_url)}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                bookmarked={recruitment.bookmarked}
+                bookmarked={isBookmarked(
+                  recruitment.id,
+                  recruitment.bookmarked
+                )}
                 status={getRecruitmentStatusLabel(recruitment.status)}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
+                }
+                onBookmarkClick={() =>
+                  toggleBookmark(
+                    recruitment.id,
+                    isBookmarked(recruitment.id, recruitment.bookmarked)
+                  )
                 }
               />
             );
           })}
         </Grid>
       )}
-      <Box $margin={[40, 0, 0, 0]}>
-        <Flex $justify="center">
-          <Pagination
-            start={1}
-            end={companyCountData?.total_page_count || 1}
-            current={currentPage}
-            onChange={page => updateParams({ page: page })}
-          />
-        </Flex>
-      </Box>
+      {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
+      {!isEmpty && !isListError && (
+        <Box $margin={[40, 0, 0, 0]}>
+          <Flex $justify="center">
+            <Pagination
+              start={1}
+              end={companyCountData?.total_page_count || 1}
+              current={currentPage}
+              onChange={page => updateParams({ page: page })}
+            />
+          </Flex>
+        </Box>
+      )}
     </Container>
   );
 };
