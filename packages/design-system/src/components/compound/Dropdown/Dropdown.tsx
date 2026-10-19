@@ -112,10 +112,12 @@ const SupportJobTagList = styled.div`
   overflow-y: auto;
 `;
 
+// 고른 태그는 채운 파란색으로 바꿔 선택 여부가 보이게 한다
 const SupportJobTag = styled.button<{ $selected: boolean }>`
   padding: 6px 16px;
   border-radius: 100px;
-  background: ${({ theme }) => theme.color.subColor.blue[20]};
+  background: ${({ theme, $selected }) =>
+    $selected ? theme.color.primary[20] : theme.color.subColor.blue[20]};
   width: fit-content;
   cursor: pointer;
   border: none;
@@ -236,13 +238,22 @@ export const Dropdown = ({
                   filteredOptions?.map(opt => (
                     <SupportJobTag
                       key={opt.value}
+                      type="button"
+                      aria-pressed={opt.value === selected}
                       $selected={opt.value === selected}
-                      onClick={() => handleSelect(opt.value)}
+                      // 전체 보기 옵션이 없어 고른 태그를 다시 누르면 선택을 푼다
+                      onClick={() =>
+                        handleSelect(opt.value === selected ? "" : opt.value)
+                      }
                     >
                       <Text
                         $size="caption"
                         $weight="regular"
-                        $color={theme.color.subColor.blue[30]}
+                        $color={
+                          opt.value === selected
+                            ? theme.color.grayScale[10]
+                            : theme.color.subColor.blue[30]
+                        }
                       >
                         {opt.label}
                       </Text>

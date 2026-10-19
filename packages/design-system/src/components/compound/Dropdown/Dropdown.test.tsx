@@ -69,6 +69,41 @@ describe("Dropdown", () => {
     expect(screen.queryByText("프론트엔드")).not.toBeInTheDocument();
   });
 
+  it("marks the selected supportJob tag and clears it when clicked again", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+
+    renderWithTheme(
+      <Dropdown
+        options={options}
+        type="supportJob"
+        $defaultValue="backend"
+        isOpen
+        onChange={handleChange}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "프론트엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+    await user.click(screen.getByRole("button", { name: "백엔드" }));
+    expect(handleChange).toHaveBeenLastCalledWith("");
+
+    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+    await user.click(screen.getByRole("button", { name: "프론트엔드" }));
+    expect(handleChange).toHaveBeenLastCalledWith("frontend");
+  });
+
   it("works in controlled mode with isOpen and onToggle", async () => {
     const user = userEvent.setup();
     const handleToggle = vi.fn();
