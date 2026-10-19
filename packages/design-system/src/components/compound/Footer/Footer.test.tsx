@@ -8,9 +8,7 @@ describe("Footer", () => {
     renderWithTheme(<Footer />);
 
     expect(screen.getByText("연락처) 042-866-8843")).toBeInTheDocument();
-    expect(
-      screen.getByText("이메일) team-return@dsm.hs.kr")
-    ).toBeInTheDocument();
+    expect(screen.getByText("이메일) jobis@dsm.hs.kr")).toBeInTheDocument();
     expect(
       screen.getByText(
         "주소) 대전광역시 유성구 가정북로 76 (창의관 산학협력부)"
