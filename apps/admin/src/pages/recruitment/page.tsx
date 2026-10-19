@@ -34,6 +34,7 @@ import {
   YEAR_OPTIONS,
   PAGE_SIZE,
   formatDate,
+  parseLocalDate,
   type LoaderData,
   useQueryParams
 } from "../../utils";
@@ -61,8 +62,8 @@ export const Recruitment = () => {
   const period: PeriodValue | undefined =
     startDate && endDate
       ? {
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
+          startDate: parseLocalDate(startDate),
+          endDate: parseLocalDate(endDate),
           isConstant: false
         }
       : undefined;

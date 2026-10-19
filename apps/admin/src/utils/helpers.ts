@@ -1,7 +1,17 @@
 export const formatDate = (date?: Date | string): string | undefined => {
   if (!date) return undefined;
   const dateObj = typeof date === "string" ? new Date(date) : date;
-  return dateObj.toISOString().split("T")[0];
+  // toISOString은 UTC 기준이라 한국 시간 자정에 고른 날짜가 하루 전날로 바뀐다
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+/** YYYY-MM-DD를 그 날 자정(현지 시간)으로 읽는다. new Date("YYYY-MM-DD")는 UTC 자정이라 formatDate와 어긋난다 */
+export const parseLocalDate = (value: string): Date => {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
 };
 
 export const booleanToYN = (value: boolean): string => {
