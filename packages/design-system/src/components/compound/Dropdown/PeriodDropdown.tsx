@@ -26,10 +26,10 @@ const TriggerButton = styled.button<
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
   min-width: ${({ $width }) => $width};
-  ${({ isOpen, theme }) =>
+  ${({ isOpen, theme, $color }) =>
     isOpen &&
     `
-      border-color: ${theme.color.grayScale[90]};
+      border-color: ${$color || theme.color.grayScale[90]};
     `}
 `;
 

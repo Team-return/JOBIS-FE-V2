@@ -32,12 +32,13 @@ const TriggerButton = styled.button<
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
   min-width: ${({ $width }) => $width};
-  ${({ isOpen, theme }) =>
+  /* 색을 지정한 드롭다운(상태변경 등)은 열려도 같은 색을 유지한다 */
+  ${({ isOpen, theme, $color }) =>
     isOpen &&
     `
-      border-color: ${theme.color.grayScale[90]};
+      border-color: ${$color || theme.color.grayScale[90]};
     `}
-  color: ${({ theme }) => theme.color.grayScale[60]};
+  color: ${({ theme, $color }) => $color || theme.color.grayScale[60]};
   white-space: nowrap;
 `;
 
