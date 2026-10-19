@@ -102,12 +102,12 @@ export const Notice = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<NoticeQuery>;
   const { currentTheme: theme } = useTheme();
 
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getPageParam } = useQueryParams();
   const navigate = useNavigate();
 
   const [localSearch, setLocalSearch] = useState(initialParams.title || "");
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const searchKeyword = getParam("title") ?? "";
 
   const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_DELAY);

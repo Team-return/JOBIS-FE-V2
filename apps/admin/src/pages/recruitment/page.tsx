@@ -46,13 +46,13 @@ export const Recruitment = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { updateParams, resetParams, getParam, getParamAsNumber } =
+  const { updateParams, resetParams, getParam, getPageParam } =
     useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const year = getParam("year");
   const type = getParam("type");
   const state = getParam("status");

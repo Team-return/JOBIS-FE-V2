@@ -212,7 +212,7 @@ export const Application = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { updateParams, resetParams, getParam, getParamAsNumber } =
+  const { updateParams, resetParams, getParam, getPageParam } =
     useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -223,7 +223,7 @@ export const Application = () => {
 
   const [openedAttachment, setOpenedAttachment] = useState<number | null>(null);
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const applicationStatus = getParam("application-status");
   const yearFilter = getParam("year");
 
