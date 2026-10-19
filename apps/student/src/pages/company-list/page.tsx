@@ -35,10 +35,10 @@ const CompanyCardSkeleton = () => {
 
 export const CompanyList = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<CompanyQuery>;
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getPageParam } = useQueryParams();
   const navigate = useNavigate();
 
-  const currentPage = getParamAsNumber("page", initialParams.page);
+  const currentPage = getPageParam();
   const currentName = getParam("name") ?? initialParams.name ?? "";
   const currentSort = (getParam("sort-type") ??
     initialParams.sortType ??

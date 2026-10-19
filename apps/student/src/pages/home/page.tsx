@@ -43,17 +43,13 @@ const takeItems = <T,>(items: T[] | undefined, count: number) =>
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
-  const { getParam, getParamAsNumber } = useQueryParams();
+  const { getParam, getPageParam } = useQueryParams();
   const { currentTheme: theme } = useTheme();
 
   const navigate = useNavigate();
   const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
-  const parsedPage = getParamAsNumber("page", initialParams.page);
-  const currentPage =
-    Number.isFinite(parsedPage) && parsedPage >= 1
-      ? parsedPage
-      : initialParams.page;
+  const currentPage = getPageParam();
   const currentName = getParam("name") ?? initialParams.name ?? "";
   const allowedSortTypes: readonly ListSortType[] = [
     "WORKERS_COUNT_ASC",
