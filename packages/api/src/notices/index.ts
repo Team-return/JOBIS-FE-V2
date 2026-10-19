@@ -2,7 +2,9 @@
   CreateNoticeRequest,
   UpdateNoticeRequest,
   NoticeDetailResponse,
-  NoticeListResponse
+  NoticeListResponse,
+  NoticePageQueryParams,
+  NoticeCountResponse
 } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { createDomainApi } from "@/create-hook";
@@ -39,10 +41,24 @@ export const useNoticeDetail = createQueryHook<number, NoticeDetailResponse>({
 
 /** 서버는 GET /notices?page=N 으로 공지를 12개씩 나눠 준다 */
 export const NOTICE_LIST_PAGE_SIZE = 12;
+
+/** 한 페이지(12개)만 받는다. 전체 페이지 수는 useNoticeCount로 따로 받는다 */
+export const useNoticePage = createQueryHook<
+  NoticePageQueryParams,
+  NoticeListResponse
+>({
+  path: "/",
+  queryKey: noticesKeys.noticePage
+});
+
+export const useNoticeCount = createQueryHook<void, NoticeCountResponse>({
+  path: "/count",
+  queryKey: noticesKeys.noticeCount
+});
 const MAX_NOTICE_PAGES = 100;
 
-// 전체 개수를 알려 주는 API가 없어, 12개 미만인 페이지가 나올 때까지 이어 받아 전체 목록을 만든다.
-// 페이지 나누기·번호 매기기·검색은 화면에서 이 전체 목록으로 한다.
+// 전체 공지 개수를 알려 주는 API가 없어(/count는 페이지 수만 준다), 12개 미만인 페이지가 나올 때까지
+// 이어 받아 전체 목록을 만든다. 서버에 제목 검색이 없어 검색·전체 순번이 필요한 화면에서만 쓴다.
 const fetchAllNotices = async (): Promise<NoticeListResponse> => {
   const notices: NoticeListResponse["notices"] = [];
 
