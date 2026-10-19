@@ -30,11 +30,11 @@ import {
 } from "@jobis/api";
 
 export const RecruitmentList = () => {
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getPageParam } = useQueryParams();
   const navigate = useNavigate();
   const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const currentName = getParam("name") || "";
   const currentSort = getParam("sort-type") || "";
   const state = getParam("status") || "";

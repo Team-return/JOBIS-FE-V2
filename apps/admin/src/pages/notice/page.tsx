@@ -14,7 +14,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { useNoticeList } from "@jobis/api";
+import { useNoticeCount, useNoticeList, useNoticePage } from "@jobis/api";
 import {
   useDebounce,
   useQueryParams,
@@ -102,21 +102,53 @@ export const Notice = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<NoticeQuery>;
   const { currentTheme: theme } = useTheme();
 
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getPageParam } = useQueryParams();
   const navigate = useNavigate();
 
   const [localSearch, setLocalSearch] = useState(initialParams.title || "");
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const searchKeyword = getParam("title") ?? "";
 
   const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_DELAY);
 
-  const { data, isLoading } = useNoticeList();
+  // 평소에는 보고 있는 페이지만 받는다. 서버에 제목 검색이 없어 검색할 때만 전체 목록을 받아 거른다
+  const isSearching = searchKeyword !== "";
+  const pageQuery = useNoticePage(
+    { page: currentPage },
+    { enabled: !isSearching }
+  );
+  const countQuery = useNoticeCount(undefined, { enabled: !isSearching });
+  const searchQuery = useNoticeList({ enabled: isSearching });
 
-  const notices = (data?.notices ?? []).filter(notice =>
+  const searchedNotices = (searchQuery.data?.notices ?? []).filter(notice =>
     notice.title.includes(searchKeyword)
   );
+  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
+  const notices = isSearching
+    ? searchedNotices.slice(startIndex, startIndex + NOTICE_PAGE_SIZE)
+    : (pageQuery.data?.notices ?? []);
+  // 페이지 수 요청이 실패하거나 아직 오지 않았으면, 지금 페이지가 꽉 찼을 때만 다음 페이지가 있다고 본다
+  const fallbackPages =
+    notices.length === NOTICE_PAGE_SIZE ? currentPage + 1 : currentPage;
+  const totalPages = Math.max(
+    1,
+    isSearching
+      ? Math.ceil(searchedNotices.length / NOTICE_PAGE_SIZE)
+      : (countQuery.data?.total_page_count ?? fallbackPages)
+  );
+  const isLoading = isSearching ? searchQuery.isLoading : pageQuery.isLoading;
+  const isError = isSearching ? searchQuery.isError : pageQuery.isError;
+  // 전체 페이지 수를 받기 전에는 범위를 벗어났는지 알 수 없다
+  const isPageRangeKnown = isSearching
+    ? searchQuery.isSuccess
+    : countQuery.isSuccess;
+  // 페이지 수가 오래됐거나(다른 곳에서 삭제) 못 받았어도, 빈 페이지에 갇히지 않게 한다
+  const isEmptyLaterPage =
+    !isSearching &&
+    pageQuery.isSuccess &&
+    notices.length === 0 &&
+    currentPage > 1;
 
   const tableRows: ReactNode[][] = notices.map(notice => [
     <NoticeCell
@@ -143,14 +175,6 @@ export const Notice = () => {
     </NoticeCell>
   ]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(tableRows.length / NOTICE_PAGE_SIZE)
-  );
-  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
-  const endIndex = startIndex + NOTICE_PAGE_SIZE;
-  const paginatedRows = tableRows.slice(startIndex, endIndex);
-
   const syncedKeyword = useRef(searchKeyword);
 
   useEffect(() => {
@@ -165,9 +189,16 @@ export const Notice = () => {
     updateParams({ title: debouncedSearch || undefined, page: undefined });
   }, [debouncedSearch, updateParams]);
   useEffect(() => {
-    if (isLoading || currentPage <= totalPages) return;
+    const isOutOfRange = isPageRangeKnown && currentPage > totalPages;
+    if (!isOutOfRange && !isEmptyLaterPage) return;
     updateParams({ page: undefined });
-  }, [isLoading, currentPage, totalPages, updateParams]);
+  }, [
+    isPageRangeKnown,
+    isEmptyLaterPage,
+    currentPage,
+    totalPages,
+    updateParams
+  ]);
 
   return (
     <Container $padding={[68, 0, 112]} $maxWidth={NOTICE_TABLE_WIDTH}>
@@ -207,9 +238,11 @@ export const Notice = () => {
               $align="center"
               $color={theme.color.grayScale[60]}
             >
-              {searchKeyword
-                ? "검색 결과가 없습니다."
-                : "등록된 공지사항이 없습니다."}
+              {isError
+                ? "공지사항을 불러오지 못했습니다."
+                : searchKeyword
+                  ? "검색 결과가 없습니다."
+                  : "등록된 공지사항이 없습니다."}
             </Text>
           </Box>
         ) : (
@@ -232,7 +265,7 @@ export const Notice = () => {
                   />,
                   "작성일"
                 ]}
-                rows={paginatedRows}
+                rows={tableRows}
                 columnWidths={NOTICE_COLUMN_WIDTHS}
                 rowHeight={NOTICE_ROW_HEIGHT}
                 headerBorder={false}

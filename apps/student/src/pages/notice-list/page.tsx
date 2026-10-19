@@ -23,14 +23,14 @@ export const NoticesList = () => {
   const navigate = useNavigate();
   const { currentTheme: theme } = useTheme();
   const { data, isPending, isError } = useNoticeList();
-  const { getParamAsNumber, updateParams } = useQueryParams();
+  const { getPageParam, updateParams } = useQueryParams();
 
   const notices = data?.notices ?? [];
   const totalPages = Math.max(
     1,
     Math.ceil(notices.length / NOTICE_LIST_PAGE_SIZE)
   );
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
   const pageNotices = notices.slice(
     startIndex,

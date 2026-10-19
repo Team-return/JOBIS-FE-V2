@@ -26,7 +26,7 @@ export const Footer = () => {
           {"연락처) 042-866-8843"}
         </Text>
         <Text $size="caption" $color={theme.color.grayScale[10]}>
-          {"이메일) team-return@dsm.hs.kr"}
+          {"이메일) jobis@dsm.hs.kr"}
         </Text>
         <Text $size="caption" $color={theme.color.grayScale[10]}>
           {"주소) 대전광역시 유성구 가정북로 76 (창의관 산학협력부)"}

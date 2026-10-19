@@ -69,6 +69,41 @@ describe("Dropdown", () => {
     expect(screen.queryByText("프론트엔드")).not.toBeInTheDocument();
   });
 
+  it("marks the selected supportJob tag and clears it when clicked again", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+
+    renderWithTheme(
+      <Dropdown
+        options={options}
+        type="supportJob"
+        $defaultValue="backend"
+        isOpen
+        onChange={handleChange}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "프론트엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+    await user.click(screen.getByRole("button", { name: "백엔드" }));
+    expect(handleChange).toHaveBeenLastCalledWith("");
+
+    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+    await user.click(screen.getByRole("button", { name: "프론트엔드" }));
+    expect(handleChange).toHaveBeenLastCalledWith("frontend");
+  });
+
   it("works in controlled mode with isOpen and onToggle", async () => {
     const user = userEvent.setup();
     const handleToggle = vi.fn();
@@ -231,6 +266,58 @@ describe("DropdownPeriod", () => {
     await user.click(trigger);
 
     expect(handleToggle).toHaveBeenCalledWith(true);
+  });
+
+  it("applies dates typed into the inputs without opening the calendar", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+
+    renderWithTheme(<PeriodDropdown onChange={handleChange} />);
+
+    await user.click(screen.getByRole("button"));
+
+    const startInput = screen.getByLabelText("모집 시작일");
+    await user.click(startInput);
+    expect(screen.queryByText("MON")).not.toBeInTheDocument();
+
+    await user.type(startInput, "20261008");
+    expect(startInput).toHaveValue("2026.10.08");
+
+    await user.type(screen.getByLabelText("모집 종료일"), "2026.10.31");
+    await user.click(screen.getByRole("button", { name: "확인" }));
+
+    expect(handleChange).toHaveBeenCalledWith({
+      startDate: new Date(2026, 9, 8),
+      endDate: new Date(2026, 9, 31),
+      isConstant: false
+    });
+  });
+
+  it("clears a typed date that does not exist on blur", async () => {
+    const user = userEvent.setup();
+
+    renderWithTheme(<PeriodDropdown />);
+
+    await user.click(screen.getByRole("button"));
+
+    const startInput = screen.getByLabelText("모집 시작일");
+    await user.type(startInput, "20260230");
+    await user.tab();
+
+    expect(startInput).toHaveValue("");
+  });
+
+  it("opens the calendar only from the calendar icon", async () => {
+    const user = userEvent.setup();
+
+    renderWithTheme(<PeriodDropdown />);
+
+    await user.click(screen.getByRole("button"));
+    await user.click(
+      screen.getByRole("button", { name: "모집 시작일 달력 열기" })
+    );
+
+    expect(screen.getByText("MON")).toBeInTheDocument();
   });
 
   it("resets internal state when value becomes undefined", () => {
