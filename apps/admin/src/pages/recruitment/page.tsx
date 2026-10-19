@@ -58,12 +58,15 @@ export const Recruitment = () => {
   const state = getParam("status");
   const startDate = getParam("start");
   const endDate = getParam("end");
+  const parsedStartDate = startDate ? parseLocalDate(startDate) : null;
+  const parsedEndDate = endDate ? parseLocalDate(endDate) : null;
 
+  // 주소에 잘못된 날짜가 들어 있으면 기간을 설정하지 않은 것으로 본다
   const period: PeriodValue | undefined =
-    startDate && endDate
+    parsedStartDate && parsedEndDate
       ? {
-          startDate: parseLocalDate(startDate),
-          endDate: parseLocalDate(endDate),
+          startDate: parsedStartDate,
+          endDate: parsedEndDate,
           isConstant: false
         }
       : undefined;
