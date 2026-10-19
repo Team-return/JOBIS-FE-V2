@@ -22,8 +22,13 @@ const Component = styled.div`
   }
 `;
 
-// 로고는 대부분 정사각형이라 칸에 맞춰 늘리면 찌그러진다. 비율을 지키고 남는 곳은 흰색으로 채운다
+// 로고는 대부분 정사각형이라 칸에 맞춰 늘리면 찌그러진다. 비율을 지키고 남는 곳은 흰색으로 채운다.
+// 이미지를 못 불러와도 대체 글자만큼 늘거나 줄어 아래 내용을 밀지 않도록 크기를 고정한다
 const ProfileImage = styled.img`
+  display: block;
+  width: 222px;
+  height: 144px;
+  overflow: hidden;
   flex-shrink: 0;
   object-fit: contain;
   background-color: ${({ theme }) => theme.color.grayScale[10]};
