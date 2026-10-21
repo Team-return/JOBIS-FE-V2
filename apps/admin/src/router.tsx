@@ -17,6 +17,7 @@ import {
   noticeEditLoader,
   noticeLoader,
   NoticeWrite,
+  PreparingPage,
   Recruitment,
   recruitmentLoader,
   Student,
@@ -28,7 +29,13 @@ export const router: ReturnType<typeof createBrowserRouter> =
     {
       path: "/",
       element: (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          }}
+        >
           <Header type="admin" />
           <main style={{ flex: 1 }}>
             <Outlet />
@@ -72,11 +79,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>학생 후기 목록</div>
+              element: <PreparingPage />
             },
             {
               path: "detail/:reviewId",
-              element: <div>학생 후기 상세</div>
+              element: <PreparingPage />
             }
           ]
         },
@@ -111,10 +118,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>배너 목록</div>
+              element: <PreparingPage />
             },
-            { path: "write", element: <div>배너 등록</div> },
-            { path: "detail/edit/:bannerId", element: <div>배너 수정</div> }
+            { path: "write", element: <PreparingPage /> },
+            { path: "detail/edit/:bannerId", element: <PreparingPage /> }
           ]
         }
       ]

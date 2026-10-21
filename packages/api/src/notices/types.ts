@@ -32,3 +32,11 @@ interface NoticeListItem {
 export interface NoticeListResponse {
   notices: NoticeListItem[];
 }
+
+export interface NoticePageQueryParams {
+  page: number;
+}
+
+export interface NoticeCountResponse {
+  total_page_count: number;
+}

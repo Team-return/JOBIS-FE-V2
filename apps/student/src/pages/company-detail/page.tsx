@@ -7,7 +7,7 @@ import {
   Box
 } from "@jobis/design-system";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { LoaderData } from "apps/student/src/utils";
+import { LoaderData, toFileUrl } from "apps/student/src/utils";
 
 const formatBusinessNumber = (businessNumber?: string) => {
   if (!businessNumber) return "-";
@@ -61,7 +61,11 @@ export const CompanyDetail = () => {
           <DetailHeader
             type="company"
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
-            logoUrl={data?.company_profile_url || "/logo.svg"}
+            logoUrl={
+              data?.company_profile_url
+                ? toFileUrl(data.company_profile_url)
+                : "/logo.svg"
+            }
             businessNumber={formatBusinessNumber(data?.business_number)}
             onViewReview={handleViewReview}
           />

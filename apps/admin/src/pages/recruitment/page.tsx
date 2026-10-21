@@ -34,6 +34,7 @@ import {
   YEAR_OPTIONS,
   PAGE_SIZE,
   formatDate,
+  parseLocalDate,
   type LoaderData,
   useQueryParams
 } from "../../utils";
@@ -45,24 +46,27 @@ export const Recruitment = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { updateParams, resetParams, getParam, getParamAsNumber } =
+  const { updateParams, resetParams, getParam, getPageParam } =
     useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const year = getParam("year");
   const type = getParam("type");
   const state = getParam("status");
   const startDate = getParam("start");
   const endDate = getParam("end");
+  const parsedStartDate = startDate ? parseLocalDate(startDate) : null;
+  const parsedEndDate = endDate ? parseLocalDate(endDate) : null;
 
+  // 주소에 잘못된 날짜가 들어 있으면 기간을 설정하지 않은 것으로 본다
   const period: PeriodValue | undefined =
-    startDate && endDate
+    parsedStartDate && parsedEndDate
       ? {
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
+          startDate: parsedStartDate,
+          endDate: parsedEndDate,
           isConstant: false
         }
       : undefined;

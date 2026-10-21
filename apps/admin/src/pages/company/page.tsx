@@ -53,7 +53,7 @@ export const Company = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { updateParams, resetParams, getParam, getParamAsNumber } =
+  const { updateParams, resetParams, getParam, getPageParam } =
     useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export const Company = () => {
   const companyType = getParam("type");
   const region = getParam("region");
   const businessArea = getParam("business-area");
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
 
   const debouncedSearch = useDebounce(localSearch, 300);
 

@@ -19,7 +19,12 @@ import {
   Button,
   useTheme
 } from "@jobis/design-system";
-import { LoaderData, useQueryParams } from "../../utils";
+import {
+  LoaderData,
+  useBookmarkToggle,
+  useQueryParams,
+  toFileUrl
+} from "../../utils";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import type { HomeQuery } from "./loader";
 
@@ -38,16 +43,13 @@ const takeItems = <T,>(items: T[] | undefined, count: number) =>
 
 export const Home = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<HomeQuery>;
-  const { getParam, getParamAsNumber } = useQueryParams();
+  const { getParam, getPageParam } = useQueryParams();
   const { currentTheme: theme } = useTheme();
 
   const navigate = useNavigate();
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
-  const parsedPage = getParamAsNumber("page", initialParams.page);
-  const currentPage =
-    Number.isFinite(parsedPage) && parsedPage >= 1
-      ? parsedPage
-      : initialParams.page;
+  const currentPage = getPageParam();
   const currentName = getParam("name") ?? initialParams.name ?? "";
   const allowedSortTypes: readonly ListSortType[] = [
     "WORKERS_COUNT_ASC",
@@ -213,7 +215,7 @@ export const Home = () => {
                 <CompanyCard
                   key={company.company_id}
                   companyName={company.company_name}
-                  imgUrl={company.company_logo_url}
+                  imgUrl={toFileUrl(company.company_logo_url)}
                   hasRecruitment={company.is_recruiting}
                   onClick={() => {
                     navigate(`/company/detail/${company.company_id}`);
@@ -261,7 +263,7 @@ export const Home = () => {
                 <CompanyCard
                   key={company.id}
                   companyName={company.name}
-                  imgUrl={company.logo_url}
+                  imgUrl={toFileUrl(company.logo_url)}
                   annualSales={`연매출 ${company.take}억`}
                   hasRecruitment={company.has_recruitment}
                   onClick={() => {
@@ -275,7 +277,7 @@ export const Home = () => {
       </Flex>
 
       <Box $margin={[120, 0]}>
-        <EmploymentRateBanner onClick={() => {}} />
+        <EmploymentRateBanner onClick={() => navigate("/jobrate")} />
       </Box>
 
       <Flex $direction="column" $gap={16}>
@@ -295,13 +297,22 @@ export const Home = () => {
               <RecrutementCard
                 key={bookmark.recruitment_id}
                 companyName={bookmark.company_name}
-                companyProfileUrl={bookmark.company_logo_url}
+                companyProfileUrl={toFileUrl(bookmark.company_logo_url)}
                 hiringJobs={bookmark.hiring_job}
                 militarySupport={bookmark.military_support}
-                bookmarked={bookmark.bookmarked}
+                bookmarked={isBookmarked(
+                  bookmark.recruitment_id,
+                  bookmark.bookmarked
+                )}
                 onClick={() => {
                   navigate(`/recruitment/detail/${bookmark.recruitment_id}`);
                 }}
+                onBookmarkClick={() =>
+                  toggleBookmark(
+                    bookmark.recruitment_id,
+                    isBookmarked(bookmark.recruitment_id, bookmark.bookmarked)
+                  )
+                }
               />
             );
           })}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
-import { Flex, Icon, Text } from "@/components";
+import { Icon, Text } from "@/components";
 import type { Props } from "./Dropdown.types";
 import { Search } from "../Search";
 
@@ -17,7 +17,10 @@ const TriggerButton = styled.button<
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 7px;
+  height: 40px;
+  padding: 0 16px;
+  font-size: ${({ theme }) => theme.font.body3.fontSize};
+  line-height: ${({ theme }) => theme.font.body3.lineHeight};
   border: 1px solid
     ${({ theme, $color }) => $color || theme.color.grayScale[50]};
   ${({ $isNoneBorder }) =>
@@ -29,12 +32,13 @@ const TriggerButton = styled.button<
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
   min-width: ${({ $width }) => $width};
-  ${({ isOpen, theme }) =>
+  /* 색을 지정한 드롭다운(상태변경 등)은 열려도 같은 색을 유지한다 */
+  ${({ isOpen, theme, $color }) =>
     isOpen &&
     `
-      border-color: ${theme.color.grayScale[90]};
+      border-color: ${$color || theme.color.grayScale[90]};
     `}
-  color: ${({ theme }) => theme.color.grayScale[60]};
+  color: ${({ theme, $color }) => $color || theme.color.grayScale[60]};
   white-space: nowrap;
 `;
 
@@ -50,15 +54,20 @@ const DefaultOptions = styled.ul`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 100%;
+  min-width: 100%;
+  width: max-content;
+  max-height: 320px;
+  overflow-y: auto;
   box-shadow: 0px 4px 20px rgba(112, 144, 176, 0.12);
   border-radius: 8px;
   background: ${({ theme }) => theme.color.grayScale[10]};
   list-style: none;
-  padding: 4px 0;
+  padding: 8px 0;
   margin: 0;
   z-index: 10;
-  color: ${({ theme }) => theme.color.grayScale[50]};
+  color: ${({ theme }) => theme.color.grayScale[60]};
+  font-size: ${({ theme }) => theme.font.caption.fontSize};
+  line-height: ${({ theme }) => theme.font.caption.lineHeight};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,7 +75,7 @@ const DefaultOptions = styled.ul`
 
 const DefaultOption = styled.li<{ $selected: boolean }>`
   white-space: nowrap;
-  padding: 8px 16px;
+  padding: 8px 22px;
   cursor: pointer;
 
   &:hover {
@@ -76,7 +85,7 @@ const DefaultOption = styled.li<{ $selected: boolean }>`
   ${({ $selected, theme }) =>
     $selected &&
     `
-      color: ${theme.color.primary[30]};
+      color: ${theme.color.primary[20]};
     `}
 `;
 
@@ -87,15 +96,28 @@ const SupportJobOptions = styled.div`
   background-color: ${({ theme }) => theme.color.grayScale[10]};
   display: flex;
   flex-direction: column;
+  gap: 16px;
   width: 399px;
   padding: 20px;
   height: 392px;
 `;
 
+const SupportJobTagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+// 고른 태그는 채운 파란색으로 바꿔 선택 여부가 보이게 한다
 const SupportJobTag = styled.button<{ $selected: boolean }>`
   padding: 6px 16px;
   border-radius: 100px;
-  background: ${({ theme }) => theme.color.subColor.blue[20]};
+  background: ${({ theme, $selected }) =>
+    $selected ? theme.color.primary[20] : theme.color.subColor.blue[20]};
   width: fit-content;
   cursor: pointer;
   border: none;
@@ -171,7 +193,7 @@ export const Dropdown = ({
         {getDisplayText()}
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
-          size={20}
+          size={16}
           fillColor={$color || theme.color.grayScale[60]}
         />
       </TriggerButton>
@@ -196,48 +218,57 @@ export const Dropdown = ({
 
           {type === "supportJob" && (
             <SupportJobOptions>
-              <Flex $direction="column" $gap={16}>
-                <Search
-                  $width={359}
-                  placeholder="검색어를 입력해주세요"
-                  onChange={value => setSearchTerm(value)}
-                  value={searchTerm}
-                  IconFillColor={theme.color.grayScale[60]}
-                />
-                <div
-                  style={{
-                    height: "1px",
-                    backgroundColor: theme.color.grayScale[40]
-                  }}
-                />
-                <Flex $wrap $gap={10}>
-                  {filteredOptions.length > 0 ? (
-                    filteredOptions?.map(opt => (
-                      <SupportJobTag
-                        key={opt.value}
-                        $selected={opt.value === selected}
-                        onClick={() => handleSelect(opt.value)}
-                      >
-                        <Text
-                          $size="caption"
-                          $weight="regular"
-                          $color={theme.color.subColor.blue[30]}
-                        >
-                          {opt.label}
-                        </Text>
-                      </SupportJobTag>
-                    ))
-                  ) : (
-                    <Text
-                      $size="body3"
-                      $weight="regular"
-                      $color={theme.color.grayScale[60]}
+              <Search
+                $width={359}
+                placeholder="검색어를 입력해주세요"
+                onChange={value => setSearchTerm(value)}
+                value={searchTerm}
+                IconFillColor={theme.color.grayScale[60]}
+              />
+              <div
+                style={{
+                  height: "1px",
+                  flexShrink: 0,
+                  backgroundColor: theme.color.grayScale[40]
+                }}
+              />
+              {/* 태그가 많으면 패널 밖으로 넘치지 않고 이 영역만 스크롤된다 */}
+              <SupportJobTagList>
+                {filteredOptions.length > 0 ? (
+                  filteredOptions?.map(opt => (
+                    <SupportJobTag
+                      key={opt.value}
+                      type="button"
+                      aria-pressed={opt.value === selected}
+                      $selected={opt.value === selected}
+                      // 전체 보기 옵션이 없어 고른 태그를 다시 누르면 선택을 푼다
+                      onClick={() =>
+                        handleSelect(opt.value === selected ? "" : opt.value)
+                      }
                     >
-                      검색 결과가 없습니다.
-                    </Text>
-                  )}
-                </Flex>
-              </Flex>
+                      <Text
+                        $size="caption"
+                        $weight="regular"
+                        $color={
+                          opt.value === selected
+                            ? theme.color.grayScale[10]
+                            : theme.color.subColor.blue[30]
+                        }
+                      >
+                        {opt.label}
+                      </Text>
+                    </SupportJobTag>
+                  ))
+                ) : (
+                  <Text
+                    $size="body3"
+                    $weight="regular"
+                    $color={theme.color.grayScale[60]}
+                  >
+                    검색 결과가 없습니다.
+                  </Text>
+                )}
+              </SupportJobTagList>
             </SupportJobOptions>
           )}
         </OptionsWrapper>

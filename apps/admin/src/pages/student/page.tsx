@@ -55,7 +55,8 @@ const TABS: { value: StudentTab; label: string }[] = [
 export const Student = () => {
   const { params: initialParams } = useLoaderData() as LoaderData<StudentQuery>;
   const { currentTheme: theme } = useTheme();
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getParamAsNumber, getPageParam } =
+    useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
@@ -67,8 +68,7 @@ export const Student = () => {
   const tab: StudentTab = STUDENT_TABS.includes(rawTab as StudentTab)
     ? (rawTab as StudentTab)
     : initialParams.tab;
-  const parsedPage = getParamAsNumber("page", initialParams.page);
-  const currentPage = parsedPage >= 1 ? parsedPage : initialParams.page;
+  const currentPage = getPageParam();
   const companyName = getParam("company-name") ?? "";
   const companyType = getParam("type");
   const year = getParam("year");

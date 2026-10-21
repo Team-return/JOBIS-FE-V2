@@ -2,6 +2,7 @@ import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { RecrutementCard } from "./RecrutementCard";
 import { renderWithTheme } from "@/utils/render";
+import { lightTheme } from "@/themes";
 
 describe("RecrutementCard", () => {
   const defaultProps = {
@@ -43,12 +44,61 @@ describe("RecrutementCard", () => {
     expect(image).toHaveAttribute("alt", defaultProps.companyName);
   });
 
+  it("does not render a status chip when status is not given", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} />);
+
+    expect(screen.queryByText("모집중")).not.toBeInTheDocument();
+    expect(screen.queryByText("모집 종료")).not.toBeInTheDocument();
+  });
+
+  it("renders the status chip in blue while recruiting", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} status="모집중" />);
+
+    expect(screen.getByText("모집중")).toHaveStyle(
+      `color: ${lightTheme.color.primary[20]}`
+    );
+  });
+
+  it("renders the status chip in red after recruiting ends", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} status="모집 종료" />);
+
+    expect(screen.getByText("모집 종료")).toHaveStyle(
+      `color: ${lightTheme.color.subColor.red[20]}`
+    );
+  });
+
   it("calls onClick when card is clicked", () => {
     const onClick = vi.fn();
     renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);
 
     const card = screen.getByRole("cell", { hidden: true });
     fireEvent.click(card);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls only onBookmarkClick when the bookmark is clicked", () => {
+    const onClick = vi.fn();
+    const onBookmarkClick = vi.fn();
+    renderWithTheme(
+      <RecrutementCard
+        {...defaultProps}
+        onClick={onClick}
+        onBookmarkClick={onBookmarkClick}
+      />
+    );
+
+    fireEvent.click(screen.getByLabelText("bookmark"));
+
+    expect(onBookmarkClick).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("falls back to onClick when onBookmarkClick is not provided", () => {
+    const onClick = vi.fn();
+    renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);
+
+    fireEvent.click(screen.getByLabelText("bookmark"));
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });

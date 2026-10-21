@@ -53,7 +53,8 @@ export async function homeLoader({
       name: queryParams.name,
       sort_type: queryParams.sortType
     }),
-    useCompanyStudentRecentList.prefetch(),
+    // 기업 상세를 보고 돌아왔을 때 방금 본 기업이 바로 보이도록 홈에 올 때마다 새로 받는다
+    useCompanyStudentRecentList.prefetch(undefined, { staleTime: 0 }),
     useBookmarks.prefetch(),
     useStudentInterviews.prefetch()
   ]);

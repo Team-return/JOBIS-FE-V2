@@ -6,8 +6,12 @@ import {
   DetailTable,
   Box
 } from "@jobis/design-system";
-import { useLoaderData } from "react-router-dom";
-import { INTERVIEW_TYPE_LABEL_MAP, LoaderData } from "apps/student/src/utils";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  INTERVIEW_TYPE_LABEL_MAP,
+  LoaderData,
+  toFileUrl
+} from "apps/student/src/utils";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
@@ -57,6 +61,7 @@ const createAreaItem = (
 
 export const RecruitmentDetail = () => {
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
@@ -83,15 +88,27 @@ export const RecruitmentDetail = () => {
           <DetailHeader
             type="recruitment"
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
-            logoUrl={data?.company_profile_url || "/logo.svg"}
+            logoUrl={
+              data?.company_profile_url
+                ? toFileUrl(data.company_profile_url)
+                : "/logo.svg"
+            }
             isParticipation={data?.integration_plan || false}
+            onViewDetail={
+              data
+                ? () => navigate(`/company/detail/${data.company_id}`)
+                : undefined
+            }
+            onApply={() =>
+              navigate(`/recruitment/detail/${recruitmentId}/apply`)
+            }
           />
         </Flex>
         <DetailTable
           items={[
             ...areaItems,
             {
-              label: "최소성적",
+              label: "기타 자격 요건",
               value: data?.additional_qualifications || "-",
               itemType: "text"
             },

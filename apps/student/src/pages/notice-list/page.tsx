@@ -1,15 +1,18 @@
-import { useNoticeList } from "@jobis/api";
+import { NOTICE_LIST_PAGE_SIZE, useNoticeList } from "@jobis/api";
 import {
   Box,
   Container,
   Flex,
   Icon,
+  Pagination,
   Skeleton,
   Table,
   Text,
   useTheme
 } from "@jobis/design-system";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryParams } from "../../utils";
 
 const formatNoticeDate = (createdAt: string) => {
   if (!createdAt) return "-";
@@ -20,8 +23,25 @@ export const NoticesList = () => {
   const navigate = useNavigate();
   const { currentTheme: theme } = useTheme();
   const { data, isPending, isError } = useNoticeList();
+  const { getPageParam, updateParams } = useQueryParams();
 
   const notices = data?.notices ?? [];
+  const totalPages = Math.max(
+    1,
+    Math.ceil(notices.length / NOTICE_LIST_PAGE_SIZE)
+  );
+  const currentPage = getPageParam();
+  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
+  const pageNotices = notices.slice(
+    startIndex,
+    startIndex + NOTICE_LIST_PAGE_SIZE
+  );
+
+  // 주소의 page가 범위를 벗어나면 첫 페이지로 돌린다
+  useEffect(() => {
+    if (isPending || (currentPage >= 1 && currentPage <= totalPages)) return;
+    updateParams({ page: undefined });
+  }, [isPending, currentPage, totalPages, updateParams]);
 
   const skeletonRows = Array.from({ length: 10 }).map((_, rowIndex) => [
     <Skeleton key={`sk-${rowIndex}-id`} width={30} height={28} $radius={8} />,
@@ -34,7 +54,8 @@ export const NoticesList = () => {
     <Skeleton key={`sk-${rowIndex}-date`} width={108} height={28} $radius={8} />
   ]);
 
-  const tableRows = notices.map(row => [
+  // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다 (삭제된 글 때문에 id가 중간부터 시작함)
+  const tableRows = pageNotices.map((row, index) => [
     <Text
       key={`id-${row.id}`}
       $size="h6"
@@ -42,7 +63,7 @@ export const NoticesList = () => {
       $align="center"
       $color={theme.color.primary[20]}
     >
-      {String(row.id)}
+      {String(notices.length - (startIndex + index))}
     </Text>,
     <div
       key={`title-${row.id}`}
@@ -136,6 +157,18 @@ export const NoticesList = () => {
               />
             )}
           </Box>
+          {!isPending && !isError && notices.length > 0 && (
+            <Box $margin={[40, 0, 0, 0]}>
+              <Flex $justify="center">
+                <Pagination
+                  start={1}
+                  end={totalPages}
+                  current={currentPage}
+                  onChange={page => updateParams({ page })}
+                />
+              </Flex>
+            </Box>
+          )}
         </Flex>
       </Flex>
     </Container>
