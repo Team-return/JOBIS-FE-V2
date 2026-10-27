@@ -285,7 +285,7 @@ export const Application = () => {
     const applicationIds = getSelectedApplicationIds();
     updateApplicationStatus(
       {
-        applicationIds,
+        application_ids: applicationIds,
         status: newStatus
       },
       {
