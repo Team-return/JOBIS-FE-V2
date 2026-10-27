@@ -1,4 +1,6 @@
+import type { MouseEvent } from "react";
+
 export interface Props {
   $checked: boolean;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<SVGSVGElement>) => void;
 }

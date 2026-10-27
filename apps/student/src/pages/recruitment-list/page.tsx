@@ -8,14 +8,15 @@ import {
   RecrutementCard,
   Search,
   Skeleton,
-  Spacer,
   Text
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import {
-  RECRUITMENT_SORT_OPTIONS,
   RECRUITMENT_STATE_OPTIONS,
+  getRecruitmentStatusLabel,
   YEAR_OPTIONS,
+  toFileUrl,
+  useBookmarkToggle,
   useDebounce,
   useQueryParams
 } from "../../utils";
@@ -29,10 +30,11 @@ import {
 } from "@jobis/api";
 
 export const RecruitmentList = () => {
-  const { updateParams, getParam, getParamAsNumber } = useQueryParams();
+  const { updateParams, getParam, getPageParam } = useQueryParams();
   const navigate = useNavigate();
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
   const currentName = getParam("name") || "";
   const currentSort = getParam("sort-type") || "";
   const state = getParam("status") || "";
@@ -69,7 +71,12 @@ export const RecruitmentList = () => {
     tech_code: techStack || undefined
   });
 
-  const { data: RecruitmentListData, isLoading } = useRecruitmentList({
+  const {
+    data: RecruitmentListData,
+    isLoading,
+    isSuccess,
+    isError
+  } = useRecruitmentList({
     page: currentPage,
     name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
@@ -80,6 +87,9 @@ export const RecruitmentList = () => {
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
+  // 요청 실패가 "검색 결과 없음"으로 보이지 않도록 빈 목록은 성공 응답에서만 판정한다
+  const isListError = isError && !RecruitmentListData;
+  const isEmpty = isSuccess && recruitments.length === 0;
 
   useEffect(() => {
     if (debouncedKeyword === currentName) return;
@@ -92,124 +102,131 @@ export const RecruitmentList = () => {
 
   return (
     <Container $maxWidth={960} $padding={[68, 0, 180, 0]}>
-      <Flex $direction="column" $gap={20}>
-        <Flex $justify="space-between">
-          <Flex>
-            <Text $size="h4" $weight="bold" $align="justify">
-              📄 모집의뢰서
-            </Text>
-          </Flex>
-          <Flex $justify="flex-end" $gap={8}>
-            <Dropdown
-              $placeholder="상태"
-              $width={96}
-              type={undefined}
-              options={RECRUITMENT_STATE_OPTIONS}
-              value={state}
-              onChange={value =>
-                updateParams({ status: value || undefined, page: 1 })
-              }
-            />
-            <Dropdown
-              $placeholder="연도"
-              $width={96}
-              type={undefined}
-              options={YEAR_OPTIONS}
-              value={year}
-              onChange={value =>
-                updateParams({ year: value || undefined, page: 1 })
-              }
-            />
-            <Dropdown
-              $placeholder="분야"
-              $width={96}
-              type={undefined}
-              options={jobOptions}
-              value={field}
-              onChange={value =>
-                updateParams({
-                  "field": value || undefined,
-                  "tech-stack": undefined,
-                  "page": 1
-                })
-              }
-            />
-            <Dropdown
-              $placeholder="기술스택"
-              $width={120}
-              options={techOptions}
-              type="supportJob"
-              value={techStack}
-              onChange={value =>
-                updateParams({ "tech-stack": value || undefined, "page": 1 })
-              }
-            />
-            <Search
-              placeholder="검색어를 입력해 주세요."
-              $width={291}
-              value={keyword}
-              onChange={setKeyword}
-            />
-          </Flex>
-        </Flex>
-        <Flex $justify="flex-end">
+      <Flex $direction="column" $gap={12}>
+        <Text $size="h4" $weight="bold">
+          📄 모집의뢰서
+        </Text>
+        <Flex $justify="flex-end" $gap={8}>
           <Dropdown
-            $width={70}
+            $placeholder="상태"
+            $width={96}
             type={undefined}
-            $isNoneBorder={true}
-            value={currentSort}
+            options={RECRUITMENT_STATE_OPTIONS}
+            value={state}
             onChange={value =>
-              updateParams({ "sort-type": value || undefined, "page": 1 })
+              updateParams({ status: value || undefined, page: 1 })
             }
-            options={RECRUITMENT_SORT_OPTIONS}
+          />
+          <Dropdown
+            $placeholder="연도"
+            $width={96}
+            type={undefined}
+            options={YEAR_OPTIONS}
+            value={year}
+            onChange={value =>
+              updateParams({ year: value || undefined, page: 1 })
+            }
+          />
+          <Dropdown
+            $placeholder="분야"
+            $width={96}
+            type={undefined}
+            options={jobOptions}
+            value={field}
+            onChange={value =>
+              updateParams({
+                "field": value || undefined,
+                "tech-stack": undefined,
+                "page": 1
+              })
+            }
+          />
+          <Dropdown
+            $placeholder="기술스택"
+            $width={120}
+            options={techOptions}
+            type="supportJob"
+            value={techStack}
+            onChange={value =>
+              updateParams({ "tech-stack": value || undefined, "page": 1 })
+            }
+          />
+          <Search
+            placeholder="검색어를 입력해주세요"
+            $width={359}
+            value={keyword}
+            onChange={setKeyword}
           />
         </Flex>
       </Flex>
-      <Box $margin={[4, 0]}></Box>
+      <Box $margin={[32, 0, 0, 0]}></Box>
 
-      <Grid $columns="repeat(4, 1fr)" $gap={24}>
-        {isLoading &&
-          Array.from({ length: 12 }, (_, index) => (
-            <Flex key={index} $direction="column" $gap={12} $align="flex-start">
-              <Skeleton width={222} height={144} $radius={12} />
-              <Skeleton width={222} height={24} $radius={12} />
-              <Skeleton width={130} height={24} $radius={12} />
-              <Skeleton width={150} height={24} $radius={12} />
-            </Flex>
-          ))}
-        {!isLoading && recruitments.length === 0 ? (
-          <>
-            <Spacer />
-            <Box $margin={[50, 76.8]}>
-              <Text $size="body2">검색된 기업이 없습니다.</Text>
-            </Box>
-          </>
-        ) : (
-          recruitments.map(recruitment => {
+      {isListError || isEmpty ? (
+        <Flex $justify="center">
+          <Box $margin={[50, 0]}>
+            <Text $size="body2">
+              {isListError
+                ? "모집의뢰서 목록을 불러오지 못했습니다."
+                : "검색된 기업이 없습니다."}
+            </Text>
+          </Box>
+        </Flex>
+      ) : (
+        <Grid $columns="repeat(4, 1fr)" $gap={[32, 24]}>
+          {isLoading &&
+            Array.from({ length: 12 }, (_, index) => (
+              <Flex
+                key={index}
+                $direction="column"
+                $gap={12}
+                $align="flex-start"
+              >
+                <Skeleton width={222} height={144} $radius={12} />
+                <Skeleton width={222} height={24} $radius={12} />
+                <Skeleton width={130} height={24} $radius={12} />
+                <Skeleton width={150} height={24} $radius={12} />
+              </Flex>
+            ))}
+          {recruitments.map(recruitment => {
             return (
               <RecrutementCard
                 key={recruitment.id}
                 companyName={recruitment.company_name}
-                companyProfileUrl={recruitment.company_profile_url}
+                companyProfileUrl={toFileUrl(recruitment.company_profile_url)}
                 hiringJobs={recruitment.hiring_jobs}
                 militarySupport={recruitment.military_support}
-                bookmarked={recruitment.bookmarked}
+                bookmarked={isBookmarked(
+                  recruitment.id,
+                  recruitment.bookmarked
+                )}
+                status={getRecruitmentStatusLabel(recruitment.status)}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
                 }
+                onBookmarkClick={() =>
+                  toggleBookmark(
+                    recruitment.id,
+                    isBookmarked(recruitment.id, recruitment.bookmarked)
+                  )
+                }
               />
             );
-          })
-        )}
-      </Grid>
-      <Flex $justify="center">
-        <Pagination
-          start={1}
-          end={companyCountData?.total_page_count || 1}
-          current={currentPage}
-          onChange={page => updateParams({ page: page })}
-        />
-      </Flex>
+          })}
+        </Grid>
+      )}
+      {/* 결과가 없으면 넘길 페이지도 없으므로 페이지네이션을 숨긴다 */}
+      {!isEmpty && !isListError && (
+        <Box $margin={[40, 0, 0, 0]}>
+          <Flex $justify="center">
+            <Pagination
+              start={1}
+              end={companyCountData?.total_page_count || 1}
+              current={currentPage}
+              onChange={page => updateParams({ page: page })}
+            />
+          </Flex>
+        </Box>
+      )}
     </Container>
   );
 };

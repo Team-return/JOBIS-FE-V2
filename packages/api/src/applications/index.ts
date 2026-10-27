@@ -104,7 +104,7 @@ export const useCreateApplication = (
   });
 
 export const useUpdateApplicationStatus = createMutationHook<
-  { applicationIds: number[]; status: string },
+  { application_ids: number[]; status: string },
   void
 >({
   path: "/status",

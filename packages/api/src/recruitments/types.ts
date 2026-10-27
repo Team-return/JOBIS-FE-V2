@@ -93,7 +93,8 @@ interface StudentRecruitment {
   military_support: boolean;
   hiring_jobs: string;
   bookmarked: boolean;
-  status: "모집전" | "모집중" | "모집 종료";
+  // 서버는 한글이 아니라 REQUESTED / RECRUITING / DONE 같은 enum 값을 보낸다
+  status: RecruitmentStatus;
   year: number;
 }
 

@@ -34,6 +34,16 @@ const meta: Meta<typeof DetailHeader> = {
       control: "boolean",
       description: "참여기업 여부",
       if: { arg: "type", eq: "recruitment" }
+    },
+    onViewDetail: {
+      action: "onViewDetail",
+      description: "상세보기 클릭 이벤트",
+      if: { arg: "type", eq: "recruitment" }
+    },
+    onApply: {
+      action: "onApply",
+      description: "지원하기 클릭 이벤트",
+      if: { arg: "type", eq: "recruitment" }
     }
   }
 };
@@ -58,6 +68,8 @@ export const Recruitment: Story = {
     title: "(주)비바리퍼블리카",
     logoUrl:
       "https://cdn.digitalasset.works/news/photo/202507/28288_36187_4536.jpg",
-    isParticipation: true
+    isParticipation: true,
+    onViewDetail: () => {},
+    onApply: () => {}
   }
 };

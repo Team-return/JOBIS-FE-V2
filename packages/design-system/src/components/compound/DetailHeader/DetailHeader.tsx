@@ -10,7 +10,9 @@ export const DetailHeader = ({
   logoUrl,
   businessNumber,
   isParticipation,
-  onViewReview
+  onViewReview,
+  onViewDetail,
+  onApply
 }: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -37,17 +39,21 @@ export const DetailHeader = ({
               )}
             </Flex>
             <Flex $direction="row" $align="center" $gap={8}>
-              <Pointer>
+              <TextButton
+                type="button"
+                onClick={onViewDetail}
+                disabled={!onViewDetail}
+              >
                 <Text $size="body2" $weight="medium" $color="#7f7f7f">
                   상세보기
                 </Text>
-              </Pointer>
+              </TextButton>
               <Line />
-              <Pointer>
+              <TextButton type="button" onClick={onApply} disabled={!onApply}>
                 <Text $size="body2" $weight="medium" $color="#7f7f7f">
                   지원하기
                 </Text>
-              </Pointer>
+              </TextButton>
             </Flex>
           </Flex>
         </Flex>
@@ -109,8 +115,15 @@ export const DetailHeader = ({
   return null;
 };
 
-const Pointer = styled.div`
+const TextButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const ParticipationBadge = styled.div`

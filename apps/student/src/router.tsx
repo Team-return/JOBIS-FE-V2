@@ -1,6 +1,10 @@
 import { useNotificationList, useStudentMy } from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Outlet,
+  ScrollRestoration
+} from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { recruitmentLoader } from "./pages/recruitment-list/loader";
 import { recruitmentDetailLoader } from "./pages/recruitment-detail/loader";
@@ -27,6 +31,8 @@ import {
   RecruitmentApply,
   recruitmentApplyLoader
 } from "./pages/recruitment-apply";
+import { PreparingPage } from "./pages/preparing";
+import { JobRate } from "./pages/job-rate";
 
 const StudentHeader = () => {
   const { data: profile } = useStudentMy();
@@ -45,12 +51,27 @@ export const router: ReturnType<typeof createBrowserRouter> =
     {
       path: "/",
       element: (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          }}
+        >
           <StudentHeader />
           <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
           <Footer />
+          {/* 새 페이지는 맨 위부터, 뒤로 가기는 보던 위치로 돌아가게 한다.
+              주소를 직접 열면 어떤 페이지든 키가 "default"라 서로 위치를 물려받으므로 그때만 URL로 구분한다 */}
+          <ScrollRestoration
+            getKey={location =>
+              location.key === "default"
+                ? location.pathname + location.search
+                : location.key
+            }
+          />
         </div>
       ),
       children: [
@@ -119,14 +140,14 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>후기 목록</div>
+              element: <PreparingPage />
             },
-            { path: "write", element: <div>후기 작성</div> },
+            { path: "write", element: <PreparingPage /> },
             {
               path: "detail/:reviewId",
-              element: <div>후기 상세</div>
+              element: <PreparingPage />
             },
-            { path: "expectations", element: <div>예상 면접 질문 작성</div> }
+            { path: "expectations", element: <PreparingPage /> }
           ]
         },
         {
@@ -162,7 +183,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "/jobrate",
-          element: <div>취업률 페이지</div>
+          element: <JobRate />
         }
       ]
     },

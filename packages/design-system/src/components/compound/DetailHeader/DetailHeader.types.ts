@@ -5,4 +5,6 @@ export interface DetailHeaderProps {
   businessNumber?: string;
   onMoreClick?: () => void;
   onViewReview?: () => void;
+  onViewDetail?: () => void;
+  onApply?: () => void;
 }
