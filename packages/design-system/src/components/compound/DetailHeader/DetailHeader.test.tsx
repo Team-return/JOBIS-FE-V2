@@ -70,14 +70,14 @@ describe("DetailHeader", () => {
         <DetailHeader
           {...recruitmentProps}
           onApply={onApply}
-          applyDisabledReason="이미 지원한 모집의뢰서입니다"
+          applyDisabledReason="이미 지원한 모집의뢰서입니다."
         />
       );
       const applyButton = screen.getByRole("button", { name: "지원하기" });
       expect(applyButton).toBeDisabled();
-      expect(
-        screen.getByText("이미 지원한 모집의뢰서입니다")
-      ).toBeInTheDocument();
+      expect(applyButton).toHaveAccessibleDescription(
+        "이미 지원한 모집의뢰서입니다."
+      );
       await userEvent.click(applyButton);
       expect(onApply).not.toHaveBeenCalled();
     });

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Flex, Spacer, Image } from "@/components/primitive";
 import { Text, Icon } from "@/components/core";
 import { DetailHeaderProps } from "./DetailHeader.types";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export const DetailHeader = ({
   type,
@@ -16,6 +16,7 @@ export const DetailHeader = ({
   applyDisabledReason
 }: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const applyReasonId = useId();
 
   if (type === "recruitment") {
     const canApply = !!onApply && !applyDisabledReason;
@@ -52,19 +53,33 @@ export const DetailHeader = ({
                 </Text>
               </TextButton>
               <Line />
-              <TextButton type="button" onClick={onApply} disabled={!canApply}>
+              <TextButton
+                type="button"
+                onClick={onApply}
+                disabled={!canApply}
+                aria-describedby={
+                  applyDisabledReason ? applyReasonId : undefined
+                }
+              >
                 <Text
                   $size="body2"
                   $weight="medium"
-                  $color={applyDisabledReason ? "#cccccc" : "#7f7f7f"}
+                  $color={canApply ? "#7f7f7f" : "#cccccc"}
                 >
                   지원하기
                 </Text>
               </TextButton>
               {applyDisabledReason && (
-                <Text $size="caption" $weight="regular" $color="#e74c3c">
-                  {applyDisabledReason}
-                </Text>
+                <span id={applyReasonId}>
+                  <Text
+                    $span
+                    $size="caption"
+                    $weight="regular"
+                    $color="#e74c3c"
+                  >
+                    {applyDisabledReason}
+                  </Text>
+                </span>
               )}
             </Flex>
           </Flex>
