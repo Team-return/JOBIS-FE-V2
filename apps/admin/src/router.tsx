@@ -37,7 +37,8 @@ export const router: ReturnType<typeof createBrowserRouter> =
           }}
         >
           <Header type="admin" />
-          <main style={{ flex: 1, width: "100%" }}>
+          {/* 창이 표보다 좁으면 main이 표 폭까지 넓어져 왼쪽이 잘리지 않고 가로 스크롤된다 */}
+          <main style={{ flex: 1, width: "100%", minWidth: "min-content" }}>
             <Outlet />
           </main>
           <Footer />
