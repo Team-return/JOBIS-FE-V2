@@ -28,6 +28,10 @@ export const RECRUITMENT_STATE_OPTIONS = [
   { label: "겨울인턴", value: "WIN_INTERN" }
 ];
 
+// 겨울인턴은 모집 상태가 아니라 winter_intern 여부라서 상태를 WIN_INTERN으로 바꾸면 지원이 막힌다
+export const RECRUITMENT_STATUS_CHANGE_OPTIONS =
+  RECRUITMENT_STATE_OPTIONS.filter(({ value }) => value !== "WIN_INTERN");
+
 export const REGION_OPTIONS = [
   { label: "대전", value: "대전" },
   { label: "서울", value: "서울" },

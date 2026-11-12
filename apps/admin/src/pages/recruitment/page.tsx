@@ -29,6 +29,7 @@ import {
   useDebounce,
   RECRUITMENT_STATUS_LABEL,
   RECRUITMENT_STATE_OPTIONS,
+  RECRUITMENT_STATUS_CHANGE_OPTIONS,
   COMPANY_TYPE_LABEL,
   COMPANY_TYPE_OPTIONS,
   YEAR_OPTIONS,
@@ -286,7 +287,7 @@ export const Recruitment = () => {
               </IconButton>
               <Dropdown
                 $width={96}
-                options={RECRUITMENT_STATE_OPTIONS}
+                options={RECRUITMENT_STATUS_CHANGE_OPTIONS}
                 $placeholder="상태변경"
                 isOpen={openDropdown === "stateChange"}
                 onToggle={isOpen =>
