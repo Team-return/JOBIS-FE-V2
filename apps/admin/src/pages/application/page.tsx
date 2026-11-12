@@ -325,7 +325,11 @@ export const Application = () => {
           resetSelection();
         },
         onError: error => {
-          toast.error(getErrorMessage(error, "상태 변경에 실패했습니다."));
+          toast.error(
+            getErrorMessage(error, "상태 변경에 실패했습니다.", {
+              400: "변경할 수 없는 상태가 포함돼 있습니다."
+            })
+          );
         }
       }
     );

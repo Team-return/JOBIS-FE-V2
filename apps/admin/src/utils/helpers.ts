@@ -62,12 +62,21 @@ export const getUploadedFileName = (url: string): string => {
 const ERROR_REASON: Record<number, string> = {
   400: "요청 값이 올바르지 않습니다.",
   403: "권한이 없습니다.",
-  404: "대상을 찾을 수 없습니다.",
-  409: "이미 처리된 항목이 있습니다."
+  404: "대상을 찾을 수 없습니다."
 };
 
-/** API가 던진 상태 코드로 실패 이유를 붙인다. 모르는 코드면 기본 문구만 쓴다 */
-export const getErrorMessage = (error: unknown, fallback: string): string => {
-  const reason = typeof error === "number" ? ERROR_REASON[error] : undefined;
+/**
+ * API가 던진 상태 코드로 실패 이유를 붙인다. 모르는 코드면 기본 문구만 쓴다.
+ * 화면마다 같은 코드의 뜻이 다르면 reasons로 그 화면의 문구를 넘긴다
+ */
+export const getErrorMessage = (
+  error: unknown,
+  fallback: string,
+  reasons: Record<number, string> = {}
+): string => {
+  const reason =
+    typeof error === "number"
+      ? (reasons[error] ?? ERROR_REASON[error])
+      : undefined;
   return reason ? `${fallback} ${reason}` : fallback;
 };
