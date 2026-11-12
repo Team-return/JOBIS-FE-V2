@@ -76,6 +76,7 @@ const CompanyName = styled.p`
 `;
 
 // 피그마 칩은 테두리 포함 높이 26px, 좌우 여백 8px (전역 box-sizing: border-box 기준)
+// 칩 영역이 좁아도 칩이 줄어 글자가 두 줄로 접히지 않게 한다
 const Clip = styled.div<{ $color?: string }>`
   padding: 0 7px;
   height: 26px;
@@ -84,7 +85,12 @@ const Clip = styled.div<{ $color?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
 `;
+
+// 피그마 칩 간격은 12px. 칩이 3개면 "모집 종료"처럼 긴 상태에서 칩 영역(199px)을 넘으므로 4px로 줄인다
+const getChipGap = (chipCount: number) => (chipCount >= 3 ? 4 : 12);
 
 export const RecrutementCard = ({
   companyName,
@@ -99,6 +105,8 @@ export const RecrutementCard = ({
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const statusColor = status && getStatusColor(status, theme);
+  const chipCount =
+    (status && statusColor ? 1 : 0) + 1 + (winterIntern ? 1 : 0);
 
   return (
     <Component onClick={onClick} role="cell">
@@ -127,8 +135,7 @@ export const RecrutementCard = ({
               }
             />
           </Flex>
-          {/* 칩이 세 개면 "모집 종료"일 때 12px 간격으로는 카드 밖으로 넘쳐 간격을 줄인다 */}
-          <Stack $direction="row" $gap={winterIntern ? 8 : 12}>
+          <Stack $direction="row" $gap={getChipGap(chipCount)}>
             {status && statusColor && (
               <Clip $color={statusColor}>
                 <Text $span $size="caption" $color={statusColor}>

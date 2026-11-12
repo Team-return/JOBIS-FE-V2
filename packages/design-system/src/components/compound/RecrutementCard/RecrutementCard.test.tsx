@@ -79,6 +79,22 @@ describe("RecrutementCard", () => {
     expect(screen.getByText("겨울인턴")).toBeInTheDocument();
   });
 
+  it("keeps the figma chip gap when two chips are shown", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} status="모집 종료" />);
+
+    const chipRow = screen.getByText("모집 종료").parentElement?.parentElement;
+    expect(chipRow).toHaveStyle("gap: 12px");
+  });
+
+  it("tightens the chip gap when three chips are shown", () => {
+    renderWithTheme(
+      <RecrutementCard {...defaultProps} status="모집 종료" winterIntern />
+    );
+
+    const chipRow = screen.getByText("모집 종료").parentElement?.parentElement;
+    expect(chipRow).toHaveStyle("gap: 4px");
+  });
+
   it("calls onClick when card is clicked", () => {
     const onClick = vi.fn();
     renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);
