@@ -122,7 +122,7 @@ export const useUpdateTrainDate = createMutationHook<
 export const useRejectApplication = createIdMutationHook<
   {
     reason: string;
-    rejectionAttachments: { url: string }[];
+    rejection_attachments: { url: string }[];
   },
   void
 >({
