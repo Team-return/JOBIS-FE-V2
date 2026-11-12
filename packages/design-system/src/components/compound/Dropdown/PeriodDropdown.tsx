@@ -1,4 +1,11 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent
+} from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
@@ -88,7 +95,7 @@ const DateInput = styled.input`
   }
 `;
 
-const CalendarButton = styled.button`
+const IconOnlyButton = styled.button`
   display: flex;
   padding: 0;
   border: none;
@@ -175,13 +182,41 @@ export const PeriodDropdown = ({
     }
   }, [externalValue]);
 
-  const closeDropdown = () => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+
+  const closeDropdown = useCallback(() => {
     if (onToggle) {
       onToggle(false);
     } else {
       setInternalIsOpen(false);
     }
-  };
+  }, [onToggle]);
+
+  // 닫기 아이콘과 같이 Escape는 달력이 떠 있으면 달력만, 아니면 패널을 닫는다
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (calendarFor) {
+        setCalendarFor(null);
+        return;
+      }
+      // 다른 입력칸에 있던 초점은 빼앗지 않는다
+      const active = document.activeElement;
+      const isFocusInside =
+        !active ||
+        active === document.body ||
+        wrapperRef.current?.contains(active);
+      closeDropdown();
+      if (isFocusInside) triggerRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, calendarFor, closeDropdown]);
 
   const formatDate = (date: Date | null) => {
     if (!date) return "";
@@ -244,8 +279,13 @@ export const PeriodDropdown = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       <TriggerButton
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
         isOpen={isOpen}
         onClick={() => {
           const newValue = !isOpen;
@@ -276,24 +316,22 @@ export const PeriodDropdown = ({
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
           fillColor={$color || theme.color.grayScale[60]}
+          aria-hidden
         />
       </TriggerButton>
 
       {isOpen && (
         <OptionsWrapper>
-          <PeriodOptions>
+          <PeriodOptions id={panelId} role="dialog" aria-label="모집기간 설정">
             <Flex $direction="column" $gap={24}>
               <Flex $justify="space-between" $align="center">
                 <Flex $align="center" $gap={8}>
                   <Text $size="h6" $weight="bold">
                     모집기간
                   </Text>
-                  <Icon
-                    icon="Refresh"
-                    size={24}
-                    strokeColor={theme.color.grayScale[70]}
-                    fillColor={theme.color.grayScale[10]}
-                    style={{ cursor: "pointer" }}
+                  <IconOnlyButton
+                    type="button"
+                    aria-label="모집기간 초기화"
                     onClick={() => {
                       setTempStartDate(null);
                       setTempEndDate(null);
@@ -301,17 +339,30 @@ export const PeriodDropdown = ({
                       setStartText(null);
                       setEndText(null);
                     }}
-                  />
+                  >
+                    <Icon
+                      icon="Refresh"
+                      size={24}
+                      strokeColor={theme.color.grayScale[70]}
+                      fillColor={theme.color.grayScale[10]}
+                      aria-hidden
+                    />
+                  </IconOnlyButton>
                 </Flex>
-                <Icon
-                  icon="Close"
-                  size={24}
-                  fillColor={theme.color.grayScale[60]}
-                  style={{ cursor: "pointer" }}
+                <IconOnlyButton
+                  type="button"
+                  aria-label={calendarFor ? "달력 닫기" : "모집기간 닫기"}
                   onClick={() =>
                     calendarFor ? setCalendarFor(null) : closeDropdown()
                   }
-                />
+                >
+                  <Icon
+                    icon="Close"
+                    size={24}
+                    fillColor={theme.color.grayScale[60]}
+                    aria-hidden
+                  />
+                </IconOnlyButton>
               </Flex>
               <Flex $direction="column" $gap={8}>
                 <Flex $align="center" $justify="space-between">
@@ -327,14 +378,14 @@ export const PeriodDropdown = ({
                       // 덜 입력했거나 없는 날짜면 비워 둔다
                       onBlur={() => setStartText(null)}
                     />
-                    <CalendarButton
+                    <IconOnlyButton
                       type="button"
                       aria-label="모집 시작일 달력 열기"
                       disabled={tempChecked}
                       onClick={() => setCalendarFor("start")}
                     >
-                      <Icon icon="Date" size={24} />
-                    </CalendarButton>
+                      <Icon icon="Date" size={24} aria-hidden />
+                    </IconOnlyButton>
                   </DateContainer>
                   <Text
                     $size="h5"
@@ -354,14 +405,14 @@ export const PeriodDropdown = ({
                       onChange={handleTypedDate(setEndText, setTempEndDate)}
                       onBlur={() => setEndText(null)}
                     />
-                    <CalendarButton
+                    <IconOnlyButton
                       type="button"
                       aria-label="모집 종료일 달력 열기"
                       disabled={tempChecked}
                       onClick={() => setCalendarFor("end")}
                     >
-                      <Icon icon="Date" size={24} />
-                    </CalendarButton>
+                      <Icon icon="Date" size={24} aria-hidden />
+                    </IconOnlyButton>
                   </DateContainer>
                 </Flex>
                 <Checkbox

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Icon, Text } from "@/components";
@@ -144,14 +145,37 @@ export const Dropdown = ({
   const selected =
     externalValue !== undefined ? externalValue : internalSelected;
   const [searchTerm, setSearchTerm] = useState("");
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listId = useId();
 
-  const closeDropdown = () => {
+  const closeDropdown = useCallback(() => {
     if (onToggle) {
       onToggle(false);
     } else {
       setInternalIsOpen(false);
     }
-  };
+  }, [onToggle]);
+
+  // 열려 있을 때 Escape를 누르면 닫고 초점을 열기 버튼으로 돌려준다
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      // 다른 입력칸에 있던 초점은 빼앗지 않는다
+      const active = document.activeElement;
+      const isFocusInside =
+        !active ||
+        active === document.body ||
+        wrapperRef.current?.contains(active);
+      closeDropdown();
+      if (isFocusInside) triggerRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, closeDropdown]);
 
   const handleSelect = (value: string) => {
     if (externalValue === undefined) {
@@ -160,6 +184,14 @@ export const Dropdown = ({
     onChange?.(value);
     closeDropdown();
   };
+
+  const handleOptionKeyDown =
+    (value: string) => (event: ReactKeyboardEvent<HTMLLIElement>) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      handleSelect(value);
+      triggerRef.current?.focus();
+    };
 
   const selectedLabel = options.find(o => o.value === selected)?.label;
   const filteredOptions =
@@ -175,8 +207,13 @@ export const Dropdown = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       <TriggerButton
+        ref={triggerRef}
+        type="button"
+        aria-haspopup={type === undefined ? "listbox" : "dialog"}
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? listId : undefined}
         isOpen={isOpen}
         onClick={() => {
           const newValue = !isOpen;
@@ -191,23 +228,29 @@ export const Dropdown = ({
         $isNoneBorder={$isNoneBorder}
       >
         {getDisplayText()}
+        {/* 아이콘 이름(ChevronDown)이 버튼 이름에 섞여 읽히지 않게 숨긴다 */}
         <Icon
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={16}
           fillColor={$color || theme.color.grayScale[60]}
+          aria-hidden
         />
       </TriggerButton>
 
       {isOpen && (
         <OptionsWrapper>
           {type === undefined && (
-            <DefaultOptions>
+            <DefaultOptions id={listId} role="listbox">
               {options.map(opt => {
                 return (
                   <DefaultOption
                     key={opt.value}
+                    role="option"
+                    aria-selected={opt.value === selected}
+                    tabIndex={0}
                     $selected={opt.value === selected}
                     onClick={() => handleSelect(opt.value)}
+                    onKeyDown={handleOptionKeyDown(opt.value)}
                   >
                     {opt.label}
                   </DefaultOption>
@@ -217,7 +260,11 @@ export const Dropdown = ({
           )}
 
           {type === "supportJob" && (
-            <SupportJobOptions>
+            <SupportJobOptions
+              id={listId}
+              role="dialog"
+              aria-label={$placeholder || "선택"}
+            >
               <Search
                 $width={359}
                 placeholder="검색어를 입력해주세요"

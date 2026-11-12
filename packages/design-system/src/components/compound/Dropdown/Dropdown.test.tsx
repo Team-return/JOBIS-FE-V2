@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { screen, cleanup } from "@testing-library/react";
+import { screen, cleanup, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithTheme } from "@/utils/render";
 import { Dropdown } from "./Dropdown";
@@ -83,24 +83,27 @@ describe("Dropdown", () => {
       />
     );
 
-    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+    // 열기 버튼도 고른 값(백엔드)을 이름으로 가지므로 패널 안에서만 찾는다
+    const panel = within(screen.getByRole("dialog"));
+
+    expect(panel.getByRole("button", { name: "백엔드" })).toHaveAttribute(
       "aria-pressed",
       "true"
     );
-    expect(screen.getByRole("button", { name: "프론트엔드" })).toHaveAttribute(
+    expect(panel.getByRole("button", { name: "프론트엔드" })).toHaveAttribute(
       "aria-pressed",
       "false"
     );
 
-    await user.click(screen.getByRole("button", { name: "백엔드" }));
+    await user.click(panel.getByRole("button", { name: "백엔드" }));
     expect(handleChange).toHaveBeenLastCalledWith("");
 
-    expect(screen.getByRole("button", { name: "백엔드" })).toHaveAttribute(
+    expect(panel.getByRole("button", { name: "백엔드" })).toHaveAttribute(
       "aria-pressed",
       "false"
     );
 
-    await user.click(screen.getByRole("button", { name: "프론트엔드" }));
+    await user.click(panel.getByRole("button", { name: "프론트엔드" }));
     expect(handleChange).toHaveBeenLastCalledWith("frontend");
   });
 
@@ -143,6 +146,83 @@ describe("Dropdown", () => {
     await user.click(trigger);
 
     expect(screen.getByText("프론트엔드")).toBeInTheDocument();
+  });
+
+  it("closes on Escape and returns focus to the trigger", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} $placeholder="상태변경" />);
+
+    const trigger = screen.getByRole("button", { name: "상태변경" });
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveFocus();
+  });
+
+  it("keeps focus on another field when closed with Escape", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <>
+        <Dropdown options={options} $placeholder="상태" />
+        <input aria-label="검색" />
+      </>
+    );
+
+    await user.click(screen.getByRole("button", { name: "상태" }));
+    const input = screen.getByRole("textbox", { name: "검색" });
+    input.focus();
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(input).toHaveFocus();
+  });
+
+  it("asks the parent to close on Escape in controlled mode", async () => {
+    const user = userEvent.setup();
+    const handleToggle = vi.fn();
+    renderWithTheme(
+      <Dropdown options={options} isOpen onToggle={handleToggle} />
+    );
+
+    await user.keyboard("{Escape}");
+
+    expect(handleToggle).toHaveBeenCalledWith(false);
+  });
+
+  it("exposes options as a listbox with the selected option marked", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} value="backend" />);
+
+    const trigger = screen.getByRole("button", { name: "백엔드" });
+    await user.click(trigger);
+
+    const listbox = screen.getByRole("listbox");
+    expect(trigger).toHaveAttribute("aria-controls", listbox.id);
+    expect(screen.getByRole("option", { name: "백엔드" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
+    expect(screen.getByRole("option", { name: "디자이너" })).toHaveAttribute(
+      "aria-selected",
+      "false"
+    );
+  });
+
+  it("selects an option with the keyboard", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+    renderWithTheme(<Dropdown options={options} onChange={handleChange} />);
+
+    await user.click(screen.getByRole("button"));
+    screen.getByRole("option", { name: "디자이너" }).focus();
+    await user.keyboard("{Enter}");
+
+    expect(handleChange).toHaveBeenCalledWith("designer");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 
   it("resets internal state when value becomes undefined", () => {
@@ -305,6 +385,47 @@ describe("DropdownPeriod", () => {
     await user.tab();
 
     expect(startInput).toHaveValue("");
+  });
+
+  it("closes the calendar first and then the panel on Escape", async () => {
+    const user = userEvent.setup();
+
+    renderWithTheme(<PeriodDropdown />);
+
+    const trigger = screen.getByRole("button", { name: "기간 설정" });
+    await user.click(trigger);
+    await user.click(
+      screen.getByRole("button", { name: "모집 시작일 달력 열기" })
+    );
+    expect(screen.getByText("MON")).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByText("MON")).not.toBeInTheDocument();
+    expect(screen.getByText("모집기간")).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByText("모집기간")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("labels the reset and close buttons", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+
+    renderWithTheme(<PeriodDropdown onChange={handleChange} />);
+
+    await user.click(screen.getByRole("button"));
+    expect(
+      screen.getByRole("dialog", { name: "모집기간 설정" })
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: "모집기간 초기화" }));
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+
+    await user.click(screen.getByRole("button", { name: "모집기간 닫기" }));
+    expect(screen.queryByText("모집기간")).not.toBeInTheDocument();
+    expect(handleChange).not.toHaveBeenCalled();
   });
 
   it("opens the calendar only from the calendar icon", async () => {
