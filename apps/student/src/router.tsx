@@ -40,23 +40,7 @@ import {
 } from "./pages/recruitment-apply";
 import { PreparingPage } from "./pages/preparing";
 import { JobRate } from "./pages/job-rate";
-
-// 서버는 topic마다 detail_id에 공지·모집의뢰서·지원서·면접 id를 담는다. 면접은 이동할 화면이 없다
-const getNotificationPath = (topic: string, detailId: number) => {
-  switch (topic) {
-    case "NOTICE":
-      return `/notice/detail/${detailId}`;
-    case "RECRUITMENT":
-      return `/recruitment/detail/${detailId}`;
-    case "WINTER_INTERN":
-      // 겨울인턴 시즌 안내 알림은 detail_id가 0이다
-      return detailId > 0 ? `/recruitment/detail/${detailId}` : "/recruitment";
-    case "APPLICATION":
-      return "/mypage";
-    default:
-      return undefined;
-  }
-};
+import { getNotificationPath } from "./utils/notification";
 
 const StudentHeader = () => {
   const navigate = useNavigate();
