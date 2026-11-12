@@ -4,6 +4,7 @@ import type { Props } from "./Bookmark.types";
 const Component = styled.svg<Pick<Props, "$checked">>`
   width: 24px;
   height: 24px;
+  flex-shrink: 0;
   cursor: pointer;
   transition: all 0.2s ease;
   color: ${({ $checked, theme }) =>

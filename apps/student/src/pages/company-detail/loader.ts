@@ -12,7 +12,8 @@ export async function companyDetailLoader({
     throw redirect("/company");
   }
 
-  await useCompanyDetail.prefetch(id);
+  // 서버는 상세 조회 요청을 받을 때 '최근 본 기업'에 기록하므로, 캐시가 남아 있어도 들어올 때마다 새로 요청한다
+  await useCompanyDetail.prefetch(id, { staleTime: 0 });
 
   return { params: id };
 }

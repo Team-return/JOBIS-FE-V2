@@ -1,15 +1,23 @@
-import { useNoticeList } from "@jobis/api";
+import {
+  NOTICE_LIST_PAGE_SIZE,
+  useNoticeCount,
+  useNoticePage,
+  useNoticeTotalCount
+} from "@jobis/api";
 import {
   Box,
   Container,
   Flex,
   Icon,
+  Pagination,
   Skeleton,
   Table,
   Text,
   useTheme
 } from "@jobis/design-system";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryParams } from "../../utils";
 
 const formatNoticeDate = (createdAt: string) => {
   if (!createdAt) return "-";
@@ -19,9 +27,41 @@ const formatNoticeDate = (createdAt: string) => {
 export const NoticesList = () => {
   const navigate = useNavigate();
   const { currentTheme: theme } = useTheme();
-  const { data, isPending, isError } = useNoticeList();
+  const { getPageParam, updateParams } = useQueryParams();
+  const currentPage = getPageParam();
 
-  const notices = data?.notices ?? [];
+  const pageQuery = useNoticePage({ page: currentPage });
+  const countQuery = useNoticeCount();
+  // 번호를 전체 개수부터 매기는 데만 쓴다. 받는 동안에도 표는 바로 보여 준다
+  const totalCountQuery = useNoticeTotalCount();
+
+  const notices = pageQuery.data?.notices ?? [];
+  // 페이지 수를 못 받았으면 지금 페이지가 꽉 찼을 때만 다음 페이지가 있다고 본다
+  const fallbackPages =
+    notices.length === NOTICE_LIST_PAGE_SIZE ? currentPage + 1 : currentPage;
+  const totalPages = Math.max(
+    1,
+    countQuery.data?.total_page_count ?? fallbackPages
+  );
+  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
+  const isPending = pageQuery.isPending;
+  const isError = pageQuery.isError;
+  // 페이지 수가 오래됐거나 못 받았어도 빈 페이지에 갇히지 않게 한다
+  const isEmptyLaterPage =
+    pageQuery.isSuccess && notices.length === 0 && currentPage > 1;
+
+  // 주소의 page가 범위를 벗어나면 첫 페이지로 돌린다
+  useEffect(() => {
+    const isOutOfRange = countQuery.isSuccess && currentPage > totalPages;
+    if (!isOutOfRange && !isEmptyLaterPage) return;
+    updateParams({ page: undefined });
+  }, [
+    countQuery.isSuccess,
+    isEmptyLaterPage,
+    currentPage,
+    totalPages,
+    updateParams
+  ]);
 
   const skeletonRows = Array.from({ length: 10 }).map((_, rowIndex) => [
     <Skeleton key={`sk-${rowIndex}-id`} width={30} height={28} $radius={8} />,
@@ -34,7 +74,16 @@ export const NoticesList = () => {
     <Skeleton key={`sk-${rowIndex}-date`} width={108} height={28} $radius={8} />
   ]);
 
-  const tableRows = notices.map(row => [
+  // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다 (삭제된 글 때문에 id가 중간부터 시작함)
+  // 전체 개수를 받는 중이면 "-", 못 받았으면 id를 보여 준다
+  const getNoticeNumber = (id: number, index: number) => {
+    if (totalCountQuery.data !== undefined) {
+      return String(totalCountQuery.data - (startIndex + index));
+    }
+    return totalCountQuery.isError ? String(id) : "-";
+  };
+
+  const tableRows = notices.map((row, index) => [
     <Text
       key={`id-${row.id}`}
       $size="h6"
@@ -42,7 +91,7 @@ export const NoticesList = () => {
       $align="center"
       $color={theme.color.primary[20]}
     >
-      {String(row.id)}
+      {getNoticeNumber(row.id, index)}
     </Text>,
     <div
       key={`title-${row.id}`}
@@ -136,6 +185,18 @@ export const NoticesList = () => {
               />
             )}
           </Box>
+          {!isPending && !isError && notices.length > 0 && (
+            <Box $margin={[40, 0, 0, 0]}>
+              <Flex $justify="center">
+                <Pagination
+                  start={1}
+                  end={totalPages}
+                  current={currentPage}
+                  onChange={page => updateParams({ page })}
+                />
+              </Flex>
+            </Box>
+          )}
         </Flex>
       </Flex>
     </Container>

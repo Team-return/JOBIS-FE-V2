@@ -15,18 +15,34 @@ describe("Pagination", () => {
   it("should render page numbers correctly for the first group", () => {
     renderWithTheme(<Pagination {...defaultProps} />);
     expect(screen.getByText("1")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.queryByText("4")).not.toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.queryByText("6")).not.toBeInTheDocument();
+  });
+
+  it.each([2, 3, 4])(
+    "should keep the first group when current is %i",
+    current => {
+      renderWithTheme(<Pagination {...defaultProps} current={current} />);
+      ["1", "2", "3", "4", "5"].forEach(page =>
+        expect(screen.getByText(page)).toBeInTheDocument()
+      );
+      expect(screen.queryByText("6")).not.toBeInTheDocument();
+    }
+  );
+
+  it("should show the last group when current is beyond end", () => {
+    renderWithTheme(<Pagination {...defaultProps} end={7} current={12} />);
+    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(screen.queryByText("5")).not.toBeInTheDocument();
   });
 
   it("should render page numbers correctly for a middle group", () => {
-    renderWithTheme(<Pagination {...defaultProps} current={5} />);
-    expect(screen.getByText("4")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument();
+    renderWithTheme(<Pagination {...defaultProps} end={12} current={7} />);
     expect(screen.getByText("6")).toBeInTheDocument();
-    expect(screen.queryByText("3")).not.toBeInTheDocument();
-    expect(screen.queryByText("7")).not.toBeInTheDocument();
+    expect(screen.getByText("10")).toBeInTheDocument();
+    expect(screen.queryByText("5")).not.toBeInTheDocument();
+    expect(screen.queryByText("11")).not.toBeInTheDocument();
   });
 
   it("should highlight the current page", () => {
@@ -57,13 +73,13 @@ describe("Pagination", () => {
     );
     const nextButton = screen.getByRole("img", { name: /chevronright/i });
     fireEvent.click(nextButton);
-    expect(handleChange).toHaveBeenCalledWith(4);
+    expect(handleChange).toHaveBeenCalledWith(6);
   });
 
   it("should call onChange with the correct page when prev group button is clicked", () => {
     const handleChange = vi.fn();
     renderWithTheme(
-      <Pagination {...defaultProps} current={5} onChange={handleChange} />
+      <Pagination {...defaultProps} current={7} onChange={handleChange} />
     );
     const prevButton = screen.getByRole("img", { name: /chevronleft/i });
     fireEvent.click(prevButton);
@@ -86,7 +102,7 @@ describe("Pagination", () => {
     renderWithTheme(
       <Pagination
         {...defaultProps}
-        end={3}
+        end={5}
         current={1}
         onChange={handleChange}
       />

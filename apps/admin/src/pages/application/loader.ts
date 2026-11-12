@@ -3,7 +3,9 @@ import {
   parseQueryParams,
   parseOptionalString,
   parseOptionalNumber,
+  parseOptionalBoolean,
   parseEnum,
+  parsePageParam,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
@@ -40,28 +42,28 @@ const applicationQueryParser: QueryParamParser<ApplicationQuery> = {
         APPLICATION_STATUSES
       ),
       recruitment_id: parseOptionalNumber(params.get("recruitment-id")),
-      winter_intern: params.get("winter-intern") === "true" || undefined,
-      page: parseOptionalNumber(params.get("page")) || 1,
+      winter_intern: parseOptionalBoolean(params.get("winter-intern")),
+      page: parsePageParam(params.get("page")),
       year: parseOptionalString(params.get("year"))
     };
-  },
-  validate: data => {
-    return data.page >= 1;
   }
 };
+
+// 서버가 지원서 목록을 페이지로 나누지 않고 조건에 맞는 전부를 돌려주므로 page는 보내지 않는다
+export const getApplicationFilter = (query: ApplicationQuery) => ({
+  application_status: query.application_status,
+  student_name: query.student_name,
+  recruitment_id: query.recruitment_id,
+  winter_intern: query.winter_intern,
+  year: query.year
+});
 
 export async function applicationLoader({
   request
 }: LoaderFunctionArgs): Promise<LoaderData<ApplicationQuery>> {
   const queryParams = parseQueryParams(request, applicationQueryParser);
 
-  void useTeacherApplications.prefetch({
-    application_status: queryParams.application_status,
-    student_name: queryParams.student_name,
-    recruitment_id: queryParams.recruitment_id,
-    winter_intern: queryParams.winter_intern,
-    year: queryParams.year
-  });
+  void useTeacherApplications.prefetch(getApplicationFilter(queryParams));
 
   return {
     params: queryParams

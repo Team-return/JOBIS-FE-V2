@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Icon, Text, NotificationItem } from "@/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Props as HeaderProps } from "./Header.types";
 import { useNavigate } from "react-router-dom";
 import { css } from "@emotion/react";
@@ -111,16 +111,20 @@ const AlarmContainer = styled.div`
   }
 `;
 
-export const StudentHeader = ({ userName, notifications }: Props) => {
+export const StudentHeader = ({
+  userName,
+  notifications,
+  onNotificationClick
+}: Props) => {
   const { currentTheme: theme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
-  const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);
+  // 드롭다운을 열 때 본 안읽음 알림. 하나를 읽어 목록이 다시 와도, 처음 보는 안읽음 알림이 있을 때만 점을 켠다
+  const [seenUnreadIds, setSeenUnreadIds] = useState<number[]>([]);
   const navigate = useNavigate();
 
-  // 알림을 비동기로 받아도 새 알림 여부가 반영되도록 동기화한다
-  useEffect(() => {
-    setIsNew(notifications?.some(n => n.new) ?? false);
-  }, [notifications]);
+  const unreadIds =
+    notifications?.filter(n => n.new).map(n => n.notification_id) ?? [];
+  const isNew = unreadIds.some(id => !seenUnreadIds.includes(id));
 
   const studentMenu = [
     { label: "기업체", path: "/company" },
@@ -166,7 +170,7 @@ export const StudentHeader = ({ userName, notifications }: Props) => {
         <HeaderContainer
           onClick={() => {
             setIsAlarm(!isAlarm);
-            setIsNew(false);
+            setSeenUnreadIds(unreadIds);
           }}
         >
           <Text $span $size="body2" $color={theme.color.grayScale[80]}>
@@ -186,6 +190,10 @@ export const StudentHeader = ({ userName, notifications }: Props) => {
                   title={n.title}
                   content={n.content}
                   date={n.created_at}
+                  onClick={() => {
+                    setIsAlarm(false);
+                    onNotificationClick?.(n);
+                  }}
                 />
               ))
             ) : (

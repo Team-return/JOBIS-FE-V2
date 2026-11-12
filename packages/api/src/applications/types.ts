@@ -11,7 +11,7 @@ export interface CreateApplicationRequest {
 
 export interface EmploymentCountResponse {
   total_student_count: number;
-  pass_count: number;
+  passed_count: number;
   approved_count: number;
 }
 

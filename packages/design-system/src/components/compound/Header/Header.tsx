@@ -95,6 +95,7 @@ export const Header = (props: Props) => {
     <StudentHeader
       userName={props.userName}
       notifications={props.notifications}
+      onNotificationClick={props.onNotificationClick}
     />
   ) : type === "company" ? (
     <Component>

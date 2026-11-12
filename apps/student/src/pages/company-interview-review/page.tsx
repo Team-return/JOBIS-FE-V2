@@ -43,9 +43,9 @@ const ReviewItem = ({
 export const CompanyInterviewReview = () => {
   const { params: companyId } = useLoaderData() as LoaderData<number>;
   const { currentTheme: theme } = useTheme();
-  const { getParamAsNumber, updateParams } = useQueryParams();
+  const { getPageParam, updateParams } = useQueryParams();
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
 
   const { data: reviewListData, isPending } = useReviewList({
     page: currentPage,

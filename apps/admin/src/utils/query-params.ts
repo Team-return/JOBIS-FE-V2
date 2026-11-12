@@ -30,6 +30,12 @@ export function parseQueryParams<T>(
   return result;
 }
 
+// page=0·음수·소수·숫자가 아닌 값은 서버가 거절해 목록이 비므로 첫 페이지로 본다
+export function parsePageParam(value: string | null): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page >= 1 ? page : 1;
+}
+
 export function parseOptionalString(value: string | null): string | undefined {
   return value || undefined;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { parsePageParam } from "./query-params";
 
 export const useQueryParams = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,12 +50,18 @@ export const useQueryParams = () => {
     [searchParams]
   );
 
+  const getPageParam = useCallback(
+    (): number => parsePageParam(searchParams.get("page")),
+    [searchParams]
+  );
+
   return {
     searchParams,
     updateParams,
     resetParams,
     getParam,
-    getParamAsNumber
+    getParamAsNumber,
+    getPageParam
   };
 };
 

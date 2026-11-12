@@ -3,12 +3,15 @@ import type { Props } from "./CompanyCard.types";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 
+// 로고는 대부분 정사각형이라 칸에 맞춰 늘리면 찌그러진다. 비율을 지키고 남는 곳은 흰색으로 채우고,
+// 흰 배경에서도 카드 영역이 보이도록 테두리를 둔다
 const Img = styled.img`
   width: 304px;
   height: 168px;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.color.grayScale[40]};
-  object-fit: fill;
+  border: 1px solid ${({ theme }) => theme.color.grayScale[40]};
+  background-color: ${({ theme }) => theme.color.grayScale[10]};
+  object-fit: contain;
   cursor: pointer;
 `;
 
@@ -33,7 +36,7 @@ export const CompanyCard = ({
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   return (
-    <Flex $direction="column" $gap={16} onClick={onClick}>
+    <Flex $direction="column" $gap={16} $fit onClick={onClick}>
       <Img src={imgUrl} alt={companyName} />
       <Flex $direction="row" $justify="space-between">
         <Flex $direction="column" $gap={4}>

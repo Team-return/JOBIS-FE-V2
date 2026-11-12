@@ -1,4 +1,4 @@
-import { ListSortType } from "@/enum";
+import { CompanyType, ListSortType } from "@/enum";
 
 export interface CompanyStudent {
   id: number;
@@ -195,7 +195,7 @@ export interface EmploymentCompanyCountResponse {
 
 export interface UpdateCompanyTypeRequest {
   company_ids: number[];
-  company_type: string;
+  company_type: CompanyType;
 }
 
 export interface CompanyCountResponse {
