@@ -32,6 +32,12 @@ export type RecruitmentStatus =
 
 export type StudentRecruitmentStatus = "REQUESTED" | "RECRUITING" | "DONE";
 
+export type UnapplicableReason =
+  | "ALREADY_APPLIED"
+  | "NOT_RECRUITING"
+  | "HAS_ACTIVE_APPLICATION"
+  | "GRADE_NOT_ELIGIBLE";
+
 export type ApplicationStatus =
   | "REQUESTED"
   | "APPROVED"

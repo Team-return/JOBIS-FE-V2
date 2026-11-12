@@ -3,7 +3,8 @@ import type {
   JobType,
   RecruitmentStatus,
   CompanyType,
-  ListSortType
+  ListSortType,
+  UnapplicableReason
 } from "@/enum";
 
 interface RecruitmentArea {
@@ -161,6 +162,7 @@ export interface RecruitmentDetailResponse {
   end_date: string;
   etc: string;
   is_applicable: boolean;
+  unapplicable_reason: UnapplicableReason | null;
   bookmarked: boolean;
   hire_convertible?: boolean;
   winter_intern: boolean;
