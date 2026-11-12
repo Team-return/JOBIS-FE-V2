@@ -85,9 +85,11 @@ export const MyPage = () => {
                   imgUrl={toFileUrl(application.company_logo_url)}
                   companyName={application.company}
                   date={application.created_at}
-                  onRetry={() => {
-                    error("준비중인 기능입니다");
-                  }}
+                  onRetry={() =>
+                    navigate(
+                      `/recruitment/detail/${application.recruitment_id}/apply?application-id=${application.application_id}`
+                    )
+                  }
                   onCancel={() => setCancelTargetId(application.application_id)}
                 />
               ))

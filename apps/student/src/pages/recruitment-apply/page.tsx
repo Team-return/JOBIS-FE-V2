@@ -2,7 +2,9 @@ import {
   query,
   recruitmentsKeys,
   useCreateApplication,
+  useReapply,
   useRecruitmentDetail,
+  useStudentApplications,
   useUploadFiles
 } from "@jobis/api";
 import {
@@ -29,7 +31,7 @@ import {
   useState
 } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { toFileUrl, type LoaderData } from "../../utils";
+import { toFileUrl, useQueryParams, type LoaderData } from "../../utils";
 import { getUnapplicableMessage } from "../recruitment-detail/constants";
 
 interface UploadedFile {
@@ -220,19 +222,52 @@ const APPLY_ERROR_MESSAGE: Record<number, string> = {
   409: "이미 지원했거나 진행 중인 다른 지원이 있습니다."
 };
 
+const REAPPLY_ERROR_MESSAGE: Record<number, string> = {
+  400: "재지원할 수 없는 상태이거나 지원 정보가 올바르지 않습니다.",
+  403: "재지원 권한이 없습니다.",
+  404: "지원 내역을 찾을 수 없습니다."
+};
+
+// 서버가 재지원을 받아 주는 지원 상태
+const REAPPLICABLE_STATUSES = ["REQUESTED", "REJECTED"];
+
 export const RecruitmentApply = () => {
   const { currentTheme: theme } = useTheme();
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
   const toast = useToast();
   const navigate = useNavigate();
+  const { getParam } = useQueryParams();
+
+  // 마이페이지 재지원은 같은 지원 폼을 쓰고 지원서 id를 쿼리로 넘긴다
+  const reapplyId = Number(getParam("application-id"));
+  const isReapply = Number.isInteger(reapplyId) && reapplyId > 0;
 
   const { data: detail } = useRecruitmentDetail(recruitmentId);
+  const { data: applicationList, isSuccess: isApplicationsLoaded } =
+    useStudentApplications(undefined, { enabled: isReapply });
+  const reapplyTarget = applicationList?.applications.find(
+    application =>
+      application.application_id === reapplyId &&
+      application.recruitment_id === recruitmentId
+  );
 
-  // 주소로 바로 들어와도 지원할 수 없는 공고는 제출 전에 막는다
-  const blockedReason =
-    detail && !detail.is_applicable
+  const getBlockedReason = () => {
+    if (isReapply) {
+      const canReapply =
+        !isApplicationsLoaded ||
+        (reapplyTarget &&
+          REAPPLICABLE_STATUSES.includes(reapplyTarget.application_status));
+
+      return canReapply ? undefined : "재지원할 수 없는 지원서입니다";
+    }
+
+    return detail && !detail.is_applicable
       ? getUnapplicableMessage(detail.unapplicable_reason)
       : undefined;
+  };
+
+  // 주소로 바로 들어와도 지원할 수 없는 공고는 제출 전에 막는다
+  const blockedReason = getBlockedReason();
 
   const [files, setFiles] = useState<Record<FileFieldName, UploadedFile[]>>({
     포트폴리오: [],
@@ -260,7 +295,7 @@ export const RecruitmentApply = () => {
     };
   }, [pageBg]);
 
-  const { mutate: apply, isPending: isApplying } = useCreateApplication(
+  const { mutate: apply, isPending: isCreating } = useCreateApplication(
     recruitmentId,
     {
       onSuccess: async () => {
@@ -277,6 +312,19 @@ export const RecruitmentApply = () => {
         )
     }
   );
+
+  const { mutate: reapply, isPending: isReapplying } = useReapply(reapplyId, {
+    onSuccess: () => {
+      toast.success("재지원이 완료되었습니다.");
+      navigate("/mypage", { replace: true });
+    },
+    onError: status =>
+      toast.error(
+        REAPPLY_ERROR_MESSAGE[status] ?? "재지원하는 중에 오류가 발생했습니다."
+      )
+  });
+
+  const isApplying = isCreating || isReapplying;
 
   const addFiles = (field: FileFieldName) => (uploaded: UploadedFile[]) =>
     setFiles(prev => ({ ...prev, [field]: [...prev[field], ...uploaded] }));
@@ -319,7 +367,11 @@ export const RecruitmentApply = () => {
       return;
     }
 
-    apply({ attachments });
+    if (isReapply) {
+      reapply({ attachments });
+    } else {
+      apply({ attachments });
+    }
   };
 
   return (
@@ -383,7 +435,7 @@ export const RecruitmentApply = () => {
               $progressing={isApplying}
               style={{ width: "100%" }}
             >
-              {blockedReason ?? "지원하기"}
+              {blockedReason ?? (isReapply ? "재지원하기" : "지원하기")}
             </Button>
           </Flex>
         </Surface>
