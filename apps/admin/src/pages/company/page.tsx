@@ -139,7 +139,7 @@ export const Company = () => {
     updateCompanyType(
       {
         company_ids: companyIds,
-        company_type: "LEADING"
+        company_type: "LEAD"
       },
       {
         onSuccess: async () => {
