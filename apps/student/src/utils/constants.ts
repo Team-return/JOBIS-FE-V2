@@ -66,6 +66,6 @@ export const RECRUITMENT_SORT_OPTIONS = [
   { label: "매출", value: "TAKE" },
   { label: "직원 ↓", value: "WORKERS_COUNT_DESC" },
   { label: "직원 ↑", value: "WORKERS_COUNT_ASC" },
-  { label: "설립일 ↓", value: "FOUNDED_AT_DESC" },
-  { label: "설립일 ↑", value: "FOUNDED_AT_ASC" }
+  { label: "공고마감 ↓", value: "DEADLINE_DESC" },
+  { label: "공고마감 ↑", value: "DEADLINE_ASC" }
 ];

@@ -12,6 +12,7 @@ import {
 } from "@jobis/design-system";
 import { useEffect, useState } from "react";
 import {
+  RECRUITMENT_SORT_OPTIONS,
   RECRUITMENT_STATE_OPTIONS,
   getRecruitmentStatusLabel,
   YEAR_OPTIONS,
@@ -22,7 +23,7 @@ import {
 } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import {
-  ListSortType,
+  RecruitmentSortType,
   StudentRecruitmentStatus,
   useCodeList,
   useRecruitmentList,
@@ -81,7 +82,7 @@ export const RecruitmentList = () => {
     name: currentName || undefined,
     years: year ? parseInt(year, 10) : undefined,
     status: (state as StudentRecruitmentStatus) || undefined,
-    sort_type: (currentSort as ListSortType) || undefined,
+    sort_type: (currentSort as RecruitmentSortType) || undefined,
     job_code: field ? parseInt(field, 10) : undefined,
     tech_code: techStack || undefined
   });
@@ -159,7 +160,20 @@ export const RecruitmentList = () => {
           />
         </Flex>
       </Flex>
-      <Box $margin={[32, 0, 0, 0]}></Box>
+      <Box $margin={[20, 0, 12, 0]}>
+        <Flex $justify="flex-end">
+          <Dropdown
+            $width={79}
+            type={undefined}
+            $isNoneBorder={true}
+            value={currentSort}
+            onChange={value =>
+              updateParams({ "sort-type": value || undefined, "page": 1 })
+            }
+            options={RECRUITMENT_SORT_OPTIONS}
+          />
+        </Flex>
+      </Box>
 
       {isListError || isEmpty ? (
         <Flex $justify="center">

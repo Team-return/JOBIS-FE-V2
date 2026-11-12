@@ -11,7 +11,7 @@ import {
 import {
   type RecruitmentStatus,
   useRecruitmentList,
-  ListSortType
+  type RecruitmentSortType
 } from "@jobis/api";
 
 export interface RecruitmentQuery {
@@ -23,7 +23,7 @@ export interface RecruitmentQuery {
   job_code?: number;
   tech_code?: string;
   military_support?: boolean;
-  sort_type?: ListSortType;
+  sort_type?: RecruitmentSortType;
 }
 
 const RECRUITMENT_STATUSES = [
@@ -36,11 +36,11 @@ const RECRUITMENT_STATUSES = [
 ] as const;
 
 const SORT_TYPES = [
-  "WORKERS_COUNT_ASC",
+  "TAKE",
   "WORKERS_COUNT_DESC",
-  "FOUNDED_AT_ASC",
-  "FOUNDED_AT_DESC",
-  "TAKE"
+  "WORKERS_COUNT_ASC",
+  "DEADLINE_DESC",
+  "DEADLINE_ASC"
 ] as const;
 
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
