@@ -111,7 +111,11 @@ const AlarmContainer = styled.div`
   }
 `;
 
-export const StudentHeader = ({ userName, notifications }: Props) => {
+export const StudentHeader = ({
+  userName,
+  notifications,
+  onNotificationClick
+}: Props) => {
   const { currentTheme: theme } = useTheme();
   const [isAlarm, setIsAlarm] = useState(false);
   const [isNew, setIsNew] = useState(notifications?.some(n => n.new) ?? false);
@@ -186,6 +190,10 @@ export const StudentHeader = ({ userName, notifications }: Props) => {
                   title={n.title}
                   content={n.content}
                   date={n.created_at}
+                  onClick={() => {
+                    setIsAlarm(false);
+                    onNotificationClick?.(n);
+                  }}
                 />
               ))
             ) : (

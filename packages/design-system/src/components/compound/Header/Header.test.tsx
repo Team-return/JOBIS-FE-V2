@@ -278,6 +278,34 @@ describe("Header", () => {
       expect(screen.getByText("새로운 소식")).toBeInTheDocument();
     });
 
+    it("calls onNotificationClick and closes dropdown when notification is clicked", async () => {
+      const notification = {
+        notification_id: 7,
+        title: "새로운 공지",
+        content: "새 공지가 있습니다",
+        topic: "NOTICE",
+        detail_id: 3,
+        created_at: "2025-12-24T10:00:00Z",
+        new: true
+      };
+      const onNotificationClick = vi.fn();
+
+      renderWithRouter(
+        <Header
+          type="student"
+          userName="홍길동"
+          notifications={[notification]}
+          onNotificationClick={onNotificationClick}
+        />
+      );
+
+      await userEvent.click(screen.getByText("홍길동"));
+      await userEvent.click(screen.getByText("새 공지가 있습니다"));
+
+      expect(onNotificationClick).toHaveBeenCalledWith(notification);
+      expect(screen.queryByText("새로운 공지")).not.toBeInTheDocument();
+    });
+
     it("navigates to correct path when menu item is clicked", async () => {
       renderWithRouter(<Header type="student" userName="홍길동" />);
 
