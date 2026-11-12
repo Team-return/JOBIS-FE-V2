@@ -32,6 +32,7 @@ import {
   COMPANY_TYPE_OPTIONS,
   REGION_OPTIONS,
   BUSINESS_AREA_OPTIONS,
+  PAGE_SIZE,
   LoaderData,
   booleanToYN,
   getErrorMessage
@@ -333,7 +334,7 @@ export const Company = () => {
                   columnWidths={[
                     164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
                   ]}
-                  rows={10}
+                  rows={PAGE_SIZE}
                 />
               ) : (
                 <Table

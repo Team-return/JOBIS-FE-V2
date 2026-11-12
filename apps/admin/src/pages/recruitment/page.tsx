@@ -35,6 +35,7 @@ import {
   COMPANY_TYPE_LABEL,
   COMPANY_TYPE_OPTIONS,
   YEAR_OPTIONS,
+  PAGE_SIZE,
   formatDate,
   getErrorMessage,
   parseLocalDate,
@@ -354,7 +355,7 @@ export const Recruitment = () => {
             <Flex $direction="column" $align="center" $gap={40}>
               {isLoading ? (
                 <TableSkeleton
-                  rows={10}
+                  rows={PAGE_SIZE}
                   checkbox
                   columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
                 />
