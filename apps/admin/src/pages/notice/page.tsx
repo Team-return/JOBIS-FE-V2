@@ -150,7 +150,38 @@ export const Notice = () => {
     notices.length === 0 &&
     currentPage > 1;
 
-  // 번호는 DB id가 아니라 최신순 목록에서의 순서다(삭제된 공지가 있어도 건너뛰지 않는다)
+  // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다(학생 공지 목록과 같다).
+  // 전체 개수 API가 없어(/count는 페이지 수만 준다) 마지막 페이지를 한 번 더 받아 센다.
+  // 지금 보는 페이지가 마지막 페이지면 같은 요청이라 다시 받지 않는다
+  const totalPageCount = countQuery.data?.total_page_count;
+  const lastPageQuery = useNoticePage(
+    { page: totalPageCount ?? 1 },
+    { enabled: !isSearching && !!totalPageCount }
+  );
+  const totalNoticeCount =
+    !!totalPageCount && lastPageQuery.isSuccess
+      ? (totalPageCount - 1) * NOTICE_PAGE_SIZE +
+        lastPageQuery.data.notices.length
+      : undefined;
+  // 페이지 수가 0인데 글이 보이면(오래된 값) 셀 수 없으니 실패와 같이 id를 보여 준다
+  const isNumberFailed =
+    countQuery.isError || lastPageQuery.isError || totalPageCount === 0;
+  // 검색 결과도 전체 목록에서의 번호를 그대로 쓴다
+  const allNotices = searchQuery.data?.notices ?? [];
+  const searchNumbers = new Map(
+    allNotices.map((notice, index) => [notice.id, allNotices.length - index])
+  );
+
+  const getNoticeNumber = (noticeId: number, index: number) => {
+    if (isSearching) return String(searchNumbers.get(noticeId) ?? noticeId);
+    if (totalNoticeCount === undefined) {
+      return isNumberFailed ? String(noticeId) : "-";
+    }
+    // 페이지 수를 받은 뒤 공지가 늘거나 줄면 어긋날 수 있어 1보다 작으면 id로 둔다
+    const number = totalNoticeCount - (startIndex + index);
+    return String(number >= 1 ? number : noticeId);
+  };
+
   const tableRows: ReactNode[][] = notices.map((notice, index) => [
     <NoticeCell
       key={`id-${notice.id}`}
@@ -158,7 +189,7 @@ export const Notice = () => {
       focusable={false}
     >
       <NoticeNumber
-        number={String(startIndex + index + 1)}
+        number={getNoticeNumber(notice.id, index)}
         color={theme.color.grayScale[70]}
       />
     </NoticeCell>,
