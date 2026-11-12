@@ -35,6 +35,7 @@ import {
   YEAR_OPTIONS,
   PAGE_SIZE,
   formatDate,
+  getErrorMessage,
   parseLocalDate,
   type LoaderData,
   useQueryParams
@@ -170,8 +171,8 @@ export const Recruitment = () => {
           await invalidateRecruitmentQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("상태 변경에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "상태 변경에 실패했습니다."));
         }
       }
     );

@@ -32,7 +32,8 @@ import {
   BUSINESS_AREA_OPTIONS,
   PAGE_SIZE,
   LoaderData,
-  booleanToYN
+  booleanToYN,
+  getErrorMessage
 } from "../../utils";
 import type { CompanyQuery } from "./loader";
 
@@ -124,8 +125,8 @@ export const Company = () => {
           await invalidateCompanyQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("참여기업 등록에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "참여기업 등록에 실패했습니다."));
         }
       }
     );
@@ -146,8 +147,8 @@ export const Company = () => {
           await invalidateCompanyQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("선도기업 등록에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "선도기업 등록에 실패했습니다."));
         }
       }
     );
@@ -167,8 +168,8 @@ export const Company = () => {
           await invalidateCompanyQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("협약 등록에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "협약 등록에 실패했습니다."));
         }
       }
     );

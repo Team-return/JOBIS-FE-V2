@@ -34,7 +34,8 @@ import {
   useQueryParams,
   YEAR_OPTIONS,
   PAGE_SIZE,
-  LoaderData
+  LoaderData,
+  getErrorMessage
 } from "../../utils";
 import type { ApplicationQuery } from "./loader";
 
@@ -294,8 +295,8 @@ export const Application = () => {
           await invalidateApplicationQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("상태 변경에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "상태 변경에 실패했습니다."));
         }
       }
     );
