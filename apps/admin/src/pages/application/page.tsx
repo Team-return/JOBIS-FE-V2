@@ -83,6 +83,13 @@ const ATTACHMENT_LABEL_STYLE = {
   whiteSpace: "nowrap"
 } as const;
 
+// 펼친 목록에서는 키보드·터치 사용자도 전체 이름을 볼 수 있게 줄바꿈한다
+const ATTACHMENT_FULL_LABEL_STYLE = {
+  maxWidth: 240,
+  whiteSpace: "normal",
+  wordBreak: "break-all"
+} as const;
+
 interface Attachment {
   url: string;
   type: AttachmentType;
@@ -154,8 +161,16 @@ const Attachments = ({
             border: `1px solid ${theme.color.grayScale[20]}`,
             backgroundColor: theme.color.grayScale[10]
           }}
+          role="button"
+          tabIndex={0}
+          aria-expanded={isOpen}
           onClick={e => {
             e.stopPropagation();
+            setOpen(isOpen ? null : id);
+          }}
+          onKeyDown={e => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            e.preventDefault();
             setOpen(isOpen ? null : id);
           }}
         >
@@ -200,10 +215,7 @@ const Attachments = ({
                       size={20}
                       strokeColor={theme.color.grayScale[60]}
                     />
-                    <div
-                      style={ATTACHMENT_LABEL_STYLE}
-                      title={getAttachmentLabel(attachment)}
-                    >
+                    <div style={ATTACHMENT_FULL_LABEL_STYLE}>
                       <Text
                         $span
                         $size="body3"
