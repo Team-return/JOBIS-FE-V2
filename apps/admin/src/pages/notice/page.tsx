@@ -150,14 +150,15 @@ export const Notice = () => {
     notices.length === 0 &&
     currentPage > 1;
 
-  const tableRows: ReactNode[][] = notices.map(notice => [
+  // 번호는 DB id가 아니라 최신순 목록에서의 순서다(삭제된 공지가 있어도 건너뛰지 않는다)
+  const tableRows: ReactNode[][] = notices.map((notice, index) => [
     <NoticeCell
       key={`id-${notice.id}`}
       to={`/notice/detail/${notice.id}`}
       focusable={false}
     >
       <NoticeNumber
-        number={String(notice.id)}
+        number={String(startIndex + index + 1)}
         color={theme.color.grayScale[70]}
       />
     </NoticeCell>,
