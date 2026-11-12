@@ -1,4 +1,8 @@
-import { NOTICE_LIST_PAGE_SIZE, useNoticeList } from "@jobis/api";
+import {
+  NOTICE_LIST_PAGE_SIZE,
+  useNoticeCount,
+  useNoticePage
+} from "@jobis/api";
 import {
   Box,
   Container,
@@ -22,26 +26,49 @@ const formatNoticeDate = (createdAt: string) => {
 export const NoticesList = () => {
   const navigate = useNavigate();
   const { currentTheme: theme } = useTheme();
-  const { data, isPending, isError } = useNoticeList();
   const { getPageParam, updateParams } = useQueryParams();
-
-  const notices = data?.notices ?? [];
-  const totalPages = Math.max(
-    1,
-    Math.ceil(notices.length / NOTICE_LIST_PAGE_SIZE)
-  );
   const currentPage = getPageParam();
-  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
-  const pageNotices = notices.slice(
-    startIndex,
-    startIndex + NOTICE_LIST_PAGE_SIZE
+
+  const pageQuery = useNoticePage({ page: currentPage });
+  const countQuery = useNoticeCount();
+  const totalPageCount = countQuery.data?.total_page_count;
+  const hasNotices = totalPageCount !== undefined && totalPageCount > 0;
+  // 번호를 전체 개수부터 매기려면 마지막 페이지의 글 수가 필요하다
+  const lastPageQuery = useNoticePage(
+    { page: totalPageCount ?? 1 },
+    { enabled: hasNotices }
   );
+
+  const notices = pageQuery.data?.notices ?? [];
+  // 페이지 수를 못 받았으면 지금 페이지가 꽉 찼을 때만 다음 페이지가 있다고 본다
+  const fallbackPages =
+    notices.length === NOTICE_LIST_PAGE_SIZE ? currentPage + 1 : currentPage;
+  const totalPages = Math.max(1, totalPageCount ?? fallbackPages);
+  const totalCount =
+    hasNotices && lastPageQuery.data
+      ? (totalPageCount - 1) * NOTICE_LIST_PAGE_SIZE +
+        lastPageQuery.data.notices.length
+      : undefined;
+  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
+  const isPending =
+    pageQuery.isPending || countQuery.isLoading || lastPageQuery.isLoading;
+  const isError = pageQuery.isError;
+  // 페이지 수가 오래됐거나 못 받았어도 빈 페이지에 갇히지 않게 한다
+  const isEmptyLaterPage =
+    pageQuery.isSuccess && notices.length === 0 && currentPage > 1;
 
   // 주소의 page가 범위를 벗어나면 첫 페이지로 돌린다
   useEffect(() => {
-    if (isPending || (currentPage >= 1 && currentPage <= totalPages)) return;
+    const isOutOfRange = countQuery.isSuccess && currentPage > totalPages;
+    if (!isOutOfRange && !isEmptyLaterPage) return;
     updateParams({ page: undefined });
-  }, [isPending, currentPage, totalPages, updateParams]);
+  }, [
+    countQuery.isSuccess,
+    isEmptyLaterPage,
+    currentPage,
+    totalPages,
+    updateParams
+  ]);
 
   const skeletonRows = Array.from({ length: 10 }).map((_, rowIndex) => [
     <Skeleton key={`sk-${rowIndex}-id`} width={30} height={28} $radius={8} />,
@@ -55,7 +82,8 @@ export const NoticesList = () => {
   ]);
 
   // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다 (삭제된 글 때문에 id가 중간부터 시작함)
-  const tableRows = pageNotices.map((row, index) => [
+  // 전체 개수를 못 구하면 id를 보여 준다
+  const tableRows = notices.map((row, index) => [
     <Text
       key={`id-${row.id}`}
       $size="h6"
@@ -63,7 +91,9 @@ export const NoticesList = () => {
       $align="center"
       $color={theme.color.primary[20]}
     >
-      {String(notices.length - (startIndex + index))}
+      {String(
+        totalCount === undefined ? row.id : totalCount - (startIndex + index)
+      )}
     </Text>,
     <div
       key={`title-${row.id}`}
