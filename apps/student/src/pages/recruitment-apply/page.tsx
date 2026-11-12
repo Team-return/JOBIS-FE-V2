@@ -243,7 +243,7 @@ export const RecruitmentApply = () => {
   const isReapply = Number.isInteger(reapplyId) && reapplyId > 0;
 
   const { data: detail } = useRecruitmentDetail(recruitmentId);
-  const { data: applicationList, isSuccess: isApplicationsLoaded } =
+  const { data: applicationList, isError: isApplicationsError } =
     useStudentApplications(undefined, { enabled: isReapply });
   const reapplyTarget = applicationList?.applications.find(
     application =>
@@ -253,10 +253,16 @@ export const RecruitmentApply = () => {
 
   const getBlockedReason = () => {
     if (isReapply) {
+      // 내 지원서인지·재지원할 수 있는 상태인지 확인하기 전에는 제출하지 못하게 한다
+      if (!applicationList) {
+        return isApplicationsError
+          ? "지원 내역을 불러오지 못했습니다"
+          : "지원 내역을 확인하는 중입니다";
+      }
+
       const canReapply =
-        !isApplicationsLoaded ||
-        (reapplyTarget &&
-          REAPPLICABLE_STATUSES.includes(reapplyTarget.application_status));
+        reapplyTarget &&
+        REAPPLICABLE_STATUSES.includes(reapplyTarget.application_status);
 
       return canReapply ? undefined : "재지원할 수 없는 지원서입니다";
     }
