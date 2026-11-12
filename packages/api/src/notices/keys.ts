@@ -5,5 +5,6 @@ export const noticesKeys = {
   noticeList: () => ["notice-list"],
   // 등록·수정·삭제 후 noticeList()로 무효화하면 함께 갱신되도록 같은 접두사를 쓴다
   noticePage: (params: NoticePageQueryParams) => ["notice-list", params],
-  noticeCount: () => ["notice-list", "count"]
+  noticeCount: () => ["notice-list", "count"],
+  noticeTotalCount: () => ["notice-list", "total-count"]
 } as const;
