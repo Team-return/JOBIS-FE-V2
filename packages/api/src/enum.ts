@@ -72,7 +72,8 @@ export type NotificationTopic =
   | "APPLICATION"
   | "RECRUITMENT"
   | "NOTICE"
-  | "WINTER_INTERN";
+  | "WINTER_INTERN"
+  | "INTERVIEW";
 
 export type InterviewMethod = "INDIVIDUAL" | "GROUP" | "OTHER";
 
