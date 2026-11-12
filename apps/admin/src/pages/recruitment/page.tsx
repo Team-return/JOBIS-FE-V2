@@ -15,7 +15,7 @@ import {
   Box,
   TableSkeleton
 } from "@jobis/design-system";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLoaderData } from "react-router-dom";
 import {
   useRecruitmentCount,
@@ -189,8 +189,29 @@ export const Recruitment = () => {
     document.body.removeChild(link);
   };
 
-  const tableRows: string[][] = recruitments.map(recruitment => [
-    RECRUITMENT_STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
+  const getStatusColor = (status: RecruitmentStatus) => {
+    switch (status) {
+      case "REQUESTED":
+        return theme.color.subColor.yellow[20];
+      case "RECRUITING":
+        return theme.color.subColor.blue[30];
+      default:
+        return theme.color.grayScale[60];
+    }
+  };
+
+  const tableRows: ReactNode[][] = recruitments.map(recruitment => [
+    <Flex $direction="column" $gap={2} $fit>
+      <Text $size="body2" $color={getStatusColor(recruitment.status)}>
+        {RECRUITMENT_STATUS_LABEL[recruitment.status] ??
+          String(recruitment.status)}
+      </Text>
+      {recruitment.winter_intern && (
+        <Text $size="caption" $color={theme.color.primary[20]}>
+          겨울인턴
+        </Text>
+      )}
+    </Flex>,
     recruitment.company_name,
     recruitment.hiring_jobs,
     COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
