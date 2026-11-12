@@ -39,6 +39,15 @@ export const useNoticeDetail = createQueryHook<number, NoticeDetailResponse>({
   queryKey: noticesKeys.noticeDetail
 });
 
+/** 학생만 호출할 수 있다. 서버가 학생마다 한 번만 기록한다 */
+export const useRecordNoticeView = createMutationHook<
+  { noticeId: number },
+  void
+>({
+  path: ({ noticeId }) => `/${noticeId}/views`,
+  method: "post"
+});
+
 /** 서버는 GET /notices?page=N 으로 공지를 12개씩 나눠 준다 */
 export const NOTICE_LIST_PAGE_SIZE = 12;
 
