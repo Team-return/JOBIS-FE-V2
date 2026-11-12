@@ -34,9 +34,10 @@ import {
   useQueryParams,
   YEAR_OPTIONS,
   PAGE_SIZE,
-  LoaderData
+  LoaderData,
+  getErrorMessage
 } from "../../utils";
-import type { ApplicationQuery } from "./loader";
+import { getApplicationFilter, type ApplicationQuery } from "./loader";
 
 const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
   REQUESTED: "접수완료",
@@ -63,6 +64,15 @@ const APPLICATION_STATUS_OPTIONS = [
   { label: "서류불합격", value: "DOC_FAILED" },
   { label: "처리중", value: "PROCESSING" }
 ];
+
+// 체험형 현장실습이 겨울인턴이라 형태는 모집의뢰서의 winter_intern 여부로 나눈다
+const APPLICATION_TYPE_OPTIONS = [
+  { label: "체험형", value: "true" },
+  { label: "채용형", value: "false" }
+];
+
+const getApplicationTypeLabel = (winterIntern: boolean) =>
+  winterIntern ? "체험형" : "채용형";
 
 interface Attachment {
   url: string;
@@ -207,8 +217,7 @@ const Attachments = ({
 };
 
 export const Application = () => {
-  const { params: initialParams } =
-    useLoaderData() as LoaderData<ApplicationQuery>;
+  const { params } = useLoaderData() as LoaderData<ApplicationQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
@@ -217,23 +226,44 @@ export const Application = () => {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
-  const [localSearch, setLocalSearch] = useState(
-    initialParams.student_name || ""
-  );
+  const [localSearch, setLocalSearch] = useState(params.student_name || "");
 
   const [openedAttachment, setOpenedAttachment] = useState<number | null>(null);
 
   const currentPage = getPageParam();
+  const applicationType = getParam("winter-intern");
   const applicationStatus = getParam("application-status");
   const yearFilter = getParam("year");
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
-  const { data, isLoading } = useTeacherApplications({
-    application_status: applicationStatus,
-    student_name: getParam("student-name"),
-    year: yearFilter
-  });
+  const filter = getApplicationFilter(params);
+
+  // 필터를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
+  const { data, isLoading, isPlaceholderData } = useTeacherApplications(
+    filter,
+    { placeholderData: previousData => previousData }
+  );
+  // 목록 응답에 겨울인턴 여부가 없어, 형태 필터가 없을 때는 겨울인턴 지원서 id만 따로 받아 형태를 가린다.
+  // id로 맞춰 보므로 년도만 같으면 되고, 이름을 검색할 때마다 다시 받지 않게 다른 조건은 넣지 않는다
+  const { data: winterInternData } = useTeacherApplications(
+    { winter_intern: true, year: filter.year },
+    { enabled: filter.winter_intern === undefined }
+  );
+  const winterInternIds = new Set(
+    winterInternData?.applications.map(app => app.application_id)
+  );
+
+  const getApplicationType = (applicationId: number) => {
+    // 이전 조건의 목록을 잠시 보여 주는 동안에는 지금 형태 필터와 맞지 않을 수 있다
+    if (isPlaceholderData) return "-";
+    if (filter.winter_intern !== undefined) {
+      return getApplicationTypeLabel(filter.winter_intern);
+    }
+    return winterInternData
+      ? getApplicationTypeLabel(winterInternIds.has(applicationId))
+      : "-";
+  };
 
   const { mutate: updateApplicationStatus } = useUpdateApplicationStatus();
 
@@ -294,8 +324,12 @@ export const Application = () => {
           await invalidateApplicationQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("상태 변경에 실패했습니다.");
+        onError: error => {
+          toast.error(
+            getErrorMessage(error, "상태 변경에 실패했습니다.", {
+              400: "변경할 수 없는 상태가 포함돼 있습니다."
+            })
+          );
         }
       }
     );
@@ -329,7 +363,7 @@ export const Application = () => {
   const tableRows: ReactNode[][] =
     data?.applications.map(app => [
       renderCellText(
-        app.attachments.some(att => att.type === "FILE") ? "파일" : "URL",
+        getApplicationType(app.application_id),
         theme.color.grayScale[80]
       ),
       renderCellText(
@@ -357,6 +391,11 @@ export const Application = () => {
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
+  // 다른 필터 결과가 오면 선택한 줄 번호가 다른 지원서를 가리키므로 비운다
+  useEffect(() => {
+    setSelected([]);
+  }, [data]);
+
   useEffect(() => {
     const currentSearchValue = getParam("student-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
@@ -375,21 +414,40 @@ export const Application = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               지원서
             </Text>
-            <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총
-            </Text>
-            <Flex $align="center" $fit>
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(tableRows?.length)}
-              </Text>
-              <Text $size="body2" $color={theme.color.grayScale[90]}>
-                개
-              </Text>
-            </Flex>
+            {data && (
+              <>
+                <Text $size="body2" $color={theme.color.grayScale[90]}>
+                  총
+                </Text>
+                <Flex $align="center" $fit>
+                  <Text
+                    $size="body2"
+                    $span
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    {String(data.applications.length)}
+                  </Text>
+                  <Text $size="body2" $color={theme.color.grayScale[90]}>
+                    개
+                  </Text>
+                </Flex>
+              </>
+            )}
           </Flex>
 
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
+              <Dropdown
+                options={APPLICATION_TYPE_OPTIONS}
+                $width={96}
+                $placeholder="형태"
+                isOpen={openDropdown === "type"}
+                onToggle={isOpen => setOpenDropdown(isOpen ? "type" : null)}
+                value={applicationType}
+                onChange={val =>
+                  updateParams({ "winter-intern": val, "page": undefined })
+                }
+              />
               <Dropdown
                 options={APPLICATION_STATUS_OPTIONS}
                 $width={96}
@@ -411,7 +469,7 @@ export const Application = () => {
                 onChange={val => updateParams({ year: val, page: undefined })}
               />
               <Search
-                placeholder="이름을 입력하여 검색"
+                placeholder="이름을 입력해주세요"
                 $width={359}
                 value={localSearch}
                 onChange={setLocalSearch}
@@ -456,7 +514,7 @@ export const Application = () => {
                 <TableSkeleton
                   checkbox
                   columnWidths={[124, 124, 124, 124, 173, 124, 405]}
-                  rows={5}
+                  rows={PAGE_SIZE}
                 />
               ) : (
                 <Table

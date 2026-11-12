@@ -112,7 +112,7 @@ export const useUpdateApplicationStatus = createMutationHook<
 });
 
 export const useUpdateTrainDate = createMutationHook<
-  { applicationIds: number[]; startDate: string; endDate: string },
+  { application_ids: number[]; start_date: string; end_date: string },
   void
 >({
   path: "/train-date",

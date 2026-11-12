@@ -15,10 +15,12 @@ import {
   Box,
   TableSkeleton
 } from "@jobis/design-system";
-import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import { Link, useLoaderData } from "react-router-dom";
 import {
+  useRecruitmentCount,
   useRecruitmentFileDownload,
+  useTeacherRecruitmentCount,
   useTeacherRecruitmentList,
   useUpdateRecruitmentStatus,
   recruitmentsKeys,
@@ -29,20 +31,21 @@ import {
   useDebounce,
   RECRUITMENT_STATUS_LABEL,
   RECRUITMENT_STATE_OPTIONS,
+  RECRUITMENT_STATUS_CHANGE_OPTIONS,
   COMPANY_TYPE_LABEL,
   COMPANY_TYPE_OPTIONS,
   YEAR_OPTIONS,
   PAGE_SIZE,
   formatDate,
+  getErrorMessage,
   parseLocalDate,
   type LoaderData,
   useQueryParams
 } from "../../utils";
-import type { RecruitmentQuery } from "./loader";
+import { getRecruitmentFilter, type RecruitmentQuery } from "./loader";
 
 export const Recruitment = () => {
-  const { params: initialParams } =
-    useLoaderData() as LoaderData<RecruitmentQuery>;
+  const { params } = useLoaderData() as LoaderData<RecruitmentQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
@@ -61,9 +64,9 @@ export const Recruitment = () => {
   const parsedStartDate = startDate ? parseLocalDate(startDate) : null;
   const parsedEndDate = endDate ? parseLocalDate(endDate) : null;
 
-  // 주소에 잘못된 날짜가 들어 있으면 기간을 설정하지 않은 것으로 본다
+  // 주소에 잘못된 날짜가 들어 있으면 그 날짜는 설정하지 않은 것으로 보고, 한쪽만 골라도 표시한다
   const period: PeriodValue | undefined =
-    parsedStartDate && parsedEndDate
+    parsedStartDate || parsedEndDate
       ? {
           startDate: parsedStartDate,
           endDate: parsedEndDate,
@@ -71,9 +74,7 @@ export const Recruitment = () => {
         }
       : undefined;
 
-  const [localSearch, setLocalSearch] = useState(
-    initialParams.company_name || ""
-  );
+  const [localSearch, setLocalSearch] = useState(params.company_name || "");
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
@@ -92,38 +93,45 @@ export const Recruitment = () => {
     });
   };
 
-  const { data, isLoading } = useTeacherRecruitmentList({
-    company_name: getParam("company-name"),
-    year: year ? parseInt(year, 10) : undefined,
-    status: state as RecruitmentStatus,
-    start: startDate,
-    end: endDate,
-    winter_intern: initialParams.winter_intern
+  const filter = getRecruitmentFilter(params);
+
+  // 필터·페이지를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
+  const { data, isLoading } = useTeacherRecruitmentList(
+    { ...filter, page: currentPage },
+    { placeholderData: previousData => previousData }
+  );
+  const {
+    data: pageCountData,
+    isSuccess: isPageCountSuccess,
+    isPlaceholderData: isPageCountPlaceholder
+  } = useTeacherRecruitmentCount(filter, {
+    placeholderData: previousData => previousData
+  });
+  const { data: countData } = useRecruitmentCount(filter, {
+    placeholderData: previousData => previousData
   });
 
   const { data: excelData } = useRecruitmentFileDownload();
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
-  const filteredRecruitments =
+  // 구분은 서버 조회 조건에 없어 받은 페이지 안에서만 거른다
+  const recruitments =
     data?.recruitments.filter(
       recruitment => type === undefined || recruitment.company_type === type
     ) ?? [];
 
+  // 페이지 수를 받기 전(?page=7로 바로 들어온 때 등)에는 지금 페이지까지 있다고 보고 번호를 보여 준다
+  const isPageCountKnown = isPageCountSuccess && !isPageCountPlaceholder;
+  const lastPage = pageCountData?.total_page_count ?? 0;
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredRecruitments.length / PAGE_SIZE)
-  );
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedRecruitments = filteredRecruitments.slice(
-    startIndex,
-    endIndex
+    isPageCountKnown ? lastPage : Math.max(lastPage, currentPage)
   );
 
   const getSelectedRecruitmentIds = (): number[] => {
     return selected
-      .map(index => paginatedRecruitments[index]?.id)
+      .map(index => recruitments[index]?.id)
       .filter((id): id is number => id !== undefined);
   };
 
@@ -145,6 +153,8 @@ export const Recruitment = () => {
   const invalidateRecruitmentQueries = async () => {
     await Promise.all([
       query.invalidate(recruitmentsKeys.teacherRecruitmentList()),
+      query.invalidate(recruitmentsKeys.teacherRecruitmentCount()),
+      query.invalidate(recruitmentsKeys.recruitmentCount()),
       query.invalidate(recruitmentsKeys.recruitmentFileDownload())
     ]);
   };
@@ -169,8 +179,8 @@ export const Recruitment = () => {
           await invalidateRecruitmentQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("상태 변경에 실패했습니다.");
+        onError: error => {
+          toast.error(getErrorMessage(error, "상태 변경에 실패했습니다."));
         }
       }
     );
@@ -190,17 +200,57 @@ export const Recruitment = () => {
     document.body.removeChild(link);
   };
 
-  const tableRows: string[][] = paginatedRecruitments.map(recruitment => [
-    RECRUITMENT_STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
+  const getStatusColor = (status: RecruitmentStatus) => {
+    switch (status) {
+      case "REQUESTED":
+        return theme.color.subColor.yellow[20];
+      case "RECRUITING":
+        return theme.color.subColor.blue[30];
+      default:
+        return theme.color.grayScale[60];
+    }
+  };
+
+  const tableRows: ReactNode[][] = recruitments.map(recruitment => [
+    <Flex $direction="column" $gap={2} $fit>
+      <Text $size="body2" $color={getStatusColor(recruitment.status)}>
+        {RECRUITMENT_STATUS_LABEL[recruitment.status] ??
+          String(recruitment.status)}
+      </Text>
+      {/* 상태가 겨울인턴으로 덮어써진 공고는 상태 글자에 이미 겨울인턴이 나온다 */}
+      {recruitment.winter_intern && recruitment.status !== "WIN_INTERN" && (
+        <Text $size="caption" $color={theme.color.primary[20]}>
+          겨울인턴
+        </Text>
+      )}
+    </Flex>,
     recruitment.company_name,
     recruitment.hiring_jobs,
     COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
-    String(recruitment.total_hiring_count),
-    String(recruitment.application_requested_count),
-    String(recruitment.application_approved_count),
+    `${recruitment.total_hiring_count}명`,
+    <Link
+      to={`/application?recruitment-id=${recruitment.id}&application-status=REQUESTED`}
+      style={{ textDecoration: "underline", color: theme.color.grayScale[60] }}
+    >
+      <Text $size="body2" $span $color={theme.color.grayScale[60]}>
+        {`${recruitment.application_requested_count}명`}
+      </Text>
+    </Link>,
+    `${recruitment.application_approved_count}명`,
     recruitment.start_date || "-",
     recruitment.end_date || "-"
   ]);
+
+  // 다른 페이지·필터 결과가 오면 선택한 줄 번호가 다른 모집의뢰서를 가리키므로 비운다
+  useEffect(() => {
+    setSelected([]);
+  }, [data, type]);
+
+  // 범위 밖 페이지(주소 직접 입력, 상태를 바꿔 마지막 페이지가 빈 경우 등)는 마지막 페이지로 옮긴다
+  useEffect(() => {
+    if (!isPageCountKnown || currentPage <= totalPages) return;
+    updateParams({ page: totalPages > 1 ? totalPages : undefined });
+  }, [isPageCountKnown, currentPage, totalPages, updateParams]);
 
   useEffect(() => {
     const currentSearchValue = getParam("company-name") ?? "";
@@ -220,17 +270,26 @@ export const Recruitment = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               모집의뢰서
             </Text>
-            <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총
-            </Text>
-            <Flex $align="center" $fit>
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(filteredRecruitments.length)}
-              </Text>
-              <Text $size="body2" $color={theme.color.grayScale[90]}>
-                개
-              </Text>
-            </Flex>
+            {/* 구분은 받은 페이지 안에서만 걸러서 서버 총 개수와 맞지 않으므로 고른 동안 숨긴다 */}
+            {countData && type === undefined && (
+              <>
+                <Text $size="body2" $color={theme.color.grayScale[90]}>
+                  총
+                </Text>
+                <Flex $align="center" $fit>
+                  <Text
+                    $size="body2"
+                    $span
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    {String(countData.count)}
+                  </Text>
+                  <Text $size="body2" $color={theme.color.grayScale[90]}>
+                    개
+                  </Text>
+                </Flex>
+              </>
+            )}
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
@@ -286,7 +345,7 @@ export const Recruitment = () => {
               </IconButton>
               <Dropdown
                 $width={96}
-                options={RECRUITMENT_STATE_OPTIONS}
+                options={RECRUITMENT_STATUS_CHANGE_OPTIONS}
                 $placeholder="상태변경"
                 isOpen={openDropdown === "stateChange"}
                 onToggle={isOpen =>
@@ -300,7 +359,7 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-          {filteredRecruitments.length === 0 && !isLoading ? (
+          {(data?.recruitments.length ?? 0) === 0 && !isLoading ? (
             <Box $margin={[300, 474.8]}>
               <Text
                 $size="h5"
@@ -314,7 +373,7 @@ export const Recruitment = () => {
             <Flex $direction="column" $align="center" $gap={40}>
               {isLoading ? (
                 <TableSkeleton
-                  rows={5}
+                  rows={PAGE_SIZE}
                   checkbox
                   columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
                 />
@@ -323,7 +382,7 @@ export const Recruitment = () => {
                   headers={[
                     "상태",
                     "기업명",
-                    "직군",
+                    "채용직군",
                     "구분",
                     "모집인원",
                     "지원요청",
@@ -337,6 +396,12 @@ export const Recruitment = () => {
                   selectedRows={selected}
                   onRowSelect={setSelected}
                 />
+              )}
+              {!isLoading && recruitments.length === 0 && (
+                <Text $size="body2" $color={theme.color.grayScale[60]}>
+                  이 페이지에는 선택한 구분의 모집의뢰서가 없습니다. 다른
+                  페이지를 확인해주세요.
+                </Text>
               )}
 
               <Pagination

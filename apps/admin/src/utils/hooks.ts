@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { parsePageParam } from "./query-params";
 
 export const useQueryParams = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,11 +50,10 @@ export const useQueryParams = () => {
     [searchParams]
   );
 
-  // page=0·음수·숫자가 아닌 값은 서버가 거절해 목록이 비므로 첫 페이지로 본다
-  const getPageParam = useCallback((): number => {
-    const page = Number(searchParams.get("page"));
-    return Number.isInteger(page) && page >= 1 ? page : 1;
-  }, [searchParams]);
+  const getPageParam = useCallback(
+    (): number => parsePageParam(searchParams.get("page")),
+    [searchParams]
+  );
 
   return {
     searchParams,

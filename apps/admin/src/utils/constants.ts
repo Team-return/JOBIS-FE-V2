@@ -28,6 +28,10 @@ export const RECRUITMENT_STATE_OPTIONS = [
   { label: "겨울인턴", value: "WIN_INTERN" }
 ];
 
+// 겨울인턴은 모집 상태가 아니라 winter_intern 여부라서 상태를 WIN_INTERN으로 바꾸면 지원이 막힌다
+export const RECRUITMENT_STATUS_CHANGE_OPTIONS =
+  RECRUITMENT_STATE_OPTIONS.filter(({ value }) => value !== "WIN_INTERN");
+
 export const REGION_OPTIONS = [
   { label: "대전", value: "대전" },
   { label: "서울", value: "서울" },
@@ -75,7 +79,7 @@ export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export const NUMBER_REGEX = /^\d+$/;
 
-export const PAGE_SIZE = 5;
-export const RECRUITMENT_PAGE_SIZE = 5;
+// 모집의뢰서·기업 목록 서버 한 페이지(limit 10)와 맞춘다
+export const PAGE_SIZE = 10;
 export const NOTICE_PAGE_SIZE = 12;
 export const ADMIN_ID_KEY = "admin_id";

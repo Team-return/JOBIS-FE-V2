@@ -204,6 +204,7 @@ export interface TeacherRecruitment {
   start_date: string;
   end_date: string;
   company_id: number;
+  winter_intern: boolean;
 }
 
 export interface TeacherRecruitmentListResponse {
