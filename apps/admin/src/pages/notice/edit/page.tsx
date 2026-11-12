@@ -80,6 +80,42 @@ export const NoticeEdit = () => {
 
   if (isError) {
     return (
+      <Container $bg={theme.color.grayScale[20]}>
+        <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
+          <Flex $justify="center">
+            <Box
+              width={CARD_WIDTH}
+              $bg={theme.color.grayScale[10]}
+              $radius={8}
+              $padding={[80, 100]}
+            >
+              <Flex $direction="column" $gap={40} $align="center">
+                <Text
+                  $size="h5"
+                  $weight="medium"
+                  $align="center"
+                  $color={theme.color.grayScale[60]}
+                >
+                  공지사항을 불러오지 못했습니다.
+                </Text>
+                <Button
+                  $variant="outline"
+                  $size="md"
+                  $padding={[12, 40]}
+                  onClick={() => navigate(`/notice/detail/${noticeId}`)}
+                >
+                  돌아가기
+                </Button>
+              </Flex>
+            </Box>
+          </Flex>
+        </Container>
+      </Container>
+    );
+  }
+
+  return (
+    <Container $bg={theme.color.grayScale[20]}>
       <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
         <Flex $justify="center">
           <Box
@@ -88,146 +124,114 @@ export const NoticeEdit = () => {
             $radius={8}
             $padding={[80, 100]}
           >
-            <Flex $direction="column" $gap={40} $align="center">
+            <Flex $direction="column" $gap={80} $align="center">
               <Text
-                $size="h5"
-                $weight="medium"
+                $size="h2"
+                $weight="bold"
                 $align="center"
-                $color={theme.color.grayScale[60]}
+                $color={theme.color.grayScale[90]}
               >
-                공지사항을 불러오지 못했습니다.
+                공지 사항 수정
               </Text>
-              <Button
-                $variant="outline"
-                $size="md"
-                $padding={[12, 40]}
-                onClick={() => navigate(`/notice/detail/${noticeId}`)}
-              >
-                돌아가기
-              </Button>
+
+              <Flex $direction="column" $gap={24}>
+                <Flex $direction="column" $gap={12}>
+                  <Text
+                    $size="h5"
+                    $weight="bold"
+                    $color={theme.color.grayScale[80]}
+                  >
+                    공지 사항 내용
+                  </Text>
+                  <Box
+                    width={FORM_WIDTH}
+                    height="1px"
+                    $bg={theme.color.grayScale[90]}
+                  />
+                </Flex>
+
+                <Flex $direction="column" $gap={40}>
+                  <Flex $gap={LABEL_GAP} $align="center">
+                    <div
+                      style={{
+                        width: LABEL_WIDTH,
+                        flexShrink: 0,
+                        whiteSpace: "nowrap"
+                      }}
+                    >
+                      <Text
+                        $size="body2"
+                        $weight="regular"
+                        $color={theme.color.grayScale[90]}
+                      >
+                        제목
+                      </Text>
+                    </div>
+                    <Input
+                      $width={FIELD_WIDTH}
+                      placeholder="직접입력"
+                      value={title}
+                      onChange={setTitle}
+                      disabled={isLoading}
+                      $errorMessage={titleError}
+                    />
+                  </Flex>
+
+                  <Flex $gap={LABEL_GAP} $align="flex-start">
+                    <div
+                      style={{
+                        width: LABEL_WIDTH,
+                        flexShrink: 0,
+                        whiteSpace: "nowrap",
+                        paddingTop: 12
+                      }}
+                    >
+                      <Text
+                        $size="body2"
+                        $weight="regular"
+                        $color={theme.color.grayScale[90]}
+                      >
+                        내용
+                      </Text>
+                    </div>
+                    <TextArea
+                      $width={FIELD_WIDTH}
+                      $height={CONTENT_HEIGHT}
+                      placeholder="직접입력"
+                      value={content}
+                      onChange={setContent}
+                      disabled={isLoading}
+                      $errorMessage={contentError}
+                    />
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Box width={FORM_WIDTH} $margin={[40, 0, 0, 0]}>
+                <Flex $justify="space-between" $align="center">
+                  <Button
+                    $variant="outline"
+                    $size="md"
+                    $padding={[12, 40]}
+                    onClick={() => navigate(`/notice/detail/${noticeId}`)}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    $size="md"
+                    $padding={[12, 40]}
+                    disabled={isLoading || !data}
+                    $progressing={isPending}
+                    onClick={handleSubmit}
+                  >
+                    수정
+                  </Button>
+                </Flex>
+              </Box>
             </Flex>
           </Box>
         </Flex>
       </Container>
-    );
-  }
-
-  return (
-    <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
-      <Flex $justify="center">
-        <Box
-          width={CARD_WIDTH}
-          $bg={theme.color.grayScale[10]}
-          $radius={8}
-          $padding={[80, 100]}
-        >
-          <Flex $direction="column" $gap={80} $align="center">
-            <Text
-              $size="h2"
-              $weight="bold"
-              $align="center"
-              $color={theme.color.grayScale[90]}
-            >
-              공지 사항 수정
-            </Text>
-
-            <Flex $direction="column" $gap={24}>
-              <Flex $direction="column" $gap={12}>
-                <Text
-                  $size="h5"
-                  $weight="bold"
-                  $color={theme.color.grayScale[80]}
-                >
-                  공지 사항 내용
-                </Text>
-                <Box
-                  width={FORM_WIDTH}
-                  height="1px"
-                  $bg={theme.color.grayScale[90]}
-                />
-              </Flex>
-
-              <Flex $direction="column" $gap={40}>
-                <Flex $gap={LABEL_GAP} $align="center">
-                  <div
-                    style={{
-                      width: LABEL_WIDTH,
-                      flexShrink: 0,
-                      whiteSpace: "nowrap"
-                    }}
-                  >
-                    <Text
-                      $size="body2"
-                      $weight="regular"
-                      $color={theme.color.grayScale[90]}
-                    >
-                      제목
-                    </Text>
-                  </div>
-                  <Input
-                    $width={FIELD_WIDTH}
-                    placeholder="직접입력"
-                    value={title}
-                    onChange={setTitle}
-                    disabled={isLoading}
-                    $errorMessage={titleError}
-                  />
-                </Flex>
-
-                <Flex $gap={LABEL_GAP} $align="flex-start">
-                  <div
-                    style={{
-                      width: LABEL_WIDTH,
-                      flexShrink: 0,
-                      whiteSpace: "nowrap",
-                      paddingTop: 12
-                    }}
-                  >
-                    <Text
-                      $size="body2"
-                      $weight="regular"
-                      $color={theme.color.grayScale[90]}
-                    >
-                      내용
-                    </Text>
-                  </div>
-                  <TextArea
-                    $width={FIELD_WIDTH}
-                    $height={CONTENT_HEIGHT}
-                    placeholder="직접입력"
-                    value={content}
-                    onChange={setContent}
-                    disabled={isLoading}
-                    $errorMessage={contentError}
-                  />
-                </Flex>
-              </Flex>
-            </Flex>
-
-            <Box width={FORM_WIDTH} $margin={[40, 0, 0, 0]}>
-              <Flex $justify="space-between" $align="center">
-                <Button
-                  $variant="outline"
-                  $size="md"
-                  $padding={[12, 40]}
-                  onClick={() => navigate(`/notice/detail/${noticeId}`)}
-                >
-                  취소
-                </Button>
-                <Button
-                  $size="md"
-                  $padding={[12, 40]}
-                  disabled={isLoading || !data}
-                  $progressing={isPending}
-                  onClick={handleSubmit}
-                >
-                  수정
-                </Button>
-              </Flex>
-            </Box>
-          </Flex>
-        </Box>
-      </Flex>
     </Container>
   );
 };

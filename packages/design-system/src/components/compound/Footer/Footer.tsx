@@ -15,6 +15,8 @@ const IconLink = styled.a`
 `;
 
 const GITHUB_URL = "https://github.com/Team-return";
+// 저작권 연도는 시안(©2023)대로 고정한다. 올해 연도를 넣으면 시안과 달라진다
+const COPYRIGHT_YEAR = 2023;
 
 export const Footer = () => {
   const { currentTheme: theme } = useTheme();
@@ -73,7 +75,7 @@ export const Footer = () => {
           </svg>
         </Stack>
         <Text $size="caption" $color={theme.color.grayScale[10]}>
-          {`©${new Date().getFullYear()} Copyright team-return  ALL RIGHTS RESERVED.`}
+          {`©${COPYRIGHT_YEAR} Copyright team-return  ALL RIGHTS RESERVED.`}
         </Text>
       </Flex>
     </Component>

@@ -14,13 +14,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { useNoticeCount, useNoticeList, useNoticePage } from "@jobis/api";
 import {
-  useDebounce,
-  useQueryParams,
-  NOTICE_PAGE_SIZE,
-  LoaderData
-} from "../../utils";
+  NOTICE_LIST_PAGE_SIZE,
+  useNoticeCount,
+  useNoticeList,
+  useNoticePage
+} from "@jobis/api";
+import { useDebounce, useQueryParams, LoaderData } from "../../utils";
 import type { NoticeQuery } from "./loader";
 
 const NOTICE_COLUMN_WIDTHS = [102, 1020, 102];
@@ -124,17 +124,17 @@ export const Notice = () => {
   const searchedNotices = (searchQuery.data?.notices ?? []).filter(notice =>
     notice.title.includes(searchKeyword)
   );
-  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
+  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
   const notices = isSearching
-    ? searchedNotices.slice(startIndex, startIndex + NOTICE_PAGE_SIZE)
+    ? searchedNotices.slice(startIndex, startIndex + NOTICE_LIST_PAGE_SIZE)
     : (pageQuery.data?.notices ?? []);
   // 페이지 수 요청이 실패하거나 아직 오지 않았으면, 지금 페이지가 꽉 찼을 때만 다음 페이지가 있다고 본다
   const fallbackPages =
-    notices.length === NOTICE_PAGE_SIZE ? currentPage + 1 : currentPage;
+    notices.length === NOTICE_LIST_PAGE_SIZE ? currentPage + 1 : currentPage;
   const totalPages = Math.max(
     1,
     isSearching
-      ? Math.ceil(searchedNotices.length / NOTICE_PAGE_SIZE)
+      ? Math.ceil(searchedNotices.length / NOTICE_LIST_PAGE_SIZE)
       : (countQuery.data?.total_page_count ?? fallbackPages)
   );
   const isLoading = isSearching ? searchQuery.isLoading : pageQuery.isLoading;
@@ -150,14 +150,46 @@ export const Notice = () => {
     notices.length === 0 &&
     currentPage > 1;
 
-  const tableRows: ReactNode[][] = notices.map(notice => [
+  // 번호는 DB id 대신 최신 글부터 전체 개수에서 1까지 거꾸로 매긴다(학생 공지 목록과 같다).
+  // 전체 개수 API가 없어(/count는 페이지 수만 준다) 마지막 페이지를 한 번 더 받아 센다.
+  // 지금 보는 페이지가 마지막 페이지면 같은 요청이라 다시 받지 않는다
+  const totalPageCount = countQuery.data?.total_page_count;
+  const lastPageQuery = useNoticePage(
+    { page: totalPageCount ?? 1 },
+    { enabled: !isSearching && !!totalPageCount }
+  );
+  const totalNoticeCount =
+    !!totalPageCount && lastPageQuery.isSuccess
+      ? (totalPageCount - 1) * NOTICE_LIST_PAGE_SIZE +
+        lastPageQuery.data.notices.length
+      : undefined;
+  // 페이지 수가 0인데 글이 보이면(오래된 값) 셀 수 없으니 실패와 같이 id를 보여 준다
+  const isNumberFailed =
+    countQuery.isError || lastPageQuery.isError || totalPageCount === 0;
+  // 검색 결과도 전체 목록에서의 번호를 그대로 쓴다
+  const allNotices = searchQuery.data?.notices ?? [];
+  const searchNumbers = new Map(
+    allNotices.map((notice, index) => [notice.id, allNotices.length - index])
+  );
+
+  const getNoticeNumber = (noticeId: number, index: number) => {
+    if (isSearching) return String(searchNumbers.get(noticeId) ?? noticeId);
+    if (totalNoticeCount === undefined) {
+      return isNumberFailed ? String(noticeId) : "-";
+    }
+    // 페이지 수를 받은 뒤 공지가 늘거나 줄면 어긋날 수 있어 1보다 작으면 "-"로 둔다
+    const number = totalNoticeCount - (startIndex + index);
+    return number >= 1 ? String(number) : "-";
+  };
+
+  const tableRows: ReactNode[][] = notices.map((notice, index) => [
     <NoticeCell
       key={`id-${notice.id}`}
       to={`/notice/detail/${notice.id}`}
       focusable={false}
     >
       <NoticeNumber
-        number={String(notice.id)}
+        number={getNoticeNumber(notice.id, index)}
         color={theme.color.grayScale[70]}
       />
     </NoticeCell>,

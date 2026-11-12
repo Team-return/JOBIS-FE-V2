@@ -36,16 +36,11 @@ describe("Footer", () => {
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("renders copyright text with current year", () => {
+  it("renders copyright text with the design year", () => {
     renderWithTheme(<Footer />);
 
-    const currentYear = new Date().getFullYear();
     expect(
-      screen.getByText(
-        new RegExp(
-          `©${currentYear} Copyright team-return\\s+ALL RIGHTS RESERVED\\.`
-        )
-      )
+      screen.getByText(/©2023 Copyright team-return\s+ALL RIGHTS RESERVED\./)
     ).toBeInTheDocument();
   });
 
