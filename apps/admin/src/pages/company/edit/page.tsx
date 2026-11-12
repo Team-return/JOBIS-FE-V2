@@ -444,13 +444,21 @@ export const CompanyEdit = () => {
               ({ label, key }) => (
                 <Flex key={label} $gap={16}>
                   <Box width={108}>
-                    <Text
-                      $size="body1"
-                      $weight="bold"
-                      $color={theme.color.grayScale[80]}
-                    >
-                      {label}
-                    </Text>
+                    {/* 시안처럼 라벨 오른쪽 위에 파란 * 를 붙인다. 저장할 때 검사하는 필수 항목에만 붙인다 */}
+                    <Flex $gap={2} $align="flex-start">
+                      <Text
+                        $size="body1"
+                        $weight="bold"
+                        $color={theme.color.grayScale[80]}
+                      >
+                        {label}
+                      </Text>
+                      {RequiredFields.includes(key) && (
+                        <Text $size="caption" $color={theme.color.primary[20]}>
+                          *
+                        </Text>
+                      )}
+                    </Flex>
                   </Box>
                   {isLoading ? (
                     key === "mainAddress" || key === "branchAddress" ? (
