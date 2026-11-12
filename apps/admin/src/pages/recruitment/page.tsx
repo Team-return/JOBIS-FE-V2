@@ -63,9 +63,9 @@ export const Recruitment = () => {
   const parsedStartDate = startDate ? parseLocalDate(startDate) : null;
   const parsedEndDate = endDate ? parseLocalDate(endDate) : null;
 
-  // 주소에 잘못된 날짜가 들어 있으면 기간을 설정하지 않은 것으로 본다
+  // 주소에 잘못된 날짜가 들어 있으면 그 날짜는 설정하지 않은 것으로 보고, 한쪽만 골라도 표시한다
   const period: PeriodValue | undefined =
-    parsedStartDate && parsedEndDate
+    parsedStartDate || parsedEndDate
       ? {
           startDate: parsedStartDate,
           endDate: parsedEndDate,
