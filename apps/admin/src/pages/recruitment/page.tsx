@@ -254,7 +254,8 @@ export const Recruitment = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               모집의뢰서
             </Text>
-            {countData && (
+            {/* 구분은 받은 페이지 안에서만 걸러서 서버 총 개수와 맞지 않으므로 고른 동안 숨긴다 */}
+            {countData && type === undefined && (
               <>
                 <Text $size="body2" $color={theme.color.grayScale[90]}>
                   총
@@ -342,7 +343,7 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-          {recruitments.length === 0 && !isLoading ? (
+          {(data?.recruitments.length ?? 0) === 0 && !isLoading ? (
             <Box $margin={[300, 474.8]}>
               <Text
                 $size="h5"
@@ -379,6 +380,12 @@ export const Recruitment = () => {
                   selectedRows={selected}
                   onRowSelect={setSelected}
                 />
+              )}
+              {!isLoading && recruitments.length === 0 && (
+                <Text $size="body2" $color={theme.color.grayScale[60]}>
+                  이 페이지에는 선택한 구분의 모집의뢰서가 없습니다. 다른
+                  페이지를 확인해주세요.
+                </Text>
               )}
 
               <Pagination
