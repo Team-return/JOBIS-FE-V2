@@ -7,9 +7,12 @@ const NOTIFICATION_PATHS: Record<
 > = {
   NOTICE: detailId => `/notice/detail/${detailId}`,
   RECRUITMENT: detailId => `/recruitment/detail/${detailId}`,
-  // 겨울인턴 시즌 안내 알림은 detail_id가 0이다
+  // 겨울인턴 시즌 안내 알림은 detail_id가 0이다.
+  // status=WIN_INTERN은 서버가 상태로 걸러 상태가 덮어써진 공고만 나오므로 쓰지 않는다
   WINTER_INTERN: detailId =>
-    detailId > 0 ? `/recruitment/detail/${detailId}` : "/recruitment",
+    detailId > 0
+      ? `/recruitment/detail/${detailId}`
+      : "/recruitment?winter_intern=true",
   // 지원서 id만 오므로 지원 현황이 있는 마이페이지로 보낸다
   APPLICATION: () => "/mypage",
   // 학생 면접 화면이 없어 읽음 처리만 한다
