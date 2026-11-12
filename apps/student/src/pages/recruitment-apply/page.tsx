@@ -1,11 +1,17 @@
 import {
+  query,
+  recruitmentsKeys,
+  type ApplicationStatus,
   useCreateApplication,
+  useReapply,
   useRecruitmentDetail,
+  useStudentApplications,
   useUploadFiles
 } from "@jobis/api";
 import {
   Box,
   Button,
+  Container,
   FileDownload,
   Flex,
   IconButton,
@@ -26,7 +32,12 @@ import {
   useState
 } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { toFileUrl, type LoaderData } from "../../utils";
+import {
+  getUnapplicableMessage,
+  toFileUrl,
+  useQueryParams,
+  type LoaderData
+} from "../../utils";
 
 interface UploadedFile {
   id: number;
@@ -207,19 +218,71 @@ const CompanyHeader = ({ recruitmentId }: { recruitmentId: number }) => {
   );
 };
 
+// 서버가 원인이 여러 개인 오류를 같은 코드·메시지로 보내서 원인을 모두 아우르는 문구로 안내한다
 const APPLY_ERROR_MESSAGE: Record<number, string> = {
-  400: "지원 정보가 올바르지 않습니다.",
-  401: "3학년 계정만 지원할 수 있습니다.",
+  400: "모집 중이 아니거나 지원 정보가 올바르지 않습니다.",
+  401: getUnapplicableMessage("GRADE_NOT_ELIGIBLE"),
   403: "지원 권한이 없습니다.",
   404: "존재하지 않는 모집의뢰서입니다.",
-  409: "이미 지원한 모집의뢰서입니다."
+  409: "이미 지원했거나 진행 중인 다른 지원이 있습니다."
 };
+
+const REAPPLY_ERROR_MESSAGE: Record<number, string> = {
+  400: "재지원할 수 없는 상태이거나 지원 정보가 올바르지 않습니다.",
+  403: "재지원 권한이 없습니다.",
+  404: "지원 내역을 찾을 수 없습니다."
+};
+
+// 서버가 재지원을 받아 주는 지원 상태
+// satisfies를 쓰면 배열이 두 값으로 좁혀져 includes(ApplicationStatus)가 타입 오류라 타입을 직접 붙인다
+const REAPPLICABLE_STATUSES: readonly ApplicationStatus[] = [
+  "REQUESTED",
+  "REJECTED"
+];
 
 export const RecruitmentApply = () => {
   const { currentTheme: theme } = useTheme();
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
   const toast = useToast();
   const navigate = useNavigate();
+  const { getParam } = useQueryParams();
+
+  // 마이페이지 재지원은 같은 지원 폼을 쓰고 지원서 id를 쿼리로 넘긴다
+  const reapplyId = Number(getParam("application-id"));
+  const isReapply = Number.isInteger(reapplyId) && reapplyId > 0;
+
+  const { data: detail } = useRecruitmentDetail(recruitmentId);
+  const { data: applicationList, isError: isApplicationsError } =
+    useStudentApplications(undefined, { enabled: isReapply });
+  const reapplyTarget = applicationList?.applications.find(
+    application =>
+      application.application_id === reapplyId &&
+      application.recruitment_id === recruitmentId
+  );
+
+  const getBlockedReason = () => {
+    if (isReapply) {
+      // 내 지원서인지·재지원할 수 있는 상태인지 확인하기 전에는 제출하지 못하게 한다
+      if (!applicationList) {
+        return isApplicationsError
+          ? "지원 내역을 불러오지 못했습니다."
+          : "지원 내역을 확인하는 중입니다.";
+      }
+
+      const canReapply =
+        reapplyTarget &&
+        REAPPLICABLE_STATUSES.includes(reapplyTarget.application_status);
+
+      return canReapply ? undefined : "재지원할 수 없는 지원서입니다.";
+    }
+
+    return detail && !detail.is_applicable
+      ? getUnapplicableMessage(detail.unapplicable_reason)
+      : undefined;
+  };
+
+  // 주소로 바로 들어와도 지원할 수 없는 공고는 제출 전에 막는다
+  const blockedReason = getBlockedReason();
 
   const [files, setFiles] = useState<Record<FileFieldName, UploadedFile[]>>({
     포트폴리오: [],
@@ -247,19 +310,41 @@ export const RecruitmentApply = () => {
     };
   }, [pageBg]);
 
-  const { mutate: apply, isPending: isApplying } = useCreateApplication(
-    recruitmentId,
-    {
-      onSuccess: () => {
-        toast.success("지원이 완료되었습니다.");
-        navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
-      },
-      onError: status =>
-        toast.error(
-          APPLY_ERROR_MESSAGE[status] ?? "지원하는 중에 오류가 발생했습니다."
-        )
-    }
-  );
+  const {
+    mutate: apply,
+    isPending: isCreating,
+    isSuccess: isCreated
+  } = useCreateApplication(recruitmentId, {
+    onSuccess: () => {
+      // 지원하면 다른 공고도 "진행 중인 다른 지원"으로 막히므로 상세를 모두 다시 받는다
+      void query.invalidate(recruitmentsKeys.recruitmentDetails());
+      toast.success("지원이 완료되었습니다.");
+      navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
+    },
+    onError: status =>
+      toast.error(
+        APPLY_ERROR_MESSAGE[status] ?? "지원하는 중에 오류가 발생했습니다."
+      )
+  });
+
+  const {
+    mutate: reapply,
+    isPending: isReapplying,
+    isSuccess: isReapplied
+  } = useReapply(reapplyId, {
+    onSuccess: () => {
+      toast.success("재지원이 완료되었습니다.");
+      navigate("/mypage", { replace: true });
+    },
+    onError: status =>
+      toast.error(
+        REAPPLY_ERROR_MESSAGE[status] ?? "재지원하는 중에 오류가 발생했습니다."
+      )
+  });
+
+  const isApplying = isCreating || isReapplying;
+  // 성공 후 페이지를 옮기는 동안 버튼이 다시 켜져 같은 지원서를 또 보내지 않게 잠근다
+  const isSubmitted = isCreated || isReapplied;
 
   const addFiles = (field: FileFieldName) => (uploaded: UploadedFile[]) =>
     setFiles(prev => ({ ...prev, [field]: [...prev[field], ...uploaded] }));
@@ -302,11 +387,15 @@ export const RecruitmentApply = () => {
       return;
     }
 
-    apply({ attachments });
+    if (isReapply) {
+      reapply({ attachments });
+    } else {
+      apply({ attachments });
+    }
   };
 
   return (
-    <Box width={780} $padding={[56, 0, 120, 0]}>
+    <Container $maxWidth={780} $padding={[56, 0, 120, 0]}>
       <Flex $direction="column" $gap={4}>
         <Surface
           $bg={theme.color.grayScale[10]}
@@ -362,15 +451,17 @@ export const RecruitmentApply = () => {
               $variant="contained"
               $size="md"
               onClick={handleSubmit}
-              disabled={isUploading || isApplying}
+              disabled={
+                isUploading || isApplying || isSubmitted || !!blockedReason
+              }
               $progressing={isApplying}
               style={{ width: "100%" }}
             >
-              지원하기
+              {blockedReason ?? (isReapply ? "재지원하기" : "지원하기")}
             </Button>
           </Flex>
         </Surface>
       </Flex>
-    </Box>
+    </Container>
   );
 };

@@ -3,7 +3,8 @@ import type {
   JobType,
   RecruitmentStatus,
   CompanyType,
-  ListSortType
+  RecruitmentSortType,
+  UnapplicableReason
 } from "@/enum";
 
 interface RecruitmentArea {
@@ -82,7 +83,7 @@ export interface StudentRecruitmentListQueryParams {
   military_support?: boolean;
   years?: number;
   status?: RecruitmentStatus;
-  sort_type?: ListSortType;
+  sort_type?: RecruitmentSortType;
 }
 
 interface StudentRecruitment {
@@ -96,6 +97,7 @@ interface StudentRecruitment {
   // 서버는 한글이 아니라 REQUESTED / RECRUITING / DONE 같은 enum 값을 보낸다
   status: RecruitmentStatus;
   year: number;
+  winter_intern: boolean;
 }
 
 export interface StudentRecruitmentListResponse {
@@ -161,6 +163,7 @@ export interface RecruitmentDetailResponse {
   end_date: string;
   etc: string;
   is_applicable: boolean;
+  unapplicable_reason: UnapplicableReason | null;
   bookmarked: boolean;
   hire_convertible?: boolean;
   winter_intern: boolean;

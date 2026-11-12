@@ -1,4 +1,9 @@
-import type { Department, InterviewType } from "@jobis/api";
+import type {
+  Department,
+  InterviewType,
+  RecruitmentSortType,
+  UnapplicableReason
+} from "@jobis/api";
 
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
@@ -46,6 +51,18 @@ export const getRecruitmentStatusLabel = (status: string) =>
     ? RECRUITMENT_STATUS_LABEL[status as keyof typeof RECRUITMENT_STATUS_LABEL]
     : undefined;
 
+const UNAPPLICABLE_REASON_LABEL: Record<UnapplicableReason, string> = {
+  ALREADY_APPLIED: "이미 지원한 모집의뢰서입니다.",
+  NOT_RECRUITING: "모집 중이 아닙니다.",
+  HAS_ACTIVE_APPLICATION: "진행 중인 다른 지원이 있습니다.",
+  GRADE_NOT_ELIGIBLE: "지원 가능한 학년이 아닙니다."
+};
+
+/** 상세 응답의 지원 불가 사유를 학생에게 보여 줄 문구로 바꾼다 (지원 실패 토스트도 같은 문구를 쓴다) */
+export const getUnapplicableMessage = (reason: UnapplicableReason | null) =>
+  (reason && UNAPPLICABLE_REASON_LABEL[reason]) ??
+  "지원할 수 없는 모집의뢰서입니다.";
+
 const RECRUITMENT_START_YEAR = 2024;
 const currentYear = new Date().getFullYear();
 
@@ -61,11 +78,24 @@ export const BUG_REPORT_AREA_OPTIONS = [
   { label: "Android", value: "ANDROID" }
 ];
 
+/** 모집의뢰서 목록 정렬. 로더의 URL 검증과 정렬 드롭다운이 같이 쓴다 */
+const RECRUITMENT_SORT_LABEL: Record<RecruitmentSortType, string> = {
+  TAKE: "매출",
+  WORKERS_COUNT_DESC: "직원 ↓",
+  WORKERS_COUNT_ASC: "직원 ↑",
+  DEADLINE_DESC: "공고마감 ↓",
+  DEADLINE_ASC: "공고마감 ↑"
+};
+
+export const RECRUITMENT_SORT_TYPES = Object.keys(
+  RECRUITMENT_SORT_LABEL
+) as RecruitmentSortType[];
+
+// 정렬을 고르지 않으면 서버가 등록순(최신순)으로 준다
 export const RECRUITMENT_SORT_OPTIONS = [
   { label: "기본순", value: "" },
-  { label: "매출", value: "TAKE" },
-  { label: "직원 ↓", value: "WORKERS_COUNT_DESC" },
-  { label: "직원 ↑", value: "WORKERS_COUNT_ASC" },
-  { label: "설립일 ↓", value: "FOUNDED_AT_DESC" },
-  { label: "설립일 ↑", value: "FOUNDED_AT_ASC" }
+  ...RECRUITMENT_SORT_TYPES.map(value => ({
+    label: RECRUITMENT_SORT_LABEL[value],
+    value
+  }))
 ];

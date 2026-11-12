@@ -44,6 +44,11 @@ const meta: Meta<typeof DetailHeader> = {
       action: "onApply",
       description: "지원하기 클릭 이벤트",
       if: { arg: "type", eq: "recruitment" }
+    },
+    applyDisabledReason: {
+      control: "text",
+      description: "지원할 수 없는 사유 (넘기면 지원하기 비활성화)",
+      if: { arg: "type", eq: "recruitment" }
     }
   }
 };

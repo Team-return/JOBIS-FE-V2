@@ -63,5 +63,23 @@ describe("DetailHeader", () => {
       expect(screen.getByRole("button", { name: "상세보기" })).toBeDisabled();
       expect(screen.getByRole("button", { name: "지원하기" })).toBeDisabled();
     });
+
+    it("should block applying and show the reason when applyDisabledReason is given", async () => {
+      const onApply = vi.fn();
+      renderWithTheme(
+        <DetailHeader
+          {...recruitmentProps}
+          onApply={onApply}
+          applyDisabledReason="이미 지원한 모집의뢰서입니다."
+        />
+      );
+      const applyButton = screen.getByRole("button", { name: "지원하기" });
+      expect(applyButton).toBeDisabled();
+      expect(applyButton).toHaveAccessibleDescription(
+        "이미 지원한 모집의뢰서입니다."
+      );
+      await userEvent.click(applyButton);
+      expect(onApply).not.toHaveBeenCalled();
+    });
   });
 });

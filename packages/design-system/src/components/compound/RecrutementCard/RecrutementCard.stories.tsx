@@ -33,6 +33,10 @@ const meta: Meta<typeof RecrutementCard> = {
       options: [undefined, "모집전", "모집중", "모집 종료"],
       description: "모집 상태 (넘기면 상태 칩 표시)"
     },
+    winterIntern: {
+      control: "boolean",
+      description: "겨울인턴 여부 (true면 겨울인턴 칩 표시)"
+    },
     onClick: {
       action: "clicked",
       description: "카드 클릭 이벤트 핸들러"
@@ -73,5 +77,13 @@ export const Bookmarked: Story = {
 export const WithoutMilitarySupport: Story = {
   args: {
     militarySupport: false
+  }
+};
+
+export const WinterIntern: Story = {
+  args: {
+    status: "모집 종료",
+    militarySupport: false,
+    winterIntern: true
   }
 };

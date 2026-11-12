@@ -51,17 +51,16 @@ const Info = styled.div`
   min-width: 0;
 `;
 
-// 카드 높이가 고정이라 직무가 길면 아래 기업명·칩이 잘린다. 두 줄까지만 보여 준다
+// 두 줄로 접히면 북마크 옆이 비좁아지고 아래 칩까지 밀린다. 피그마처럼 한 줄로 두고 넘치면 말줄임
 const HiringJobs = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.color.grayScale[90]};
   font-weight: ${({ theme }) => theme.fontWeight.medium};
   font-size: ${({ theme }) => theme.font.body2.fontSize};
   line-height: ${({ theme }) => theme.font.body2.lineHeight};
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 // 기업명은 피그마처럼 한 줄로 두고 넘치면 말줄임
@@ -77,6 +76,7 @@ const CompanyName = styled.p`
 `;
 
 // 피그마 칩은 테두리 포함 높이 26px, 좌우 여백 8px (전역 box-sizing: border-box 기준)
+// 칩 영역이 좁아도 칩이 줄어 글자가 두 줄로 접히지 않게 한다
 const Clip = styled.div<{ $color?: string }>`
   padding: 0 7px;
   height: 26px;
@@ -85,7 +85,12 @@ const Clip = styled.div<{ $color?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
 `;
+
+// 피그마 칩 간격은 12px. 칩이 3개면 "모집 종료"처럼 긴 상태에서 칩 영역(199px)을 넘으므로 4px로 줄인다
+const getChipGap = (chipCount: number) => (chipCount >= 3 ? 4 : 12);
 
 export const RecrutementCard = ({
   companyName,
@@ -94,11 +99,14 @@ export const RecrutementCard = ({
   militarySupport,
   bookmarked,
   status,
+  winterIntern,
   onClick,
   onBookmarkClick
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const statusColor = status && getStatusColor(status, theme);
+  const chipCount =
+    (status && statusColor ? 1 : 0) + 1 + (winterIntern ? 1 : 0);
 
   return (
     <Component onClick={onClick} role="cell">
@@ -110,7 +118,7 @@ export const RecrutementCard = ({
       />
       <Box $padding={[12, 12, 12, 11]} $bg={theme.color.grayScale[20]}>
         <Flex $direction="column" $justify="space-between">
-          <Flex $direction="row" $justify="space-between">
+          <Flex $direction="row" $justify="space-between" $gap={8}>
             <Info>
               <HiringJobs title={hiringJobs}>{hiringJobs}</HiringJobs>
               <CompanyName title={companyName}>{companyName}</CompanyName>
@@ -127,7 +135,7 @@ export const RecrutementCard = ({
               }
             />
           </Flex>
-          <Stack $direction="row" $gap={12}>
+          <Stack $direction="row" $gap={getChipGap(chipCount)}>
             {status && statusColor && (
               <Clip $color={statusColor}>
                 <Text $span $size="caption" $color={statusColor}>
@@ -140,6 +148,13 @@ export const RecrutementCard = ({
                 {`병역특례 ${militarySupport ? "O" : "X"}`}
               </Text>
             </Clip>
+            {winterIntern && (
+              <Clip $color={theme.color.primary[20]}>
+                <Text $span $size="caption" $color={theme.color.primary[20]}>
+                  겨울인턴
+                </Text>
+              </Clip>
+            )}
           </Stack>
         </Flex>
       </Box>

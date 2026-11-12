@@ -1,4 +1,6 @@
 import {
+  query,
+  recruitmentsKeys,
   resetToken,
   useDeleteApplication,
   useStudentApplications,
@@ -27,7 +29,11 @@ export const MyPage = () => {
   const { data: applicationList } = useStudentApplications();
   const applications = applicationList?.applications || [];
   const { mutate: deleteApplication } = useDeleteApplication({
-    onSuccess: () => setCancelTargetId(null),
+    onSuccess: () => {
+      setCancelTargetId(null);
+      // 지원을 취소하면 막혀 있던 공고들("진행 중인 다른 지원")도 다시 지원할 수 있어 상세를 모두 다시 받는다
+      void query.invalidate(recruitmentsKeys.recruitmentDetails());
+    },
     onError: () => error("지원 취소에 실패했습니다. 잠시 후 다시 시도해주세요.")
   });
   const cancelTarget = applications.find(
@@ -83,9 +89,11 @@ export const MyPage = () => {
                   imgUrl={toFileUrl(application.company_logo_url)}
                   companyName={application.company}
                   date={application.created_at}
-                  onRetry={() => {
-                    error("준비중인 기능입니다");
-                  }}
+                  onRetry={() =>
+                    navigate(
+                      `/recruitment/detail/${application.recruitment_id}/apply?application-id=${application.application_id}`
+                    )
+                  }
                   onCancel={() => setCancelTargetId(application.application_id)}
                 />
               ))
