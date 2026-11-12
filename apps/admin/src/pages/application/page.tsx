@@ -35,7 +35,9 @@ import {
   YEAR_OPTIONS,
   PAGE_SIZE,
   LoaderData,
-  getErrorMessage
+  getErrorMessage,
+  getUploadedFileName,
+  toFileUrl
 } from "../../utils";
 import { getApplicationFilter, type ApplicationQuery } from "./loader";
 
@@ -73,6 +75,13 @@ const APPLICATION_TYPE_OPTIONS = [
 
 const getApplicationTypeLabel = (winterIntern: boolean) =>
   winterIntern ? "체험형" : "채용형";
+
+const ATTACHMENT_LABEL_STYLE = {
+  maxWidth: 200,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
+} as const;
 
 interface Attachment {
   url: string;
@@ -124,10 +133,11 @@ const Attachments = ({
     return type === "FILE" ? "Document" : "Link";
   };
 
-  const getFileName = (url: string) => {
-    const parts = url.split("-");
-    return parts[parts.length - 1] || url;
-  };
+  // 링크는 주소를, 파일은 업로드 접두사를 뗀 원래 파일명을 보여 준다
+  const getAttachmentLabel = ({ url, type }: Attachment) =>
+    type === "FILE"
+      ? getUploadedFileName(url)
+      : url.replace(/^https?:\/\//i, "");
 
   const firstAttachment = attachments[0];
 
@@ -149,9 +159,11 @@ const Attachments = ({
             setOpen(isOpen ? null : id);
           }}
         >
-          <Text $size="body3" $color={theme.color.grayScale[60]}>
-            {getFileName(firstAttachment.url)}
-          </Text>
+          <div style={ATTACHMENT_LABEL_STYLE}>
+            <Text $span $size="body3" $color={theme.color.grayScale[60]}>
+              {getAttachmentLabel(firstAttachment)}
+            </Text>
+          </div>
           {attachments.length > 1 && (
             <Text $size="body3" $color={theme.color.grayScale[60]}>
               {`외 ${attachments.length - 1}개`}
@@ -185,9 +197,15 @@ const Attachments = ({
                       size={20}
                       strokeColor={theme.color.grayScale[60]}
                     />
-                    <Text $size="body3" $color={theme.color.grayScale[70]}>
-                      {getFileName(attachment.url)}
-                    </Text>
+                    <div style={ATTACHMENT_LABEL_STYLE}>
+                      <Text
+                        $span
+                        $size="body3"
+                        $color={theme.color.grayScale[70]}
+                      >
+                        {getAttachmentLabel(attachment)}
+                      </Text>
+                    </div>
                   </Flex>
                   <Button
                     $size="sm"
@@ -196,8 +214,8 @@ const Attachments = ({
                       e.stopPropagation();
                       if (attachment.type === "FILE") {
                         handleDownload(
-                          `${import.meta.env.FILE_URL}/${attachment.url}`,
-                          getFileName(attachment.url)
+                          toFileUrl(attachment.url),
+                          getUploadedFileName(attachment.url)
                         );
                       } else {
                         window.open(attachment.url, "_blank");
