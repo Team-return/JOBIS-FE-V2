@@ -4,7 +4,9 @@ import {
   DetailHeader,
   Flex,
   DetailTable,
-  Box
+  Box,
+  Text,
+  useTheme
 } from "@jobis/design-system";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import {
@@ -63,11 +65,21 @@ const createAreaItem = (
 export const RecruitmentDetail = () => {
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
   const navigate = useNavigate();
+  const { currentTheme: theme } = useTheme();
 
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
-  if (isError) {
-    return <Container $maxWidth={960}>정보를 불러오지 못했습니다.</Container>;
+  // 다시 불러오다 실패해도 받아 둔 내용이 있으면 그대로 보여 준다
+  if (isError && !data) {
+    return (
+      <Container $maxWidth={960} $padding={[160, 0, 232, 0]}>
+        <Flex $justify="center">
+          <Text $size="h6" $color={theme.color.grayScale[70]}>
+            모집의뢰서 정보를 불러오지 못했습니다.
+          </Text>
+        </Flex>
+      </Container>
+    );
   }
 
   const areas = data?.areas ?? [];
