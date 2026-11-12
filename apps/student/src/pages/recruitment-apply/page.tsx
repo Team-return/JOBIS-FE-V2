@@ -1,6 +1,7 @@
 import {
   query,
   recruitmentsKeys,
+  type ApplicationStatus,
   useCreateApplication,
   useReapply,
   useRecruitmentDetail,
@@ -220,7 +221,7 @@ const CompanyHeader = ({ recruitmentId }: { recruitmentId: number }) => {
 // 서버가 원인이 여러 개인 오류를 같은 코드·메시지로 보내서 원인을 모두 아우르는 문구로 안내한다
 const APPLY_ERROR_MESSAGE: Record<number, string> = {
   400: "모집 중이 아니거나 지원 정보가 올바르지 않습니다.",
-  401: "지원할 수 있는 학년이 아닙니다.",
+  401: getUnapplicableMessage("GRADE_NOT_ELIGIBLE"),
   403: "지원 권한이 없습니다.",
   404: "존재하지 않는 모집의뢰서입니다.",
   409: "이미 지원했거나 진행 중인 다른 지원이 있습니다."
@@ -233,7 +234,11 @@ const REAPPLY_ERROR_MESSAGE: Record<number, string> = {
 };
 
 // 서버가 재지원을 받아 주는 지원 상태
-const REAPPLICABLE_STATUSES = ["REQUESTED", "REJECTED"];
+// satisfies를 쓰면 배열이 두 값으로 좁혀져 includes(ApplicationStatus)가 타입 오류라 타입을 직접 붙인다
+const REAPPLICABLE_STATUSES: readonly ApplicationStatus[] = [
+  "REQUESTED",
+  "REJECTED"
+];
 
 export const RecruitmentApply = () => {
   const { currentTheme: theme } = useTheme();
@@ -260,15 +265,15 @@ export const RecruitmentApply = () => {
       // 내 지원서인지·재지원할 수 있는 상태인지 확인하기 전에는 제출하지 못하게 한다
       if (!applicationList) {
         return isApplicationsError
-          ? "지원 내역을 불러오지 못했습니다"
-          : "지원 내역을 확인하는 중입니다";
+          ? "지원 내역을 불러오지 못했습니다."
+          : "지원 내역을 확인하는 중입니다.";
       }
 
       const canReapply =
         reapplyTarget &&
         REAPPLICABLE_STATUSES.includes(reapplyTarget.application_status);
 
-      return canReapply ? undefined : "재지원할 수 없는 지원서입니다";
+      return canReapply ? undefined : "재지원할 수 없는 지원서입니다.";
     }
 
     return detail && !detail.is_applicable
