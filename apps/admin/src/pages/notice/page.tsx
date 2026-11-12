@@ -14,13 +14,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { useNoticeCount, useNoticeList, useNoticePage } from "@jobis/api";
 import {
-  useDebounce,
-  useQueryParams,
-  NOTICE_PAGE_SIZE,
-  LoaderData
-} from "../../utils";
+  NOTICE_LIST_PAGE_SIZE,
+  useNoticeCount,
+  useNoticeList,
+  useNoticePage
+} from "@jobis/api";
+import { useDebounce, useQueryParams, LoaderData } from "../../utils";
 import type { NoticeQuery } from "./loader";
 
 const NOTICE_COLUMN_WIDTHS = [102, 1020, 102];
@@ -124,17 +124,17 @@ export const Notice = () => {
   const searchedNotices = (searchQuery.data?.notices ?? []).filter(notice =>
     notice.title.includes(searchKeyword)
   );
-  const startIndex = (currentPage - 1) * NOTICE_PAGE_SIZE;
+  const startIndex = (currentPage - 1) * NOTICE_LIST_PAGE_SIZE;
   const notices = isSearching
-    ? searchedNotices.slice(startIndex, startIndex + NOTICE_PAGE_SIZE)
+    ? searchedNotices.slice(startIndex, startIndex + NOTICE_LIST_PAGE_SIZE)
     : (pageQuery.data?.notices ?? []);
   // 페이지 수 요청이 실패하거나 아직 오지 않았으면, 지금 페이지가 꽉 찼을 때만 다음 페이지가 있다고 본다
   const fallbackPages =
-    notices.length === NOTICE_PAGE_SIZE ? currentPage + 1 : currentPage;
+    notices.length === NOTICE_LIST_PAGE_SIZE ? currentPage + 1 : currentPage;
   const totalPages = Math.max(
     1,
     isSearching
-      ? Math.ceil(searchedNotices.length / NOTICE_PAGE_SIZE)
+      ? Math.ceil(searchedNotices.length / NOTICE_LIST_PAGE_SIZE)
       : (countQuery.data?.total_page_count ?? fallbackPages)
   );
   const isLoading = isSearching ? searchQuery.isLoading : pageQuery.isLoading;
@@ -160,7 +160,7 @@ export const Notice = () => {
   );
   const totalNoticeCount =
     !!totalPageCount && lastPageQuery.isSuccess
-      ? (totalPageCount - 1) * NOTICE_PAGE_SIZE +
+      ? (totalPageCount - 1) * NOTICE_LIST_PAGE_SIZE +
         lastPageQuery.data.notices.length
       : undefined;
   // 페이지 수가 0인데 글이 보이면(오래된 값) 셀 수 없으니 실패와 같이 id를 보여 준다
