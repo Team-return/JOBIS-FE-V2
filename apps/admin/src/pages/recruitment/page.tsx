@@ -207,7 +207,8 @@ export const Recruitment = () => {
         {RECRUITMENT_STATUS_LABEL[recruitment.status] ??
           String(recruitment.status)}
       </Text>
-      {recruitment.winter_intern && (
+      {/* 상태가 겨울인턴으로 덮어써진 공고는 상태 글자에 이미 겨울인턴이 나온다 */}
+      {recruitment.winter_intern && recruitment.status !== "WIN_INTERN" && (
         <Text $size="caption" $color={theme.color.primary[20]}>
           겨울인턴
         </Text>
