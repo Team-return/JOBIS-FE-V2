@@ -1,4 +1,4 @@
-import { useNoticeDetail } from "@jobis/api";
+import { useNoticeDetail, useRecordNoticeView } from "@jobis/api";
 import {
   Box,
   Container,
@@ -7,6 +7,7 @@ import {
   Text,
   useTheme
 } from "@jobis/design-system";
+import { useEffect, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderData, getUploadedFileName, toFileUrl } from "../../utils";
 
@@ -19,7 +20,16 @@ export const NoticeDetail = () => {
   const { params: noticeId } = useLoaderData() as LoaderData<number>;
   const { currentTheme: theme } = useTheme();
 
-  const { data, isLoading, isError } = useNoticeDetail(noticeId);
+  const { data, isLoading, isError, isSuccess } = useNoticeDetail(noticeId);
+  const { mutate: recordNoticeView } = useRecordNoticeView();
+  // StrictMode에서 effect가 두 번 돌아도 공지마다 조회 기록은 한 번만 보낸다
+  const recordedNoticeId = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isSuccess || recordedNoticeId.current === noticeId) return;
+    recordedNoticeId.current = noticeId;
+    recordNoticeView({ noticeId });
+  }, [isSuccess, noticeId, recordNoticeView]);
 
   if (isError) {
     return (
