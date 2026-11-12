@@ -10,9 +10,9 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import {
   INTERVIEW_TYPE_LABEL_MAP,
   LoaderData,
+  getUnapplicableMessage,
   toFileUrl
 } from "apps/student/src/utils";
-import { getUnapplicableMessage } from "./constants";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];

@@ -31,8 +31,12 @@ import {
   useState
 } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { toFileUrl, useQueryParams, type LoaderData } from "../../utils";
-import { getUnapplicableMessage } from "../recruitment-detail/constants";
+import {
+  getUnapplicableMessage,
+  toFileUrl,
+  useQueryParams,
+  type LoaderData
+} from "../../utils";
 
 interface UploadedFile {
   id: number;
