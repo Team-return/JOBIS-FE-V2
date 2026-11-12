@@ -1,9 +1,16 @@
-import { useNotificationList, useStudentMy } from "@jobis/api";
+import {
+  notificationsKeys,
+  query,
+  useNotificationList,
+  useReadNotification,
+  useStudentMy
+} from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
 import {
   createBrowserRouter,
   Outlet,
-  ScrollRestoration
+  ScrollRestoration,
+  useNavigate
 } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { recruitmentLoader } from "./pages/recruitment-list/loader";
@@ -34,14 +41,46 @@ import {
 import { PreparingPage } from "./pages/preparing";
 import { JobRate } from "./pages/job-rate";
 
+// 서버는 topic마다 detail_id에 공지·모집의뢰서·지원서·면접 id를 담는다. 면접은 이동할 화면이 없다
+const getNotificationPath = (topic: string, detailId: number) => {
+  switch (topic) {
+    case "NOTICE":
+      return `/notice/detail/${detailId}`;
+    case "RECRUITMENT":
+      return `/recruitment/detail/${detailId}`;
+    case "WINTER_INTERN":
+      // 겨울인턴 시즌 안내 알림은 detail_id가 0이다
+      return detailId > 0 ? `/recruitment/detail/${detailId}` : "/recruitment";
+    case "APPLICATION":
+      return "/mypage";
+    default:
+      return undefined;
+  }
+};
+
 const StudentHeader = () => {
+  const navigate = useNavigate();
   const { data: profile } = useStudentMy();
   const { data: notificationData } = useNotificationList();
+  const { mutate: readNotification } = useReadNotification({
+    onSuccess: () => query.invalidate(notificationsKeys.notificationList())
+  });
+
   return (
     <Header
       type="student"
       userName={profile?.student_name || ""}
       notifications={notificationData?.notifications}
+      onNotificationClick={notification => {
+        if (notification.new) {
+          readNotification({ notificationId: notification.notification_id });
+        }
+        const path = getNotificationPath(
+          notification.topic,
+          notification.detail_id
+        );
+        if (path) navigate(path);
+      }}
     />
   );
 };
