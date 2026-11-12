@@ -240,12 +240,14 @@ export const Application = () => {
   const filter = getApplicationFilter(params);
 
   // 필터를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
-  const { data, isLoading } = useTeacherApplications(filter, {
-    placeholderData: previousData => previousData
-  });
-  // 목록 응답에 겨울인턴 여부가 없어, 형태 필터가 없을 때는 겨울인턴 지원서만 따로 받아 형태를 가린다
+  const { data, isLoading, isPlaceholderData } = useTeacherApplications(
+    filter,
+    { placeholderData: previousData => previousData }
+  );
+  // 목록 응답에 겨울인턴 여부가 없어, 형태 필터가 없을 때는 겨울인턴 지원서 id만 따로 받아 형태를 가린다.
+  // id로 맞춰 보므로 년도만 같으면 되고, 이름을 검색할 때마다 다시 받지 않게 다른 조건은 넣지 않는다
   const { data: winterInternData } = useTeacherApplications(
-    { ...filter, winter_intern: true },
+    { winter_intern: true, year: filter.year },
     { enabled: filter.winter_intern === undefined }
   );
   const winterInternIds = new Set(
@@ -253,6 +255,8 @@ export const Application = () => {
   );
 
   const getApplicationType = (applicationId: number) => {
+    // 이전 조건의 목록을 잠시 보여 주는 동안에는 지금 형태 필터와 맞지 않을 수 있다
+    if (isPlaceholderData) return "-";
     if (filter.winter_intern !== undefined) {
       return getApplicationTypeLabel(filter.winter_intern);
     }
