@@ -1,4 +1,8 @@
-import type { Department, InterviewType } from "@jobis/api";
+import type {
+  Department,
+  InterviewType,
+  RecruitmentSortType
+} from "@jobis/api";
 
 export const ID_REGEX = /^[A-Za-z]*$/;
 export const PASSWORD_REGEX =
@@ -61,11 +65,24 @@ export const BUG_REPORT_AREA_OPTIONS = [
   { label: "Android", value: "ANDROID" }
 ];
 
+/** 모집의뢰서 목록 정렬. 로더의 URL 검증과 정렬 드롭다운이 같이 쓴다 */
+const RECRUITMENT_SORT_LABEL: Record<RecruitmentSortType, string> = {
+  TAKE: "매출",
+  WORKERS_COUNT_DESC: "직원 ↓",
+  WORKERS_COUNT_ASC: "직원 ↑",
+  DEADLINE_DESC: "공고마감 ↓",
+  DEADLINE_ASC: "공고마감 ↑"
+};
+
+export const RECRUITMENT_SORT_TYPES = Object.keys(
+  RECRUITMENT_SORT_LABEL
+) as RecruitmentSortType[];
+
+// 정렬을 고르지 않으면 서버가 등록순(최신순)으로 준다
 export const RECRUITMENT_SORT_OPTIONS = [
   { label: "기본순", value: "" },
-  { label: "매출", value: "TAKE" },
-  { label: "직원 ↓", value: "WORKERS_COUNT_DESC" },
-  { label: "직원 ↑", value: "WORKERS_COUNT_ASC" },
-  { label: "공고마감 ↓", value: "DEADLINE_DESC" },
-  { label: "공고마감 ↑", value: "DEADLINE_ASC" }
+  ...RECRUITMENT_SORT_TYPES.map(value => ({
+    label: RECRUITMENT_SORT_LABEL[value],
+    value
+  }))
 ];

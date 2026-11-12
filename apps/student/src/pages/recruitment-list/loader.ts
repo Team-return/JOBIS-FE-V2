@@ -6,7 +6,8 @@ import {
   parseEnum,
   LoaderData,
   type QueryParamParser,
-  parseOptionalBoolean
+  parseOptionalBoolean,
+  RECRUITMENT_SORT_TYPES
 } from "../../utils";
 import {
   type RecruitmentStatus,
@@ -35,14 +36,6 @@ const RECRUITMENT_STATUSES = [
   "WIN_INTERN"
 ] as const;
 
-const SORT_TYPES = [
-  "TAKE",
-  "WORKERS_COUNT_DESC",
-  "WORKERS_COUNT_ASC",
-  "DEADLINE_DESC",
-  "DEADLINE_ASC"
-] as const;
-
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
   parse: (params: URLSearchParams) => {
     const status = parseEnum(params.get("status"), RECRUITMENT_STATUSES);
@@ -63,7 +56,7 @@ const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
         params.get("tech-stack") || params.get("techStack") || ""
       ),
       military_support: parseOptionalBoolean(params.get("military_support")),
-      sort_type: parseEnum(params.get("sort-type"), SORT_TYPES)
+      sort_type: parseEnum(params.get("sort-type"), RECRUITMENT_SORT_TYPES)
     };
   },
   validate: data => data.page >= 1
