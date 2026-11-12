@@ -5,6 +5,7 @@ import {
   parseOptionalNumber,
   parseEnum,
   parseLocalDate,
+  parsePageParam,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
@@ -45,11 +46,8 @@ const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
       status: parseEnum(params.get("status"), RECRUITMENT_STATUSES),
       start: parseDateParam(params.get("start")),
       end: parseDateParam(params.get("end")),
-      page: parseOptionalNumber(params.get("page")) || 1
+      page: parsePageParam(params.get("page"))
     };
-  },
-  validate: data => {
-    return data.page >= 1;
   }
 };
 

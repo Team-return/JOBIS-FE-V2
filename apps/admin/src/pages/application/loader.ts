@@ -5,6 +5,7 @@ import {
   parseOptionalNumber,
   parseOptionalBoolean,
   parseEnum,
+  parsePageParam,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
@@ -42,12 +43,9 @@ const applicationQueryParser: QueryParamParser<ApplicationQuery> = {
       ),
       recruitment_id: parseOptionalNumber(params.get("recruitment-id")),
       winter_intern: parseOptionalBoolean(params.get("winter-intern")),
-      page: parseOptionalNumber(params.get("page")) || 1,
+      page: parsePageParam(params.get("page")),
       year: parseOptionalString(params.get("year"))
     };
-  },
-  validate: data => {
-    return data.page >= 1;
   }
 };
 

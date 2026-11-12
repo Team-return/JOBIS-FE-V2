@@ -4,6 +4,7 @@ import {
   parseOptionalString,
   parseOptionalNumber,
   parseEnum,
+  parsePageParam,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
@@ -31,11 +32,8 @@ const companyQueryParser: QueryParamParser<CompanyQuery> = {
       type: parseEnum(params.get("type"), COMPANY_TYPES),
       region: parseOptionalString(params.get("region")),
       businessArea: parseOptionalNumber(params.get("business-area")),
-      page: parseOptionalNumber(params.get("page")) || 1
+      page: parsePageParam(params.get("page"))
     };
-  },
-  validate: data => {
-    return data.page >= 1;
   }
 };
 
