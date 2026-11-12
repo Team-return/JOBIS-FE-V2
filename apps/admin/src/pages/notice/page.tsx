@@ -177,9 +177,9 @@ export const Notice = () => {
     if (totalNoticeCount === undefined) {
       return isNumberFailed ? String(noticeId) : "-";
     }
-    // 페이지 수를 받은 뒤 공지가 늘거나 줄면 어긋날 수 있어 1보다 작으면 id로 둔다
+    // 페이지 수를 받은 뒤 공지가 늘거나 줄면 어긋날 수 있어 1보다 작으면 "-"로 둔다
     const number = totalNoticeCount - (startIndex + index);
-    return String(number >= 1 ? number : noticeId);
+    return number >= 1 ? String(number) : "-";
   };
 
   const tableRows: ReactNode[][] = notices.map((notice, index) => [
