@@ -159,18 +159,28 @@ export const Company = () => {
     if (!validateSelectedCompanies()) return;
 
     const companyIds = getSelectedCompanyIds();
+    // 서버는 선택한 기업마다 협약 여부를 뒤집으므로 요청 전 상태로 문구를 고른다
+    const conventions = selected.map(
+      index => data?.companies[index]?.convention
+    );
+    const successMessage = conventions.every(Boolean)
+      ? "협약이 해제되었습니다."
+      : conventions.some(Boolean)
+        ? "협약 여부가 변경되었습니다."
+        : "협약이 등록되었습니다.";
+
     updateMou(
       {
         company_ids: companyIds
       },
       {
         onSuccess: async () => {
-          toast.success("협약이 등록되었습니다.");
+          toast.success(successMessage);
           await invalidateCompanyQueries();
           resetSelection();
         },
         onError: error => {
-          toast.error(getErrorMessage(error, "협약 등록에 실패했습니다."));
+          toast.error(getErrorMessage(error, "협약 변경에 실패했습니다."));
         }
       }
     );
