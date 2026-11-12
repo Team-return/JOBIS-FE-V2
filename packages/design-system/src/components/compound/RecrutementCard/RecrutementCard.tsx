@@ -51,17 +51,16 @@ const Info = styled.div`
   min-width: 0;
 `;
 
-// 카드 높이가 고정이라 직무가 길면 아래 기업명·칩이 잘린다. 두 줄까지만 보여 준다
+// 두 줄로 접히면 북마크 옆이 비좁아지고 아래 칩까지 밀린다. 피그마처럼 한 줄로 두고 넘치면 말줄임
 const HiringJobs = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.color.grayScale[90]};
   font-weight: ${({ theme }) => theme.fontWeight.medium};
   font-size: ${({ theme }) => theme.font.body2.fontSize};
   line-height: ${({ theme }) => theme.font.body2.lineHeight};
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 // 기업명은 피그마처럼 한 줄로 두고 넘치면 말줄임
@@ -110,7 +109,7 @@ export const RecrutementCard = ({
       />
       <Box $padding={[12, 12, 12, 11]} $bg={theme.color.grayScale[20]}>
         <Flex $direction="column" $justify="space-between">
-          <Flex $direction="row" $justify="space-between">
+          <Flex $direction="row" $justify="space-between" $gap={8}>
             <Info>
               <HiringJobs title={hiringJobs}>{hiringJobs}</HiringJobs>
               <CompanyName title={companyName}>{companyName}</CompanyName>
