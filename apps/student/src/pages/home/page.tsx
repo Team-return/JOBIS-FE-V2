@@ -292,6 +292,14 @@ export const Home = () => {
           />
         </Flex>
         <Flex $gap={24}>
+          {bookmarksData && bookmarks.length === 0 && (
+            <>
+              <Spacer />
+              <Box $margin={[100, 400, 100, 0]}>
+                <Text $size="body2">저장한 모집 의뢰서가 없습니다.</Text>
+              </Box>
+            </>
+          )}
           {bookmarks.map(bookmark => {
             return (
               <RecrutementCard
