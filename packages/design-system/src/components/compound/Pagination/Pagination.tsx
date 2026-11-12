@@ -26,7 +26,7 @@ const PageNumber = styled.div`
   }
 `;
 
-const PAGE_UNIT = 3;
+const PAGE_UNIT = 5;
 
 export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
   const { currentTheme: theme } = useTheme();
