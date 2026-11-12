@@ -159,7 +159,10 @@ const Attachments = ({
             setOpen(isOpen ? null : id);
           }}
         >
-          <div style={ATTACHMENT_LABEL_STYLE}>
+          <div
+            style={ATTACHMENT_LABEL_STYLE}
+            title={getAttachmentLabel(firstAttachment)}
+          >
             <Text $span $size="body3" $color={theme.color.grayScale[60]}>
               {getAttachmentLabel(firstAttachment)}
             </Text>
@@ -197,7 +200,10 @@ const Attachments = ({
                       size={20}
                       strokeColor={theme.color.grayScale[60]}
                     />
-                    <div style={ATTACHMENT_LABEL_STYLE}>
+                    <div
+                      style={ATTACHMENT_LABEL_STYLE}
+                      title={getAttachmentLabel(attachment)}
+                    >
                       <Text
                         $span
                         $size="body3"
