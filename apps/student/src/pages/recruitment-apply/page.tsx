@@ -295,25 +295,28 @@ export const RecruitmentApply = () => {
     };
   }, [pageBg]);
 
-  const { mutate: apply, isPending: isCreating } = useCreateApplication(
-    recruitmentId,
-    {
-      onSuccess: async () => {
-        // 상세의 지원하기 버튼이 바로 막히도록 지원 가능 여부를 다시 받는다
-        await query.invalidate(
-          recruitmentsKeys.recruitmentDetail(recruitmentId)
-        );
-        toast.success("지원이 완료되었습니다.");
-        navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
-      },
-      onError: status =>
-        toast.error(
-          APPLY_ERROR_MESSAGE[status] ?? "지원하는 중에 오류가 발생했습니다."
-        )
-    }
-  );
+  const {
+    mutate: apply,
+    isPending: isCreating,
+    isSuccess: isCreated
+  } = useCreateApplication(recruitmentId, {
+    onSuccess: () => {
+      // 지원하면 다른 공고도 "진행 중인 다른 지원"으로 막히므로 상세를 모두 다시 받는다
+      void query.invalidate(recruitmentsKeys.recruitmentDetails());
+      toast.success("지원이 완료되었습니다.");
+      navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
+    },
+    onError: status =>
+      toast.error(
+        APPLY_ERROR_MESSAGE[status] ?? "지원하는 중에 오류가 발생했습니다."
+      )
+  });
 
-  const { mutate: reapply, isPending: isReapplying } = useReapply(reapplyId, {
+  const {
+    mutate: reapply,
+    isPending: isReapplying,
+    isSuccess: isReapplied
+  } = useReapply(reapplyId, {
     onSuccess: () => {
       toast.success("재지원이 완료되었습니다.");
       navigate("/mypage", { replace: true });
@@ -325,6 +328,8 @@ export const RecruitmentApply = () => {
   });
 
   const isApplying = isCreating || isReapplying;
+  // 성공 후 페이지를 옮기는 동안 버튼이 다시 켜져 같은 지원서를 또 보내지 않게 잠근다
+  const isSubmitted = isCreated || isReapplied;
 
   const addFiles = (field: FileFieldName) => (uploaded: UploadedFile[]) =>
     setFiles(prev => ({ ...prev, [field]: [...prev[field], ...uploaded] }));
@@ -431,7 +436,9 @@ export const RecruitmentApply = () => {
               $variant="contained"
               $size="md"
               onClick={handleSubmit}
-              disabled={isUploading || isApplying || !!blockedReason}
+              disabled={
+                isUploading || isApplying || isSubmitted || !!blockedReason
+              }
               $progressing={isApplying}
               style={{ width: "100%" }}
             >

@@ -29,7 +29,11 @@ export const MyPage = () => {
   const { data: applicationList } = useStudentApplications();
   const applications = applicationList?.applications || [];
   const { mutate: deleteApplication } = useDeleteApplication({
-    onSuccess: () => setCancelTargetId(null),
+    onSuccess: () => {
+      setCancelTargetId(null);
+      // 지원을 취소하면 막혀 있던 공고들("진행 중인 다른 지원")도 다시 지원할 수 있어 상세를 모두 다시 받는다
+      void query.invalidate(recruitmentsKeys.recruitmentDetails());
+    },
     onError: () => error("지원 취소에 실패했습니다. 잠시 후 다시 시도해주세요.")
   });
   const cancelTarget = applications.find(
@@ -112,17 +116,7 @@ export const MyPage = () => {
         <Modal
           title="지원 취소"
           content={`${cancelTarget.company}에 지원을 취소하시겠습니까?`}
-          onConfirm={() =>
-            deleteApplication(cancelTargetId, {
-              // 취소한 공고는 다시 지원할 수 있으므로 상세의 지원 가능 여부를 다시 받게 한다
-              onSuccess: () =>
-                query.invalidate(
-                  recruitmentsKeys.recruitmentDetail(
-                    cancelTarget.recruitment_id
-                  )
-                )
-            })
-          }
+          onConfirm={() => deleteApplication(cancelTargetId)}
           onClose={() => setCancelTargetId(null)}
         />
       )}
