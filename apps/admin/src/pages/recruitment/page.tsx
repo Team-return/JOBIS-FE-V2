@@ -16,7 +16,7 @@ import {
   TableSkeleton
 } from "@jobis/design-system";
 import { useEffect, useState, type ReactNode } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   useRecruitmentCount,
   useRecruitmentFileDownload,
@@ -215,9 +215,16 @@ export const Recruitment = () => {
     recruitment.company_name,
     recruitment.hiring_jobs,
     COMPANY_TYPE_LABEL[recruitment.company_type] ?? recruitment.company_type,
-    String(recruitment.total_hiring_count),
-    String(recruitment.application_requested_count),
-    String(recruitment.application_approved_count),
+    `${recruitment.total_hiring_count}명`,
+    <Link
+      to={`/application?recruitment-id=${recruitment.id}&application-status=REQUESTED`}
+      style={{ textDecoration: "underline", color: theme.color.grayScale[60] }}
+    >
+      <Text $size="body2" $span $color={theme.color.grayScale[60]}>
+        {`${recruitment.application_requested_count}명`}
+      </Text>
+    </Link>,
+    `${recruitment.application_approved_count}명`,
     recruitment.start_date || "-",
     recruitment.end_date || "-"
   ]);
@@ -356,7 +363,7 @@ export const Recruitment = () => {
                   headers={[
                     "상태",
                     "기업명",
-                    "직군",
+                    "채용직군",
                     "구분",
                     "모집인원",
                     "지원요청",
