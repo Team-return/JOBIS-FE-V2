@@ -135,10 +135,21 @@ export const useRejection = createQueryHook<number, RejectionResponse>({
   queryKey: applicationsKeys.rejection
 });
 
-export const useReapply = createIdMutationHook<CreateApplicationRequest, void>({
-  path: "",
-  method: "put"
-});
+export const useReapply = (
+  applicationId: number | string,
+  options?: MutationOptions<CreateApplicationRequest, void>
+) =>
+  useMutation<void, number, CreateApplicationRequest>({
+    mutationFn: request =>
+      instance
+        .put(`${DOMAIN}/${applicationId}`, request)
+        .then(({ data }) => data),
+    ...options,
+    onSuccess: async (...args) => {
+      await query.invalidate(applicationsKeys.studentApplications());
+      options?.onSuccess?.(...args);
+    }
+  });
 
 export const useApplicationCount = createQueryHook<
   {
