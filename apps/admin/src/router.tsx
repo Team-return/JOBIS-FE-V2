@@ -37,7 +37,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
           }}
         >
           <Header type="admin" />
-          <main style={{ flex: 1 }}>
+          <main style={{ flex: 1, width: "100%" }}>
             <Outlet />
           </main>
           <Footer />
