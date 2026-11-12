@@ -11,6 +11,8 @@ import { useEffect, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderData, getUploadedFileName, toFileUrl } from "../../utils";
 
+const VIEW_RECORD_RETRY_COUNT = 2;
+
 const formatDate = (createdAt: string) => {
   if (!createdAt) return "-";
   return createdAt.split("T")[0];
@@ -21,7 +23,12 @@ export const NoticeDetail = () => {
   const { currentTheme: theme } = useTheme();
 
   const { data, isLoading, isError, isSuccess } = useNoticeDetail(noticeId);
-  const { mutate: recordNoticeView } = useRecordNoticeView();
+  const { mutate: recordNoticeView } = useRecordNoticeView({
+    // 일시적인 네트워크·서버 오류만 다시 보낸다. 4xx는 다시 보내도 같다
+    retry: (failureCount, error) =>
+      failureCount < VIEW_RECORD_RETRY_COUNT &&
+      !(typeof error === "number" && error < 500)
+  });
   // StrictMode에서 effect가 두 번 돌아도 공지마다 조회 기록은 한 번만 보낸다
   const recordedNoticeId = useRef<number | null>(null);
 
