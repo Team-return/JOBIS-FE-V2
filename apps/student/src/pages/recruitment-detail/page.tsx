@@ -12,6 +12,7 @@ import {
   LoaderData,
   toFileUrl
 } from "apps/student/src/utils";
+import { getUnapplicableMessage } from "./constants";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
@@ -101,6 +102,11 @@ export const RecruitmentDetail = () => {
             }
             onApply={() =>
               navigate(`/recruitment/detail/${recruitmentId}/apply`)
+            }
+            applyDisabledReason={
+              data && !data.is_applicable
+                ? getUnapplicableMessage(data.unapplicable_reason)
+                : undefined
             }
           />
         </Flex>

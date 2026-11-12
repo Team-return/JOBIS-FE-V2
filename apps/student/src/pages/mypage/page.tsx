@@ -1,4 +1,6 @@
 import {
+  query,
+  recruitmentsKeys,
   resetToken,
   useDeleteApplication,
   useStudentApplications,
@@ -108,7 +110,17 @@ export const MyPage = () => {
         <Modal
           title="지원 취소"
           content={`${cancelTarget.company}에 지원을 취소하시겠습니까?`}
-          onConfirm={() => deleteApplication(cancelTargetId)}
+          onConfirm={() =>
+            deleteApplication(cancelTargetId, {
+              // 취소한 공고는 다시 지원할 수 있으므로 상세의 지원 가능 여부를 다시 받게 한다
+              onSuccess: () =>
+                query.invalidate(
+                  recruitmentsKeys.recruitmentDetail(
+                    cancelTarget.recruitment_id
+                  )
+                )
+            })
+          }
           onClose={() => setCancelTargetId(null)}
         />
       )}

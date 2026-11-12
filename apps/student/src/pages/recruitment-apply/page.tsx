@@ -1,4 +1,6 @@
 import {
+  query,
+  recruitmentsKeys,
   useCreateApplication,
   useRecruitmentDetail,
   useUploadFiles
@@ -28,6 +30,7 @@ import {
 } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { toFileUrl, type LoaderData } from "../../utils";
+import { getUnapplicableMessage } from "../recruitment-detail/constants";
 
 interface UploadedFile {
   id: number;
@@ -223,6 +226,14 @@ export const RecruitmentApply = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
+  const { data: detail } = useRecruitmentDetail(recruitmentId);
+
+  // 주소로 바로 들어와도 지원할 수 없는 공고는 제출 전에 막는다
+  const blockedReason =
+    detail && !detail.is_applicable
+      ? getUnapplicableMessage(detail.unapplicable_reason)
+      : undefined;
+
   const [files, setFiles] = useState<Record<FileFieldName, UploadedFile[]>>({
     포트폴리오: [],
     자소서: [],
@@ -252,7 +263,11 @@ export const RecruitmentApply = () => {
   const { mutate: apply, isPending: isApplying } = useCreateApplication(
     recruitmentId,
     {
-      onSuccess: () => {
+      onSuccess: async () => {
+        // 상세의 지원하기 버튼이 바로 막히도록 지원 가능 여부를 다시 받는다
+        await query.invalidate(
+          recruitmentsKeys.recruitmentDetail(recruitmentId)
+        );
         toast.success("지원이 완료되었습니다.");
         navigate(`/recruitment/detail/${recruitmentId}`, { replace: true });
       },
@@ -364,11 +379,11 @@ export const RecruitmentApply = () => {
               $variant="contained"
               $size="md"
               onClick={handleSubmit}
-              disabled={isUploading || isApplying}
+              disabled={isUploading || isApplying || !!blockedReason}
               $progressing={isApplying}
               style={{ width: "100%" }}
             >
-              지원하기
+              {blockedReason ?? "지원하기"}
             </Button>
           </Flex>
         </Surface>
