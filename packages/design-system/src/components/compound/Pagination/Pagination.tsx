@@ -31,7 +31,12 @@ const PAGE_UNIT = 5;
 export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
   const { currentTheme: theme } = useTheme();
 
-  const currentGroupIndex = Math.floor((current - start) / PAGE_UNIT);
+  // 현재 페이지가 범위를 벗어나도(전체 페이지 수가 줄어든 직후 등) 마지막 묶음을 보여 준다
+  const groupBasePage = Math.min(
+    Math.max(current, start),
+    Math.max(start, end)
+  );
+  const currentGroupIndex = Math.floor((groupBasePage - start) / PAGE_UNIT);
   const groupStartPage = start + currentGroupIndex * PAGE_UNIT;
 
   const pages = Array.from(

@@ -19,6 +19,24 @@ describe("Pagination", () => {
     expect(screen.queryByText("6")).not.toBeInTheDocument();
   });
 
+  it.each([2, 3, 4])(
+    "should keep the first group when current is %i",
+    current => {
+      renderWithTheme(<Pagination {...defaultProps} current={current} />);
+      ["1", "2", "3", "4", "5"].forEach(page =>
+        expect(screen.getByText(page)).toBeInTheDocument()
+      );
+      expect(screen.queryByText("6")).not.toBeInTheDocument();
+    }
+  );
+
+  it("should show the last group when current is beyond end", () => {
+    renderWithTheme(<Pagination {...defaultProps} end={7} current={12} />);
+    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(screen.queryByText("5")).not.toBeInTheDocument();
+  });
+
   it("should render page numbers correctly for a middle group", () => {
     renderWithTheme(<Pagination {...defaultProps} end={12} current={7} />);
     expect(screen.getByText("6")).toBeInTheDocument();
