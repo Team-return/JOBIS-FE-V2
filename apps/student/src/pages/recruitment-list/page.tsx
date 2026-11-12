@@ -200,6 +200,7 @@ export const RecruitmentList = () => {
                   recruitment.bookmarked
                 )}
                 status={getRecruitmentStatusLabel(recruitment.status)}
+                winterIntern={recruitment.winter_intern}
                 onClick={() =>
                   navigate(`/recruitment/detail/${recruitment.id}`)
                 }
