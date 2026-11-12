@@ -4,7 +4,9 @@ import {
   DetailHeader,
   Flex,
   DetailTable,
-  Box
+  Box,
+  Text,
+  useTheme
 } from "@jobis/design-system";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { LoaderData, toFileUrl } from "apps/student/src/utils";
@@ -33,12 +35,18 @@ const getAttachmentName = (fileUrl?: string) => {
     fileName = fileName.substring(0, lastDotIndex);
   }
 
-  return decodeURIComponent(fileName || "-");
+  // 파일명에 `%`가 그대로 들어 있으면 decodeURIComponent가 던져 화면 전체가 오류로 바뀐다
+  try {
+    return decodeURIComponent(fileName || "-");
+  } catch {
+    return fileName || "-";
+  }
 };
 
 export const CompanyDetail = () => {
   const { params: companyId } = useLoaderData() as LoaderData<number>;
   const navigate = useNavigate();
+  const { currentTheme: theme } = useTheme();
 
   const { data, isLoading, isError } = useCompanyDetail(companyId);
   const handleViewReview = () => {
@@ -47,9 +55,15 @@ export const CompanyDetail = () => {
 
   const firstAttachment = data?.attachments?.[0];
 
-  if (isError) {
+  if (isError && !data) {
     return (
-      <Container $maxWidth={960}>기업 정보를 불러오지 못했습니다.</Container>
+      <Container $maxWidth={960} $padding={[160, 0, 232, 0]}>
+        <Flex $justify="center">
+          <Text $size="h6" $color={theme.color.grayScale[70]}>
+            기업 정보를 불러오지 못했습니다.
+          </Text>
+        </Flex>
+      </Container>
     );
   }
 
