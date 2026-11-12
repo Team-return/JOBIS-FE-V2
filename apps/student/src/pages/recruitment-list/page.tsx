@@ -23,21 +23,25 @@ import {
 } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import {
-  RecruitmentSortType,
-  StudentRecruitmentStatus,
   useCodeList,
   useRecruitmentList,
   useStudentRecruitmentCount
 } from "@jobis/api";
+import { parseRecruitmentQuery, toRecruitmentListFilter } from "./loader";
 
 export const RecruitmentList = () => {
-  const { updateParams, getParam, getPageParam } = useQueryParams();
+  const { searchParams, updateParams, getParam, getPageParam } =
+    useQueryParams();
   const navigate = useNavigate();
   const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle();
 
+  // 서버로 보내는 값은 로더와 같은 해석을 거쳐 프리페치와 쿼리 키를 맞춘다
+  const listQuery = parseRecruitmentQuery(searchParams);
+  const listFilter = toRecruitmentListFilter(listQuery);
+
   const currentPage = getPageParam();
   const currentName = getParam("name") || "";
-  const currentSort = getParam("sort-type") || "";
+  const currentSort = listQuery.sort_type ?? "";
   const state = getParam("status") || "";
   const year = getParam("year") || "";
   const field = getParam("field") || "";
@@ -64,13 +68,7 @@ export const RecruitmentList = () => {
       value: item.code.toString()
     })) || [];
 
-  const { data: companyCountData } = useStudentRecruitmentCount({
-    name: currentName || undefined,
-    years: year ? parseInt(year, 10) : undefined,
-    status: (state as StudentRecruitmentStatus) || undefined,
-    job_code: field ? parseInt(field, 10) : undefined,
-    tech_code: techStack || undefined
-  });
+  const { data: companyCountData } = useStudentRecruitmentCount(listFilter);
 
   const {
     data: RecruitmentListData,
@@ -78,13 +76,9 @@ export const RecruitmentList = () => {
     isSuccess,
     isError
   } = useRecruitmentList({
+    ...listFilter,
     page: currentPage,
-    name: currentName || undefined,
-    years: year ? parseInt(year, 10) : undefined,
-    status: (state as StudentRecruitmentStatus) || undefined,
-    sort_type: (currentSort as RecruitmentSortType) || undefined,
-    job_code: field ? parseInt(field, 10) : undefined,
-    tech_code: techStack || undefined
+    sort_type: listQuery.sort_type
   });
 
   const recruitments = RecruitmentListData?.recruitments || [];
