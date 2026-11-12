@@ -1,9 +1,16 @@
-import { useNotificationList, useStudentMy } from "@jobis/api";
+import {
+  notificationsKeys,
+  query,
+  useNotificationList,
+  useReadNotification,
+  useStudentMy
+} from "@jobis/api";
 import { Header, Footer } from "@jobis/design-system";
 import {
   createBrowserRouter,
   Outlet,
-  ScrollRestoration
+  ScrollRestoration,
+  useNavigate
 } from "react-router-dom";
 import { companyLoader } from "./pages/company-list/loader";
 import { recruitmentLoader } from "./pages/recruitment-list/loader";
@@ -33,15 +40,31 @@ import {
 } from "./pages/recruitment-apply";
 import { PreparingPage } from "./pages/preparing";
 import { JobRate } from "./pages/job-rate";
+import { getNotificationPath } from "./utils/notification";
 
 const StudentHeader = () => {
+  const navigate = useNavigate();
   const { data: profile } = useStudentMy();
   const { data: notificationData } = useNotificationList();
+  const { mutate: readNotification } = useReadNotification({
+    onSuccess: () => query.invalidate(notificationsKeys.notificationList())
+  });
+
   return (
     <Header
       type="student"
       userName={profile?.student_name || ""}
       notifications={notificationData?.notifications}
+      onNotificationClick={notification => {
+        if (notification.new) {
+          readNotification({ notificationId: notification.notification_id });
+        }
+        const path = getNotificationPath(
+          notification.topic,
+          notification.detail_id
+        );
+        if (path) navigate(path);
+      }}
     />
   );
 };

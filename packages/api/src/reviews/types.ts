@@ -4,7 +4,8 @@ export interface ReviewDetailResponse {
   review_id: number;
   company_name: string;
   writer: string;
-  year: number;
+  // 면접 날짜(yyyy-MM-dd)
+  time: string;
   major: string;
   type: InterviewType;
   location: InterviewLocation;
@@ -54,14 +55,15 @@ export interface ReviewListResponse {
   reviews: ReviewListItem[];
 }
 
+// 서버 @RequestParam 이름(type, years, code)을 그대로 쓴다
 export interface ReviewListQueryParams {
   page?: number;
   location?: InterviewLocation;
-  interview_type?: InterviewType;
+  type?: InterviewType;
   company_id?: number;
   keyword?: string;
-  year?: number;
-  job_code?: number;
+  years?: number;
+  code?: number;
 }
 
 export interface ReviewCountResponse {
@@ -70,10 +72,11 @@ export interface ReviewCountResponse {
 
 export interface ReviewCountQueryParams {
   location?: InterviewLocation;
-  interview_type?: InterviewType;
+  type?: InterviewType;
   company_id?: number;
-  year?: number;
-  job_code?: number;
+  keyword?: string;
+  years?: number;
+  code?: number;
 }
 
 export interface MyReview {
