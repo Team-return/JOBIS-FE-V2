@@ -212,16 +212,104 @@ describe("Dropdown", () => {
     );
   });
 
-  it("selects an option with the keyboard", async () => {
+  it("moves focus to the selected option on open with a roving tabindex", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} value="backend" />);
+
+    const trigger = screen.getByRole("button", { name: "백엔드" });
+    await user.click(trigger);
+
+    expect(screen.getByRole("listbox")).toHaveAttribute(
+      "aria-labelledby",
+      trigger.id
+    );
+    const selectedOption = screen.getByRole("option", { name: "백엔드" });
+    expect(selectedOption).toHaveFocus();
+    expect(selectedOption).toHaveAttribute("tabindex", "0");
+    expect(screen.getByRole("option", { name: "프론트엔드" })).toHaveAttribute(
+      "tabindex",
+      "-1"
+    );
+    expect(screen.getByRole("option", { name: "디자이너" })).toHaveAttribute(
+      "tabindex",
+      "-1"
+    );
+  });
+
+  it("moves between options with arrow, Home and End keys", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} />);
+
+    await user.click(screen.getByRole("button"));
+    const [frontend, backend, designer] = screen.getAllByRole("option");
+    expect(frontend).toHaveFocus();
+
+    await user.keyboard("{ArrowDown}");
+    expect(backend).toHaveFocus();
+    await user.keyboard("{End}");
+    expect(designer).toHaveFocus();
+    await user.keyboard("{ArrowDown}");
+    expect(designer).toHaveFocus();
+    await user.keyboard("{Home}");
+    expect(frontend).toHaveFocus();
+    await user.keyboard("{ArrowUp}");
+    expect(frontend).toHaveFocus();
+  });
+
+  it("opens from the trigger with ArrowDown", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<Dropdown options={options} $placeholder="분야" />);
+
+    screen.getByRole("button", { name: "분야" }).focus();
+    await user.keyboard("{ArrowDown}");
+
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "프론트엔드" })).toHaveFocus();
+  });
+
+  it("selects an option with Enter and returns focus to the trigger", async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();
     renderWithTheme(<Dropdown options={options} onChange={handleChange} />);
 
-    await user.click(screen.getByRole("button"));
-    screen.getByRole("option", { name: "디자이너" }).focus();
-    await user.keyboard("{Enter}");
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+    await user.keyboard("{End}{Enter}");
 
     expect(handleChange).toHaveBeenCalledWith("designer");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("selects an option with Space without reopening the list", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+    renderWithTheme(<Dropdown options={options} onChange={handleChange} />);
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+    await user.keyboard("{ArrowDown}[Space]");
+
+    expect(handleChange).toHaveBeenCalledTimes(1);
+    expect(handleChange).toHaveBeenCalledWith("backend");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("closes when Tab moves focus out of the list", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <>
+        <Dropdown options={options} />
+        <button type="button">다음</button>
+      </>
+    );
+
+    await user.click(screen.getAllByRole("button")[0]);
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+    await user.tab();
+
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 
@@ -402,6 +490,9 @@ describe("DropdownPeriod", () => {
     await user.keyboard("{Escape}");
     expect(screen.queryByText("MON")).not.toBeInTheDocument();
     expect(screen.getByText("모집기간")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "모집 시작일 달력 열기" })
+    ).toHaveFocus();
 
     await user.keyboard("{Escape}");
     expect(screen.queryByText("모집기간")).not.toBeInTheDocument();

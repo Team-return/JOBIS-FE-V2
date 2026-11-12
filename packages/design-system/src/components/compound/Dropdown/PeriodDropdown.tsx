@@ -184,6 +184,8 @@ export const PeriodDropdown = ({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const startCalendarButtonRef = useRef<HTMLButtonElement>(null);
+  const endCalendarButtonRef = useRef<HTMLButtonElement>(null);
   const panelId = useId();
 
   const closeDropdown = useCallback(() => {
@@ -199,17 +201,26 @@ export const PeriodDropdown = ({
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      if (calendarFor) {
-        setCalendarFor(null);
-        return;
-      }
+      // 한글 조합 중이거나 다른 곳에서 이미 처리한 Escape는 넘긴다
+      const isHandled = event.isComposing || event.defaultPrevented;
+      if (event.key !== "Escape" || isHandled) return;
       // 다른 입력칸에 있던 초점은 빼앗지 않는다
       const active = document.activeElement;
       const isFocusInside =
         !active ||
         active === document.body ||
         wrapperRef.current?.contains(active);
+
+      if (calendarFor) {
+        setCalendarFor(null);
+        // 달력을 연 시작일·종료일 버튼으로 초점을 돌려준다
+        const calendarButton =
+          calendarFor === "start"
+            ? startCalendarButtonRef.current
+            : endCalendarButtonRef.current;
+        if (isFocusInside) calendarButton?.focus();
+        return;
+      }
       closeDropdown();
       if (isFocusInside) triggerRef.current?.focus();
     };
@@ -379,6 +390,7 @@ export const PeriodDropdown = ({
                       onBlur={() => setStartText(null)}
                     />
                     <IconOnlyButton
+                      ref={startCalendarButtonRef}
                       type="button"
                       aria-label="모집 시작일 달력 열기"
                       disabled={tempChecked}
@@ -406,6 +418,7 @@ export const PeriodDropdown = ({
                       onBlur={() => setEndText(null)}
                     />
                     <IconOnlyButton
+                      ref={endCalendarButtonRef}
                       type="button"
                       aria-label="모집 종료일 달력 열기"
                       disabled={tempChecked}

@@ -147,7 +147,23 @@ export const Dropdown = ({
   const [searchTerm, setSearchTerm] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const triggerId = useId();
   const listId = useId();
+  const isListbox = type === undefined;
+  // 로빙 tabindex: 고른 항목(없으면 첫 항목)만 Tab으로 들어오고 나머지는 화살표로 옮긴다
+  const initialIndex = Math.max(
+    options.findIndex(o => o.value === selected),
+    0
+  );
+
+  const openDropdown = () => {
+    if (onToggle) {
+      onToggle(true);
+    } else {
+      setInternalIsOpen(true);
+    }
+  };
 
   const closeDropdown = useCallback(() => {
     if (onToggle) {
@@ -162,7 +178,9 @@ export const Dropdown = ({
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      // 한글 조합 중이거나 다른 곳에서 이미 처리한 Escape는 넘긴다
+      const isHandled = event.isComposing || event.defaultPrevented;
+      if (event.key !== "Escape" || isHandled) return;
       // 다른 입력칸에 있던 초점은 빼앗지 않는다
       const active = document.activeElement;
       const isFocusInside =
@@ -177,6 +195,12 @@ export const Dropdown = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeDropdown]);
 
+  // 목록을 열면 고른 항목(없으면 첫 항목)으로 초점을 옮긴다
+  useEffect(() => {
+    if (!isOpen || !isListbox) return;
+    optionRefs.current[initialIndex]?.focus();
+  }, [isOpen, isListbox, initialIndex]);
+
   const handleSelect = (value: string) => {
     if (externalValue === undefined) {
       setInternalSelected(value);
@@ -185,12 +209,67 @@ export const Dropdown = ({
     closeDropdown();
   };
 
+  const selectWithKeyboard = (value: string) => {
+    handleSelect(value);
+    triggerRef.current?.focus();
+  };
+
+  const focusOption = (index: number) => {
+    const lastIndex = options.length - 1;
+    optionRefs.current[Math.min(Math.max(index, 0), lastIndex)]?.focus();
+  };
+
+  const handleTriggerKeyDown = (
+    event: ReactKeyboardEvent<HTMLButtonElement>
+  ) => {
+    if (!isListbox || event.key !== "ArrowDown") return;
+    event.preventDefault();
+    if (isOpen) {
+      focusOption(initialIndex);
+    } else {
+      openDropdown();
+    }
+  };
+
   const handleOptionKeyDown =
+    (index: number) => (event: ReactKeyboardEvent<HTMLLIElement>) => {
+      switch (event.key) {
+        case "ArrowDown":
+          event.preventDefault();
+          focusOption(index + 1);
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          focusOption(index - 1);
+          break;
+        case "Home":
+          event.preventDefault();
+          focusOption(0);
+          break;
+        case "End":
+          event.preventDefault();
+          focusOption(options.length - 1);
+          break;
+        case "Enter":
+          event.preventDefault();
+          selectWithKeyboard(options[index].value);
+          break;
+        // 스페이스는 keyup에서 고른다. keydown에서 초점을 옮기면 Firefox가 keyup으로 열기 버튼을 다시 누를 수 있다
+        case " ":
+          event.preventDefault();
+          break;
+        // Tab으로 목록을 벗어나면 닫는다. 초점은 브라우저가 옮기는 대로 둔다
+        case "Tab":
+          closeDropdown();
+          break;
+      }
+    };
+
+  const handleOptionKeyUp =
     (value: string) => (event: ReactKeyboardEvent<HTMLLIElement>) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.key !== " ") return;
       event.preventDefault();
-      handleSelect(value);
-      triggerRef.current?.focus();
+      selectWithKeyboard(value);
     };
 
   const selectedLabel = options.find(o => o.value === selected)?.label;
@@ -210,8 +289,9 @@ export const Dropdown = ({
     <Wrapper ref={wrapperRef}>
       <TriggerButton
         ref={triggerRef}
+        id={triggerId}
         type="button"
-        aria-haspopup={type === undefined ? "listbox" : "dialog"}
+        aria-haspopup={isListbox ? "listbox" : "dialog"}
         aria-expanded={isOpen}
         aria-controls={isOpen ? listId : undefined}
         isOpen={isOpen}
@@ -223,6 +303,7 @@ export const Dropdown = ({
             setInternalIsOpen(newValue);
           }
         }}
+        onKeyDown={handleTriggerKeyDown}
         $width={typeof $width === "number" ? `${$width}px` : $width}
         $color={$color}
         $isNoneBorder={$isNoneBorder}
@@ -239,18 +320,26 @@ export const Dropdown = ({
 
       {isOpen && (
         <OptionsWrapper>
-          {type === undefined && (
-            <DefaultOptions id={listId} role="listbox">
-              {options.map(opt => {
+          {isListbox && (
+            <DefaultOptions
+              id={listId}
+              role="listbox"
+              aria-labelledby={triggerId}
+            >
+              {options.map((opt, index) => {
                 return (
                   <DefaultOption
                     key={opt.value}
+                    ref={element => {
+                      optionRefs.current[index] = element;
+                    }}
                     role="option"
                     aria-selected={opt.value === selected}
-                    tabIndex={0}
+                    tabIndex={index === initialIndex ? 0 : -1}
                     $selected={opt.value === selected}
                     onClick={() => handleSelect(opt.value)}
-                    onKeyDown={handleOptionKeyDown(opt.value)}
+                    onKeyDown={handleOptionKeyDown(index)}
+                    onKeyUp={handleOptionKeyUp(opt.value)}
                   >
                     {opt.label}
                   </DefaultOption>
