@@ -38,6 +38,14 @@ export type UnapplicableReason =
   | "HAS_ACTIVE_APPLICATION"
   | "GRADE_NOT_ELIGIBLE";
 
+// 모집의뢰서 목록 정렬. 기업 목록(ListSortType)과 달리 설립일 대신 공고 마감일로 정렬한다
+export type RecruitmentSortType =
+  | "TAKE"
+  | "WORKERS_COUNT_DESC"
+  | "WORKERS_COUNT_ASC"
+  | "DEADLINE_DESC"
+  | "DEADLINE_ASC";
+
 export type ApplicationStatus =
   | "REQUESTED"
   | "APPROVED"

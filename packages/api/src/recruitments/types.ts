@@ -3,7 +3,7 @@ import type {
   JobType,
   RecruitmentStatus,
   CompanyType,
-  ListSortType,
+  RecruitmentSortType,
   UnapplicableReason
 } from "@/enum";
 
@@ -83,7 +83,7 @@ export interface StudentRecruitmentListQueryParams {
   military_support?: boolean;
   years?: number;
   status?: RecruitmentStatus;
-  sort_type?: ListSortType;
+  sort_type?: RecruitmentSortType;
 }
 
 interface StudentRecruitment {
