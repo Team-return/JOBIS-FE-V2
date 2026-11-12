@@ -100,7 +100,11 @@ export const Recruitment = () => {
     { ...filter, page: currentPage },
     { placeholderData: previousData => previousData }
   );
-  const { data: pageCountData } = useTeacherRecruitmentCount(filter, {
+  const {
+    data: pageCountData,
+    isSuccess: isPageCountSuccess,
+    isPlaceholderData: isPageCountPlaceholder
+  } = useTeacherRecruitmentCount(filter, {
     placeholderData: previousData => previousData
   });
   const { data: countData } = useRecruitmentCount(filter, {
@@ -117,7 +121,13 @@ export const Recruitment = () => {
       recruitment => type === undefined || recruitment.company_type === type
     ) ?? [];
 
-  const totalPages = Math.max(1, pageCountData?.total_page_count ?? 1);
+  // 페이지 수를 받기 전(?page=7로 바로 들어온 때 등)에는 지금 페이지까지 있다고 보고 번호를 보여 준다
+  const isPageCountKnown = isPageCountSuccess && !isPageCountPlaceholder;
+  const lastPage = pageCountData?.total_page_count ?? 0;
+  const totalPages = Math.max(
+    1,
+    isPageCountKnown ? lastPage : Math.max(lastPage, currentPage)
+  );
 
   const getSelectedRecruitmentIds = (): number[] => {
     return selected
@@ -235,6 +245,12 @@ export const Recruitment = () => {
   useEffect(() => {
     setSelected([]);
   }, [data, type]);
+
+  // 범위 밖 페이지(주소 직접 입력, 상태를 바꿔 마지막 페이지가 빈 경우 등)는 마지막 페이지로 옮긴다
+  useEffect(() => {
+    if (!isPageCountKnown || currentPage <= totalPages) return;
+    updateParams({ page: totalPages > 1 ? totalPages : undefined });
+  }, [isPageCountKnown, currentPage, totalPages, updateParams]);
 
   useEffect(() => {
     const currentSearchValue = getParam("company-name") ?? "";
