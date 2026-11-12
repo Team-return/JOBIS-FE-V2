@@ -306,6 +306,57 @@ describe("Header", () => {
       expect(screen.queryByText("새로운 공지")).not.toBeInTheDocument();
     });
 
+    it("shows alarm dot again only when an unseen unread notification arrives", async () => {
+      const createNotification = (id: number, isNew: boolean) => ({
+        notification_id: id,
+        title: `알림 ${id}`,
+        content: `내용 ${id}`,
+        topic: "NOTICE",
+        detail_id: id,
+        created_at: "2025-12-24T10:00:00Z",
+        new: isNew
+      });
+      const renderHeader = (
+        notifications: ReturnType<typeof createNotification>[]
+      ) => (
+        <ThemeProvider theme={darkTheme}>
+          <Header
+            type="student"
+            userName="홍길동"
+            notifications={notifications}
+          />
+        </ThemeProvider>
+      );
+
+      const { rerender } = render(
+        renderHeader([createNotification(1, true), createNotification(2, true)])
+      );
+      await userEvent.click(screen.getByText("홍길동"));
+      expect(
+        screen.queryByLabelText("alarm-indicator")
+      ).not.toBeInTheDocument();
+
+      // 하나를 읽어 목록이 다시 와도 이미 본 안읽음 알림만 남았으므로 점은 꺼져 있다
+      rerender(
+        renderHeader([
+          createNotification(1, false),
+          createNotification(2, true)
+        ])
+      );
+      expect(
+        screen.queryByLabelText("alarm-indicator")
+      ).not.toBeInTheDocument();
+
+      rerender(
+        renderHeader([
+          createNotification(3, true),
+          createNotification(1, false),
+          createNotification(2, true)
+        ])
+      );
+      expect(screen.getByLabelText("alarm-indicator")).toBeInTheDocument();
+    });
+
     it("navigates to correct path when menu item is clicked", async () => {
       renderWithRouter(<Header type="student" userName="홍길동" />);
 
