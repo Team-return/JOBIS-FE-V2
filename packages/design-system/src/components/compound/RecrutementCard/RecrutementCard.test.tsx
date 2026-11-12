@@ -67,6 +67,18 @@ describe("RecrutementCard", () => {
     );
   });
 
+  it("does not render the winter intern chip by default", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} />);
+
+    expect(screen.queryByText("겨울인턴")).not.toBeInTheDocument();
+  });
+
+  it("renders the winter intern chip for winter intern recruitments", () => {
+    renderWithTheme(<RecrutementCard {...defaultProps} winterIntern />);
+
+    expect(screen.getByText("겨울인턴")).toBeInTheDocument();
+  });
+
   it("calls onClick when card is clicked", () => {
     const onClick = vi.fn();
     renderWithTheme(<RecrutementCard {...defaultProps} onClick={onClick} />);

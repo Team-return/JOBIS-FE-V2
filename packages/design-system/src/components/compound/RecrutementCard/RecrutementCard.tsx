@@ -93,6 +93,7 @@ export const RecrutementCard = ({
   militarySupport,
   bookmarked,
   status,
+  winterIntern,
   onClick,
   onBookmarkClick
 }: Props) => {
@@ -126,7 +127,8 @@ export const RecrutementCard = ({
               }
             />
           </Flex>
-          <Stack $direction="row" $gap={12}>
+          {/* 칩이 세 개면 "모집 종료"일 때 12px 간격으로는 카드 밖으로 넘쳐 간격을 줄인다 */}
+          <Stack $direction="row" $gap={winterIntern ? 8 : 12}>
             {status && statusColor && (
               <Clip $color={statusColor}>
                 <Text $span $size="caption" $color={statusColor}>
@@ -139,6 +141,13 @@ export const RecrutementCard = ({
                 {`병역특례 ${militarySupport ? "O" : "X"}`}
               </Text>
             </Clip>
+            {winterIntern && (
+              <Clip $color={theme.color.primary[20]}>
+                <Text $span $size="caption" $color={theme.color.primary[20]}>
+                  겨울인턴
+                </Text>
+              </Clip>
+            )}
           </Stack>
         </Flex>
       </Box>
