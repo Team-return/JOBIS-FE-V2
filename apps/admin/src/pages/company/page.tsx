@@ -16,6 +16,8 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import {
+  useCompanyCount,
+  useTeacherCompanyCount,
   useTeacherCompanyList,
   useUpdateCompanyType,
   useUpdateMou,
@@ -30,12 +32,11 @@ import {
   COMPANY_TYPE_OPTIONS,
   REGION_OPTIONS,
   BUSINESS_AREA_OPTIONS,
-  PAGE_SIZE,
   LoaderData,
   booleanToYN,
   getErrorMessage
 } from "../../utils";
-import type { CompanyQuery } from "./loader";
+import { getCompanyFilter, type CompanyQuery } from "./loader";
 
 const CompanyName = ({ name, id }: { name: string; id: number }) => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const CompanyName = ({ name, id }: { name: string; id: number }) => {
 };
 
 export const Company = () => {
-  const { params: initialParams } = useLoaderData() as LoaderData<CompanyQuery>;
+  const { params } = useLoaderData() as LoaderData<CompanyQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
@@ -59,7 +60,7 @@ export const Company = () => {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
-  const [localSearch, setLocalSearch] = useState(initialParams.name || "");
+  const [localSearch, setLocalSearch] = useState(params.name || "");
 
   const companyType = getParam("type");
   const region = getParam("region");
@@ -77,10 +78,7 @@ export const Company = () => {
 
   const getSelectedCompanyIds = (): number[] => {
     return selected
-      .map(index => {
-        const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.companies[globalIndex]?.company_id;
-      })
+      .map(index => data?.companies[index]?.company_id)
       .filter((id): id is number => id !== undefined);
   };
 
@@ -102,6 +100,8 @@ export const Company = () => {
   const invalidateCompanyQueries = async () => {
     await Promise.all([
       query.invalidate(companiesKeys.teacherCompanyList()),
+      query.invalidate(companiesKeys.teacherCompanyCount()),
+      query.invalidate(companiesKeys.companyCount()),
       query.invalidate(companiesKeys.companyFileDownload())
     ]);
   };
@@ -175,12 +175,18 @@ export const Company = () => {
     );
   };
 
-  const { data, isLoading } = useTeacherCompanyList({
-    page: currentPage,
-    type: companyType,
-    name: getParam("name"),
-    region: region,
-    business_area: businessArea ? parseInt(businessArea, 10) : undefined
+  const filter = getCompanyFilter(params);
+
+  // 필터·페이지를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
+  const { data, isLoading } = useTeacherCompanyList(
+    { ...filter, page: currentPage },
+    { placeholderData: previousData => previousData }
+  );
+  const { data: pageCountData } = useTeacherCompanyCount(filter, {
+    placeholderData: previousData => previousData
+  });
+  const { data: countData } = useCompanyCount(filter, {
+    placeholderData: previousData => previousData
   });
 
   const { mutate: updateCompanyType } = useUpdateCompanyType();
@@ -202,10 +208,12 @@ export const Company = () => {
       String(company.review_count)
     ]) ?? [];
 
-  const totalPages = Math.max(1, Math.ceil(tableRows.length / PAGE_SIZE));
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedRows = tableRows.slice(startIndex, endIndex);
+  const totalPages = Math.max(1, pageCountData?.total_page_count ?? 1);
+
+  // 다른 페이지·필터 결과가 오면 선택한 줄 번호가 다른 기업을 가리키므로 비운다
+  useEffect(() => {
+    setSelected([]);
+  }, [data]);
 
   useEffect(() => {
     const currentSearchValue = getParam("name") ?? "";
@@ -222,18 +230,25 @@ export const Company = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               기업
             </Text>
-            <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총
-            </Text>
-            <Flex $align="center" $fit>
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(tableRows?.length)}
-              </Text>
-
-              <Text $size="body2" $color={theme.color.grayScale[90]}>
-                개
-              </Text>
-            </Flex>
+            {countData && (
+              <>
+                <Text $size="body2" $color={theme.color.grayScale[90]}>
+                  총
+                </Text>
+                <Flex $align="center" $fit>
+                  <Text
+                    $size="body2"
+                    $span
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    {String(countData.count)}
+                  </Text>
+                  <Text $size="body2" $color={theme.color.grayScale[90]}>
+                    개
+                  </Text>
+                </Flex>
+              </>
+            )}
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
@@ -318,7 +333,7 @@ export const Company = () => {
                   columnWidths={[
                     164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
                   ]}
-                  rows={5}
+                  rows={10}
                 />
               ) : (
                 <Table
@@ -335,7 +350,7 @@ export const Company = () => {
                     "총 취업 학생수",
                     "후기등록"
                   ]}
-                  rows={paginatedRows}
+                  rows={tableRows}
                   columnWidths={[
                     164, 106, 170, 137, 101, 120, 75, 75, 117, 108, 115
                   ]}

@@ -18,7 +18,9 @@ import {
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import {
+  useRecruitmentCount,
   useRecruitmentFileDownload,
+  useTeacherRecruitmentCount,
   useTeacherRecruitmentList,
   useUpdateRecruitmentStatus,
   recruitmentsKeys,
@@ -33,18 +35,16 @@ import {
   COMPANY_TYPE_LABEL,
   COMPANY_TYPE_OPTIONS,
   YEAR_OPTIONS,
-  PAGE_SIZE,
   formatDate,
   getErrorMessage,
   parseLocalDate,
   type LoaderData,
   useQueryParams
 } from "../../utils";
-import type { RecruitmentQuery } from "./loader";
+import { getRecruitmentFilter, type RecruitmentQuery } from "./loader";
 
 export const Recruitment = () => {
-  const { params: initialParams } =
-    useLoaderData() as LoaderData<RecruitmentQuery>;
+  const { params } = useLoaderData() as LoaderData<RecruitmentQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
@@ -73,9 +73,7 @@ export const Recruitment = () => {
         }
       : undefined;
 
-  const [localSearch, setLocalSearch] = useState(
-    initialParams.company_name || ""
-  );
+  const [localSearch, setLocalSearch] = useState(params.company_name || "");
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
@@ -94,38 +92,35 @@ export const Recruitment = () => {
     });
   };
 
-  const { data, isLoading } = useTeacherRecruitmentList({
-    company_name: getParam("company-name"),
-    year: year ? parseInt(year, 10) : undefined,
-    status: state as RecruitmentStatus,
-    start: startDate,
-    end: endDate,
-    winter_intern: initialParams.winter_intern
+  const filter = getRecruitmentFilter(params);
+
+  // 필터·페이지를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
+  const { data, isLoading } = useTeacherRecruitmentList(
+    { ...filter, page: currentPage },
+    { placeholderData: previousData => previousData }
+  );
+  const { data: pageCountData } = useTeacherRecruitmentCount(filter, {
+    placeholderData: previousData => previousData
+  });
+  const { data: countData } = useRecruitmentCount(filter, {
+    placeholderData: previousData => previousData
   });
 
   const { data: excelData } = useRecruitmentFileDownload();
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
-  const filteredRecruitments =
+  // 구분은 서버 조회 조건에 없어 받은 페이지 안에서만 거른다
+  const recruitments =
     data?.recruitments.filter(
       recruitment => type === undefined || recruitment.company_type === type
     ) ?? [];
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRecruitments.length / PAGE_SIZE)
-  );
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedRecruitments = filteredRecruitments.slice(
-    startIndex,
-    endIndex
-  );
+  const totalPages = Math.max(1, pageCountData?.total_page_count ?? 1);
 
   const getSelectedRecruitmentIds = (): number[] => {
     return selected
-      .map(index => paginatedRecruitments[index]?.id)
+      .map(index => recruitments[index]?.id)
       .filter((id): id is number => id !== undefined);
   };
 
@@ -147,6 +142,8 @@ export const Recruitment = () => {
   const invalidateRecruitmentQueries = async () => {
     await Promise.all([
       query.invalidate(recruitmentsKeys.teacherRecruitmentList()),
+      query.invalidate(recruitmentsKeys.teacherRecruitmentCount()),
+      query.invalidate(recruitmentsKeys.recruitmentCount()),
       query.invalidate(recruitmentsKeys.recruitmentFileDownload())
     ]);
   };
@@ -192,7 +189,7 @@ export const Recruitment = () => {
     document.body.removeChild(link);
   };
 
-  const tableRows: string[][] = paginatedRecruitments.map(recruitment => [
+  const tableRows: string[][] = recruitments.map(recruitment => [
     RECRUITMENT_STATUS_LABEL[recruitment.status] ?? String(recruitment.status),
     recruitment.company_name,
     recruitment.hiring_jobs,
@@ -203,6 +200,11 @@ export const Recruitment = () => {
     recruitment.start_date || "-",
     recruitment.end_date || "-"
   ]);
+
+  // 다른 페이지·필터 결과가 오면 선택한 줄 번호가 다른 모집의뢰서를 가리키므로 비운다
+  useEffect(() => {
+    setSelected([]);
+  }, [data, type]);
 
   useEffect(() => {
     const currentSearchValue = getParam("company-name") ?? "";
@@ -222,17 +224,25 @@ export const Recruitment = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               모집의뢰서
             </Text>
-            <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총
-            </Text>
-            <Flex $align="center" $fit>
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(filteredRecruitments.length)}
-              </Text>
-              <Text $size="body2" $color={theme.color.grayScale[90]}>
-                개
-              </Text>
-            </Flex>
+            {countData && (
+              <>
+                <Text $size="body2" $color={theme.color.grayScale[90]}>
+                  총
+                </Text>
+                <Flex $align="center" $fit>
+                  <Text
+                    $size="body2"
+                    $span
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    {String(countData.count)}
+                  </Text>
+                  <Text $size="body2" $color={theme.color.grayScale[90]}>
+                    개
+                  </Text>
+                </Flex>
+              </>
+            )}
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
@@ -302,7 +312,7 @@ export const Recruitment = () => {
               />
             </Flex>
           </Flex>
-          {filteredRecruitments.length === 0 && !isLoading ? (
+          {recruitments.length === 0 && !isLoading ? (
             <Box $margin={[300, 474.8]}>
               <Text
                 $size="h5"
@@ -316,7 +326,7 @@ export const Recruitment = () => {
             <Flex $direction="column" $align="center" $gap={40}>
               {isLoading ? (
                 <TableSkeleton
-                  rows={5}
+                  rows={10}
                   checkbox
                   columnWidths={[150, 135, 152, 120, 135, 135, 135, 163, 118]}
                 />

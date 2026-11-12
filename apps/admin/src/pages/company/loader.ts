@@ -7,7 +7,12 @@ import {
   LoaderData,
   type QueryParamParser
 } from "../../utils";
-import { type CompanyType, useTeacherCompanyList } from "@jobis/api";
+import {
+  type CompanyType,
+  useCompanyCount,
+  useTeacherCompanyCount,
+  useTeacherCompanyList
+} from "@jobis/api";
 
 export interface CompanyQuery {
   name?: string;
@@ -34,17 +39,24 @@ const companyQueryParser: QueryParamParser<CompanyQuery> = {
   }
 };
 
+export const getCompanyFilter = (query: CompanyQuery) => ({
+  type: query.type,
+  name: query.name,
+  region: query.region,
+  business_area: query.businessArea
+});
+
 export async function companyLoader({
   request
 }: LoaderFunctionArgs): Promise<LoaderData<CompanyQuery>> {
   const queryParams = parseQueryParams(request, companyQueryParser);
+  const filter = getCompanyFilter(queryParams);
 
+  void useTeacherCompanyCount.prefetch(filter);
+  void useCompanyCount.prefetch(filter);
   await useTeacherCompanyList.prefetch({
-    page: queryParams.page,
-    type: queryParams.type,
-    name: queryParams.name,
-    region: queryParams.region,
-    business_area: queryParams.businessArea
+    ...filter,
+    page: queryParams.page
   });
 
   return {
