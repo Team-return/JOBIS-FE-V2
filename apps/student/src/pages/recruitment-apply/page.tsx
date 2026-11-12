@@ -6,6 +6,7 @@ import {
 import {
   Box,
   Button,
+  Container,
   FileDownload,
   Flex,
   IconButton,
@@ -306,7 +307,7 @@ export const RecruitmentApply = () => {
   };
 
   return (
-    <Box width={780} $padding={[56, 0, 120, 0]}>
+    <Container $maxWidth={780} $padding={[56, 0, 120, 0]}>
       <Flex $direction="column" $gap={4}>
         <Surface
           $bg={theme.color.grayScale[10]}
@@ -371,6 +372,6 @@ export const RecruitmentApply = () => {
           </Flex>
         </Surface>
       </Flex>
-    </Box>
+    </Container>
   );
 };
