@@ -12,11 +12,14 @@ export const DetailHeader = ({
   isParticipation,
   onViewReview,
   onViewDetail,
-  onApply
+  onApply,
+  applyDisabledReason
 }: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   if (type === "recruitment") {
+    const canApply = !!onApply && !applyDisabledReason;
+
     return (
       <Flex $direction="row" $align="center">
         <Flex $gap={28} $fit>
@@ -49,11 +52,20 @@ export const DetailHeader = ({
                 </Text>
               </TextButton>
               <Line />
-              <TextButton type="button" onClick={onApply} disabled={!onApply}>
-                <Text $size="body2" $weight="medium" $color="#7f7f7f">
+              <TextButton type="button" onClick={onApply} disabled={!canApply}>
+                <Text
+                  $size="body2"
+                  $weight="medium"
+                  $color={applyDisabledReason ? "#cccccc" : "#7f7f7f"}
+                >
                   지원하기
                 </Text>
               </TextButton>
+              {applyDisabledReason && (
+                <Text $size="caption" $weight="regular" $color="#e74c3c">
+                  {applyDisabledReason}
+                </Text>
+              )}
             </Flex>
           </Flex>
         </Flex>
