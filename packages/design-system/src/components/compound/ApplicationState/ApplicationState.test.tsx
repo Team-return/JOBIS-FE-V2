@@ -72,6 +72,17 @@ describe("ApplicationState", () => {
     expect(screen.getByText("지원 취소")).toBeInTheDocument();
   });
 
+  it("should let a rejected application be reapplied", () => {
+    const onRetry = vi.fn();
+    renderWithTheme(
+      <ApplicationState {...defaultProps} types="rejected" onRetry={onRetry} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "지원 메뉴 열기" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "재지원" }));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
   it("should open the menu and cancel with the keyboard only", async () => {
     const onCancel = vi.fn();
     renderWithTheme(

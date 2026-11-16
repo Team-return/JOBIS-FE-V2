@@ -152,7 +152,9 @@ export const ApplicationState = ({
                 {statusText}
               </Text>
             </Status>
-            {(types === "requested" || types === "pending") && (
+            {(types === "requested" ||
+              types === "pending" ||
+              types === "rejected") && (
               <MenuButton
                 type="button"
                 aria-label="지원 메뉴 열기"
