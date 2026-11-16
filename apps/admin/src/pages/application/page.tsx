@@ -37,6 +37,7 @@ import {
   LoaderData,
   getErrorMessage,
   getUploadedFileName,
+  toExternalUrl,
   toFileUrl
 } from "../../utils";
 import { getApplicationFilter, type ApplicationQuery } from "./loader";
@@ -108,6 +109,7 @@ const Attachments = ({
   setOpen: (id: number | null) => void;
 }) => {
   const { currentTheme: theme } = useTheme();
+  const toast = useToast();
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -237,7 +239,12 @@ const Attachments = ({
                           getUploadedFileName(attachment.url)
                         );
                       } else {
-                        window.open(attachment.url, "_blank");
+                        const externalUrl = toExternalUrl(attachment.url);
+                        if (!externalUrl) {
+                          toast.error("열 수 없는 링크입니다.");
+                          return;
+                        }
+                        window.open(externalUrl, "_blank", "noopener");
                       }
                     }}
                   >
