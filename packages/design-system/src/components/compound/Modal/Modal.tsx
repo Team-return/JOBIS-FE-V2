@@ -30,8 +30,12 @@ const ModalWrapper = styled.div`
   width: 440px;
 `;
 
-const TitleAndContentContainer = styled.div`
-  margin-bottom: 66px;
+const TitleAndContentContainer = styled.div<{ $hasChildren: boolean }>`
+  margin-bottom: ${({ $hasChildren }) => ($hasChildren ? 32 : 66)}px;
+`;
+
+const ChildrenContainer = styled.div`
+  margin-top: 8px;
 `;
 
 const ContentContainer = styled(Text)`
@@ -43,6 +47,8 @@ export const Modal = ({
   content,
   onConfirm,
   onClose,
+  children,
+  confirmDisabled = false,
   disableBackdropClick = false,
   disableEscapeKey = false
 }: Props) => {
@@ -72,19 +78,25 @@ export const Modal = ({
         aria-modal="true"
         onClick={e => e.stopPropagation()}
       >
-        <TitleAndContentContainer>
+        <TitleAndContentContainer $hasChildren={!!children}>
           <Text $size="h5" $weight="bold">
             {title}
           </Text>
           <ContentContainer $size="body1" $color={theme.color.grayScale[60]}>
             {content}
           </ContentContainer>
+          {children && <ChildrenContainer>{children}</ChildrenContainer>}
         </TitleAndContentContainer>
         <Flex $justify="flex-end" $gap={8}>
           <Button $size="md" $variant="outline" onClick={onClose}>
             취소
           </Button>
-          <Button $size="md" $variant="contained" onClick={onConfirm}>
+          <Button
+            $size="md"
+            $variant="contained"
+            onClick={onConfirm}
+            disabled={confirmDisabled}
+          >
             확인
           </Button>
         </Flex>
