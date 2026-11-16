@@ -119,16 +119,26 @@ export const useUpdateTrainDate = createMutationHook<
   method: "patch"
 });
 
-export const useRejectApplication = createIdMutationHook<
-  {
-    reason: string;
-    rejection_attachments: { url: string }[];
-  },
-  void
->({
-  path: "/rejection",
-  method: "patch"
-});
+export interface RejectApplicationsRequest {
+  application_ids: number[];
+  reason: string;
+  rejection_attachments: { url: string }[];
+}
+
+// 반려 API는 지원서 하나씩 받으므로, 선택한 지원서마다 같은 사유로 보낸다
+export const useRejectApplications = (
+  options?: MutationOptions<RejectApplicationsRequest, void>
+) =>
+  useMutation<void, number, RejectApplicationsRequest>({
+    mutationFn: async ({ application_ids: applicationIds, ...request }) => {
+      await Promise.all(
+        applicationIds.map(id =>
+          instance.patch(`${DOMAIN}/rejection/${id}`, request)
+        )
+      );
+    },
+    ...options
+  });
 
 export const useRejection = createQueryHook<number, RejectionResponse>({
   path: applicationId => `/rejection/${applicationId}`,
