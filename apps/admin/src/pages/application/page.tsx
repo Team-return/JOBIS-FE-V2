@@ -40,6 +40,7 @@ import {
   toFileUrl
 } from "../../utils";
 import { getApplicationFilter, type ApplicationQuery } from "./loader";
+import { RejectModal } from "./RejectModal";
 
 const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
   REQUESTED: "접수완료",
@@ -265,6 +266,10 @@ export const Application = () => {
   const [localSearch, setLocalSearch] = useState(params.student_name || "");
 
   const [openedAttachment, setOpenedAttachment] = useState<number | null>(null);
+  const [rejectTargets, setRejectTargets] = useState<{
+    applicationIds: number[];
+    studentNames: string[];
+  } | null>(null);
 
   const currentPage = getPageParam();
   const applicationType = getParam("winter-intern");
@@ -310,14 +315,16 @@ export const Application = () => {
     resetParams();
   };
 
-  const getSelectedApplicationIds = (): number[] => {
-    return selected
+  const getSelectedApplications = () =>
+    selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.applications[globalIndex]?.application_id;
+        return data?.applications[globalIndex];
       })
-      .filter((id): id is number => id !== undefined);
-  };
+      .filter(app => app !== undefined);
+
+  const getSelectedApplicationIds = (): number[] =>
+    getSelectedApplications().map(app => app.application_id);
 
   const validateSelectedApplications = (): boolean => {
     if (selected.length === 0) {
@@ -347,6 +354,17 @@ export const Application = () => {
 
   const handleStatusChange = (newStatus: string) => {
     if (!validateSelectedApplications()) return;
+
+    // 반려는 학생에게 사유를 보여 줘야 해서 모달에서 사유를 받아 반려 API로 보낸다
+    if (newStatus === "REJECTED") {
+      const applications = getSelectedApplications();
+      setOpenDropdown(null);
+      setRejectTargets({
+        applicationIds: applications.map(app => app.application_id),
+        studentNames: applications.map(app => app.student_name)
+      });
+      return;
+    }
 
     const applicationIds = getSelectedApplicationIds();
     updateApplicationStatus(
@@ -584,6 +602,19 @@ export const Application = () => {
           )}
         </Flex>
       </Flex>
+
+      {rejectTargets && (
+        <RejectModal
+          applicationIds={rejectTargets.applicationIds}
+          studentNames={rejectTargets.studentNames}
+          onSuccess={async () => {
+            await invalidateApplicationQueries();
+            resetSelection();
+          }}
+          onError={invalidateApplicationQueries}
+          onClose={() => setRejectTargets(null)}
+        />
+      )}
     </Container>
   );
 };
