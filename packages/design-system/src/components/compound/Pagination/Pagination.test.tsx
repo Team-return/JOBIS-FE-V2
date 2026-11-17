@@ -112,4 +112,46 @@ describe("Pagination", () => {
     fireEvent.click(nextButton);
     expect(handleChange).not.toHaveBeenCalled();
   });
+
+  it("should show the last page after an ellipsis so the list does not look cut off", () => {
+    const { container } = renderWithTheme(
+      <Pagination {...defaultProps} end={54} current={1} />
+    );
+    ["1", "2", "3", "4", "5", "54"].forEach(page =>
+      expect(screen.getByText(page)).toBeInTheDocument()
+    );
+    expect(screen.queryByText("6")).not.toBeInTheDocument();
+    expect(
+      container.querySelectorAll("[aria-hidden='true'] > span")
+    ).toHaveLength(3);
+  });
+
+  it("should show the first and last page around a middle group", () => {
+    const handleChange = vi.fn();
+    renderWithTheme(
+      <Pagination
+        {...defaultProps}
+        end={54}
+        current={23}
+        onChange={handleChange}
+      />
+    );
+    ["1", "21", "25", "54"].forEach(page =>
+      expect(screen.getByText(page)).toBeInTheDocument()
+    );
+    fireEvent.click(screen.getByText("54"));
+    expect(handleChange).toHaveBeenCalledWith(54);
+    fireEvent.click(screen.getByText("1"));
+    expect(handleChange).toHaveBeenCalledWith(1);
+  });
+
+  it("should not add an ellipsis when only the last page is left", () => {
+    const { container } = renderWithTheme(
+      <Pagination {...defaultProps} end={6} current={1} />
+    );
+    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(
+      container.querySelectorAll("[aria-hidden='true'] > span")
+    ).toHaveLength(0);
+  });
 });
