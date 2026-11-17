@@ -43,6 +43,28 @@ const UPLOAD_UUID_PREFIX =
 export const toFileUrl = (url: string): string =>
   ABSOLUTE_URL.test(url) ? url : `${import.meta.env.FILE_URL}/${url}`;
 
+/**
+ * 학생이 `github.com/abc`처럼 스킴 없이 적은 링크는 그대로 열면 현재 사이트 기준 상대 경로가 되므로 https://를 붙인다.
+ * `javascript:` 같은 스킴은 열지 않도록 http(s)가 아니면 null을 돌려준다
+ */
+export const toExternalUrl = (url: string): string | null => {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  const withScheme = trimmed.includes("://")
+    ? trimmed
+    : `https://${trimmed.replace(/^\/+/, "")}`;
+
+  try {
+    const parsed = new URL(withScheme);
+    return parsed.protocol === "http:" || parsed.protocol === "https:"
+      ? parsed.href
+      : null;
+  } catch {
+    return null;
+  }
+};
+
 /** 저장된 경로에서 업로드할 때 붙은 uuid 접두사를 떼어 원래 파일명만 돌려준다 */
 export const getUploadedFileName = (url: string): string => {
   const path = url.split("?")[0];
