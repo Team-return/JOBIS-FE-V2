@@ -183,18 +183,21 @@ export const ApplicationState = ({
               재지원
             </Text>
           </ClickAria>
-          <ClickAria
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setShowMenu(false);
-              onCancel?.();
-            }}
-          >
-            <Text $size="caption" $color={theme.color.grayScale[80]}>
-              지원 취소
-            </Text>
-          </ClickAria>
+          {/* 서버가 접수완료 상태만 취소를 받아 주므로 반려된 지원서는 재지원만 보여 준다 */}
+          {types !== "rejected" && (
+            <ClickAria
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setShowMenu(false);
+                onCancel?.();
+              }}
+            >
+              <Text $size="caption" $color={theme.color.grayScale[80]}>
+                지원 취소
+              </Text>
+            </ClickAria>
+          )}
         </Menu>
       )}
     </Component>
