@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { Button } from "./Button";
 import { renderWithTheme } from "@/utils/render";
+import { lightTheme } from "@/themes";
 
 describe("Button", () => {
   it("renders correctly with children", () => {
@@ -29,5 +30,17 @@ describe("Button", () => {
     renderWithTheme(<Button $size="sm">Small Button</Button>);
     const buttonElement = screen.getByRole("button", { name: /small button/i });
     expect(buttonElement).toBeInTheDocument();
+  });
+
+  it("uses the given text size and weight", () => {
+    renderWithTheme(
+      <Button $size="sm" $textSize="body3" $textWeight="regular">
+        Regular Button
+      </Button>
+    );
+    expect(screen.getByText("Regular Button")).toHaveStyle({
+      fontSize: lightTheme.font.body3.fontSize,
+      fontWeight: lightTheme.fontWeight.regular
+    });
   });
 });

@@ -136,6 +136,8 @@ export const Button = ({
   children,
   $variant = "contained",
   $progressing = false,
+  $textSize = "body2",
+  $textWeight = "bold",
   disabled,
   ...rest
 }: TextProps<Props>) => {
@@ -151,12 +153,12 @@ export const Button = ({
       {isProgressing ? (
         <>
           <Spinner />
-          <Text $span $size="body2" $weight="bold" $color="inherit">
+          <Text $span $size={$textSize} $weight={$textWeight} $color="inherit">
             {children}
           </Text>
         </>
       ) : (
-        <Text $span $size="body2" $weight="bold" $color="inherit">
+        <Text $span $size={$textSize} $weight={$textWeight} $color="inherit">
           {children}
         </Text>
       )}
