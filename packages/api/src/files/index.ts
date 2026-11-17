@@ -28,6 +28,16 @@ export const useUploadFiles = (
         { files: files.map(file => ({ type, file_name: file.name })) }
       );
 
+      // 경로가 빠지거나 형식이 다르면 열리지 않는 첨부가 저장되므로 올리기 전에 실패시킨다
+      const isValid =
+        data.urls.length === files.length &&
+        data.urls.every(({ file_path: filePath }) =>
+          filePath?.startsWith(`${type}/`)
+        );
+      if (!isValid) {
+        throw new Error("업로드 경로를 받지 못했습니다.");
+      }
+
       // presigned URL에는 서명이 들어있어 Authorization 헤더를 붙이면 안 되므로
       // 인터셉터가 걸린 instance 대신 순수 axios로 올린다.
       await Promise.all(
