@@ -51,7 +51,8 @@ export const toExternalUrl = (url: string): string | null => {
   const trimmed = url.trim();
   if (!trimmed) return null;
 
-  const withScheme = trimmed.includes("://")
+  // `?redirect=https://...`처럼 주소 중간에 있는 ://는 스킴이 아니므로 맨 앞에서만 찾는다
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
     ? trimmed
     : `https://${trimmed.replace(/^\/+/, "")}`;
 
