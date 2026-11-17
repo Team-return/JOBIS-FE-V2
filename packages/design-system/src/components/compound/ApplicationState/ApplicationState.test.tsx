@@ -79,6 +79,9 @@ describe("ApplicationState", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "지원 메뉴 열기" }));
+    expect(
+      screen.queryByRole("menuitem", { name: "지원 취소" })
+    ).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("menuitem", { name: "재지원" }));
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
