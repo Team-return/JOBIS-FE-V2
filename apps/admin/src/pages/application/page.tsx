@@ -42,6 +42,7 @@ import {
 } from "../../utils";
 import { getApplicationFilter, type ApplicationQuery } from "./loader";
 import { RejectModal } from "./RejectModal";
+import { TrainDateModal } from "./TrainDateModal";
 
 const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
   REQUESTED: "접수완료",
@@ -277,6 +278,10 @@ export const Application = () => {
     applicationIds: number[];
     studentNames: string[];
   } | null>(null);
+  const [trainDateTargets, setTrainDateTargets] = useState<{
+    applicationIds: number[];
+    studentNames: string[];
+  } | null>(null);
 
   const currentPage = getPageParam();
   const applicationType = getParam("winter-intern");
@@ -394,6 +399,25 @@ export const Application = () => {
         }
       }
     );
+  };
+
+  const handleTrainDateChange = () => {
+    if (!validateSelectedApplications()) return;
+
+    // 서버가 현장실습 상태인 지원서만 파견/종료일자를 바꿔 주므로 모달을 열기 전에 막는다
+    const applications = getSelectedApplications();
+    if (applications.some(app => app.application_status !== "FIELD_TRAIN")) {
+      toast.warning(
+        "현장실습 상태인 지원서만 파견/종료일자를 변경할 수 있습니다."
+      );
+      return;
+    }
+
+    setOpenDropdown(null);
+    setTrainDateTargets({
+      applicationIds: applications.map(app => app.application_id),
+      studentNames: applications.map(app => app.student_name)
+    });
   };
 
   const getStatusColor = (status: ApplicationStatus) => {
@@ -541,6 +565,16 @@ export const Application = () => {
               <IconButton icon="Refresh" onClick={handleResetFilters}>
                 초기화
               </IconButton>
+              <Button
+                $size="sm"
+                $variant="outline"
+                $padding={[8, 40]}
+                $textSize="body3"
+                $textWeight="regular"
+                onClick={handleTrainDateChange}
+              >
+                파견/종료일자 변경
+              </Button>
               <Dropdown
                 $width={96}
                 options={APPLICATION_STATUS_OPTIONS}
@@ -620,6 +654,18 @@ export const Application = () => {
           }}
           onError={invalidateApplicationQueries}
           onClose={() => setRejectTargets(null)}
+        />
+      )}
+
+      {trainDateTargets && (
+        <TrainDateModal
+          applicationIds={trainDateTargets.applicationIds}
+          studentNames={trainDateTargets.studentNames}
+          onSuccess={async () => {
+            await invalidateApplicationQueries();
+            resetSelection();
+          }}
+          onClose={() => setTrainDateTargets(null)}
         />
       )}
     </Container>
