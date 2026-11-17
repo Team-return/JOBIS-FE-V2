@@ -19,8 +19,11 @@ export const WinterInternToggle = () => {
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { data: isWinterIntern } = useWinterInternStatus();
-  const { mutate: toggleWinterIntern } = useToggleWinterIntern();
+  const { data: isWinterIntern, refetch } = useWinterInternStatus();
+  // 화면을 벗어나도 서버 상태가 바뀐 뒤 캐시는 반드시 무효화한다
+  const { mutate: toggleWinterIntern } = useToggleWinterIntern({
+    onSuccess: () => query.invalidate(winterInternKeys.winterInternStatus())
+  });
 
   // 서버 값을 다시 받아올 때까지 바꾸려는 값을 보여 주고 다시 누르지 못하게 막는다
   const [pendingValue, setPendingValue] = useState<boolean | null>(null);
@@ -32,7 +35,14 @@ export const WinterInternToggle = () => {
     toggleWinterIntern(undefined, {
       onSuccess: async () => {
         toast.success(next ? "겨울인턴을 켰습니다." : "겨울인턴을 껐습니다.");
-        await query.invalidate(winterInternKeys.winterInternStatus());
+        // 재조회가 실패하면 이전 값이 남으므로 바꾼 값을 유지한 채 스위치를 잠가 둔다
+        const { isError } = await refetch();
+        if (isError) {
+          toast.error(
+            "겨울인턴 상태를 다시 불러오지 못했습니다. 새로고침해 주세요."
+          );
+          return;
+        }
         setPendingValue(null);
       },
       onError: error => {
