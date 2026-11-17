@@ -51,8 +51,16 @@ export const toExternalUrl = (url: string): string | null => {
   const trimmed = url.trim();
   if (!trimmed) return null;
 
-  // `?redirect=https://...`처럼 주소 중간에 있는 ://는 스킴이 아니므로 맨 앞에서만 찾는다
-  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
+  // `notion.so/page?redirect=https://...`처럼 주소 중간의 ://는 스킴이 아니므로 맨 앞에서만 찾는다
+  const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed);
+  // `mailto:` 같은 다른 스킴에 https://를 붙이면 엉뚱한 주소가 되므로 막는다 (`localhost:3000` 같은 호스트:포트는 제외)
+  const hasOtherScheme =
+    !hasScheme &&
+    /^[a-z][a-z0-9+.-]*:/i.test(trimmed) &&
+    !/^[^/?#:]+:\d+(?:[/?#]|$)/.test(trimmed);
+  if (hasOtherScheme) return null;
+
+  const withScheme = hasScheme
     ? trimmed
     : `https://${trimmed.replace(/^\/+/, "")}`;
 
