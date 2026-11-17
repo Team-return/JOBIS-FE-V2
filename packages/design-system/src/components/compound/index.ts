@@ -5,6 +5,7 @@ export * from "./Checkbox";
 export * from "./CheckboxGroup";
 export * from "./CompanyCard";
 export * from "./CompanyTypeChip";
+export * from "./DateField";
 export * from "./FileDownload";
 export * from "./FileUpload";
 export * from "./Footer";
