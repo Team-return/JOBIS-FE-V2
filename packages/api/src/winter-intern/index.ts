@@ -1,5 +1,4 @@
 ﻿import { useQuery } from "@tanstack/react-query";
-import type { WinterInternStatusResponse } from "./types";
 import type { QueryOptions } from "@/QueryProvider";
 import { createDomainApi } from "@/create-hook";
 import { instance } from "@/instance";
@@ -19,8 +18,9 @@ export const useWinterInternStatus = (options?: QueryOptions<boolean>) => {
   return useQuery({
     queryKey: winterInternKeys.winterInternStatus(),
     queryFn: async () => {
-      const { data } = await instance.get<WinterInternStatusResponse>(DOMAIN);
-      return data.winter_intern;
+      // 서버가 객체로 감싸지 않고 true/false를 그대로 준다
+      const { data } = await instance.get<boolean>(DOMAIN);
+      return data;
     },
     ...options
   });

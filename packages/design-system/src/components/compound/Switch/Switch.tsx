@@ -25,9 +25,19 @@ const Component = styled.button<Pick<Props, "$checked">>`
     transition: left 0.2s ease;
     border-radius: 50%;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 `;
 
-export const Switch = ({ $checked = false, onChange }: Props) => {
+export const Switch = ({
+  $checked = false,
+  onChange,
+  disabled = false,
+  "aria-label": ariaLabel = "Switch"
+}: Props) => {
   const handleToggle = () => onChange?.(!$checked);
 
   return (
@@ -35,8 +45,9 @@ export const Switch = ({ $checked = false, onChange }: Props) => {
       type="button"
       role="switch"
       aria-checked={$checked}
-      aria-label="Switch"
+      aria-label={ariaLabel}
       $checked={$checked}
+      disabled={disabled}
       onClick={handleToggle}
     />
   );

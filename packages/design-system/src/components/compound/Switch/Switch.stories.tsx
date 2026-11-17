@@ -20,6 +20,10 @@ const meta: Meta<typeof Switch> = {
     onChange: {
       action: "changed",
       description: "스위치 상태 변경 이벤트"
+    },
+    disabled: {
+      control: "boolean",
+      description: "비활성화 여부"
     }
   }
 };
@@ -44,5 +48,12 @@ export const Default: Story = {
 export const Checked: Story = {
   args: {
     $checked: true
+  }
+};
+
+export const Disabled: Story = {
+  args: {
+    $checked: true,
+    disabled: true
   }
 };

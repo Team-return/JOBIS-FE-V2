@@ -43,6 +43,7 @@ import {
   useQueryParams
 } from "../../utils";
 import { getRecruitmentFilter, type RecruitmentQuery } from "./loader";
+import { WinterInternToggle } from "./WinterInternToggle";
 
 export const Recruitment = () => {
   const { params } = useLoaderData() as LoaderData<RecruitmentQuery>;
@@ -290,6 +291,8 @@ export const Recruitment = () => {
                 </Flex>
               </>
             )}
+            <Spacer />
+            <WinterInternToggle />
           </Flex>
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
