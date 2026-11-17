@@ -12,6 +12,8 @@ import { useRejectApplications, useUploadFiles } from "@jobis/api";
 import { getErrorMessage, toFileUrl } from "../../utils";
 
 const NAME_PREVIEW_COUNT = 3;
+// 서버가 반려 사유를 100자까지만 받는다
+const REASON_MAX_LENGTH = 100;
 
 interface UploadedFile {
   id: number;
@@ -95,10 +97,20 @@ export const RejectModal = ({
     setFiles(prev => prev.filter(file => file.id !== fileId));
   };
 
+  // 요청 중에 닫으면 완료 처리(안내·목록 갱신·선택 해제)가 실행되지 않으므로 막는다
+  const handleClose = () => {
+    if (isRejecting) return;
+    onClose();
+  };
+
   const handleConfirm = () => {
     const trimmedReason = reason.trim();
     if (!trimmedReason) {
       setReasonError("반려 사유를 입력해주세요.");
+      return;
+    }
+    if (trimmedReason.length > REASON_MAX_LENGTH) {
+      setReasonError(`반려 사유는 ${REASON_MAX_LENGTH}자 이내로 입력해주세요.`);
       return;
     }
 
@@ -132,9 +144,10 @@ export const RejectModal = ({
       title="상태변경"
       content={`${getTargetLabel(studentNames)} 지원서를 반려(으)로 바꾸시겠습니까?`}
       onConfirm={handleConfirm}
-      onClose={onClose}
+      onClose={handleClose}
       confirmDisabled={isUploading || isRejecting}
       disableBackdropClick
+      disableEscapeKey={isRejecting}
     >
       <Flex $direction="column" $gap={32}>
         <TextArea
@@ -144,6 +157,7 @@ export const RejectModal = ({
             if (reasonError && value.trim()) setReasonError("");
           }}
           placeholder="반려사유를 입력해주세요."
+          maxLength={REASON_MAX_LENGTH}
           $height={116}
           $errorMessage={reasonError}
           disabled={isRejecting}
