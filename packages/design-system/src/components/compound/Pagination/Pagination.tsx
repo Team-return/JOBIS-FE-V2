@@ -26,6 +26,23 @@ const PageNumber = styled.div`
   }
 `;
 
+// 건너뛴 페이지가 있다는 표시 (시안의 점 세 개)
+const Ellipsis = styled.div`
+  height: 32px;
+  width: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+`;
+
+const Dot = styled.span`
+  width: 5px;
+  height: 5px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.color.grayScale[60]};
+`;
+
 const PAGE_UNIT = 5;
 
 export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
@@ -43,6 +60,36 @@ export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
     { length: PAGE_UNIT },
     (_, i) => groupStartPage + i
   ).filter(page => page <= end && page >= start);
+
+  const groupEndPage = pages[pages.length - 1] ?? groupStartPage;
+  // 묶음 밖에 있는 첫·마지막 페이지도 보여 줘서 전체 페이지가 몇 개인지 알 수 있게 한다
+  const showFirst = groupStartPage > start;
+  const showLast = groupEndPage < end;
+
+  const renderPage = (page: number) => (
+    <PageNumber key={page} onClick={() => onChange(page)}>
+      <Text
+        $size="body3"
+        $align="center"
+        $weight="bold"
+        $color={
+          current === page
+            ? theme.color.grayScale[90]
+            : theme.color.grayScale[60]
+        }
+      >
+        {page.toString()}
+      </Text>
+    </PageNumber>
+  );
+
+  const renderEllipsis = (key: string) => (
+    <Ellipsis key={key} aria-hidden>
+      <Dot />
+      <Dot />
+      <Dot />
+    </Ellipsis>
+  );
 
   const handlePrevGroup = () => {
     const prevGroupStartPage = Math.max(start, groupStartPage - PAGE_UNIT);
@@ -71,22 +118,12 @@ export const Pagination = ({ start = 1, end, current, onChange }: Props) => {
         style={{ cursor: canGoPrev ? "pointer" : "not-allowed" }}
       />
       <Stack $direction="row" $gap={8}>
-        {pages.map(page => (
-          <PageNumber key={page} onClick={() => onChange(page)}>
-            <Text
-              $size="body3"
-              $align="center"
-              $weight="bold"
-              $color={
-                current === page
-                  ? theme.color.grayScale[90]
-                  : theme.color.grayScale[60]
-              }
-            >
-              {page.toString()}
-            </Text>
-          </PageNumber>
-        ))}
+        {showFirst && renderPage(start)}
+        {/* 바로 붙은 페이지면 점 없이 번호만 이어 붙인다 */}
+        {showFirst && groupStartPage > start + 1 && renderEllipsis("prev")}
+        {pages.map(renderPage)}
+        {showLast && groupEndPage < end - 1 && renderEllipsis("next")}
+        {showLast && renderPage(end)}
       </Stack>
       <Icon
         icon="ChevronRight"
