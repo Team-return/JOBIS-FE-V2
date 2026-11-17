@@ -10,8 +10,8 @@ import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useRejectApplications, useUploadFiles } from "@jobis/api";
 import { getErrorMessage, toFileUrl } from "../../utils";
+import { getTargetLabel } from "./targetLabel";
 
-const NAME_PREVIEW_COUNT = 3;
 // 서버가 반려 사유를 100자까지만 받는다
 const REASON_MAX_LENGTH = 100;
 
@@ -28,13 +28,6 @@ interface Props {
   onError: () => void | Promise<void>;
   onClose: () => void;
 }
-
-// "김정현, 김주원, 강용수 외 3명의" 처럼 앞의 몇 명만 이름을 보여 준다
-const getTargetLabel = (names: string[]) => {
-  const preview = names.slice(0, NAME_PREVIEW_COUNT).join(", ");
-  const rest = names.length - NAME_PREVIEW_COUNT;
-  return rest > 0 ? `${preview} 외 ${rest}명의` : `${preview}의`;
-};
 
 export const RejectModal = ({
   applicationIds,
