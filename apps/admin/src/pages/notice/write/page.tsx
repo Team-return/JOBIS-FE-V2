@@ -88,13 +88,11 @@ export const NoticeWrite = () => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
-  const [fileError, setFileError] = useState("");
 
   const { mutate: uploadFiles, isPending: isUploading } = useUploadFiles(
     "EXTENSION_FILE",
     {
       onSuccess: (urls, selected) => {
-        setFileError("");
         setFiles(prev => [
           ...prev,
           ...urls.map((url, index) => {
@@ -138,21 +136,17 @@ export const NoticeWrite = () => {
   const validate = () => {
     const nextTitleError = title.trim() ? "" : "제목을 입력해주세요.";
     const nextContentError = content.trim() ? "" : "내용을 입력해주세요.";
-    // 서버가 첨부 파일이 없는 공지를 400으로 거절하므로 보내기 전에 막는다
-    const nextFileError =
-      files.length > 0 ? "" : "첨부 파일을 1개 이상 추가해주세요.";
 
     setTitleError(nextTitleError);
     setContentError(nextContentError);
-    setFileError(nextFileError);
 
-    return !nextTitleError && !nextContentError && !nextFileError;
+    return !nextTitleError && !nextContentError;
   };
 
   const handleSubmit = () => {
     if (isCreating) return;
 
-    // 업로드 중에는 첨부 목록이 아직 비어 있어 "첨부 파일을 추가해주세요"로 잘못 안내되므로 먼저 막는다
+    // 업로드 중에 등록하면 올라가는 파일이 공지에서 빠지므로 먼저 막는다
     if (isUploading) {
       toast.warning("첨부파일 업로드가 끝난 뒤에 등록해주세요.");
       return;
@@ -253,16 +247,6 @@ export const NoticeWrite = () => {
                         disabled={isUploading}
                         onClick={() => inputRef.current?.click()}
                       />
-                      {fileError && (
-                        <Text
-                          $span
-                          $size="body3"
-                          $weight="regular"
-                          $color={theme.color.subColor.red[20]}
-                        >
-                          {fileError}
-                        </Text>
-                      )}
 
                       {files.length > 0 && (
                         <Flex $direction="row" $gap={8} $wrap>
