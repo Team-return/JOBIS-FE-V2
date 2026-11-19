@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Icon, Text } from "@/components";
+import { downloadFile } from "@/utils";
 import type { Props } from "./FileDownload.types";
 
 const Container = styled.div`
@@ -38,12 +39,7 @@ export const FileDownload = ({
 }: Props) => {
   const { currentTheme: theme } = useTheme();
   const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = label;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    void downloadFile(fileUrl, label);
   };
 
   return (

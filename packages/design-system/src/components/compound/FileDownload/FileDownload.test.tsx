@@ -1,5 +1,5 @@
-import { fireEvent, screen } from "@testing-library/react";
-import { expect, describe, it, vi } from "vitest";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { afterEach, expect, describe, it, vi } from "vitest";
 import { FileDownload } from "./FileDownload";
 import { renderWithTheme } from "@/utils/render";
 
@@ -11,16 +11,27 @@ describe("FileDownload", () => {
     expect(screen.getByText("MyFile.pdf")).toBeInTheDocument();
   });
 
-  it("triggers file download when clicked", () => {
-    // anchor 태그 생성 동작을 spy로 감시
-    const createElementSpy = vi.spyOn(document, "createElement");
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it("downloads the file under its label when clicked", async () => {
+    const fetchMock = vi.fn(async () => new Response("pdf"));
+    vi.stubGlobal("fetch", fetchMock);
+    URL.createObjectURL = vi.fn(() => "blob:http://localhost/1");
+    URL.revokeObjectURL = vi.fn();
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
     renderWithTheme(<FileDownload label="MyFile.pdf" fileUrl="/mock.pdf" />);
-    const component = screen.getByRole("button");
 
-    fireEvent.click(component);
+    fireEvent.click(screen.getByRole("button"));
 
-    expect(createElementSpy).toHaveBeenCalledWith("a");
-    createElementSpy.mockRestore();
+    await waitFor(() => expect(clickSpy).toHaveBeenCalledTimes(1));
+    expect(fetchMock).toHaveBeenCalledWith("/mock.pdf", { cache: "no-store" });
+    const link = clickSpy.mock.instances[0] as unknown as HTMLAnchorElement;
+    expect(link.download).toBe("MyFile.pdf");
   });
 
   it("does not render a remove button without onRemove", () => {
@@ -44,15 +55,15 @@ describe("FileDownload", () => {
   });
 
   it("does not trigger a download when the remove button is clicked", () => {
-    const createElementSpy = vi.spyOn(document, "createElement");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
     renderWithTheme(
       <FileDownload label="MyFile.pdf" fileUrl="/mock.pdf" onRemove={vi.fn()} />
     );
 
     fireEvent.click(screen.getByLabelText("MyFile.pdf 삭제"));
 
-    expect(createElementSpy).not.toHaveBeenCalledWith("a");
-    createElementSpy.mockRestore();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("renders with underline style when done", () => {
