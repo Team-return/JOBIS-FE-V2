@@ -12,6 +12,12 @@ interface PresignedUrl {
 }
 
 /**
+ * 맥 브라우저는 한글 파일명을 자모 분리형(NFD)으로 넘겨 S3 키도 그대로 NFD가 된다.
+ * 완성형(NFC)으로 요청하는 앱에서는 다른 키라 열리지 않으므로 올리기 전에 NFC로 맞춘다.
+ */
+const toUploadFileName = (file: File) => file.name.normalize("NFC");
+
+/**
  * presigned URL을 발급받아 S3로 직접 올리고, 저장된 경로 목록을 돌려준다.
  * 반환값은 `EXTENSION_FILE/{uuid}-{파일명}` 형태의 상대 경로이며,
  * 화면에 노출할 때는 `import.meta.env.FILE_URL`을 앞에 붙여 사용한다.
@@ -25,7 +31,12 @@ export const useUploadFiles = (
     mutationFn: async (files: File[]) => {
       const { data } = await instance.post<{ urls: PresignedUrl[] }>(
         "/files/pre-signed",
-        { files: files.map(file => ({ type, file_name: file.name })) }
+        {
+          files: files.map(file => ({
+            type,
+            file_name: toUploadFileName(file)
+          }))
+        }
       );
 
       // 경로가 빠지거나 형식이 다르면 열리지 않는 첨부가 저장되므로 올리기 전에 실패시킨다
@@ -71,7 +82,7 @@ export const usePresignLogoFile = (options?: MutationOptions<File, string>) => {
   const presign = async (targetFile: File) => {
     const logo = {
       type: "LOGO_IMAGE",
-      file_name: targetFile.name
+      file_name: toUploadFileName(targetFile)
     };
     const { data } = await axios.post<{
       urls: {
