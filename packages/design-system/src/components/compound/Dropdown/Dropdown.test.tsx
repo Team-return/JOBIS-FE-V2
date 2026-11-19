@@ -354,6 +354,31 @@ describe("Dropdown", () => {
     await user.click(screen.getByRole("button", { name: "필터 지우기" }));
     expect(screen.getByRole("button", { name: "분야" })).toBeInTheDocument();
   });
+
+  it("keeps the user's choice when only the default value changes", async () => {
+    const user = userEvent.setup();
+    // value 없이 쓰는 드롭다운에서 부모가 기본값만 바꾸는 흐름
+    const Uncontrolled = () => {
+      const [defaultValue, setDefaultValue] = useState("backend");
+      return (
+        <>
+          <Dropdown options={options} $defaultValue={defaultValue} />
+          <button type="button" onClick={() => setDefaultValue("designer")}>
+            기본값 바꾸기
+          </button>
+        </>
+      );
+    };
+    renderWithTheme(<Uncontrolled />);
+
+    await user.click(screen.getByRole("button", { name: "백엔드" }));
+    await user.click(screen.getByText("프론트엔드"));
+    await user.click(screen.getByRole("button", { name: "기본값 바꾸기" }));
+
+    expect(
+      screen.getByRole("button", { name: "프론트엔드" })
+    ).toBeInTheDocument();
+  });
 });
 
 describe("DropdownPeriod", () => {

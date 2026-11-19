@@ -145,11 +145,14 @@ export const Dropdown = ({
   const selected =
     externalValue !== undefined ? externalValue : internalSelected;
 
-  // 바깥에서 준 값이 undefined로 바뀌면(주소의 필터가 지워진 경우 등) 예전에 고른 값을 보여 주지 않도록 비운다
+  // 바깥에서 준 값이 있다가 undefined로 바뀌면(주소의 필터가 지워진 경우 등) 예전에 고른 값을 보여 주지 않도록 비운다
+  // value 없이 쓰는 드롭다운은 처음부터 undefined라 사용자가 고른 값을 그대로 둔다
+  const previousValueRef = useRef(externalValue);
   useEffect(() => {
-    if (externalValue === undefined) {
+    if (previousValueRef.current !== undefined && externalValue === undefined) {
       setInternalSelected($defaultValue ? $defaultValue : null);
     }
+    previousValueRef.current = externalValue;
   }, [externalValue, $defaultValue]);
   const [searchTerm, setSearchTerm] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
