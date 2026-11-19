@@ -5,6 +5,7 @@ import {
   Flex,
   Icon,
   Text,
+  downloadFile,
   useTheme
 } from "@jobis/design-system";
 import { useEffect, useRef } from "react";
@@ -127,6 +128,21 @@ export const NoticeDetail = () => {
                             key={index}
                             href={toFileUrl(attachment.url)}
                             download
+                            onClick={e => {
+                              // 보조키 클릭은 새 탭 열기 등 브라우저 동작에 맡긴다
+                              if (
+                                e.metaKey ||
+                                e.ctrlKey ||
+                                e.shiftKey ||
+                                e.altKey
+                              )
+                                return;
+                              e.preventDefault();
+                              void downloadFile(
+                                toFileUrl(attachment.url),
+                                getUploadedFileName(attachment.url)
+                              );
+                            }}
                             style={{
                               textDecoration: "none",
                               display: "inline-flex",
