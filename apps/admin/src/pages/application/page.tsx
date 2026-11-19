@@ -15,6 +15,7 @@ import {
   Table,
   TableSkeleton,
   Text,
+  downloadFile,
   useTheme,
   useToast
 } from "@jobis/design-system";
@@ -129,16 +130,6 @@ const Attachments = ({
 
   if (attachments.length === 0) return "-";
 
-  const handleDownload = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const getFileIcon = (type: AttachmentType) => {
     return type === "FILE" ? "Document" : "Link";
   };
@@ -234,7 +225,7 @@ const Attachments = ({
                     onClick={e => {
                       e.stopPropagation();
                       if (attachment.type === "FILE") {
-                        handleDownload(
+                        void downloadFile(
                           toFileUrl(attachment.url),
                           getUploadedFileName(attachment.url)
                         );

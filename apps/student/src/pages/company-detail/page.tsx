@@ -9,7 +9,11 @@ import {
   useTheme
 } from "@jobis/design-system";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { LoaderData, toFileUrl } from "apps/student/src/utils";
+import {
+  LoaderData,
+  getUploadedFileName,
+  toFileUrl
+} from "apps/student/src/utils";
 
 const formatBusinessNumber = (businessNumber?: string) => {
   if (!businessNumber) return "-";
@@ -20,27 +24,6 @@ const formatBusinessNumber = (businessNumber?: string) => {
 const formatDate = (date?: string) => {
   if (!date) return "-";
   return date.replace(/-/g, ".");
-};
-
-const getAttachmentName = (fileUrl?: string) => {
-  if (!fileUrl) return "-";
-
-  const path = fileUrl.split("?")[0] ?? "";
-
-  let fileName = path.split("/").pop() ?? "";
-
-  const lastDotIndex = fileName.lastIndexOf(".");
-
-  if (lastDotIndex > 0) {
-    fileName = fileName.substring(0, lastDotIndex);
-  }
-
-  // 파일명에 `%`가 그대로 들어 있으면 decodeURIComponent가 던져 화면 전체가 오류로 바뀐다
-  try {
-    return decodeURIComponent(fileName || "-");
-  } catch {
-    return fileName || "-";
-  }
 };
 
 export const CompanyDetail = () => {
@@ -138,9 +121,11 @@ export const CompanyDetail = () => {
             },
             {
               label: "첨부파일",
-              value: firstAttachment ? getAttachmentName(firstAttachment) : "-",
+              value: firstAttachment
+                ? getUploadedFileName(firstAttachment)
+                : "-",
               itemType: firstAttachment ? "file" : "text",
-              fileUrl: firstAttachment
+              fileUrl: firstAttachment && toFileUrl(firstAttachment)
             }
           ]}
         />
