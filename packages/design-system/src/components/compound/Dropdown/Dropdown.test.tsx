@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen, cleanup, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { renderWithTheme } from "@/utils/render";
 import { Dropdown } from "./Dropdown";
 import { PeriodDropdown } from "./PeriodDropdown";
@@ -323,6 +324,35 @@ describe("Dropdown", () => {
     renderWithTheme(<Dropdown options={options} value={undefined} />);
 
     expect(screen.queryByText("백엔드")).not.toBeInTheDocument();
+  });
+
+  it("shows the placeholder again when the controlled value is cleared", async () => {
+    const user = userEvent.setup();
+    // 필터처럼 고른 값이 주소로 갔다가, 메뉴 이동 등으로 주소에서 지워지는 흐름
+    const Filter = () => {
+      const [value, setValue] = useState<string | undefined>(undefined);
+      return (
+        <>
+          <Dropdown
+            options={options}
+            $placeholder="분야"
+            value={value}
+            onChange={setValue}
+          />
+          <button type="button" onClick={() => setValue(undefined)}>
+            필터 지우기
+          </button>
+        </>
+      );
+    };
+    renderWithTheme(<Filter />);
+
+    await user.click(screen.getByRole("button", { name: "분야" }));
+    await user.click(screen.getByText("백엔드"));
+    expect(screen.getByRole("button", { name: "백엔드" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "필터 지우기" }));
+    expect(screen.getByRole("button", { name: "분야" })).toBeInTheDocument();
   });
 });
 
