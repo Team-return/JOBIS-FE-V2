@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, spyOn, userEvent, waitFor, within } from "storybook/test";
 import { FileDownload } from "./FileDownload";
 
 const meta: Meta<typeof FileDownload> = {
@@ -42,7 +42,18 @@ export const Default: Story = {
       button.textContent?.includes("File Download")
     );
     expect(fileDownloadButton).toBeInTheDocument();
+
+    // 없는 /mock.pdf를 실제로 받거나 새 탭을 열지 않도록 막는다
+    const fetchSpy = spyOn(window, "fetch").mockRejectedValue(
+      new TypeError("blocked")
+    );
+    const openSpy = spyOn(window, "open").mockReturnValue(null);
     await userEvent.click(fileDownloadButton!);
+
+    await waitFor(() => expect(openSpy).toHaveBeenCalled());
+    expect(fetchSpy).toHaveBeenCalledWith("/mock.pdf", { cache: "no-store" });
+    fetchSpy.mockRestore();
+    openSpy.mockRestore();
   }
 };
 

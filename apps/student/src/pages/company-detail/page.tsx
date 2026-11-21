@@ -4,10 +4,16 @@ import {
   DetailHeader,
   Flex,
   DetailTable,
-  Box
+  Box,
+  Text,
+  useTheme
 } from "@jobis/design-system";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { LoaderData } from "apps/student/src/utils";
+import {
+  LoaderData,
+  getUploadedFileName,
+  toFileUrl
+} from "apps/student/src/utils";
 
 const formatBusinessNumber = (businessNumber?: string) => {
   if (!businessNumber) return "-";
@@ -20,25 +26,10 @@ const formatDate = (date?: string) => {
   return date.replace(/-/g, ".");
 };
 
-const getAttachmentName = (fileUrl?: string) => {
-  if (!fileUrl) return "-";
-
-  const path = fileUrl.split("?")[0] ?? "";
-
-  let fileName = path.split("/").pop() ?? "";
-
-  const lastDotIndex = fileName.lastIndexOf(".");
-
-  if (lastDotIndex > 0) {
-    fileName = fileName.substring(0, lastDotIndex);
-  }
-
-  return decodeURIComponent(fileName || "-");
-};
-
 export const CompanyDetail = () => {
   const { params: companyId } = useLoaderData() as LoaderData<number>;
   const navigate = useNavigate();
+  const { currentTheme: theme } = useTheme();
 
   const { data, isLoading, isError } = useCompanyDetail(companyId);
   const handleViewReview = () => {
@@ -47,9 +38,15 @@ export const CompanyDetail = () => {
 
   const firstAttachment = data?.attachments?.[0];
 
-  if (isError) {
+  if (isError && !data) {
     return (
-      <Container $maxWidth={960}>기업 정보를 불러오지 못했습니다.</Container>
+      <Container $maxWidth={960} $padding={[160, 0, 232, 0]}>
+        <Flex $justify="center">
+          <Text $size="h6" $color={theme.color.grayScale[70]}>
+            기업 정보를 불러오지 못했습니다.
+          </Text>
+        </Flex>
+      </Container>
     );
   }
 
@@ -61,7 +58,11 @@ export const CompanyDetail = () => {
           <DetailHeader
             type="company"
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
-            logoUrl={data?.company_profile_url || "/logo.svg"}
+            logoUrl={
+              data?.company_profile_url
+                ? toFileUrl(data.company_profile_url)
+                : "/logo.svg"
+            }
             businessNumber={formatBusinessNumber(data?.business_number)}
             onViewReview={handleViewReview}
           />
@@ -120,9 +121,11 @@ export const CompanyDetail = () => {
             },
             {
               label: "첨부파일",
-              value: firstAttachment ? getAttachmentName(firstAttachment) : "-",
+              value: firstAttachment
+                ? getUploadedFileName(firstAttachment)
+                : "-",
               itemType: firstAttachment ? "file" : "text",
-              fileUrl: firstAttachment
+              fileUrl: firstAttachment && toFileUrl(firstAttachment)
             }
           ]}
         />

@@ -4,10 +4,17 @@ import {
   DetailHeader,
   Flex,
   DetailTable,
-  Box
+  Box,
+  Text,
+  useTheme
 } from "@jobis/design-system";
-import { useLoaderData } from "react-router-dom";
-import { INTERVIEW_TYPE_LABEL_MAP, LoaderData } from "apps/student/src/utils";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  INTERVIEW_TYPE_LABEL_MAP,
+  LoaderData,
+  getUnapplicableMessage,
+  toFileUrl
+} from "apps/student/src/utils";
 
 type RecruitmentDetailData = ReturnType<typeof useRecruitmentDetail>["data"];
 type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
@@ -57,11 +64,22 @@ const createAreaItem = (
 
 export const RecruitmentDetail = () => {
   const { params: recruitmentId } = useLoaderData() as LoaderData<number>;
+  const navigate = useNavigate();
+  const { currentTheme: theme } = useTheme();
 
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
-  if (isError) {
-    return <Container $maxWidth={960}>정보를 불러오지 못했습니다.</Container>;
+  // 다시 불러오다 실패해도 받아 둔 내용이 있으면 그대로 보여 준다
+  if (isError && !data) {
+    return (
+      <Container $maxWidth={960} $padding={[160, 0, 232, 0]}>
+        <Flex $justify="center">
+          <Text $size="h6" $color={theme.color.grayScale[70]}>
+            모집의뢰서 정보를 불러오지 못했습니다.
+          </Text>
+        </Flex>
+      </Container>
+    );
   }
 
   const areas = data?.areas ?? [];
@@ -83,15 +101,32 @@ export const RecruitmentDetail = () => {
           <DetailHeader
             type="recruitment"
             title={isLoading ? "불러오는 중..." : data?.company_name || "-"}
-            logoUrl={data?.company_profile_url || "/logo.svg"}
+            logoUrl={
+              data?.company_profile_url
+                ? toFileUrl(data.company_profile_url)
+                : "/logo.svg"
+            }
             isParticipation={data?.integration_plan || false}
+            onViewDetail={
+              data
+                ? () => navigate(`/company/detail/${data.company_id}`)
+                : undefined
+            }
+            onApply={() =>
+              navigate(`/recruitment/detail/${recruitmentId}/apply`)
+            }
+            applyDisabledReason={
+              data && !data.is_applicable
+                ? getUnapplicableMessage(data.unapplicable_reason)
+                : undefined
+            }
           />
         </Flex>
         <DetailTable
           items={[
             ...areaItems,
             {
-              label: "최소성적",
+              label: "기타 자격 요건",
               value: data?.additional_qualifications || "-",
               itemType: "text"
             },

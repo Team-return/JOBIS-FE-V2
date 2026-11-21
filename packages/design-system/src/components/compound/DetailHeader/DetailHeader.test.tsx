@@ -33,4 +33,53 @@ describe("DetailHeader", () => {
     expect(screen.getByText("면접 후기 조회")).toBeInTheDocument();
     expect(screen.getByText("면접 후기 작성")).toBeInTheDocument();
   });
+
+  describe("recruitment", () => {
+    const recruitmentProps = {
+      type: "recruitment",
+      title: "(주)비바리퍼블리카",
+      logoUrl:
+        "https://cdn.digitalasset.works/news/photo/202507/28288_36187_4536.jpg"
+    } satisfies DetailHeaderProps;
+
+    it("should call onViewDetail and onApply when clicked", async () => {
+      const onViewDetail = vi.fn();
+      const onApply = vi.fn();
+      renderWithTheme(
+        <DetailHeader
+          {...recruitmentProps}
+          onViewDetail={onViewDetail}
+          onApply={onApply}
+        />
+      );
+      await userEvent.click(screen.getByRole("button", { name: "상세보기" }));
+      await userEvent.click(screen.getByRole("button", { name: "지원하기" }));
+      expect(onViewDetail).toHaveBeenCalledTimes(1);
+      expect(onApply).toHaveBeenCalledTimes(1);
+    });
+
+    it("should disable buttons when handlers are not provided", () => {
+      renderWithTheme(<DetailHeader {...recruitmentProps} />);
+      expect(screen.getByRole("button", { name: "상세보기" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "지원하기" })).toBeDisabled();
+    });
+
+    it("should block applying and show the reason when applyDisabledReason is given", async () => {
+      const onApply = vi.fn();
+      renderWithTheme(
+        <DetailHeader
+          {...recruitmentProps}
+          onApply={onApply}
+          applyDisabledReason="이미 지원한 모집의뢰서입니다."
+        />
+      );
+      const applyButton = screen.getByRole("button", { name: "지원하기" });
+      expect(applyButton).toBeDisabled();
+      expect(applyButton).toHaveAccessibleDescription(
+        "이미 지원한 모집의뢰서입니다."
+      );
+      await userEvent.click(applyButton);
+      expect(onApply).not.toHaveBeenCalled();
+    });
+  });
 });

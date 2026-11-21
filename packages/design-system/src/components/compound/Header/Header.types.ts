@@ -25,6 +25,7 @@ interface StudentProps extends BaseProps {
   type: "student";
   userName: string;
   notifications?: Notification[];
+  onNotificationClick?: (notification: Notification) => void;
 }
 
 export type Props = AdminProps | CompanyProps | StudentProps;

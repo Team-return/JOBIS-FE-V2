@@ -24,8 +24,9 @@ export const CompanyDetail = () => {
   const navigate = useNavigate();
   const { data, isLoading } = useCompanyDetail(id);
 
-  const formatValue = (value: string | number | null | undefined) =>
-    value === null || value === undefined ? "-" : String(value);
+  // 값이 없으면 단위 없이 "-"만 보여 준다
+  const formatValue = (value: string | number | null | undefined, unit = "") =>
+    value === null || value === undefined ? "-" : `${value}${unit}`;
 
   const infos: Array<[string, string]> = [
     ["대표 서비스명", formatValue(data?.service_name)],
@@ -36,8 +37,9 @@ export const CompanyDetail = () => {
     ["전화번호", formatPhone(formatValue(data?.manager_phone_no))],
     ["담당자2", "-"],
     ["전화번호2", "-"],
-    ["매출액", formatValue(data?.take)],
-    ["근로자 수", formatValue(data?.worker_number)],
+    // 매출액은 억 단위 숫자로 온다(기업 목록 "매출액(억)", 학생 기업 상세와 같다)
+    ["매출액", formatValue(data?.take, "억")],
+    ["근로자 수", formatValue(data?.worker_number, "명")],
     ["사업분야", formatValue(data?.business_area)],
     ["팩스번호", "-"],
     ["본사주소", formatValue(data?.main_address)],

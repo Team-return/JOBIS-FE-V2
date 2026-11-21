@@ -22,6 +22,8 @@ export const recruitmentsKeys = {
     "recruitment-detail",
     recruitmentId
   ],
+  // 지원 여부는 모든 공고의 지원 가능 여부에 영향을 줘서 상세 전체를 무효화할 때 쓴다
+  recruitmentDetails: () => ["recruitment-detail"],
   teacherRecruitmentList: (params?: TeacherRecruitmentListQueryParams) => [
     "teacher-recruitment-list",
     params

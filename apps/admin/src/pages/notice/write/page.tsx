@@ -144,12 +144,15 @@ export const NoticeWrite = () => {
   };
 
   const handleSubmit = () => {
-    if (isCreating || !validate()) return;
+    if (isCreating) return;
 
+    // 업로드 중에 등록하면 올라가는 파일이 공지에서 빠지므로 먼저 막는다
     if (isUploading) {
       toast.warning("첨부파일 업로드가 끝난 뒤에 등록해주세요.");
       return;
     }
+
+    if (!validate()) return;
 
     createNotice(
       {
@@ -163,123 +166,129 @@ export const NoticeWrite = () => {
           await query.invalidate(noticesKeys.noticeList());
           navigate("/notice");
         },
-        onError: () => {
-          toast.error("공지사항 등록에 실패했습니다.");
+        onError: status => {
+          toast.error(
+            status === 400
+              ? "입력한 내용을 다시 확인해주세요."
+              : "공지사항 등록에 실패했습니다."
+          );
         }
       }
     );
   };
 
   return (
-    <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
-      <Flex $justify="center">
-        <Box
-          width={CARD_WIDTH}
-          $bg={theme.color.grayScale[10]}
-          $radius={8}
-          $padding={[80, 100]}
-        >
-          <Flex $direction="column" $gap={80} $align="center">
-            <Text
-              $size="h2"
-              $weight="bold"
-              $align="center"
-              $color={theme.color.grayScale[90]}
-            >
-              공지 사항 등록
-            </Text>
+    <Container $bg={theme.color.grayScale[20]}>
+      <Container $padding={[68, 0, 112]} $maxWidth={CARD_WIDTH}>
+        <Flex $justify="center">
+          <Box
+            width={CARD_WIDTH}
+            $bg={theme.color.grayScale[10]}
+            $radius={8}
+            $padding={[80, 100]}
+          >
+            <Flex $direction="column" $gap={80} $align="center">
+              <Text
+                $size="h2"
+                $weight="bold"
+                $align="center"
+                $color={theme.color.grayScale[90]}
+              >
+                공지 사항 등록
+              </Text>
 
-            <Flex $direction="column" $gap={120}>
-              <Flex $direction="column" $gap={24}>
-                <SectionTitle title="공지 사항 내용" />
+              <Flex $direction="column" $gap={120}>
+                <Flex $direction="column" $gap={24}>
+                  <SectionTitle title="공지 사항 내용" />
 
-                <Flex $direction="column" $gap={40}>
-                  <Flex $gap={CONTENT_LABEL_GAP} $align="center">
-                    <FieldLabel label="제목" />
-                    <Input
-                      $width={FIELD_WIDTH}
-                      placeholder="직접입력"
-                      value={title}
-                      onChange={setTitle}
-                      $errorMessage={titleError}
-                    />
+                  <Flex $direction="column" $gap={40}>
+                    <Flex $gap={CONTENT_LABEL_GAP} $align="center">
+                      <FieldLabel label="제목" />
+                      <Input
+                        $width={FIELD_WIDTH}
+                        placeholder="직접입력"
+                        value={title}
+                        onChange={setTitle}
+                        $errorMessage={titleError}
+                      />
+                    </Flex>
+
+                    <Flex $gap={CONTENT_LABEL_GAP} $align="flex-start">
+                      <FieldLabel label="내용" alignTop />
+                      <TextArea
+                        $width={FIELD_WIDTH}
+                        $height={CONTENT_HEIGHT}
+                        placeholder="직접입력"
+                        value={content}
+                        onChange={setContent}
+                        $errorMessage={contentError}
+                      />
+                    </Flex>
                   </Flex>
+                </Flex>
 
-                  <Flex $gap={CONTENT_LABEL_GAP} $align="flex-start">
-                    <FieldLabel label="내용" alignTop />
-                    <TextArea
-                      $width={FIELD_WIDTH}
-                      $height={CONTENT_HEIGHT}
-                      placeholder="직접입력"
-                      value={content}
-                      onChange={setContent}
-                      $errorMessage={contentError}
-                    />
+                <Flex $direction="column" $gap={24}>
+                  <SectionTitle title="첨부 파일" />
+
+                  <Flex $gap={FILE_LABEL_GAP} $align="flex-start">
+                    <FieldLabel label="첨부 파일" alignTop />
+                    <Flex $direction="column" $gap={12}>
+                      <input
+                        ref={inputRef}
+                        type="file"
+                        multiple
+                        hidden
+                        aria-label="첨부 파일 추가"
+                        onChange={handleFileChange}
+                      />
+                      <FileUpload
+                        label={isUploading ? "업로드 중..." : "파일 추가하기"}
+                        $width={FIELD_WIDTH}
+                        disabled={isUploading}
+                        onClick={() => inputRef.current?.click()}
+                      />
+
+                      {files.length > 0 && (
+                        <Flex $direction="row" $gap={8} $wrap>
+                          {files.map(file => (
+                            <FileDownload
+                              key={file.id}
+                              label={file.name}
+                              fileUrl={toFileUrl(file.url)}
+                              onRemove={() => removeFile(file.id)}
+                            />
+                          ))}
+                        </Flex>
+                      )}
+                    </Flex>
                   </Flex>
                 </Flex>
               </Flex>
 
-              <Flex $direction="column" $gap={24}>
-                <SectionTitle title="첨부 파일" />
-
-                <Flex $gap={FILE_LABEL_GAP} $align="flex-start">
-                  <FieldLabel label="첨부 파일" alignTop />
-                  <Flex $direction="column" $gap={12}>
-                    <input
-                      ref={inputRef}
-                      type="file"
-                      multiple
-                      hidden
-                      aria-label="첨부 파일 추가"
-                      onChange={handleFileChange}
-                    />
-                    <FileUpload
-                      label={isUploading ? "업로드 중..." : "파일 추가하기"}
-                      $width={FIELD_WIDTH}
-                      disabled={isUploading}
-                      onClick={() => inputRef.current?.click()}
-                    />
-
-                    {files.length > 0 && (
-                      <Flex $direction="row" $gap={8} $wrap>
-                        {files.map(file => (
-                          <FileDownload
-                            key={file.id}
-                            label={file.name}
-                            fileUrl={toFileUrl(file.url)}
-                            onRemove={() => removeFile(file.id)}
-                          />
-                        ))}
-                      </Flex>
-                    )}
-                  </Flex>
+              <Box width={FORM_WIDTH}>
+                <Flex $justify="space-between" $align="center">
+                  <Button
+                    $variant="outline"
+                    $size="md"
+                    $padding={[12, 40]}
+                    onClick={() => navigate("/notice")}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    $size="md"
+                    $padding={[12, 40]}
+                    $progressing={isCreating}
+                    onClick={handleSubmit}
+                  >
+                    등록
+                  </Button>
                 </Flex>
-              </Flex>
+              </Box>
             </Flex>
-
-            <Box width={FORM_WIDTH}>
-              <Flex $justify="space-between" $align="center">
-                <Button
-                  $variant="outline"
-                  $size="md"
-                  $padding={[12, 40]}
-                  onClick={() => navigate("/notice")}
-                >
-                  취소
-                </Button>
-                <Button
-                  $size="md"
-                  $padding={[12, 40]}
-                  $progressing={isCreating}
-                  onClick={handleSubmit}
-                >
-                  등록
-                </Button>
-              </Flex>
-            </Box>
-          </Flex>
-        </Box>
-      </Flex>
+          </Box>
+        </Flex>
+      </Container>
     </Container>
   );
 };

@@ -15,6 +15,7 @@ import {
   Table,
   TableSkeleton,
   Text,
+  downloadFile,
   useTheme,
   useToast
 } from "@jobis/design-system";
@@ -34,9 +35,14 @@ import {
   useQueryParams,
   YEAR_OPTIONS,
   PAGE_SIZE,
-  LoaderData
+  LoaderData,
+  getErrorMessage,
+  getUploadedFileName,
+  toExternalUrl,
+  toFileUrl
 } from "../../utils";
-import type { ApplicationQuery } from "./loader";
+import { getApplicationFilter, type ApplicationQuery } from "./loader";
+import { RejectModal } from "./RejectModal";
 
 const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
   REQUESTED: "접수완료",
@@ -44,7 +50,7 @@ const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
   SEND: "전송완료",
   FAILED: "불합격",
   PASS: "합격",
-  REJECTED: "거절",
+  REJECTED: "반려",
   FIELD_TRAIN: "현장실습",
   ACCEPTANCE: "취업",
   DOC_FAILED: "서류불합격",
@@ -57,12 +63,35 @@ const APPLICATION_STATUS_OPTIONS = [
   { label: "전송완료", value: "SEND" },
   { label: "불합격", value: "FAILED" },
   { label: "합격", value: "PASS" },
-  { label: "거절", value: "REJECTED" },
+  { label: "반려", value: "REJECTED" },
   { label: "현장실습", value: "FIELD_TRAIN" },
   { label: "취업", value: "ACCEPTANCE" },
   { label: "서류불합격", value: "DOC_FAILED" },
   { label: "처리중", value: "PROCESSING" }
 ];
+
+// 체험형 현장실습이 겨울인턴이라 형태는 모집의뢰서의 winter_intern 여부로 나눈다
+const APPLICATION_TYPE_OPTIONS = [
+  { label: "체험형", value: "true" },
+  { label: "채용형", value: "false" }
+];
+
+const getApplicationTypeLabel = (winterIntern: boolean) =>
+  winterIntern ? "체험형" : "채용형";
+
+const ATTACHMENT_LABEL_STYLE = {
+  maxWidth: 200,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
+} as const;
+
+// 펼친 목록에서는 키보드·터치 사용자도 전체 이름을 볼 수 있게 줄바꿈한다
+const ATTACHMENT_FULL_LABEL_STYLE = {
+  maxWidth: 240,
+  whiteSpace: "normal",
+  wordBreak: "break-all"
+} as const;
 
 interface Attachment {
   url: string;
@@ -81,6 +110,7 @@ const Attachments = ({
   setOpen: (id: number | null) => void;
 }) => {
   const { currentTheme: theme } = useTheme();
+  const toast = useToast();
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -100,24 +130,15 @@ const Attachments = ({
 
   if (attachments.length === 0) return "-";
 
-  const handleDownload = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const getFileIcon = (type: AttachmentType) => {
     return type === "FILE" ? "Document" : "Link";
   };
 
-  const getFileName = (url: string) => {
-    const parts = url.split("-");
-    return parts[parts.length - 1] || url;
-  };
+  // 링크는 주소를, 파일은 업로드 접두사를 뗀 원래 파일명을 보여 준다
+  const getAttachmentLabel = ({ url, type }: Attachment) =>
+    type === "FILE"
+      ? getUploadedFileName(url)
+      : url.replace(/^https?:\/\//i, "");
 
   const firstAttachment = attachments[0];
 
@@ -134,14 +155,27 @@ const Attachments = ({
             border: `1px solid ${theme.color.grayScale[20]}`,
             backgroundColor: theme.color.grayScale[10]
           }}
+          role="button"
+          tabIndex={0}
+          aria-expanded={isOpen}
           onClick={e => {
             e.stopPropagation();
             setOpen(isOpen ? null : id);
           }}
+          onKeyDown={e => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            e.preventDefault();
+            setOpen(isOpen ? null : id);
+          }}
         >
-          <Text $size="body3" $color={theme.color.grayScale[60]}>
-            {getFileName(firstAttachment.url)}
-          </Text>
+          <div
+            style={ATTACHMENT_LABEL_STYLE}
+            title={getAttachmentLabel(firstAttachment)}
+          >
+            <Text $span $size="body3" $color={theme.color.grayScale[60]}>
+              {getAttachmentLabel(firstAttachment)}
+            </Text>
+          </div>
           {attachments.length > 1 && (
             <Text $size="body3" $color={theme.color.grayScale[60]}>
               {`외 ${attachments.length - 1}개`}
@@ -175,9 +209,15 @@ const Attachments = ({
                       size={20}
                       strokeColor={theme.color.grayScale[60]}
                     />
-                    <Text $size="body3" $color={theme.color.grayScale[70]}>
-                      {getFileName(attachment.url)}
-                    </Text>
+                    <div style={ATTACHMENT_FULL_LABEL_STYLE}>
+                      <Text
+                        $span
+                        $size="body3"
+                        $color={theme.color.grayScale[70]}
+                      >
+                        {getAttachmentLabel(attachment)}
+                      </Text>
+                    </div>
                   </Flex>
                   <Button
                     $size="sm"
@@ -185,12 +225,17 @@ const Attachments = ({
                     onClick={e => {
                       e.stopPropagation();
                       if (attachment.type === "FILE") {
-                        handleDownload(
-                          `${import.meta.env.FILE_URL}/${attachment.url}`,
-                          getFileName(attachment.url)
+                        void downloadFile(
+                          toFileUrl(attachment.url),
+                          getUploadedFileName(attachment.url)
                         );
                       } else {
-                        window.open(attachment.url, "_blank");
+                        const externalUrl = toExternalUrl(attachment.url);
+                        if (!externalUrl) {
+                          toast.error("열 수 없는 링크입니다.");
+                          return;
+                        }
+                        window.open(externalUrl, "_blank", "noopener");
                       }
                     }}
                   >
@@ -207,33 +252,57 @@ const Attachments = ({
 };
 
 export const Application = () => {
-  const { params: initialParams } =
-    useLoaderData() as LoaderData<ApplicationQuery>;
+  const { params } = useLoaderData() as LoaderData<ApplicationQuery>;
   const { currentTheme: theme } = useTheme();
   const toast = useToast();
 
-  const { updateParams, resetParams, getParam, getParamAsNumber } =
+  const { updateParams, resetParams, getParam, getPageParam } =
     useQueryParams();
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
-  const [localSearch, setLocalSearch] = useState(
-    initialParams.student_name || ""
-  );
+  const [localSearch, setLocalSearch] = useState(params.student_name || "");
 
   const [openedAttachment, setOpenedAttachment] = useState<number | null>(null);
+  const [rejectTargets, setRejectTargets] = useState<{
+    applicationIds: number[];
+    studentNames: string[];
+  } | null>(null);
 
-  const currentPage = getParamAsNumber("page", 1);
+  const currentPage = getPageParam();
+  const applicationType = getParam("winter-intern");
   const applicationStatus = getParam("application-status");
   const yearFilter = getParam("year");
 
   const debouncedSearch = useDebounce(localSearch, 300);
 
-  const { data, isLoading } = useTeacherApplications({
-    application_status: applicationStatus,
-    student_name: getParam("student-name"),
-    year: yearFilter
-  });
+  const filter = getApplicationFilter(params);
+
+  // 필터를 바꾸는 동안 이전 결과를 두어 표와 총 개수가 비었다 채워지며 깜빡이지 않게 한다
+  const { data, isLoading, isPlaceholderData } = useTeacherApplications(
+    filter,
+    { placeholderData: previousData => previousData }
+  );
+  // 목록 응답에 겨울인턴 여부가 없어, 형태 필터가 없을 때는 겨울인턴 지원서 id만 따로 받아 형태를 가린다.
+  // id로 맞춰 보므로 년도만 같으면 되고, 이름을 검색할 때마다 다시 받지 않게 다른 조건은 넣지 않는다
+  const { data: winterInternData } = useTeacherApplications(
+    { winter_intern: true, year: filter.year },
+    { enabled: filter.winter_intern === undefined }
+  );
+  const winterInternIds = new Set(
+    winterInternData?.applications.map(app => app.application_id)
+  );
+
+  const getApplicationType = (applicationId: number) => {
+    // 이전 조건의 목록을 잠시 보여 주는 동안에는 지금 형태 필터와 맞지 않을 수 있다
+    if (isPlaceholderData) return "-";
+    if (filter.winter_intern !== undefined) {
+      return getApplicationTypeLabel(filter.winter_intern);
+    }
+    return winterInternData
+      ? getApplicationTypeLabel(winterInternIds.has(applicationId))
+      : "-";
+  };
 
   const { mutate: updateApplicationStatus } = useUpdateApplicationStatus();
 
@@ -244,14 +313,16 @@ export const Application = () => {
     resetParams();
   };
 
-  const getSelectedApplicationIds = (): number[] => {
-    return selected
+  const getSelectedApplications = () =>
+    selected
       .map(index => {
         const globalIndex = (currentPage - 1) * PAGE_SIZE + index;
-        return data?.applications[globalIndex]?.application_id;
+        return data?.applications[globalIndex];
       })
-      .filter((id): id is number => id !== undefined);
-  };
+      .filter(app => app !== undefined);
+
+  const getSelectedApplicationIds = (): number[] =>
+    getSelectedApplications().map(app => app.application_id);
 
   const validateSelectedApplications = (): boolean => {
     if (selected.length === 0) {
@@ -282,10 +353,21 @@ export const Application = () => {
   const handleStatusChange = (newStatus: string) => {
     if (!validateSelectedApplications()) return;
 
+    // 반려는 학생에게 사유를 보여 줘야 해서 모달에서 사유를 받아 반려 API로 보낸다
+    if (newStatus === "REJECTED") {
+      const applications = getSelectedApplications();
+      setOpenDropdown(null);
+      setRejectTargets({
+        applicationIds: applications.map(app => app.application_id),
+        studentNames: applications.map(app => app.student_name)
+      });
+      return;
+    }
+
     const applicationIds = getSelectedApplicationIds();
     updateApplicationStatus(
       {
-        applicationIds,
+        application_ids: applicationIds,
         status: newStatus
       },
       {
@@ -294,19 +376,54 @@ export const Application = () => {
           await invalidateApplicationQueries();
           resetSelection();
         },
-        onError: () => {
-          toast.error("상태 변경에 실패했습니다.");
+        onError: error => {
+          toast.error(
+            getErrorMessage(error, "상태 변경에 실패했습니다.", {
+              400: "변경할 수 없는 상태가 포함돼 있습니다."
+            })
+          );
         }
       }
     );
   };
 
+  const getStatusColor = (status: ApplicationStatus) => {
+    switch (status) {
+      case "REQUESTED":
+        return theme.color.subColor.yellow[20];
+      case "APPROVED":
+      case "SEND":
+      case "PROCESSING":
+        return theme.color.subColor.blue[30];
+      case "PASS":
+      case "FIELD_TRAIN":
+      case "ACCEPTANCE":
+        return theme.color.subColor.green[20];
+      case "FAILED":
+      case "DOC_FAILED":
+      case "REJECTED":
+        return theme.color.subColor.red[20];
+    }
+  };
+
+  const renderCellText = (text: string, color?: string) => (
+    <Text $size="body2" $color={color}>
+      {text}
+    </Text>
+  );
+
   const tableRows: ReactNode[][] =
     data?.applications.map(app => [
-      app.attachments.some(att => att.type === "FILE") ? "파일" : "URL",
-      APPLICATION_STATUS_LABEL[app.application_status],
-      app.student_gcn,
-      app.student_name,
+      renderCellText(
+        getApplicationType(app.application_id),
+        theme.color.grayScale[80]
+      ),
+      renderCellText(
+        APPLICATION_STATUS_LABEL[app.application_status],
+        getStatusColor(app.application_status)
+      ),
+      renderCellText(app.student_gcn, theme.color.grayScale[80]),
+      renderCellText(app.student_name, theme.color.grayScale[80]),
       app.company_name,
       app.created_at,
       app.attachments.length > 0 ? (
@@ -326,6 +443,11 @@ export const Application = () => {
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedRows = tableRows.slice(startIndex, endIndex);
 
+  // 다른 필터 결과가 오면 선택한 줄 번호가 다른 지원서를 가리키므로 비운다
+  useEffect(() => {
+    setSelected([]);
+  }, [data]);
+
   useEffect(() => {
     const currentSearchValue = getParam("student-name") ?? "";
     if (debouncedSearch !== currentSearchValue) {
@@ -344,21 +466,40 @@ export const Application = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               지원서
             </Text>
-            <Text $size="body2" $color={theme.color.grayScale[90]}>
-              총
-            </Text>
-            <Flex $align="center" $fit>
-              <Text $size="body2" $span $color={theme.color.subColor.blue[30]}>
-                {isLoading ? "-" : String(tableRows?.length)}
-              </Text>
-              <Text $size="body2" $color={theme.color.grayScale[90]}>
-                개
-              </Text>
-            </Flex>
+            {data && (
+              <>
+                <Text $size="body2" $color={theme.color.grayScale[90]}>
+                  총
+                </Text>
+                <Flex $align="center" $fit>
+                  <Text
+                    $size="body2"
+                    $span
+                    $color={theme.color.subColor.blue[30]}
+                  >
+                    {String(data.applications.length)}
+                  </Text>
+                  <Text $size="body2" $color={theme.color.grayScale[90]}>
+                    개
+                  </Text>
+                </Flex>
+              </>
+            )}
           </Flex>
 
           <Flex $align="center" $justify="space-between">
             <Flex $align="center" $gap={8} $fit>
+              <Dropdown
+                options={APPLICATION_TYPE_OPTIONS}
+                $width={96}
+                $placeholder="형태"
+                isOpen={openDropdown === "type"}
+                onToggle={isOpen => setOpenDropdown(isOpen ? "type" : null)}
+                value={applicationType}
+                onChange={val =>
+                  updateParams({ "winter-intern": val, "page": undefined })
+                }
+              />
               <Dropdown
                 options={APPLICATION_STATUS_OPTIONS}
                 $width={96}
@@ -380,7 +521,7 @@ export const Application = () => {
                 onChange={val => updateParams({ year: val, page: undefined })}
               />
               <Search
-                placeholder="이름을 입력하여 검색"
+                placeholder="이름을 입력해주세요"
                 $width={359}
                 value={localSearch}
                 onChange={setLocalSearch}
@@ -425,7 +566,7 @@ export const Application = () => {
                 <TableSkeleton
                   checkbox
                   columnWidths={[124, 124, 124, 124, 173, 124, 405]}
-                  rows={5}
+                  rows={PAGE_SIZE}
                 />
               ) : (
                 <Table
@@ -459,6 +600,19 @@ export const Application = () => {
           )}
         </Flex>
       </Flex>
+
+      {rejectTargets && (
+        <RejectModal
+          applicationIds={rejectTargets.applicationIds}
+          studentNames={rejectTargets.studentNames}
+          onSuccess={async () => {
+            await invalidateApplicationQueries();
+            resetSelection();
+          }}
+          onError={invalidateApplicationQueries}
+          onClose={() => setRejectTargets(null)}
+        />
+      )}
     </Container>
   );
 };

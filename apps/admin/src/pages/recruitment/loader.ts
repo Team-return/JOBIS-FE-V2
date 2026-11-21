@@ -4,10 +4,17 @@ import {
   parseOptionalString,
   parseOptionalNumber,
   parseEnum,
+  parseLocalDate,
+  parsePageParam,
   LoaderData,
   type QueryParamParser
 } from "../../utils";
-import { useTeacherRecruitmentList, type RecruitmentStatus } from "@jobis/api";
+import {
+  useRecruitmentCount,
+  useTeacherRecruitmentCount,
+  useTeacherRecruitmentList,
+  type RecruitmentStatus
+} from "@jobis/api";
 
 export interface RecruitmentQuery {
   company_name?: string;
@@ -16,7 +23,6 @@ export interface RecruitmentQuery {
   start?: string;
   end?: string;
   page: number;
-  winter_intern?: boolean;
 }
 
 const RECRUITMENT_STATUSES = [
@@ -28,39 +34,48 @@ const RECRUITMENT_STATUSES = [
   "WIN_INTERN"
 ] as const;
 
+// 없는 날짜를 보내면 서버가 400을 돌려 목록이 비므로 기간을 설정하지 않은 것으로 본다
+const parseDateParam = (value: string | null) =>
+  value && parseLocalDate(value) ? value : undefined;
+
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
   parse: (params: URLSearchParams) => {
-    const status = parseEnum(params.get("status"), RECRUITMENT_STATUSES);
-    const page = parseOptionalNumber(params.get("page")) || 1;
-
     return {
       company_name: parseOptionalString(params.get("company-name")),
       year: parseOptionalNumber(params.get("year")),
-      status,
-      start: parseOptionalString(params.get("start")),
-      end: parseOptionalString(params.get("end")),
-      page,
-      winter_intern: status === "WIN_INTERN" || undefined
+      status: parseEnum(params.get("status"), RECRUITMENT_STATUSES),
+      start: parseDateParam(params.get("start")),
+      end: parseDateParam(params.get("end")),
+      page: parsePageParam(params.get("page"))
     };
-  },
-  validate: data => {
-    return data.page >= 1;
   }
 };
+
+/**
+ * 겨울인턴은 모집 상태가 아니라 winter_intern 여부라서
+ * 상태 필터에서 겨울인턴을 고르면 status 대신 winter_intern=true로 조회한다
+ */
+export const getRecruitmentFilter = (query: RecruitmentQuery) => ({
+  company_name: query.company_name,
+  year: query.year,
+  status: query.status === "WIN_INTERN" ? undefined : query.status,
+  start: query.start,
+  end: query.end,
+  winter_intern: query.status === "WIN_INTERN" || undefined
+});
 
 export async function recruitmentLoader({
   request
 }: LoaderFunctionArgs): Promise<LoaderData<RecruitmentQuery>> {
   const queryParams = parseQueryParams(request, recruitmentQueryParser);
+  const filter = getRecruitmentFilter(queryParams);
 
   void useTeacherRecruitmentList.prefetch({
-    company_name: queryParams.company_name,
-    year: queryParams.year,
-    status: queryParams.status,
-    start: queryParams.start,
-    end: queryParams.end,
-    winter_intern: queryParams.winter_intern
+    ...filter,
+    page: queryParams.page
   });
+  void useTeacherRecruitmentCount.prefetch(filter);
+  void useRecruitmentCount.prefetch(filter);
 
   return {
     params: queryParams

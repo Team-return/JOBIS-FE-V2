@@ -104,7 +104,7 @@ export const useCreateApplication = (
   });
 
 export const useUpdateApplicationStatus = createMutationHook<
-  { applicationIds: number[]; status: string },
+  { application_ids: number[]; status: string },
   void
 >({
   path: "/status",
@@ -112,33 +112,54 @@ export const useUpdateApplicationStatus = createMutationHook<
 });
 
 export const useUpdateTrainDate = createMutationHook<
-  { applicationIds: number[]; startDate: string; endDate: string },
+  { application_ids: number[]; start_date: string; end_date: string },
   void
 >({
   path: "/train-date",
   method: "patch"
 });
 
-export const useRejectApplication = createIdMutationHook<
-  {
-    reason: string;
-    rejectionAttachments: { url: string }[];
-  },
-  void
->({
-  path: "/rejection",
-  method: "patch"
-});
+export interface RejectApplicationsRequest {
+  application_ids: number[];
+  reason: string;
+  rejection_attachments: { url: string }[];
+}
+
+// 반려 API는 지원서 하나씩 받으므로, 선택한 지원서마다 같은 사유로 보낸다
+export const useRejectApplications = (
+  options?: MutationOptions<RejectApplicationsRequest, void>
+) =>
+  useMutation<void, number, RejectApplicationsRequest>({
+    mutationFn: async ({ application_ids: applicationIds, ...request }) => {
+      await Promise.all(
+        applicationIds.map(id =>
+          instance.patch(`${DOMAIN}/rejection/${id}`, request)
+        )
+      );
+    },
+    ...options
+  });
 
 export const useRejection = createQueryHook<number, RejectionResponse>({
   path: applicationId => `/rejection/${applicationId}`,
   queryKey: applicationsKeys.rejection
 });
 
-export const useReapply = createIdMutationHook<CreateApplicationRequest, void>({
-  path: "",
-  method: "put"
-});
+export const useReapply = (
+  applicationId: number | string,
+  options?: MutationOptions<CreateApplicationRequest, void>
+) =>
+  useMutation<void, number, CreateApplicationRequest>({
+    mutationFn: request =>
+      instance
+        .put(`${DOMAIN}/${applicationId}`, request)
+        .then(({ data }) => data),
+    ...options,
+    onSuccess: async (...args) => {
+      await query.invalidate(applicationsKeys.studentApplications());
+      options?.onSuccess?.(...args);
+    }
+  });
 
 export const useApplicationCount = createQueryHook<
   {

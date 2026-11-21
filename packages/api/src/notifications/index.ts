@@ -25,7 +25,8 @@ export const useReadNotification = createMutationHook<
   { notificationId: number },
   void
 >({
-  path: "/",
+  // 서버는 `PATCH /notifications/{notification-id}`로 알림을 읽음 처리한다
+  path: ({ notificationId }) => `/${notificationId}`,
   method: "patch"
 });
 
