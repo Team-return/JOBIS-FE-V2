@@ -22,6 +22,8 @@ export interface RecruitmentQuery {
   status?: RecruitmentStatus;
   start?: string;
   end?: string;
+  // 상시모집(모집기간 없음)만 보기. 서버 조회 조건에 없어 받은 페이지 안에서 거른다
+  constant?: boolean;
   page: number;
 }
 
@@ -40,12 +42,16 @@ const parseDateParam = (value: string | null) =>
 
 const recruitmentQueryParser: QueryParamParser<RecruitmentQuery> = {
   parse: (params: URLSearchParams) => {
+    const constant = params.get("constant") === "true";
+
     return {
       company_name: parseOptionalString(params.get("company-name")),
       year: parseOptionalNumber(params.get("year")),
       status: parseEnum(params.get("status"), RECRUITMENT_STATUSES),
-      start: parseDateParam(params.get("start")),
-      end: parseDateParam(params.get("end")),
+      // 상시모집은 기간이 없으므로 날짜는 보내지 않는다
+      start: constant ? undefined : parseDateParam(params.get("start")),
+      end: constant ? undefined : parseDateParam(params.get("end")),
+      constant: constant || undefined,
       page: parsePageParam(params.get("page"))
     };
   }
