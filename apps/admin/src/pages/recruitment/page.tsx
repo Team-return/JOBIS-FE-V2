@@ -68,12 +68,13 @@ export const Recruitment = () => {
   const state = getParam("status");
   const startDate = getParam("start");
   const endDate = getParam("end");
+  const isConstant = getParam("constant") === "true";
   const parsedStartDate = startDate ? parseLocalDate(startDate) : null;
   const parsedEndDate = endDate ? parseLocalDate(endDate) : null;
 
   // 주소에 잘못된 날짜가 들어 있으면 그 날짜는 설정하지 않은 것으로 보고, 한쪽만 골라도 표시한다
   const period: PeriodValue | undefined =
-    parsedStartDate || parsedEndDate
+    !isConstant && (parsedStartDate || parsedEndDate)
       ? {
           startDate: parsedStartDate,
           endDate: parsedEndDate,
@@ -96,6 +97,7 @@ export const Recruitment = () => {
     updateParams({
       start: val?.startDate ? formatDate(val.startDate) : undefined,
       end: val?.endDate ? formatDate(val.endDate) : undefined,
+      constant: val?.isConstant ? "true" : undefined,
       page: undefined
     });
   };
@@ -122,10 +124,13 @@ export const Recruitment = () => {
   const { mutate: updateRecruitmentStatus } = useUpdateRecruitmentStatus();
 
   const excelUrl = excelData ? URL.createObjectURL(excelData) : null;
-  // 구분은 서버 조회 조건에 없어 받은 페이지 안에서만 거른다
+  // 구분·상시모집은 서버 조회 조건에 없어 받은 페이지 안에서만 거른다
+  const isFilteredInPage = type !== undefined || isConstant;
   const recruitments =
     data?.recruitments.filter(
-      recruitment => type === undefined || recruitment.company_type === type
+      recruitment =>
+        (type === undefined || recruitment.company_type === type) &&
+        (!isConstant || (!recruitment.start_date && !recruitment.end_date))
     ) ?? [];
 
   // 페이지 수를 받기 전(?page=7로 바로 들어온 때 등)에는 지금 페이지까지 있다고 보고 번호를 보여 준다
@@ -250,7 +255,7 @@ export const Recruitment = () => {
   // 다른 페이지·필터 결과가 오면 선택한 줄 번호가 다른 모집의뢰서를 가리키므로 비운다
   useEffect(() => {
     setSelected([]);
-  }, [data, type]);
+  }, [data, type, isConstant]);
 
   // 범위 밖 페이지(주소 직접 입력, 상태를 바꿔 마지막 페이지가 빈 경우 등)는 마지막 페이지로 옮긴다
   useEffect(() => {
@@ -276,8 +281,8 @@ export const Recruitment = () => {
             <Text $size="h4" $weight="bold" $color={theme.color.grayScale[90]}>
               모집의뢰서
             </Text>
-            {/* 구분은 받은 페이지 안에서만 걸러서 서버 총 개수와 맞지 않으므로 고른 동안 숨긴다 */}
-            {countData && type === undefined && (
+            {/* 받은 페이지 안에서만 거른 동안은 서버 총 개수와 맞지 않으므로 숨긴다 */}
+            {countData && !isFilteredInPage && (
               <>
                 <Text $size="body2" $color={theme.color.grayScale[90]}>
                   총
@@ -307,6 +312,7 @@ export const Recruitment = () => {
                 isOpen={openDropdown === "period"}
                 onToggle={isOpen => setOpenDropdown(isOpen ? "period" : null)}
                 value={period}
+                checked={isConstant}
                 onChange={handlePeriodChange}
               />
               <Dropdown
@@ -407,7 +413,7 @@ export const Recruitment = () => {
               )}
               {!isLoading && recruitments.length === 0 && (
                 <Text $size="body2" $color={theme.color.grayScale[60]}>
-                  이 페이지에는 선택한 구분의 모집의뢰서가 없습니다. 다른
+                  이 페이지에는 선택한 조건의 모집의뢰서가 없습니다. 다른
                   페이지를 확인해주세요.
                 </Text>
               )}
