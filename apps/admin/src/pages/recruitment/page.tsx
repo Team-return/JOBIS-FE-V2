@@ -45,6 +45,12 @@ import {
 import { getRecruitmentFilter, type RecruitmentQuery } from "./loader";
 import { WinterInternToggle } from "./WinterInternToggle";
 
+// 서버는 상시모집이면 시작일·종료일을 모두 비워 보내므로 두 칸 모두 상시모집으로 보여 준다
+const getPeriodCells = (startDate?: string | null, endDate?: string | null) =>
+  !startDate && !endDate
+    ? ["상시모집", "상시모집"]
+    : [startDate || "-", endDate || "-"];
+
 export const Recruitment = () => {
   const { params } = useLoaderData() as LoaderData<RecruitmentQuery>;
   const { currentTheme: theme } = useTheme();
@@ -238,8 +244,7 @@ export const Recruitment = () => {
       </Text>
     </Link>,
     `${recruitment.application_approved_count}명`,
-    recruitment.start_date || "-",
-    recruitment.end_date || "-"
+    ...getPeriodCells(recruitment.start_date, recruitment.end_date)
   ]);
 
   // 다른 페이지·필터 결과가 오면 선택한 줄 번호가 다른 모집의뢰서를 가리키므로 비운다
