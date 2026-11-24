@@ -22,6 +22,14 @@ type RecruitmentArea = NonNullable<RecruitmentDetailData>["areas"][number];
 const joinNames = (items?: { name: string }[]) =>
   items?.map(item => item.name).join(", ") || "-";
 
+// 서버는 상시모집이면 시작일·종료일을 모두 비워 보내므로 두 칸 모두 상시모집으로 보여 준다
+// 아직 불러오는 중이면 상시모집으로 오해하지 않도록 "-"를 보여 준다
+const getPeriodCells = (data: RecruitmentDetailData) => {
+  if (!data) return ["-", "-"];
+  if (!data.start_date && !data.end_date) return ["상시모집", "상시모집"];
+  return [data.start_date || "-", data.end_date || "-"];
+};
+
 const getAreaLabel = (index: number, total: number) =>
   total > 1 ? `모집분야 ${index + 1}` : "모집분야";
 
@@ -82,6 +90,7 @@ export const RecruitmentDetail = () => {
     );
   }
 
+  const periodCells = getPeriodCells(data);
   const areas = data?.areas ?? [];
   const areaItems = areas.length
     ? areas.map((area, index) => createAreaItem(area, index, areas.length))
@@ -170,12 +179,12 @@ export const RecruitmentDetail = () => {
             },
             {
               label: "모집 시작일",
-              value: data?.start_date || "-",
+              value: periodCells[0],
               itemType: "text"
             },
             {
               label: "모집 종료일",
-              value: data?.end_date || "-",
+              value: periodCells[1],
               itemType: "text"
             },
             {
