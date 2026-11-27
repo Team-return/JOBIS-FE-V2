@@ -1,4 +1,11 @@
-import { useState, useEffect } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent
+} from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@/hooks";
 import { Flex, Icon, Text } from "@/components";
@@ -26,10 +33,10 @@ const TriggerButton = styled.button<
   background: ${({ theme }) => theme.color.grayScale[10]};
   cursor: pointer;
   min-width: ${({ $width }) => $width};
-  ${({ isOpen, theme }) =>
+  ${({ isOpen, theme, $color }) =>
     isOpen &&
     `
-      border-color: ${theme.color.grayScale[90]};
+      border-color: ${$color || theme.color.grayScale[90]};
     `}
 `;
 
@@ -66,21 +73,62 @@ const DateContainer = styled.div<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
-  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
+  gap: 8px;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "text")};
 `;
 
 const DateInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  padding: 0;
   border: none;
   background-color: transparent;
   outline: none;
-  width: 76px;
+  font-family: inherit;
   font-size: ${({ theme }) => theme.font.body3.fontSize};
-  color: ${({ theme }) => theme.color.grayScale[50]};
+  color: ${({ theme }) => theme.color.grayScale[80]};
   &::placeholder {
     color: ${({ theme }) => theme.color.grayScale[50]};
   }
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;
+
+const IconOnlyButton = styled.button`
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+// 숫자만 남겨 YYYY.MM.DD 모양으로 점을 채운다
+const formatTypedDate = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  return [digits.slice(0, 4), digits.slice(4, 6), digits.slice(6, 8)]
+    .filter(Boolean)
+    .join(".");
+};
+
+// 다 입력했고 실제로 있는 날짜일 때만 Date로 바꾼다 (2026.02.30 같은 값은 거른다)
+const parseTypedDate = (value: string): Date | null => {
+  const match = /^(\d{4})\.(\d{2})\.(\d{2})$/.exec(value);
+  if (!match) return null;
+
+  const [year, month, day] = match.slice(1).map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+    ? date
+    : null;
+};
 
 const CalendarWrapper = styled.div`
   position: absolute;
@@ -121,6 +169,9 @@ export const PeriodDropdown = ({
   const [tempEndDate, setTempEndDate] = useState<Date | null>(null);
   const [tempChecked, setTempChecked] = useState(false);
   const [calendarFor, setCalendarFor] = useState<"start" | "end" | null>(null);
+  // 입력 중인 글자. null이면 고른 날짜를 그대로 보여 준다
+  const [startText, setStartText] = useState<string | null>(null);
+  const [endText, setEndText] = useState<string | null>(null);
 
   // value가 undefined로 변경되면 내부 상태도 리셋
   useEffect(() => {
@@ -131,13 +182,52 @@ export const PeriodDropdown = ({
     }
   }, [externalValue]);
 
-  const closeDropdown = () => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const startCalendarButtonRef = useRef<HTMLButtonElement>(null);
+  const endCalendarButtonRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+
+  const closeDropdown = useCallback(() => {
     if (onToggle) {
       onToggle(false);
     } else {
       setInternalIsOpen(false);
     }
-  };
+  }, [onToggle]);
+
+  // 닫기 아이콘과 같이 Escape는 달력이 떠 있으면 달력만, 아니면 패널을 닫는다
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // 한글 조합 중이거나 다른 곳에서 이미 처리한 Escape는 넘긴다
+      const isHandled = event.isComposing || event.defaultPrevented;
+      if (event.key !== "Escape" || isHandled) return;
+      // 다른 입력칸에 있던 초점은 빼앗지 않는다
+      const active = document.activeElement;
+      const isFocusInside =
+        !active ||
+        active === document.body ||
+        wrapperRef.current?.contains(active);
+
+      if (calendarFor) {
+        setCalendarFor(null);
+        // 달력을 연 시작일·종료일 버튼으로 초점을 돌려준다
+        const calendarButton =
+          calendarFor === "start"
+            ? startCalendarButtonRef.current
+            : endCalendarButtonRef.current;
+        if (isFocusInside) calendarButton?.focus();
+        return;
+      }
+      closeDropdown();
+      if (isFocusInside) triggerRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, calendarFor, closeDropdown]);
 
   const formatDate = (date: Date | null) => {
     if (!date) return "";
@@ -150,11 +240,24 @@ export const PeriodDropdown = ({
   const handleDateChange = (date: Date) => {
     if (calendarFor === "start") {
       setTempStartDate(date);
+      setStartText(null);
     } else if (calendarFor === "end") {
       setTempEndDate(date);
+      setEndText(null);
     }
     setCalendarFor(null);
   };
+
+  const handleTypedDate =
+    (
+      setText: (text: string | null) => void,
+      setDate: (date: Date | null) => void
+    ) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const text = formatTypedDate(event.target.value);
+      setText(text);
+      setDate(parseTypedDate(text));
+    };
 
   const handlePeriodSubmit = () => {
     setStartDate(tempStartDate);
@@ -187,8 +290,13 @@ export const PeriodDropdown = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       <TriggerButton
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
         isOpen={isOpen}
         onClick={() => {
           const newValue = !isOpen;
@@ -196,6 +304,8 @@ export const PeriodDropdown = ({
             setTempStartDate(startDate);
             setTempEndDate(endDate);
             setTempChecked(isChecked);
+            setStartText(null);
+            setEndText(null);
           }
           if (onToggle) {
             onToggle(newValue);
@@ -217,54 +327,77 @@ export const PeriodDropdown = ({
           icon={isOpen ? "ChevronUp" : "ChevronDown"}
           size={20}
           fillColor={$color || theme.color.grayScale[60]}
+          aria-hidden
         />
       </TriggerButton>
 
       {isOpen && (
         <OptionsWrapper>
-          <PeriodOptions>
+          <PeriodOptions id={panelId} role="dialog" aria-label="모집기간 설정">
             <Flex $direction="column" $gap={24}>
               <Flex $justify="space-between" $align="center">
                 <Flex $align="center" $gap={8}>
                   <Text $size="h6" $weight="bold">
                     모집기간
                   </Text>
-                  <Icon
-                    icon="Refresh"
-                    size={24}
-                    strokeColor={theme.color.grayScale[70]}
-                    fillColor={theme.color.grayScale[10]}
-                    style={{ cursor: "pointer" }}
+                  <IconOnlyButton
+                    type="button"
+                    aria-label="모집기간 초기화"
                     onClick={() => {
                       setTempStartDate(null);
                       setTempEndDate(null);
                       setTempChecked(false);
+                      setStartText(null);
+                      setEndText(null);
                     }}
-                  />
+                  >
+                    <Icon
+                      icon="Refresh"
+                      size={24}
+                      strokeColor={theme.color.grayScale[70]}
+                      fillColor={theme.color.grayScale[10]}
+                      aria-hidden
+                    />
+                  </IconOnlyButton>
                 </Flex>
-                <Icon
-                  icon="Close"
-                  size={24}
-                  fillColor={theme.color.grayScale[60]}
-                  style={{ cursor: "pointer" }}
+                <IconOnlyButton
+                  type="button"
+                  aria-label={calendarFor ? "달력 닫기" : "모집기간 닫기"}
                   onClick={() =>
                     calendarFor ? setCalendarFor(null) : closeDropdown()
                   }
-                />
+                >
+                  <Icon
+                    icon="Close"
+                    size={24}
+                    fillColor={theme.color.grayScale[60]}
+                    aria-hidden
+                  />
+                </IconOnlyButton>
               </Flex>
               <Flex $direction="column" $gap={8}>
                 <Flex $align="center" $justify="space-between">
-                  <DateContainer
-                    $disabled={tempChecked}
-                    onClick={() => !tempChecked && setCalendarFor("start")}
-                  >
+                  <DateContainer $disabled={tempChecked}>
                     <DateInput
                       type="text"
+                      inputMode="numeric"
                       placeholder="YYYY.MM.DD"
-                      readOnly
-                      value={formatDate(tempStartDate)}
+                      aria-label="모집 시작일"
+                      disabled={tempChecked}
+                      value={startText ?? formatDate(tempStartDate)}
+                      onChange={handleTypedDate(setStartText, setTempStartDate)}
+                      // 덜 입력했거나 없는 날짜면 비워 둔다
+                      onBlur={() => setStartText(null)}
                     />
-                    <Icon icon="Date" size={24} />
+                    <IconOnlyButton
+                      ref={startCalendarButtonRef}
+                      type="button"
+                      aria-label="모집 시작일 달력 열기"
+                      disabled={tempChecked}
+                      onClick={() => setCalendarFor("start")}
+                    >
+                      <Icon icon="Date" size={24} aria-hidden />
+                    </IconOnlyButton>
                   </DateContainer>
                   <Text
                     $size="h5"
@@ -273,17 +406,26 @@ export const PeriodDropdown = ({
                   >
                     ~
                   </Text>
-                  <DateContainer
-                    $disabled={tempChecked}
-                    onClick={() => !tempChecked && setCalendarFor("end")}
-                  >
+                  <DateContainer $disabled={tempChecked}>
                     <DateInput
                       type="text"
+                      inputMode="numeric"
                       placeholder="YYYY.MM.DD"
-                      readOnly
-                      value={formatDate(tempEndDate)}
+                      aria-label="모집 종료일"
+                      disabled={tempChecked}
+                      value={endText ?? formatDate(tempEndDate)}
+                      onChange={handleTypedDate(setEndText, setTempEndDate)}
+                      onBlur={() => setEndText(null)}
                     />
-                    <Icon icon="Date" size={24} />
+                    <IconOnlyButton
+                      ref={endCalendarButtonRef}
+                      type="button"
+                      aria-label="모집 종료일 달력 열기"
+                      disabled={tempChecked}
+                      onClick={() => setCalendarFor("end")}
+                    >
+                      <Icon icon="Date" size={24} aria-hidden />
+                    </IconOnlyButton>
                   </DateContainer>
                 </Flex>
                 <Checkbox
@@ -297,6 +439,8 @@ export const PeriodDropdown = ({
                     if (newChecked) {
                       setTempStartDate(null);
                       setTempEndDate(null);
+                      setStartText(null);
+                      setEndText(null);
                     }
                   }}
                 />

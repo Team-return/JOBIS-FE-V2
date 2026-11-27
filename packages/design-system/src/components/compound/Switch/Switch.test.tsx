@@ -49,4 +49,20 @@ describe("Switch", () => {
     fireEvent.click(switchElement);
     expect(handleChange).toHaveBeenCalledWith(false);
   });
+
+  it("does not call onChange when disabled", () => {
+    const handleChange = vi.fn();
+    renderWithTheme(<Switch disabled onChange={handleChange} />);
+    const switchElement = screen.getByRole("switch");
+    expect(switchElement).toBeDisabled();
+    fireEvent.click(switchElement);
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
+  it("uses the given aria-label", () => {
+    renderWithTheme(<Switch aria-label="겨울인턴" />);
+    expect(
+      screen.getByRole("switch", { name: "겨울인턴" })
+    ).toBeInTheDocument();
+  });
 });

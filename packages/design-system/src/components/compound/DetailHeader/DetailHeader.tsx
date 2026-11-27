@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Flex, Spacer, Image } from "@/components/primitive";
 import { Text, Icon } from "@/components/core";
 import { DetailHeaderProps } from "./DetailHeader.types";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export const DetailHeader = ({
   type,
@@ -10,11 +10,17 @@ export const DetailHeader = ({
   logoUrl,
   businessNumber,
   isParticipation,
-  onViewReview
+  onViewReview,
+  onViewDetail,
+  onApply,
+  applyDisabledReason
 }: DetailHeaderProps & { isParticipation?: boolean }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const applyReasonId = useId();
 
   if (type === "recruitment") {
+    const canApply = !!onApply && !applyDisabledReason;
+
     return (
       <Flex $direction="row" $align="center">
         <Flex $gap={28} $fit>
@@ -37,17 +43,44 @@ export const DetailHeader = ({
               )}
             </Flex>
             <Flex $direction="row" $align="center" $gap={8}>
-              <Pointer>
+              <TextButton
+                type="button"
+                onClick={onViewDetail}
+                disabled={!onViewDetail}
+              >
                 <Text $size="body2" $weight="medium" $color="#7f7f7f">
                   상세보기
                 </Text>
-              </Pointer>
+              </TextButton>
               <Line />
-              <Pointer>
-                <Text $size="body2" $weight="medium" $color="#7f7f7f">
+              <TextButton
+                type="button"
+                onClick={onApply}
+                disabled={!canApply}
+                aria-describedby={
+                  applyDisabledReason ? applyReasonId : undefined
+                }
+              >
+                <Text
+                  $size="body2"
+                  $weight="medium"
+                  $color={canApply ? "#7f7f7f" : "#cccccc"}
+                >
                   지원하기
                 </Text>
-              </Pointer>
+              </TextButton>
+              {applyDisabledReason && (
+                <span id={applyReasonId}>
+                  <Text
+                    $span
+                    $size="caption"
+                    $weight="regular"
+                    $color="#e74c3c"
+                  >
+                    {applyDisabledReason}
+                  </Text>
+                </span>
+              )}
             </Flex>
           </Flex>
         </Flex>
@@ -109,8 +142,15 @@ export const DetailHeader = ({
   return null;
 };
 
-const Pointer = styled.div`
+const TextButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const ParticipationBadge = styled.div`

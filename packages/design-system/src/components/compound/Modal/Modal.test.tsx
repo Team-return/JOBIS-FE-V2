@@ -119,4 +119,34 @@ describe("Modal", () => {
     fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it("should render children between content and buttons", () => {
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+      >
+        <textarea aria-label="reason" />
+      </Modal>
+    );
+
+    expect(screen.getByLabelText("reason")).toBeInTheDocument();
+  });
+
+  it("should not call onConfirm when confirmDisabled is true", () => {
+    renderWithTheme(
+      <Modal
+        title="Test Modal"
+        content="This is the modal content."
+        onConfirm={onConfirm}
+        onClose={onClose}
+        confirmDisabled
+      />
+    );
+
+    fireEvent.click(screen.getByText("확인"));
+    expect(onConfirm).not.toHaveBeenCalled();
+  });
 });

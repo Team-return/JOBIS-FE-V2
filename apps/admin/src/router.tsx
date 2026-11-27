@@ -17,6 +17,7 @@ import {
   noticeEditLoader,
   noticeLoader,
   NoticeWrite,
+  PreparingPage,
   Recruitment,
   recruitmentLoader,
   Student,
@@ -28,9 +29,24 @@ export const router: ReturnType<typeof createBrowserRouter> =
     {
       path: "/",
       element: (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          }}
+        >
           <Header type="admin" />
-          <main style={{ flex: 1 }}>
+          {/* 창이 표보다 좁으면 main이 표 폭까지 넓어져 왼쪽이 잘리지 않고 가로 스크롤된다.
+              grid라 페이지가 main 높이를 채워 공지 회색 배경이 푸터까지 닿는다 */}
+          <main
+            style={{
+              flex: 1,
+              width: "100%",
+              minWidth: "min-content",
+              display: "grid"
+            }}
+          >
             <Outlet />
           </main>
           <Footer />
@@ -72,11 +88,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>학생 후기 목록</div>
+              element: <PreparingPage />
             },
             {
               path: "detail/:reviewId",
-              element: <div>학생 후기 상세</div>
+              element: <PreparingPage />
             }
           ]
         },
@@ -111,10 +127,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
           children: [
             {
               index: true,
-              element: <div>배너 목록</div>
+              element: <PreparingPage />
             },
-            { path: "write", element: <div>배너 등록</div> },
-            { path: "detail/edit/:bannerId", element: <div>배너 수정</div> }
+            { path: "write", element: <PreparingPage /> },
+            { path: "detail/edit/:bannerId", element: <PreparingPage /> }
           ]
         }
       ]
